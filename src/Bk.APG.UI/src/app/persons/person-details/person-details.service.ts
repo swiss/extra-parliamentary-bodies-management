@@ -11,7 +11,8 @@ export class PersonDetailsService {
     needsAttentionBasicData = computed(() => this.personDetails().needsAttentionBasicData);
     needsAttentionInterests = computed(() => this.personDetails().needsAttentionInterests);
     needsAttentionFederalDuty = computed(() => this.personDetails().needsAttentionFederalDuty);
-    needsAttentionFederalAssembly = computed(() => this.personDetails().needsAttentionFederalAssembly);
+    needsAttentionFederalAssemblyAdministrationCommission = computed(() => this.personDetails().needsAttentionFederalAssemblyAdministrationCommission);
+    needsAttentionFederalAssemblyAuthoritiesCommission = computed(() => this.personDetails().needsAttentionFederalAssemblyAuthoritiesCommission);
     needsAttentionLongerDuty = computed(() => this.personDetails().needsAttentionLongerDuty);
     needsAttentionShorterDuty = computed(() => this.personDetails().needsAttentionShorterDuty);
     needsAttentionMembershipExpired = computed(() => this.personDetails().needsAttentionMembershipExpired);

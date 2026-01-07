@@ -57,7 +57,7 @@ public static class MembershipMapper
             HasMembershipAddition = membership.MembershipAddition is not null,
             IsActive = membership.IsActive,
             IsFuture = membership.IsFuture,
-            NeedsAttention = membership.NeedsAttention
+            NeedsAttention = membership.NeedsAttention || membership.NeedsAttentionInterests
         };
     }
 

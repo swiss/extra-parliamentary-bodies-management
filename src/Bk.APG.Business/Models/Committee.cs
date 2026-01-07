@@ -253,7 +253,7 @@ public class Committee : EntityBase
     public bool NeedsAttentionFederalDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionFederalDuty: true });
 
     [NotMapped]
-    public bool NeedsAttentionFederalAssembly => Memberships.Any(y => y is { IsActive: true, NeedsAttentionFederalAssembly: true });
+    public bool NeedsAttentionFederalAssembly => Memberships.Any(y => y.IsActive && (y.NeedsAttentionFederalAssemblyAuthoritiesCommission || y.NeedsAttentionFederalAssemblyAdministrationCommission));
 
     [NotMapped]
     public bool NeedsAttentionBasicData => string.IsNullOrWhiteSpace(DescriptionGerman) || string.IsNullOrWhiteSpace(DescriptionFrench) || string.IsNullOrWhiteSpace(DescriptionItalian) || string.IsNullOrWhiteSpace(DescriptionRomansh) ||
@@ -271,6 +271,12 @@ public class Committee : EntityBase
 
     [NotMapped]
     public bool NeedsAttentionMembershipExpired => Memberships.Any(y => y.NeedsAttentionMembershipExpired);
+
+    [NotMapped]
+    public bool NeedsAttentionMembershipInterestOrOccupation => Memberships.Any(m => m.Person is not null && (m.Person.NeedsAttentionOccupation || (!m.Person.NoInterest && m.Person.Interests.Count == 0 && ((m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) ||
+        m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
+        m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
+        m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid))));
 
     [NotMapped]
     public bool NeedsAttentionDataProtectionOfficer => (CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) &&
