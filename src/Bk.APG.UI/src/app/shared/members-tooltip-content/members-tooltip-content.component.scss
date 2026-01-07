@@ -1,0 +1,33 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+.members-tooltip-content {
+    max-width: 600px;
+
+    p {
+        margin-top: 0;
+        margin-bottom: $ob-spacing-sm;
+    }
+
+    .members-rules-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+
+        th,
+        td {
+            border: 1px solid $ob-gray-lighter;
+            padding: $ob-spacing-xs;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: $ob-secondary-100;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: $ob-secondary-50;
+        }
+    }
+}

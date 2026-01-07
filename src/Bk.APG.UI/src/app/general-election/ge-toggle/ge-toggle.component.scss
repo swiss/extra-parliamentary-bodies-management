@@ -1,0 +1,32 @@
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host {
+    mat-button-toggle-group {
+        height: 40px;
+
+        ::ng-deep {
+            .mat-button-toggle {
+                width: 200px;
+                color: $ob-secondary-200;
+
+                &.mat-button-toggle-checked {
+                    color: $ob-white;
+
+                    &.green-active {
+                        background-color: $ob-green-600;
+                    }
+
+                    &.blue-active {
+                        background-color: $ob-blue-600;
+                    }
+                }
+            }
+            button {
+                height: 100%;
+            }
+            span {
+                line-height: unset;
+            }
+        }
+    }
+}

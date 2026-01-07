@@ -1,0 +1,105 @@
+<div>
+    <apg-worklist-filter (filter)="onFilter($event)" />
+</div>
+<table
+    (matSortChange)="onSort($event)"
+    [matSortActive]="currentSort.active"
+    [matSortDirection]="currentSort.direction"
+    [dataSource]="tasksTable"
+    mat-table
+    matSort
+    matSortDisableClear
+    class="ob-table"
+>
+    <ng-container matColumnDef="worklistTaskType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.worklistTaskType' | translate">
+            {{ 'worklist.task.worklistTaskType' | translate }}
+        </th>
+        <td *matCellDef="let element" data-label="worklistTaskType" mat-cell [matTooltip]="element.worklistTaskType">{{ element.worklistTaskType }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="assignedBy">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.assignedBy' | translate">
+            {{ 'worklist.task.assignedBy' | translate }}
+        </th>
+        <td *matCellDef="let element" data-label="createdBy" mat-cell>{{ element.assignedBy }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="assignedTo">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.assignedTo' | translate">
+            {{ 'worklist.task.assignedTo' | translate }}
+        </th>
+        <td *matCellDef="let element" data-label="assignedTo" mat-cell>{{ element.assignedTo }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="department">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.department' | translate">
+            {{ 'worklist.task.department' | translate }}
+        </th>
+        <td *matCellDef="let element" data-label="department" mat-cell>{{ element.department }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="office">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.office' | translate">{{ 'worklist.task.office' | translate }}</th>
+        <td *matCellDef="let element" data-label="office" mat-cell>{{ element.office }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="committee">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.committee' | translate">
+            {{ 'worklist.task.committee' | translate }}
+        </th>
+        <td *matCellDef="let element" data-label="committee" mat-cell [matTooltip]="element.committee">{{ element.committee }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="worklistTaskState">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.worklistTaskState' | translate">
+            {{ 'worklist.task.worklistTaskState' | translate }}
+        </th>
+        <td *matCellDef="let element" data-label="worklistTaskState" mat-cell>{{ element.worklistTaskState }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="created">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.created' | translate">{{ 'worklist.task.created' | translate }}</th>
+        <td *matCellDef="let element" data-label="created" mat-cell>{{ element.created | date: 'dd.MM.yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="dueDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header [matTooltip]="'worklist.task.dueDate' | translate">{{ 'worklist.task.dueDate' | translate }}</th>
+        <td *matCellDef="let element" data-label="dueDate" mat-cell>{{ element.dueDate | date: 'dd.MM.yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell></th>
+        <td *matCellDef="let element" mat-cell>
+            @if (!!element.navigationUrl) {
+                <button
+                    (click)="navigateToUrl(element.navigationUrl)"
+                    mat-icon-button
+                    obButton="tertiary"
+                    [matTooltip]="'worklist.task.navigation' | translate"
+                >
+                    <mat-icon svgIcon="link" />
+                </button>
+            }
+        </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns()" mat-header-row></tr>
+    <tr
+        *matRowDef="let row; columns: displayedColumns()"
+        [class]="row.isCompleted ? 'green-table-row' : row.isOverdue ? 'red-table-row' : row.isInactive ? 'inactive-table-row' : ''"
+        (dblclick)="navigateToDetails(row)"
+        mat-row
+    ></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns().length">{{ 'common.noEntries' | translate }}</td>
+    </tr>
+</table>
+<mat-paginator
+    (page)="onPageChange($event)"
+    [length]="totalCount()"
+    [pageIndex]="pagingParams.pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageSize]="pagingParams.pageSize"
+    class="paginator"
+/>

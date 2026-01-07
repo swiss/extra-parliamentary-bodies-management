@@ -1,0 +1,20 @@
+@if (formArray) {
+    <div class="interest-form">
+        @if (formArray.length === 0) {
+            <div class="noData">{{ 'person.interests.table.noEntries' | translate }}</div>
+        }
+        @for (control of formArray.controls; track control; let i = $index) {
+            <div>
+                @if (interests) {
+                    <apg-interests-edit-form-detail [formGroup]="$any(control)" (interestRemoved)="removeInterest(i)" />
+                }
+            </div>
+        }
+        <div>
+            <button mat-button obButton="secondary" type="button" (click)="addInterest()" [matTooltip]="'interest.add' | translate">
+                <mat-icon svgIcon="plus" class="ob-icon" />
+                {{ 'interest.add' | translate }}
+            </button>
+        </div>
+    </div>
+}

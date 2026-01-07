@@ -1,0 +1,14 @@
+<div [ngClass]="controlStatus()?.status === 'INVALID' ? 'invalid' : ''" class="froala-editor">
+    <div class="froala-editor-header">
+        <label class="froala-editor-title">{{ title() }}</label>
+        @if (helpTooltipTexts()) {
+            <apg-help-tooltip [texts]="helpTooltipTexts()!" />
+        }
+    </div>
+    @if (!isUpdating()) {
+        <div [formControlName]="controlName()" [froalaEditor]="options()"></div>
+        @if (plugins().includes('lance')) {
+            <div class="annotations-container"></div>
+        }
+    }
+</div>

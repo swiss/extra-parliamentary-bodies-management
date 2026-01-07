@@ -1,0 +1,53 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+$gap: 16px;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 150ch;
+    margin: auto;
+    form {
+        display: flex;
+        flex-direction: column;
+        column-gap: $gap;
+        width: 150ch;
+        max-width: 150ch;
+        margin: auto;
+
+        .input-grid {
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: $gap;
+
+            > * {
+                flex: 1 1 calc(25% - $gap);
+                max-width: calc(50%);
+            }
+        }
+    }
+
+    .hint {
+        color: $ob-blue-700;
+        font-style: italic;
+        font-size: medium;
+    }
+
+    .upload-document-detail {
+        display: flex;
+        max-width: 100%;
+    }
+
+    .upload-document-field-name {
+        width: 40%;
+    }
+
+    .upload-document-field {
+        margin-left: $ob-spacing-default;
+        width: 30%;
+    }
+
+    .action-button {
+        margin-left: $ob-spacing-default;
+        margin-top: $ob-spacing-xs;
+    }
+}

@@ -1,0 +1,486 @@
+<div class="membership-candidate-list-header">
+    <h3>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h3>
+    <h4 class="candidate-list-state">{{ generalElectionCommittee()?.candidateListState }}</h4>
+
+    @if (generalElectionCommittee()?.isCandidateListCompleted && !validated) {
+        <ob-alert type="warning">{{ 'candidateList.completedHint' | translate }}</ob-alert>
+    }
+</div>
+
+@if (validationErrors().length) {
+    <div class="validation-errors">
+        @for (error of validationErrors(); track error) {
+            <ob-alert type="error">{{ error }}</ob-alert>
+        }
+    </div>
+}
+
+@if (areJustificationsMissing()) {
+    <div class="validation-errors">
+        <ob-alert type="warning">{{ 'generalElection.committee.candidateList.justificationsMissingTasksCreated' | translate }}</ob-alert>
+    </div>
+}
+
+<div class="duplicates">
+    @if (personDuplicates.length > 0) {
+        <mat-card appearance="outlined" class="mat-card-warning">
+            <mat-card-content
+                >{{ 'person.create.validate.warning' | translate }}
+                <ul>
+                    @for (duplicate of personDuplicates; track duplicate) {
+                        <li>
+                            {{ 'generalElection.committee.candidateList.duplicate.recorded' | translate }} {{ duplicate.membershipCandidateToCheck.surname }}
+                            {{ duplicate.membershipCandidateToCheck.givenName }} ({{ duplicate.membershipCandidateToCheck.birthYear }},
+                            {{ duplicate.membershipCandidateToCheck.language }}, {{ duplicate.membershipCandidateToCheck.gender }})<br />
+                            {{ 'generalElection.committee.candidateList.duplicate.found' | translate }}
+                            <a href="persons/{{ duplicate.personFound.id }}" target="_blank">
+                                {{ duplicate.personFound.surname }} {{ duplicate.personFound.givenName }} ({{ duplicate.personFound.birthYear }},
+                                {{ duplicate.personFound.language }}, {{ duplicate.personFound.gender }})<br />
+                            </a>
+                        </li>
+                        <i>
+                            @switch (duplicate.duplicateReason) {
+                                @case (DuplicateReason.FullMatch) {
+                                    <span>({{ 'generalElection.committee.candidateList.duplicateReason.exactMatch' | translate }})</span>
+                                }
+                                @case (DuplicateReason.LanguageMismatch) {
+                                    <span>({{ 'generalElection.committee.candidateList.duplicateReason.languageMismatch' | translate }})</span>
+                                }
+                                @case (DuplicateReason.InBirthYearRange) {
+                                    <span>({{ 'generalElection.committee.candidateList.duplicateReason.inBirthYearRange' | translate }})</span>
+                                }
+                                @case (DuplicateReason.GivenNameMismatch) {
+                                    <span>({{ 'generalElection.committee.candidateList.duplicateReason.givenNameMismatch' | translate }})</span>
+                                }
+                            }
+                        </i>
+                    }
+                </ul>
+                <div>{{ 'generalElection.committee.candidateList.duplicate.hint' | translate }}</div>
+                <mat-checkbox [(ngModel)]="duplicateCheckConfirmed">
+                    {{ 'generalElection.committee.candidateList.duplicate.confirm' | translate }}
+                </mat-checkbox></mat-card-content
+            >
+        </mat-card>
+    }
+
+    @if (existingPersons.length > 0) {
+        <mat-card appearance="outlined" [ngClass]="personDuplicates.length > 0 ? 'mat-card-warning' : 'mat-card-success'">
+            <mat-card-content
+                >{{ 'generalElection.committee.candidateList.existingPersons.hint' | translate }}
+                <button
+                    mat-icon-button
+                    (click)="clearExistingPersonList()"
+                    [matTooltip]="'common.hide' | translate"
+                    class="close-btn"
+                    [matTooltipPosition]="'below'"
+                >
+                    <mat-icon svgIcon="xmark" class="ob-icon" />
+                </button>
+
+                <ul>
+                    @for (person of existingPersons; track person) {
+                        <li>{{ person.surname }} {{ person.givenName }} ({{ person.birthYear }}, {{ person.language }}, {{ person.gender }})<br /></li>
+                    }
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    }
+    @if (createdPersons.length > 0) {
+        <mat-card appearance="outlined" [ngClass]="personDuplicates.length > 0 ? 'mat-card-warning' : 'mat-card-success'">
+            <mat-card-content
+                >{{ 'generalElection.committee.candidateList.createdPersons.hint' | translate }}
+                <button
+                    mat-icon-button
+                    (click)="clearCreatedPersonList()"
+                    [matTooltip]="'common.hide' | translate"
+                    class="close-btn"
+                    [matTooltipPosition]="'below'"
+                >
+                    <mat-icon svgIcon="xmark" class="ob-icon" />
+                </button>
+                <ul>
+                    @for (person of createdPersons; track person) {
+                        <li>
+                            {{ person.surname }} {{ person.givenName }} ({{ person.birthYear }}, {{ person.language }}, {{ person.gender }})
+                            <mat-icon svgIcon="checkmark" class="ob-icon" /> <br />
+                        </li>
+                    }
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    }
+</div>
+
+<div class="table-header">
+    <h5 class="table-title">
+        {{ 'generalElection.committee.candidateList.title' | translate }}
+        @if (generalElectionCommittee()?.assignedTo) {
+            {{ 'generalElection.committee.candidateList.assignedTo' | translate }} {{ generalElectionCommittee()?.assignedTo }}
+        }
+    </h5>
+    <div class="button-header">
+        @if (generalElectionCommittee()?.quotas) {
+            <apg-members-quotas [membersQuotas]="generalElectionCommittee()!.quotas!" />
+        }
+        @if (!isObserver()) {
+            <div class="vacancies ob-form-sm">
+                @if (isDepartment()) {
+                    <mat-icon class="info" matIconPrefix matTooltip="{{ 'committee.details.vacancies.hint' | translate }}" svgIcon="info_circle" />
+                }
+                <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="vacanciesForm">
+                    <mat-label>{{ 'membershipCandidate.vacanciesGeneralElection' | translate }}</mat-label>
+                    <input matInput type="number" min="0" max="99" formControlName="vacancies" />
+
+                    <button
+                        matSuffix
+                        type="button"
+                        mat-icon-button
+                        obButton="tertiary"
+                        (click)="saveVacancies()"
+                        [matTooltip]="'generalElection.vacancies.saveChanges' | translate"
+                        [disabled]="!vacanciesForm.dirty || !vacanciesForm.valid"
+                    >
+                        <mat-icon svgIcon="save" />
+                    </button>
+                </mat-form-field>
+            </div>
+        }
+        @if (generalElectionCommittee()?.canSaveCandidateList) {
+            <button mat-button obButton="secondary" type="button" (click)="saveSelectedIds()">
+                {{ 'generalElection.candidateList.save' | translate }}
+            </button>
+        }
+        @if (generalElectionCommittee()?.canForwardCandidateList) {
+            <button [disabled]="!selectedIds.length" mat-button obButton="secondary" type="button" (click)="openForwardDialog()">
+                {{ 'common.forward' | translate }}
+            </button>
+        }
+        @if (generalElectionCommittee()?.canValidateCandidateList) {
+            <button [disabled]="!selectedIds.length" mat-button obButton="secondary" type="button" (click)="validateCandidateList()">
+                {{ 'generalElection.candidateList.validate' | translate }}
+            </button>
+        }
+    </div>
+</div>
+
+<table [dataSource]="dataSource" matSortActive="surname" matSortDirection="asc" class="ob-table" mat-table matSort matSortDisableClear>
+    <ng-container matColumnDef="select">
+        <th *matHeaderCellDef mat-header-cell>
+            <mat-checkbox
+                [checked]="allSelected"
+                [indeterminate]="isPartiallySelected()"
+                (change)="toggleSelectAll()"
+                [disabled]="
+                    !generalElectionCommittee()?.canSaveCandidateList &&
+                    !generalElectionCommittee()?.canForwardCandidateList &&
+                    !generalElectionCommittee()?.canValidateCandidateList
+                "
+            />
+        </th>
+        <td *matCellDef="let element" mat-cell>
+            <mat-checkbox
+                [checked]="isSelected(element.id)"
+                (change)="toggleSelection(element.id)"
+                [disabled]="
+                    !generalElectionCommittee()?.canSaveCandidateList &&
+                    !generalElectionCommittee()?.canForwardCandidateList &&
+                    !generalElectionCommittee()?.canValidateCandidateList
+                "
+            />
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell></td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="surname">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.surname' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'person.details.surname' | translate }}">{{ element.surname }}</td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell [colSpan]="2">
+                <div class="person-footer-container">
+                    <apg-person-search #personSearch [(personSelected)]="selectedPerson" />
+                    <div class="name-footer-container">
+                        <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                            <mat-label>{{ 'person.details.surname' | translate }}</mat-label>
+                            <input matInput formControlName="surname" />
+                        </mat-form-field>
+                        <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                            <mat-label>{{ 'person.details.givenName' | translate }}</mat-label>
+                            <input matInput formControlName="givenName" />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="givenName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.givenName' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'person.details.givenName' | translate }}">{{ element.givenName }}</td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell style="display: none"></td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="gender">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.gender' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'person.details.gender' | translate }}">{{ element.gender }}</td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell>
+                <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                    <mat-label>{{ 'person.details.gender' | translate }}</mat-label>
+                    <mat-select formControlName="genderId">
+                        @for (gender of masterDataService.genders(); track gender.id) {
+                            <mat-option [value]="gender.id">{{ gender.text }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="language">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.language' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'person.details.language' | translate }}">{{ element.language }}</td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell>
+                <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                    <mat-label>{{ 'person.details.language' | translate }}</mat-label>
+                    <mat-select formControlName="languageId">
+                        @for (language of masterDataService.languages(); track language.id) {
+                            <mat-option [value]="language.id">{{ language.text }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="birthYear">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.birthYear' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'person.details.birthYear' | translate }}">{{ element.birthYear }}</td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell>
+                <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                    <mat-label>{{ 'person.details.birthYear' | translate }}</mat-label>
+                    <input matInput formControlName="birthYear" type="number" />
+                </mat-form-field>
+            </td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="function">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.function' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.function' | translate }}">
+            @if (isAllowed()) {
+                <mat-form-field [formGroup]="getMembershipCandidateForm(element.id)" subscriptSizing="dynamic">
+                    <mat-select formControlName="functionId">
+                        @for (function of masterDataService.functions(); track function.id) {
+                            <mat-option [value]="function.id">{{ function.text }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            } @else {
+                <span>{{ element.function }}</span>
+            }
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell>
+                <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                    <mat-label>{{ 'membership.details.function' | translate }}</mat-label>
+                    <mat-select formControlName="functionId">
+                        @for (function of masterDataService.functions(); track function.id) {
+                            <mat-option [value]="function.id">{{ function.text }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="beginDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.beginDate' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.beginDate' | translate }}">
+            {{ element.beginDate | date }}
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell><!-- Not editable for new candidates --></td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="endDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.endDate' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.endDate' | translate }}">
+            {{ element.endDate | date }}
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell><!-- Not editable for new candidates --></td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="electionType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.electionType' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.electionType' | translate }}">
+            {{ element.electionType }}
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell><!-- Not editable for new candidates --></td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="membershipAddition">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.membershipAddition' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.membershipAddition' | translate }}">
+            {{ element.membershipAddition }}
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell><!-- Not editable for new candidates --></td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="remarks">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.remarks' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.remarks' | translate }}">
+            @if (isAllowed()) {
+                <div class="textarea-container" [formGroup]="getMembershipCandidateForm(element.id)">
+                    <mat-form-field subscriptSizing="dynamic" appearance="outline" class="textarea-field">
+                        <textarea
+                            matInput
+                            formControlName="remarks"
+                            [placeholder]="'membership.details.remarks.hint' | translate"
+                            rows="2"
+                            maxlength="1000"
+                        ></textarea>
+                        <mat-hint align="end">{{ getMembershipCandidateForm(element.id).get('remarks')?.value?.length || 0 }}/1000</mat-hint>
+                    </mat-form-field>
+                </div>
+            } @else {
+                <span>{{ element.remarks }}</span>
+            }
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell>
+                <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                    <textarea
+                        matInput
+                        formControlName="remarks"
+                        [placeholder]="'membership.details.remarks.hint' | translate"
+                        rows="2"
+                        maxlength="1000"
+                    ></textarea>
+                    <mat-hint align="end">{{ newMembershipCandidateForm.get('remarks')?.value?.length || 0 }}/1000</mat-hint>
+                </mat-form-field>
+            </td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="remarksStatus">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.remarksStatus' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.remarksStatus' | translate }}">
+            @if (isAllowed()) {
+                <div class="textarea-container" [formGroup]="getMembershipCandidateForm(element.id)">
+                    <mat-form-field subscriptSizing="dynamic" appearance="outline" class="textarea-field">
+                        <textarea
+                            matInput
+                            formControlName="remarksStatus"
+                            [placeholder]="'membership.details.remarksStatus.hint' | translate"
+                            rows="2"
+                            maxlength="1000"
+                        ></textarea>
+                        <mat-hint align="end">{{ getMembershipCandidateForm(element.id).get('remarksStatus')?.value?.length || 0 }}/1000</mat-hint>
+                    </mat-form-field>
+                </div>
+            } @else {
+                <span>{{ element.remarksStatus }}</span>
+            }
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell>
+                <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="newMembershipCandidateForm">
+                    <textarea
+                        matInput
+                        formControlName="remarksStatus"
+                        [placeholder]="'membership.details.remarksStatus.hint' | translate"
+                        rows="2"
+                        maxlength="1000"
+                    ></textarea>
+                    <mat-hint align="end">{{ newMembershipCandidateForm.get('remarksStatus')?.value?.length || 0 }}/1000</mat-hint>
+                </mat-form-field>
+            </td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell></th>
+        <td *matCellDef="let element" mat-cell>
+            @if (isAllowed()) {
+                <div class="actions-container">
+                    <button
+                        type="button"
+                        mat-icon-button
+                        obButton="secondary"
+                        (click)="saveMembershipCandidate(element)"
+                        [disabled]="!hasUnsavedFormChanges(element.id) || !canEdit()"
+                        [class.has-changes]="hasUnsavedFormChanges(element.id)"
+                        [matTooltip]="'generalElection.membershipCandidate.saveChanges' | translate"
+                    >
+                        <mat-icon svgIcon="save" />
+                    </button>
+
+                    <button
+                        type="button"
+                        mat-icon-button
+                        obButton="secondary"
+                        (click)="editMembershipCandidate(element.id)"
+                        [disabled]="hasUnsavedFormChanges(element.id) || !canEdit()"
+                        [matTooltip]="'generalElection.membershipCandidate.edit' | translate"
+                    >
+                        <mat-icon svgIcon="pencil" />
+                    </button>
+
+                    <button
+                        type="button"
+                        mat-icon-button
+                        obButton="secondary"
+                        (click)="deleteMembershipCandidate(element.id)"
+                        [disabled]="hasUnsavedFormChanges(element.id) || (element.personId && !isNewElection(element)) || !canEdit()"
+                        [matTooltip]="'generalElection.membershipCandidate.delete' | translate"
+                    >
+                        <mat-icon svgIcon="minus" />
+                    </button>
+                </div>
+            }
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell>
+                <div class="actions-container">
+                    <button
+                        type="button"
+                        mat-button
+                        obButton="secondary"
+                        (click)="saveNewMembershipCandidate()"
+                        [disabled]="!newMembershipCandidateForm.dirty || !newMembershipCandidateForm.valid"
+                        [matTooltip]="'generalElection.membershipCandidate.create' | translate"
+                    >
+                        <mat-icon svgIcon="plus" />
+                        {{ 'generalElection.membershipCandidate.create' | translate }}
+                    </button>
+                </div>
+            </td>
+        }
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumnsWithPermissions()" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumnsWithPermissions()" mat-row [class.highlighted]="row.id === highlightedCandidateId"></tr>
+    @if (isAllowed()) {
+        <tr *matFooterRowDef="displayedColumnsWithPermissions()" mat-footer-row></tr>
+    }
+
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumnsWithPermissions().length">{{ 'generalElection.committee.candidateList.table.noEntries' | translate }}</td>
+    </tr>
+</table>
+
+<mat-paginator [pageSize]="100" [pageSizeOptions]="pageSizeOptions" class="paginator" />
