@@ -108,12 +108,7 @@ volumes:
 ```
 
 This docker file contains a reference to a reference to a KeyCloak real export file which will be imported when KeyCloak is initialized.
-
-Here is an example file that can be used for this.
-
-```
-
-```
+An example export can be found here: https://github.com/swiss/extra-parliamentary-bodies-management/blob/main/etc/apg-docker/keycloak-realms/bk-apg-realm.json
 
 
 ## Add user secrets
