@@ -7,8 +7,11 @@ Evaluations in the form of statistics and publication of data on the internet as
 Handling and verification of general elections and supplementary elections.
 Preparation of Federal Council affairs for the election of members and reporting to parliament.
 
+## Getting Started
+See: https://github.com/swiss/extra-parliamentary-bodies-management/blob/main/GETTING-STARTED.md
+
 ## Contribution
-See: TODO link
+See: https://github.com/swiss/extra-parliamentary-bodies-management/blob/main/CONTRIBUTING.md
 
 ## Security
-See: TODO link
+See: https://github.com/swiss/extra-parliamentary-bodies-management/blob/main/SECURITY.md
