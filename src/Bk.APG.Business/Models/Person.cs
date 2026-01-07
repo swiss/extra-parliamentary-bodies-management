@@ -79,13 +79,13 @@ public class Person : EntityBase
         m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
         m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
         m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid)) &&
-        (Interests.Count == 0 || Interests.Any(i => string.IsNullOrWhiteSpace(i.InterestText) || i.LegalForm is null || i.InterestCommittee is null || i.InterestFunction is null));
+        (Interests.Count == 0 /* TODO REACTIVATE || Interests.Any(i => string.IsNullOrWhiteSpace(i.InterestText) || i.LegalFormId is null || i.InterestCommitteeId == Guid.Empty || i.InterestFunctionId == Guid.Empty) */);
 
     [NotMapped]
 #pragma warning disable CA1051
     public bool NeedsAttentionOccupation = false; // TODO REACTIVATE
 #pragma warning restore CA1051
-    //public bool NeedsAttentionOccupation => Memberships.Any(y => y.IsActive && (y.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
+    //public bool NeedsAttentionOccupation => !FederalDuty && !NoEmployment &&Memberships.Any(y => y.IsActive && (y.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
     //    y.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
     //    y.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
     //    y.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid) &&
