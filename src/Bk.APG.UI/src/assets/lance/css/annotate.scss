@@ -1,0 +1,129 @@
+$ann-bg-color: #f9e9ac;
+
+:root {
+	--marker-bg-image: url(images/marker3.png);
+	--marker-bg-image-selected: url(images/marker3-s.png);
+	--marker-width: 16px;
+	--marker-height: 21px;
+	--ann-bg-color: #f9e9ac;
+	--ann-bg-dark: darken($ann-bg-color, 10%);
+	--ann-bg-light: lighten($ann-bg-color, 10%);
+}
+
+@keyframes lance-new-comment-pulse {
+	0% {
+		background-color: var(--ann-bg-light);
+	}
+
+	50% {
+		background-color: var(--ann-bg-color);
+	}
+
+	100% {
+		background-color: var(--ann-bg-dark);
+	}
+}
+
+
+.lance-annotation-pin-class {
+	display: inline-block;
+	width: 16px !important;
+	height: 21px !important;
+	background-image: var(--marker-bg-image);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	text-decoration: none;
+	overflow: hidden;
+	color: transparent;
+	cursor: pointer;
+	outline: none !important;
+
+	&[data-selected='true'] {
+		background-image: var(--marker-bg-image-selected);
+	}
+}
+
+.lance-annotation-class {
+	background-color: var(--ann-bg-color);
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--ann-bg-light) var(--ann-bg-dark) var(--ann-bg-dark) var(--ann-bg-light);
+	padding: 1px 0;
+	border-radius: 2px;
+	border-top-left-radius: 0;
+	box-sizing: border-box;
+
+	animation: lance-new-comment-pulse 1s;
+	animation-iteration-count: 2;
+	animation-direction: alternate;
+	animation-fill-mode: none;
+
+	&[data-selected='true'] {
+		/* border-color: #f9e9ac; */
+		background-color: var(--ann-bg-dark);
+	}
+}
+
+img.lance-annotation-pin-class {
+	width: var(--marker-width) !important;
+	height: var(--marker-height) !important;
+	outline: none;
+	resize: none;
+	-moz-resize: none;
+}
+
+img.lance-annotation-pin-class::selection,
+.lance-annotation-pin-class::selection {
+	background-color: transparent;
+}
+
+img.lance-annotation-pin-class::-moz-selection,
+.lance-annotation-pin-class::-moz-selection {
+	background-color: transparent;
+}
+
+.lance-annotation-pin-class>object {
+	width: 10px;
+	height: 10px;
+	visibility: hidden;
+}
+
+.fr-toolbar .fr-command.fr-btn.loopindex-froala-button-highlight {
+	border: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.lance-resolve-min {
+	[data-lance-resolved] {
+		&.lance-annotation-class {
+			border-style: none;
+			border-bottom-style: solid;
+			background-color: unset;
+			border-color: var(--ann-bg-color);
+		}
+
+		&.lance-annotation-pin-class {
+			opacity: 0.5;
+			transform-origin: center center;
+			transform: scale(0.75);
+		}
+	}
+}
+
+.lance-resolve-none {
+	.lance-annotation-class[data-lance-resolved] {
+		border-style: none;
+		background-color: unset;
+		box-sizing: unset;
+		padding: unset;
+	}
+
+	.lance-annotation-pin-class[data-lance-resolved] {
+		display: none;
+	}
+}
+
+.lance-abm-start,
+.lance-abm-end {
+	display: none;
+}

@@ -1,0 +1,23 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+.person-details-form {
+    max-width: 150ch;
+    margin: auto;
+}
+
+.two-column-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+.header-column {
+    margin-top: $ob-spacing-default;
+}
+
+.heading-text {
+    font-weight: bold;
+}
+
+.separator-line {
+    margin-top: $ob-spacing-default;
+}

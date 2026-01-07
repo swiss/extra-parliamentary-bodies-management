@@ -1,0 +1,9 @@
+<div class="center-layout">
+    <h2>{{ title() | translate }}</h2>
+    <h3>{{ subtitle() | translate }}</h3>
+    @if (showSignIn()) {
+        <button mat-button obButton="primary" (click)="login()" type="button" role="button">
+            {{ 'application.signIn' | translate }}
+        </button>
+    }
+</div>

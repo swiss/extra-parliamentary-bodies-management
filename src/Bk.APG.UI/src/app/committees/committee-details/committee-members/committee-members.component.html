@@ -1,0 +1,130 @@
+@if (committeeDetailsService.committeeDetails(); as committeeDetails) {
+    @if (committeeDetails.needsAttentionAboveMaxMembers) {
+        <ob-alert type="warning">{{ 'committee.details.warning.aboveMaxMembers' | translate }}<br /></ob-alert>
+    }
+    @if (committeeDetails.needsAttentionNoMembers) {
+        <ob-alert type="warning">{{ 'committee.details.warning.noMembers' | translate }}<br /></ob-alert>
+    }
+    @if (
+        committeeDetails.needsAttentionMembershipExpired ||
+        committeeDetails.needsAttentionLongerDuty ||
+        committeeDetails.needsAttentionShorterDuty ||
+        committeeDetails.needsAttentionFederalDuty ||
+        committeeDetails.needsAttentionFederalAssembly
+    ) {
+        <ob-alert type="warning">{{ 'committee.details.warning.membershipJustificationOrStatus' | translate }}</ob-alert>
+    }
+    @if (committeeDetails.needsAttentionMembershipInterestOrOccupation) {
+        <ob-alert type="warning">{{ 'committee.details.warning.membershipInterestOrOccupation' | translate }}</ob-alert>
+    }
+}
+<div class="committee-members-header">
+    <h2>
+        {{ committeeDetailsService.committeeDetails()?.description }}
+    </h2>
+
+    <div class="buttons">
+        <button
+            (click)="createMember()"
+            mat-button
+            obButton="secondary"
+            type="button"
+            [disabled]="!committeeDetailsService.committeeDetails()?.canCreateMembership || !this.canEdit()"
+            [matTooltip]="'membership.create' | translate"
+        >
+            <mat-icon svgIcon="plus" />
+            {{ 'membership.create' | translate }}
+        </button>
+    </div>
+</div>
+
+@for (table of tables; track table.name) {
+    <div class="table-header">
+        <h4>{{ 'committee.' + table.name | translate }}</h4>
+        @if (table.name === 'activeMembers') {
+            <apg-members-quotas class="quotas" [membersQuotas]="membershipList().committeeQuotas" />
+            <apg-help-tooltip text="committee.helpTooltip.membersTabGeneral" size="big" />
+        }
+    </div>
+    <table
+        [dataSource]="table.data()"
+        class="ob-table"
+        mat-table
+        matSort
+        matSortDisableClear
+        (matSortChange)="sortData($event, table.sort)"
+        [matSortActive]="table.sort().active"
+        [matSortDirection]="table.sort().direction"
+    >
+        <ng-container matColumnDef="surname">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.surname' | translate }}</th>
+            <td *matCellDef="let element" mat-cell data-label="surname">{{ element.surname }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="givenName">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.givenName' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.givenName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="gender">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.gender' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.gender }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="language">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.language' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.language }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="function">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.function' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.function }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="beginDate">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.beginDate' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.beginDate | date: 'dd.MM.yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="endDate">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.endDate' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.endDate | date: 'dd.MM.yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="electionType">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.electionType' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.electionType }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="hasMembershipAddition">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.hasMembershipAddition' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ (element.hasMembershipAddition ? 'common.yes' : 'common.no') | translate }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="employmentLevel">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.employmentLevel' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.employmentLevel }}</td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns()" mat-header-row></tr>
+        <tr
+            (click)="canEdit() ? editMember(row) : ''"
+            *matRowDef="let row; columns: displayedColumns()"
+            mat-row
+            [ngClass]="row.isFuture ? 'green-table-row' : row.needsAttention ? 'red-table-row' : !row.isActive ? 'inactive-table-row' : ''"
+        ></tr>
+        <tr *matNoDataRow>
+            <td [colSpan]="displayedColumns().length">{{ 'committees.memberships.table.noEntries' | translate }}</td>
+        </tr>
+    </table>
+    @if (table.length() > 25) {
+        <mat-paginator
+            (page)="onPageChange($event, table.paging)"
+            [length]="table.length()"
+            [pageSizeOptions]="[25, 50, 100]"
+            [pageSize]="table.paging().pageSize"
+            [pageIndex]="table.paging().pageIndex"
+            class="paginator"
+        />
+    }
+}

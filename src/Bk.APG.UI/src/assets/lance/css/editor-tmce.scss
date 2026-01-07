@@ -1,0 +1,19 @@
+@import "./all-editors";
+
+.tox {
+	.tox-tbtn--disabled,
+	.tox-tbtn--disabled:hover,
+	.tox-tbtn:disabled,
+	.tox-tbtn:disabled:hover {
+		svg.loopindex-button {
+			opacity: 0.8;
+		}
+		path.loopindex-svg-icon {
+			opacity: 0.55;
+		}
+	}
+	svg.loopindex-button[width='32'], svg.loopindex-button[height='32'] {
+		transform-origin: center;
+		transform: scale(0.75);
+	}
+}

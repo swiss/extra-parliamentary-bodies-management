@@ -1,0 +1,111 @@
+<div class="header-title">
+    <h3>{{ committeeDetailsService.committeeDetails()?.description }}</h3>
+    <apg-help-tooltip text="committee.helpTooltip.appointmentDecisionsGeneral" />
+</div>
+<div class="committee-appointment-decision-header">
+    <h4>{{ 'appointmentDecisions.table.title' | translate }}</h4>
+
+    <button
+        (click)="createAppointmentDecision()"
+        mat-button
+        obButton="secondary"
+        type="button"
+        [matTooltip]="'appointmentDecision.create.info' | translate"
+        [disabled]="!canEdit()"
+    >
+        <mat-icon svgIcon="plus" />
+        {{ 'appointmentDecision.create.info' | translate }}
+    </button>
+</div>
+
+<table [dataSource]="dataSource" class="ob-table" mat-table matSort>
+    <ng-container matColumnDef="fileName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'appointmentDecisions.table.header.filename.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'appointmentDecisions.table.header.filename.label' | translate }}">
+            {{ element.fileName }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="appointmentDecisionDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'appointmentDecisions.table.header.appointmentDecisionDate.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'appointmentDecisions.table.header.appointmentDecisionDate.label' | translate }}">
+            {{ element.appointmentDecisionDate | date: 'dd.MM.yyyy' }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="appointmentDecisionType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'appointmentDecisions.table.header.appointmentDecisionType.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'appointmentDecisions.table.header.appointmentDecisionLType.label' | translate }}">
+            {{ element.appointmentDecisionType }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="appointmentDecisionLinkType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'appointmentDecisions.table.header.appointmentDecisionLinkType.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'appointmentDecisions.table.header.appointmentDecisionLinkType.label' | translate }}">
+            {{ element.appointmentDecisionLinkType }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="text">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'appointmentDecisions.table.header.text.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'appointmentDecisions.table.header.text.label' | translate }}">
+            {{ element.text }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="link">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'appointmentDecisions.table.header.link.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'appointmentDecisions.table.header.link.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            <a href="{{ element.link }}" target="_blank">{{ element.linkText }}</a>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="modified">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'appointmentDecisions.table.header.modified.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'appointmentDecisions.table.header.modified.label' | translate }}">
+            {{ element.modified | date: 'dd.MM.yyyy' }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef scope="col"></th>
+
+        <td mat-cell class="actions" *matCellDef="let element">
+            @if (element.documentStorageId) {
+                <button
+                    class="action-button"
+                    (click)="$event.stopPropagation(); downloadDocument(element.documentStorageId, element.fileName)"
+                    mat-icon-button
+                    obButton="secondary"
+                    type="button"
+                    [matTooltip]="'appointmentDecision.download.info' | translate"
+                >
+                    <mat-icon svgIcon="download" />
+                </button>
+            }
+            <button
+                class="action-button"
+                (click)="$event.stopPropagation(); deleteEntry(element.id)"
+                mat-icon-button
+                obButton="secondary"
+                type="button"
+                [matTooltip]="'appointmentDecision.delete.info' | translate"
+                [hidden]="!this.canEdit()"
+            >
+                <mat-icon svgIcon="delete" />
+            </button>
+        </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns" mat-row (click)="this.canEdit() ? editAppointmentDecision(row.id) : ''"></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">{{ 'appointmentDecisions.table.noEntries' | translate }}</td>
+    </tr>
+</table>

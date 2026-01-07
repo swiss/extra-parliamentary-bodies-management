@@ -1,0 +1,66 @@
+<p class="overview-hint">{{ 'entityAuditLog.hint' | translate }}</p>
+
+<table [dataSource]="dataSource" matSortActive="auditDate" matSortDirection="desc" class="ob-table" mat-table matSort matSortDisableClear>
+    <ng-container matColumnDef="auditUser">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'entityAuditLog.table.header.auditUser.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'entityAuditLog.table.header.auditUser.label' | translate }}">{{ element.auditUser }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="auditDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'entityAuditLog.table.header.auditDate.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'entityAuditLog.table.header.auditDate.label' | translate }}">
+            {{ element.auditDate | date: 'dd.MM.yyyy HH:mm' }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="entityType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'entityAuditLog.table.header.entityType.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'entityAuditLog.table.header.entityType.label' | translate }}">
+            {{ element.entityType }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="auditDataBefore">
+        <th *matHeaderCellDef mat-header-cell>{{ 'entityAuditLog.table.header.auditDataBefore.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'entityAuditLog.table.header.auditDataBefore.label' | translate }}">
+            <ul>
+                @for (data of element.auditDataBefore; track data.columnName) {
+                    <li>{{ data.columnName }}: {{ data.data }}</li>
+                }
+            </ul>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="auditDataAfter">
+        <th *matHeaderCellDef mat-header-cell>{{ 'entityAuditLog.table.header.auditDataAfter.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'entityAuditLog.table.header.auditDataAfter.label' | translate }}">
+            <ul>
+                @for (data of element.auditDataAfter; track data.columnName) {
+                    <li>{{ data.columnName }}: {{ data.data }}</li>
+                }
+            </ul>
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="auditAction">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'entityAuditLog.table.header.auditAction.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'entityAuditLog.table.header.auditAction.label' | translate }}">
+            {{ element.auditAction }}
+        </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">{{ 'entityAuditLog.table.noEntries' | translate }}</td>
+    </tr>
+</table>
+
+<mat-paginator
+    (page)="onPageChange($event)"
+    [length]="totalCount()"
+    [pageIndex]="pagingParams().pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageSize]="pagingParams().pageSize"
+    class="paginator"
+/>

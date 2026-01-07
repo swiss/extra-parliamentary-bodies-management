@@ -1,0 +1,25 @@
+<div class="membership-data-header">
+    <div class="header-title">
+        <h4>{{ 'appointmentDecision.create' | translate }}</h4>
+        <apg-help-tooltip text="committee.helpTooltip.appointmentDecisionCreate" />
+    </div>
+    <div class="buttons">
+        <button mat-button obButton="secondary" type="button" (click)="close()">{{ 'common.close' | translate }}</button>
+        <button
+            mat-button
+            obButton="primary"
+            type="button"
+            [disabled]="
+                !form().valid ||
+                !documentForm().valid ||
+                (isInstitution() && documentForm().controls.length === 0) ||
+                (isInstitution() && documentForm().controls.length > 0 && !isOriginalSelected()) ||
+                (isReport() && documentForm().controls.length === 0 && !isLinkProvided())
+            "
+            (click)="save()"
+        >
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+<apg-appointment-decision-data-form [(appointmentDecisionModification)]="appointmentDecisionToCreate" [isUpdateMode]="false" />

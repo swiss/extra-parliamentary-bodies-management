@@ -1,0 +1,29 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 150ch;
+    margin: auto;
+
+    .person-data-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $ob-spacing-sm;
+    }
+
+    .buttons {
+        text-align: right;
+
+        button + button {
+            margin-left: $ob-spacing-sm;
+        }
+
+        .delete-button {
+            color: $ob-red-700;
+            border-color: $ob-red-700;
+        }
+    }
+}
