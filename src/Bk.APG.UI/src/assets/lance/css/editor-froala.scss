@@ -1,0 +1,12 @@
+@import "./all-editors";
+
+span.fr-video[data-flite-cid] {
+	width: -moz-fit-content;
+	width: fit-content;
+}
+
+.fr-toolbar .fr-command.fr-btn svg.loopindex-button[height='32'] {
+    width: auto;
+    transform: scale(0.75) translate(0px, -6px);
+	transform-origin: center center;
+}

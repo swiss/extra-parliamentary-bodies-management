@@ -1,0 +1,150 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+@use '@oblique/oblique/styles/scss/core/mixins/layout' as *;
+
+.ob-main-layout:has(mat-tab-group) {
+    padding: 0 !important;
+
+    .mat-mdc-tab-body {
+        overflow: hidden;
+    }
+
+    .mat-mdc-tab-group {
+        height: 100%;
+    }
+
+    .mat-mdc-tab-header {
+        position: sticky;
+        top: 0;
+        z-index: 11;
+        background: white;
+        outline: 1px solid $ob-secondary-100; // fix oblique 13 missing border
+
+        .mat-mdc-tab-disabled {
+            pointer-events: auto !important;
+            cursor: not-allowed !important;
+            box-shadow: none;
+        }
+    }
+
+    .mat-mdc-tab-body-wrapper {
+        flex: 1;
+
+        .mat-mdc-tab-body {
+            position: absolute;
+
+            .mat-mdc-tab-body-content {
+                padding: $ob-spacing-default;
+            }
+        }
+    }
+}
+
+.overview-hint {
+    color: $ob-blue-700;
+    font-style: italic;
+    font-size: medium;
+    margin: 4px auto;
+}
+
+a[href='/accessibility-statement'] {
+    display: none;
+}
+
+.mat-calendar-controls ::first-letter {
+    text-transform: uppercase !important;
+}
+
+.mat-calendar-body-label::first-letter {
+    text-transform: uppercase !important;
+}
+
+.red-table-row {
+    color: $ob-red-700 !important;
+}
+
+.green-table-row {
+    color: $ob-green-700 !important;
+    font-style: italic;
+}
+
+.inactive-table-row {
+    color: $ob-gray-light !important;
+    font-style: italic;
+}
+
+.mat-mdc-radio-disabled,
+.mat-mdc-button-disabled {
+    cursor: not-allowed !important;
+    pointer-events: auto !important;
+}
+
+.rotate {
+    margin: 0;
+    animation: rotation 2s infinite linear;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+@include ob-media-breakpoint-down(sm) {
+    .ob-service-navigation {
+        border-bottom: 1px solid $ob-gray-lighter;
+    }
+    .header-actions {
+        flex-wrap: wrap;
+    }
+}
+
+.ob-master-layout-navigation-item .ob-sub-menu {
+    padding: 0 !important;
+    width: 100% !important;
+    min-width: max-content;
+    min-height: 0 !important;
+
+    // Remove the navigation close button on non-mobile screen-sizes
+    @include ob-media-breakpoint-up(sm) {
+        .ob-sub-menu-back-close-container {
+            display: none !important;
+        }
+    }
+}
+
+// Fix the sort header arrow in the Oblique table for multi-line text
+.mat-mdc-table.ob-table .mat-sort-header .mat-sort-header-arrow {
+    background-repeat: no-repeat;
+    min-width: 12px;
+}
+
+// Reusable component patterns with help tooltips
+.form-field-with-tooltip {
+    display: flex;
+    gap: $ob-spacing-sm;
+
+    mat-form-field {
+        flex: 1;
+    }
+
+    apg-help-tooltip {
+        padding-top: $ob-spacing-md;
+    }
+}
+
+.checkbox-with-tooltip {
+    display: flex;
+    gap: $ob-spacing-sm;
+
+    mat-checkbox {
+        padding-top: $ob-spacing-xs;
+    }
+
+    apg-help-tooltip {
+        padding-top: $ob-spacing-md;
+    }
+}

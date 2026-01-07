@@ -1,0 +1,23 @@
+<mat-icon
+    svgIcon="question_circle"
+    class="help-icon"
+    [class.help-icon-big]="size() === 'big'"
+    [obPopover]="popover"
+    [toggleHandle]="toggleHandle()"
+    placement="right"
+    (mouseenter)="onMouseEnter()"
+/>
+
+<ng-template #popover>
+    <div class="help-tooltip-content">
+        @if (text()) {
+            {{ text() | translate }}
+        } @else if (texts()) {
+            @for (textItem of texts(); track $index) {
+                <p>{{ textItem | translate }}</p>
+            }
+        } @else {
+            <ng-content />
+        }
+    </div>
+</ng-template>

@@ -1,0 +1,72 @@
+<table class="stats" [obPopover]="popover" [toggleHandle]="ObEToggleType.HOVER" placement="bottom">
+    <tr>
+        <td>{{ membersQuotas().membersCount }} {{ 'committee.details.members' | translate }}</td>
+        <td></td>
+        <td [ngClass]="membersQuotas().femaleQuota! < membersQuotas().femaleThreshold! ? 'red' : 'green'">
+            {{ membersQuotas().femaleQuota | number: '1.0-2' }} % {{ 'common.femaleShort' | translate }}
+        </td>
+        <td [ngClass]="membersQuotas().maleQuota! < membersQuotas().maleThreshold! ? 'red' : 'green'">
+            {{ membersQuotas().maleQuota | number: '1.0-2' }} % {{ 'common.maleShort' | translate }}
+        </td>
+        <td></td>
+        <td [ngClass]="membersQuotas().germanQuota! < membersQuotas().germanThreshold! ? 'red' : 'green'">
+            {{ membersQuotas().germanQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }} DE
+        </td>
+        <td [ngClass]="membersQuotas().frenchQuota! < membersQuotas().frenchThreshold! ? 'red' : 'green'">
+            {{ membersQuotas().frenchQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }} FR
+        </td>
+        <td [ngClass]="membersQuotas().italianQuota! < membersQuotas().italianThreshold! ? 'red' : 'green'">
+            {{ membersQuotas().italianQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }} IT
+        </td>
+        <td [ngClass]="membersQuotas().romanshQuota! < membersQuotas().romanshThreshold! ? 'red' : 'green'">
+            {{ membersQuotas().romanshQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }} RM
+        </td>
+    </tr>
+</table>
+
+<ng-template #popover>
+    <table class="stats">
+        <tr class="stats-header">
+            <td></td>
+            <td>{{ 'common.femaleShort' | translate }}</td>
+            <td>{{ 'common.maleShort' | translate }}</td>
+            <td></td>
+            <td>DE</td>
+            <td>FR</td>
+            <td>IT</td>
+            <td>RM</td>
+        </tr>
+        <tr>
+            <td class="heading-text">{{ 'committee.quota' | translate }}</td>
+            <td>{{ membersQuotas().femaleThreshold | number: '1.0-2' }} %</td>
+            <td>{{ membersQuotas().maleThreshold | number: '1.0-2' }} %</td>
+            <td></td>
+            <td>{{ membersQuotas().germanThreshold | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}</td>
+            <td>{{ membersQuotas().frenchThreshold | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}</td>
+            <td>{{ membersQuotas().italianThreshold | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}</td>
+            <td>{{ membersQuotas().romanshThreshold | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}</td>
+        </tr>
+        <tr>
+            <td class="heading-text">{{ 'committee.currentQuota' | translate }}</td>
+            <td [ngClass]="membersQuotas().femaleQuota! < membersQuotas().femaleThreshold! ? 'red' : 'green'">
+                {{ membersQuotas().femaleQuota | number: '1.0-2' }} %
+            </td>
+            <td [ngClass]="membersQuotas().maleQuota! < membersQuotas().maleThreshold! ? 'red' : 'green'">
+                {{ membersQuotas().maleQuota | number: '1.0-2' }} %
+            </td>
+            <td></td>
+            <td [ngClass]="membersQuotas().germanQuota! < membersQuotas().germanThreshold! ? 'red' : 'green'">
+                {{ membersQuotas().germanQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}
+            </td>
+            <td [ngClass]="membersQuotas().frenchQuota! < membersQuotas().frenchThreshold! ? 'red' : 'green'">
+                {{ membersQuotas().frenchQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}
+            </td>
+            <td [ngClass]="membersQuotas().italianQuota! < membersQuotas().italianThreshold! ? 'red' : 'green'">
+                {{ membersQuotas().italianQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}
+            </td>
+            <td [ngClass]="membersQuotas().romanshQuota! < membersQuotas().romanshThreshold! ? 'red' : 'green'">
+                {{ membersQuotas().romanshQuota | number: '1.0-2' }} {{ membersQuotas().percentageLabel }}
+            </td>
+        </tr>
+    </table>
+</ng-template>

@@ -1,0 +1,18 @@
+<h4>{{ committeeName }}</h4>
+<div class="contact-point-header">
+    @if (isUpdateMode) {
+        <h3>{{ 'contactPoint.edit' | translate }}</h3>
+    }
+    @if (isCopyMode) {
+        <h3>{{ 'contactPoint.copy' | translate }}</h3>
+    }
+    <div class="buttons">
+        <button (click)="back()" mat-button obButton="secondary" type="button">{{ 'common.back' | translate }}</button>
+        <button (click)="reset()" [disabled]="!form().dirty" mat-button obButton="secondary" type="button">{{ 'common.reset' | translate }}</button>
+        <button mat-button obButton="primary" type="button" [disabled]="!form().dirty || !form().valid" (click)="save()">
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+
+<apg-contact-point-form [(contactPointModification)]="contactPointToUpdate" [isUpdateMode]="true" />

@@ -1,0 +1,57 @@
+<form [formGroup]="form" class="ob-grid">
+    <!-- Free text search -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'persons.filter.search' | translate }}</mat-label>
+            <input title="{{ 'persons.filter.search' | translate }}" type="text" matInput [formControl]="form.controls.freeText" />
+        </mat-form-field>
+    </div>
+    <!-- Aktive Mitgliedschaft -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'persons.filter.activeMembership.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.hasActiveMembership">
+                <mat-option [value]="true">{{ 'persons.filter.activeMembership.active' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'persons.filter.activeMembership.inactive' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <!-- Kanton -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'persons.filter.canton.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.cantons">
+                @for (canton of masterDataService.cantons(); track canton.id) {
+                    <mat-option [value]="canton.id">{{ canton.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <!-- Sprache -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'persons.filter.language.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.languages">
+                @for (language of masterDataService.languages(); track language.id) {
+                    <mat-option [value]="language.id">{{ language.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="ob-span-3 buttons">
+        <button mat-button obButton="secondary" type="button" (click)="reset()">
+            {{ 'persons.filter.reset' | translate }}
+        </button>
+        <button
+            (click)="create()"
+            mat-button
+            obButton="secondary"
+            type="button"
+            [disabled]="!canCreatePerson()"
+            [matTooltip]="'person.details.data.create' | translate"
+        >
+            <mat-icon svgIcon="plus" />
+            {{ 'person.details.data.create' | translate }}
+        </button>
+    </div>
+</form>

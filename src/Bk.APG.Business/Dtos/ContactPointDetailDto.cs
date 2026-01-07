@@ -1,0 +1,34 @@
+namespace Bk.APG.Business.Dtos;
+
+public class ContactPointDetailDto
+{
+    public required Guid Id { get; set; }
+    public required string ContactPointType { get; set; }
+    public string? CompanyName { get; set; }
+    public string? Section { get; set; }
+    public DateOnly BeginDate { get; set; }
+    public DateOnly? EndDate { get; set; }
+    public string? Street { get; set; }
+    public string? PoBox { get; set; }
+    public string? Zip { get; set; }
+    public string? City { get; set; }
+    public string? Phone { get; set; }
+    public string? Email { get; set; }
+    public string? Surname { get; set; }
+    public string? GivenName { get; set; }
+    public string? Title { get; set; }
+    public required string Language { get; set; }
+    public string? Gender { get; set; }
+    public string? PersonalPhone { get; set; }
+    public string? PersonalMobile { get; set; }
+    public string? PersonalEmail { get; set; }
+    public bool ReleasePersonData { get; set; }
+
+    public bool IsActive
+    {
+        get
+        {
+            return EndDate is null || EndDate > DateOnly.FromDateTime(DateTime.Now);
+        }
+    }
+}

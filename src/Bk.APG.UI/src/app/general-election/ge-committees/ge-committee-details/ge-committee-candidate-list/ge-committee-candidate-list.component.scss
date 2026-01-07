@@ -1,0 +1,268 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host {
+    .membership-candidate-list-header,
+    .table-header,
+    .validation-errors,
+    .duplicates {
+        display: flex;
+        flex-wrap: wrap;
+        position: sticky;
+        left: 0;
+
+        > * {
+            margin: 0;
+        }
+    }
+
+    .duplicates {
+        flex-direction: column;
+    }
+
+    .validation-errors {
+        ob-alert {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+    }
+
+    .membership-candidate-list-header {
+        align-items: flex-start;
+        justify-content: space-between;
+
+        .candidate-list-state {
+            font-style: italic;
+            white-space: nowrap;
+        }
+
+        ob-alert {
+            width: 100%;
+            margin-bottom: 8px;
+        }
+    }
+
+    .table-header {
+        align-items: flex-end;
+        margin-bottom: 4px;
+        gap: 0 8px;
+        z-index: 1;
+
+        .table-title {
+            font-weight: bold;
+            flex: 1;
+            white-space: nowrap;
+        }
+
+        .button-header {
+            display: flex;
+            align-items: flex-end;
+            gap: $ob-spacing-sm;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+
+            button {
+                white-space: nowrap;
+            }
+        }
+    }
+
+    .vacancies {
+        display: flex;
+        margin-bottom: 5px;
+        max-width: 210px;
+
+        .info {
+            height: 30px;
+            width: 30px;
+            padding: 5px 5px 0 0;
+            color: $ob-gray-darker;
+            margin-top: 5px;
+        }
+
+        ::ng-deep .mat-mdc-form-field-icon-suffix {
+            .mat-mdc-button-touch-target,
+            button {
+                height: 28px !important;
+                width: 28px !important;
+            }
+            button {
+                margin: 1px 2px 4px 0;
+            }
+        }
+    }
+
+    .paginator {
+        margin-top: $ob-spacing-default;
+        position: sticky;
+        left: 0;
+    }
+
+    .mat-mdc-cell:has(textarea) {
+        padding: 4px 4px;
+    }
+
+    .textarea-container {
+        width: 100%;
+        min-width: 200px;
+
+        .textarea-field {
+            width: 100%;
+
+            textarea {
+                resize: vertical;
+            }
+
+            .mat-mdc-form-field-hint {
+                font-size: 14px;
+            }
+        }
+    }
+
+    .mat-mdc-form-field-hint {
+        font-size: 14px;
+    }
+
+    .actions-container {
+        display: flex;
+        gap: $ob-spacing-sm;
+
+        button {
+            transition: all 0.2s ease;
+
+            &[disabled] {
+                opacity: 0.3;
+            }
+        }
+    }
+
+    .person-footer-container {
+        display: flex;
+        flex-direction: column;
+        gap: $ob-spacing-sm;
+
+        .name-footer-container {
+            display: flex;
+            gap: $ob-spacing-sm;
+        }
+    }
+
+    .mat-column-select {
+        min-width: 30px;
+        width: 1%;
+        padding: 5px 0 0 4px;
+    }
+
+    td:has(apg-person-search) {
+        padding: 0 8px 8px 0;
+
+        ::ng-deep {
+            .person-search-icon {
+                margin-top: 16px;
+
+                &:empty {
+                    display: none;
+                }
+            }
+
+            mat-form-field {
+                margin: 0 !important;
+                min-width: 200px;
+            }
+
+            .mat-mdc-form-field-subscript-wrapper {
+                display: none;
+            }
+        }
+    }
+
+    [class*='mat-column-'] {
+        width: 1%;
+    }
+
+    .mat-column-surname {
+        width: 10%;
+    }
+
+    .mat-column-givenName {
+        width: 10%;
+    }
+
+    .mat-column-gender {
+        mat-form-field {
+            max-width: 180px;
+        }
+    }
+
+    .mat-column-language {
+        mat-form-field {
+            max-width: 180px;
+        }
+    }
+
+    .mat-column-birthYear {
+        mat-form-field {
+            max-width: 165px;
+        }
+    }
+
+    .mat-column-function {
+        mat-form-field {
+            max-width: 160px;
+        }
+
+        &:not(.mat-mdc-footer-cell) mat-form-field {
+            margin-bottom: 4px;
+        }
+    }
+
+    .mat-column-beginDate {
+        min-width: 140px;
+    }
+
+    .mat-column-endDate {
+        min-width: 130px;
+    }
+
+    .mat-column-electionType {
+        min-width: 120px;
+    }
+
+    .mat-column-membershipAddition {
+        min-width: 110px;
+    }
+
+    .mat-column-remarks {
+        min-width: 110px;
+    }
+
+    .mat-column-remarksStatus {
+        min-width: 110px;
+    }
+
+    .mat-column-actions {
+        min-width: 50px;
+    }
+
+    .highlighted {
+        background-color: $ob-red-300 !important;
+    }
+
+    .mat-card-warning {
+        background-color: $ob-orange-200;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .mat-card-success {
+        background-color: $ob-green-200;
+        margin-bottom: 10px;
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+    }
+}

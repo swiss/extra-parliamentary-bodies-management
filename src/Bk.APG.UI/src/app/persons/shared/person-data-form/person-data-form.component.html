@@ -1,0 +1,728 @@
+<form [formGroup]="personForm" id="personDataForm" obUnsavedChanges>
+    <fieldset>
+        @if (similarPersons.length > 0) {
+            <mat-card appearance="outlined">
+                <mat-card-content>{{ 'person.create.validate.warning' | translate }}</mat-card-content>
+                <ul>
+                    @for (similarPerson of similarPersons; track similarPerson) {
+                        <li>
+                            <a href="persons/{{ similarPerson.id }}" target="_blank">
+                                {{ similarPerson.surname }} {{ similarPerson.givenName }} ({{ similarPerson.birthYear }}{{ getPersonsCity(similarPerson) }})
+                            </a>
+                        </li>
+                    }
+                </ul>
+                <mat-checkbox required [formControl]="personForm.controls.confirmNewPerson" (change)="onManualSimilarityCheckConfirmation($event)">
+                    {{ 'person.create.validate.confirm' | translate }}
+                </mat-checkbox>
+            </mat-card>
+        }
+
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'person.details.surname' | translate }}</mat-label>
+                    <input [formControl]="personForm.controls.surname" matInput type="text" />
+                    <mat-error>
+                        {{ errorService.getControlError(personForm.controls.surname.errors, 'person.details.surname' | translate, 'person.error') }}
+                    </mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="person.helpTooltip.name" />
+            </div>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.givenName' | translate }}</mat-label>
+                <input [formControl]="personForm.controls.givenName" matInput type="text" />
+                <mat-error>
+                    {{ errorService.getControlError(personForm.controls.givenName.errors, 'person.details.givenName' | translate, 'person.error') }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.birthYear' | translate }}</mat-label>
+                <input [formControl]="personForm.controls.birthYear" matInput type="number" />
+                <mat-error>
+                    {{ errorService.getControlError(personForm.controls.birthYear.errors, 'person.details.birthYear' | translate, 'person.error') }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.gender' | translate }}</mat-label>
+                <mat-select [formControl]="personForm.controls.genderId">
+                    @for (gender of masterDataService.genders(); track gender.id) {
+                        <mat-option [value]="gender.id">{{ gender.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{ errorService.getControlError(personForm.controls.genderId.errors, 'person.details.gender' | translate, 'person.error') }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.language' | translate }}</mat-label>
+                <mat-select [formControl]="personForm.controls.languageId">
+                    @for (language of masterDataService.languages(); track language.id) {
+                        <mat-option [value]="language.id">{{ language.description }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{ errorService.getControlError(personForm.controls.languageId.errors, 'person.details.language' | translate, 'person.error') }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.correspondenceLanguage' | translate }}</mat-label>
+                <mat-select [formControl]="personForm.controls.correspondenceLanguageId">
+                    @for (language of masterDataService.languages(); track language.id) {
+                        <mat-option [value]="language.id">{{ language.description }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            personForm.controls.correspondenceLanguageId.errors,
+                            'person.details.correspondenceLanguage' | translate,
+                            'person.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.salutation' | translate }}</mat-label>
+                <mat-select [formControl]="personForm.controls.salutationId">
+                    @for (salutation of masterDataService.salutations(); track salutation.id) {
+                        <mat-option [value]="salutation.id">{{ salutation.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error />
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.salutationText' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="personForm.controls.salutationText" />
+                <mat-error />
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages [ngClass]="{invisible: !isUpdateMode}">
+                <mat-label>{{ 'person.details.occupationMigrated' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="personForm.controls.occupation" />
+                <mat-error />
+            </mat-form-field>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'person.details.title' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="personForm.controls.title" />
+                    <mat-error />
+                </mat-form-field>
+                <apg-help-tooltip text="person.helpTooltip.title" />
+            </div>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field class="occupation-chip-list">
+                    <mat-label>{{ 'person.details.occupation' | translate }}</mat-label>
+                    <mat-chip-grid #chipGrid aria-label="Occupation selection" [disabled]="occupationsDisabled">
+                        @for (occupation of selectedOccupations; track $index) {
+                            <mat-chip-row (removed)="remove(occupation)">
+                                @if (isFemalePerson) {
+                                    {{ occupation.textFemale }}
+                                } @else {
+                                    {{ occupation.text }}
+                                }
+
+                                <button matChipRemove [attr.aria-label]="'remove ' + occupation">
+                                    <mat-icon svgIcon="xmark" />
+                                </button>
+                            </mat-chip-row>
+                        }
+                    </mat-chip-grid>
+
+                    <input
+                        [formControl]="personForm.controls.occupations"
+                        placeholder="{{ 'person.details.occupations.typeahead' | translate }}"
+                        #occupationInput
+                        [matChipInputFor]="chipGrid"
+                        [matAutocomplete]="auto"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    />
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event); occupationInput.value = ''">
+                        @for (occupation of filteredOccupationDb(); track occupation) {
+                            <mat-option [value]="occupation">
+                                @if (isFemalePerson) {
+                                    {{ occupation.textFemale }}
+                                } @else {
+                                    {{ occupation.text }}
+                                }
+                            </mat-option>
+                        }
+                    </mat-autocomplete>
+                </mat-form-field>
+                <apg-help-tooltip text="person.helpTooltip.occupation" />
+            </div>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'person.details.employer' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="personForm.controls.employer" />
+                    <mat-error />
+                </mat-form-field>
+                <apg-help-tooltip text="person.helpTooltip.employer" />
+            </div>
+
+            <mat-checkbox [formControl]="personForm.controls.noEmployment" (change)="noEmploymentChecked($event)"
+                >{{ 'person.details.noEmployment' | translate }}
+            </mat-checkbox>
+
+            <div class="checkbox-with-tooltip">
+                <mat-checkbox [formControl]="personForm.controls.noInterest" (change)="noInterestChecked($event)">{{
+                    'person.details.noInterest' | translate
+                }}</mat-checkbox>
+                @if (!isUpdateMode) {
+                    <apg-help-tooltip text="person.helpTooltip.noInterests" />
+                }
+            </div>
+
+            <div class="checkbox-with-tooltip">
+                <mat-checkbox [formControl]="personForm.controls.federalDuty" (change)="federalDutyChecked($event)">{{
+                    'person.details.federalDuty' | translate
+                }}</mat-checkbox>
+                <apg-help-tooltip text="person.helpTooltip.federalDuty" />
+            </div>
+
+            <div class="checkbox-with-tooltip">
+                <mat-checkbox [formControl]="personForm.controls.federalAssembly" (change)="federalAssemblyChecked($event)">{{
+                    'person.details.federalAssembly' | translate
+                }}</mat-checkbox>
+                <apg-help-tooltip text="person.helpTooltip.federalAssembly" />
+            </div>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.officeId' | translate }}</mat-label>
+
+                <mat-select [formControl]="personForm.controls.officeId">
+                    @for (office of masterDataService.offices(); track office.id) {
+                        <mat-option [value]="office.id">{{ office.text }}</mat-option>
+                    }
+                </mat-select>
+
+                <mat-error>{{
+                    errorService.getControlError(personForm.controls.officeId.errors, 'person.details.officeId' | translate, 'person.error.officeId')
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'person.details.councilId' | translate }}</mat-label>
+                <mat-select [formControl]="personForm.controls.councilId">
+                    @for (council of masterDataService.councils(); track council.id) {
+                        <mat-option [value]="council.id">{{ council.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>{{
+                    errorService.getControlError(personForm.controls.councilId.errors, 'person.details.councilId' | translate, 'person.error.councilId')
+                }}</mat-error>
+            </mat-form-field>
+
+            @if (personForm.controls.federalAssembly.value) {
+                <div></div>
+            }
+
+            <mat-form-field [hidden]="!personForm.controls.federalAssembly.value" obErrorMessages>
+                <mat-label>{{ 'person.details.legislaturePeriods' | translate }}</mat-label>
+                <mat-select [formControl]="personForm.controls.legislaturePeriodIds" multiple>
+                    <mat-select-trigger>{{ selectedLegislaturePeriodTexts() }}</mat-select-trigger>
+                    @for (legislaturePeriod of masterDataService.legislaturePeriods(); track legislaturePeriod.id) {
+                        <mat-option [value]="legislaturePeriod.id">
+                            <b>{{ legislaturePeriod.text }}</b>
+                            ({{ legislaturePeriod.startDate | date: 'dd.MM.yyyy' }} - {{ legislaturePeriod.endDate | date: 'dd.MM.yyyy' }})
+                        </mat-option>
+                    }
+                </mat-select>
+                <mat-error>{{ 'error.legislaturePeriods' | translate }}</mat-error>
+            </mat-form-field>
+        </div>
+    </fieldset>
+    @if (areAddressesEmpty()) {
+        <mat-error>{{ 'person.create.validate.emptyAddress.error' | translate }}</mat-error>
+    }
+    @if (isWithoutActiveAddress()) {
+        <mat-error>{{ 'person.create.validate.activeAddress.error' | translate }}</mat-error>
+    }
+    @if (isActiveAddressEmpty()) {
+        <mat-error>{{ 'person.create.validate.emptyActiveAddress.error' | translate }}</mat-error>
+    }
+    <mat-expansion-panel togglePosition="before" #expansionPanelOfficeAddress>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <strong>{{ 'person.details.address.officeAddress' | translate }}</strong>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        @if (maskAddress()) {
+            <ob-alert type="info">{{ 'person.details.info.maskedAddress' | translate }}</ob-alert>
+        } @else {
+            <fieldset [formGroup]="personForm.controls.officeAddress">
+                <div class="input-grid">
+                    <div>
+                        <mat-radio-button
+                            [disabled]="personForm.controls.officeAddress.controls.activeAddress.disabled"
+                            [checked]="personForm.controls.officeAddress.controls.activeAddress.value"
+                            (change)="changeActiveAddress('officeAddress')"
+                        >
+                            {{ 'person.details.address.activeAddress' | translate }}
+                        </mat-radio-button>
+                    </div>
+                    <div></div>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.companyName' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.officeAddress.controls.companyName" />
+                        <mat-error />
+                    </mat-form-field>
+
+                    <div class="form-field-with-tooltip">
+                        <mat-form-field obErrorMessages>
+                            <mat-label
+                                >{{ 'person.details.address.street' | translate
+                                }}{{ personForm.controls.officeAddress.controls.street.errors?.required ? '*' : '' }}</mat-label
+                            >
+                            <input
+                                matInput
+                                type="text"
+                                #officeStreetControl
+                                [formControl]="personForm.controls.officeAddress.controls.street"
+                                [matAutocomplete]="filteredStreetsOfficeUnique"
+                            />
+
+                            <button (onClear)="clear('officeAddress')" [obInputClear]="officeStreetControl" role="button" type="button">
+                                <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                                <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                            </button>
+
+                            <mat-autocomplete #filteredStreetsOfficeUnique="matAutocomplete" (optionSelected)="setStreet($event, 'officeAddress')">
+                                @for (option of filteredZipsAndCitiesStreetOffice(); track option.id) {
+                                    <mat-option [value]="option">
+                                        <b>{{ option.street }}</b>
+                                        <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.zip }} {{ option.city }})</span>
+                                    </mat-option>
+                                }
+                            </mat-autocomplete>
+
+                            <mat-error>
+                                {{
+                                    errorService.getControlError(
+                                        personForm.controls.officeAddress.controls.street.errors,
+                                        'person.details.address.street' | translate,
+                                        'person.error'
+                                    )
+                                }}
+                            </mat-error>
+                        </mat-form-field>
+                        <apg-help-tooltip text="person.helpTooltip.address" />
+                    </div>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.poBox' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.officeAddress.controls.poBox" />
+                        <mat-error />
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label
+                            >{{ 'person.details.address.zip' | translate
+                            }}{{ personForm.controls.officeAddress.controls.zip.errors?.required ? '*' : '' }}</mat-label
+                        >
+                        <input
+                            matInput
+                            type="text"
+                            [formControl]="personForm.controls.officeAddress.controls.zip"
+                            #officeZipControl
+                            [matAutocomplete]="filteredZipsOfficeUnique"
+                        />
+
+                        <button (onClear)="clear('officeAddress')" [obInputClear]="officeZipControl" role="button" type="button">
+                            <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                            <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                        </button>
+
+                        <mat-autocomplete #filteredZipsOfficeUnique="matAutocomplete" (optionSelected)="setZipOrCity($event, 'officeAddress')">
+                            @for (option of filteredZipsAndCitiesOffice(); track option.id) {
+                                <mat-option [value]="option">
+                                    <b>{{ option.zip }}</b>
+                                    <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.city }})</span>
+                                </mat-option>
+                            }
+                        </mat-autocomplete>
+
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.officeAddress.controls.zip.errors,
+                                    'person.details.address.zip' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label
+                            >{{ 'person.details.address.city' | translate
+                            }}{{ personForm.controls.officeAddress.controls.city.errors?.required ? '*' : '' }}</mat-label
+                        >
+                        <input
+                            matInput
+                            type="text"
+                            [formControl]="personForm.controls.officeAddress.controls.city"
+                            #officeCityControl
+                            [matAutocomplete]="filteredCitiesOfficeUnique"
+                        />
+
+                        <button (onClear)="clear('officeAddress')" [obInputClear]="officeCityControl" role="button" type="button">
+                            <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                            <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                        </button>
+
+                        <mat-autocomplete #filteredCitiesOfficeUnique="matAutocomplete" (optionSelected)="setZipOrCity($event, 'officeAddress')">
+                            @for (option of filteredZipsAndCitiesOffice(); track option.id) {
+                                <mat-option [value]="option">
+                                    <b>{{ option.city }}</b>
+                                    <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.zip }})</span>
+                                </mat-option>
+                            }
+                        </mat-autocomplete>
+
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.officeAddress.controls.city.errors,
+                                    'person.details.address.city' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label
+                            >{{ 'person.details.address.canton' | translate
+                            }}{{ personForm.controls.officeAddress.controls.cantonId.errors?.required ? '*' : '' }}</mat-label
+                        >
+                        <mat-select [formControl]="personForm.controls.officeAddress.controls.cantonId" (selectionChange)="setCanton($event, 'officeAddress')">
+                            <mat-option />
+                            @for (canton of masterDataService.cantons(); track canton.id) {
+                                <mat-option [value]="canton.id">{{ canton.description || canton.text }}</mat-option>
+                            }
+                        </mat-select>
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.officeAddress.controls.cantonId.errors,
+                                    'person.details.address.canton' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label
+                            >{{ 'person.details.address.countryCode' | translate
+                            }}{{ personForm.controls.officeAddress.controls.countryCode.errors?.required ? '*' : '' }}</mat-label
+                        >
+                        <input matInput type="text" [formControl]="personForm.controls.officeAddress.controls.countryCode" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.officeAddress.controls.countryCode.errors,
+                                    'person.details.address.countryCode' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.email' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.officeAddress.controls.email" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.officeAddress.controls.email.errors,
+                                    'person.details.address.email' | translate,
+                                    'person.error.address.email'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.phone' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.officeAddress.controls.phone" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.officeAddress.controls.phone.errors,
+                                    'person.details.address.phone' | translate,
+                                    'person.error.address.phone'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.mobile' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.officeAddress.controls.mobile" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.officeAddress.controls.mobile.errors,
+                                    'person.details.address.mobile' | translate,
+                                    'person.error.address.mobile'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </fieldset>
+        }
+    </mat-expansion-panel>
+    <mat-expansion-panel togglePosition="before" #expansionPanelPrivateAddress>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <strong>{{ 'person.details.address.privateAddress' | translate }}</strong>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        @if (maskAddress()) {
+            <ob-alert type="info">{{ 'person.details.info.maskedAddress' | translate }}</ob-alert>
+        } @else {
+            <fieldset [formGroup]="personForm.controls.privateAddress">
+                <div class="input-grid">
+                    <div>
+                        <mat-radio-button
+                            [disabled]="personForm.controls.privateAddress.controls.activeAddress.disabled"
+                            [checked]="personForm.controls.privateAddress.controls.activeAddress.value"
+                            (change)="changeActiveAddress('privateAddress')"
+                        >
+                            {{ 'person.details.address.activeAddress' | translate }}
+                        </mat-radio-button>
+                    </div>
+
+                    <div></div>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.companyName' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.privateAddress.controls.companyName" />
+                        <mat-error />
+                    </mat-form-field>
+
+                    <div class="form-field-with-tooltip">
+                        <mat-form-field obErrorMessages>
+                            <mat-label>
+                                {{ 'person.details.address.street' | translate
+                                }}{{ personForm.controls.privateAddress.controls.street.errors?.required ? '*' : '' }}
+                            </mat-label>
+                            <input
+                                matInput
+                                type="text"
+                                [formControl]="personForm.controls.privateAddress.controls.street"
+                                #privateStreetControl
+                                [matAutocomplete]="filteredStreetsPrivateUnique"
+                            />
+
+                            <button (onClear)="clear('privateAddress')" [obInputClear]="privateStreetControl" role="button" type="button">
+                                <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                                <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                            </button>
+
+                            <mat-autocomplete #filteredStreetsPrivateUnique="matAutocomplete" (optionSelected)="setStreet($event, 'privateAddress')">
+                                @for (option of filteredZipsAndCitiesStreetPrivate(); track option.id) {
+                                    <mat-option [value]="option">
+                                        <b>{{ option.street }}</b>
+                                        <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.zip }} {{ option.city }})</span>
+                                    </mat-option>
+                                }
+                            </mat-autocomplete>
+
+                            <mat-error>
+                                {{
+                                    errorService.getControlError(
+                                        personForm.controls.privateAddress.controls.street.errors,
+                                        'person.details.address.street' | translate,
+                                        'person.error'
+                                    )
+                                }}
+                            </mat-error>
+                        </mat-form-field>
+                        <apg-help-tooltip text="person.helpTooltip.address" />
+                    </div>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.poBox' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.privateAddress.controls.poBox" />
+                        <mat-error />
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>
+                            {{ 'person.details.address.zip' | translate }}{{ personForm.controls.privateAddress.controls.zip.errors?.required ? '*' : '' }}
+                        </mat-label>
+                        <input
+                            matInput
+                            type="text"
+                            [formControl]="personForm.controls.privateAddress.controls.zip"
+                            #privateZipControl
+                            [matAutocomplete]="filteredZipsPrivateUnique"
+                        />
+
+                        <button (onClear)="clear('privateAddress')" [obInputClear]="privateZipControl" role="button" type="button">
+                            <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                            <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                        </button>
+
+                        <mat-autocomplete #filteredZipsPrivateUnique="matAutocomplete" (optionSelected)="setZipOrCity($event, 'privateAddress')">
+                            @for (option of filteredZipsAndCitiesPrivate(); track option.id) {
+                                <mat-option [value]="option">
+                                    <b>{{ option.zip }}</b>
+                                    <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.city }})</span>
+                                </mat-option>
+                            }
+                        </mat-autocomplete>
+
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.privateAddress.controls.zip.errors,
+                                    'person.details.address.zip' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>
+                            {{ 'person.details.address.city' | translate }}{{ personForm.controls.privateAddress.controls.city.errors?.required ? '*' : '' }}
+                        </mat-label>
+                        <input
+                            matInput
+                            type="text"
+                            [formControl]="personForm.controls.privateAddress.controls.city"
+                            #privateCityControl
+                            [matAutocomplete]="filteredCitiesPrivateUnique"
+                        />
+
+                        <button (onClear)="clear('privateAddress')" [obInputClear]="privateCityControl" role="button" type="button">
+                            <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                            <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                        </button>
+
+                        <mat-autocomplete #filteredCitiesPrivateUnique="matAutocomplete" (optionSelected)="setZipOrCity($event, 'privateAddress')">
+                            @for (option of filteredZipsAndCitiesPrivate(); track option.id) {
+                                <mat-option [value]="option">
+                                    <b>{{ option.city }}</b>
+                                    <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.zip }})</span>
+                                </mat-option>
+                            }
+                        </mat-autocomplete>
+
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.privateAddress.controls.city.errors,
+                                    'person.details.address.city' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>
+                            {{ 'person.details.address.canton' | translate
+                            }}{{ personForm.controls.privateAddress.controls.cantonId.errors?.required ? '*' : '' }}
+                        </mat-label>
+                        <mat-select
+                            [formControl]="personForm.controls.privateAddress.controls.cantonId"
+                            (selectionChange)="setCanton($event, 'privateAddress')"
+                        >
+                            <mat-option />
+                            @for (canton of masterDataService.cantons(); track canton.id) {
+                                <mat-option [value]="canton.id">{{ canton.description || canton.text }}</mat-option>
+                            }
+                        </mat-select>
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.privateAddress.controls.cantonId.errors,
+                                    'person.details.address.canton' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>
+                            {{ 'person.details.address.countryCode' | translate
+                            }}{{ personForm.controls.privateAddress.controls.countryCode.errors?.required ? '*' : '' }}
+                        </mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.privateAddress.controls.countryCode" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.privateAddress.controls.countryCode.errors,
+                                    'person.details.address.countryCode' | translate,
+                                    'person.error'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.email' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.privateAddress.controls.email" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.privateAddress.controls.email.errors,
+                                    'person.details.address.email' | translate,
+                                    'person.error.address.email'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.phone' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.privateAddress.controls.phone" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.privateAddress.controls.phone.errors,
+                                    'person.details.address.phone' | translate,
+                                    'person.error.address.phone'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'person.details.address.mobile' | translate }}</mat-label>
+                        <input matInput type="text" [formControl]="personForm.controls.privateAddress.controls.mobile" />
+                        <mat-error>
+                            {{
+                                errorService.getControlError(
+                                    personForm.controls.privateAddress.controls.mobile.errors,
+                                    'person.details.address.mobile' | translate,
+                                    'person.error.address.mobile'
+                                )
+                            }}
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </fieldset>
+        }
+    </mat-expansion-panel>
+</form>

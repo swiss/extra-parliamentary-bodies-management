@@ -1,0 +1,26 @@
+.tox .tox-tbtn--disabled svg.loopindex-button,
+.tox .tox-tbtn--disabled:hover svg.loopindex-button,
+.tox .tox-tbtn:disabled svg.loopindex-button,
+.tox .tox-tbtn:disabled:hover svg.loopindex-button {
+  opacity: 0.8;
+}
+
+.tox .tox-tbtn--disabled path.loopindex-svg-icon, .tox .tox-tbtn--disabled image.loopindex-svg-icon,
+.tox .tox-tbtn--disabled:hover path.loopindex-svg-icon,
+.tox .tox-tbtn--disabled:hover image.loopindex-svg-icon,
+.tox .tox-tbtn:disabled path.loopindex-svg-icon,
+.tox .tox-tbtn:disabled image.loopindex-svg-icon,
+.tox .tox-tbtn:disabled:hover path.loopindex-svg-icon,
+.tox .tox-tbtn:disabled:hover image.loopindex-svg-icon {
+  opacity: 0.55;
+}
+
+.tox svg.loopindex-button[width='32'], .tox svg.loopindex-button[height='32'] {
+  transform-origin: center;
+  transform: scale(0.75);
+}
+
+.tox .tox-icon svg.loopindex-button image {
+  width: 24px;
+  height: 24px;
+}

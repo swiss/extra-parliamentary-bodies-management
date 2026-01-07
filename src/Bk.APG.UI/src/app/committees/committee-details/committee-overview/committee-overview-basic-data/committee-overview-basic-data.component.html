@@ -1,0 +1,93 @@
+@if (committee) {
+    <div class="committee-overview">
+        <div class="ob-flex">
+            <mat-card>
+                <mat-card-content>
+                    <table>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.id' | translate }}</td>
+                            <td>{{ committee.committeeNumber }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.committeeType' | translate }}</td>
+                            <td>{{ committee.committeeType }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.committeeLevel' | translate }}</td>
+                            <td>{{ committee.committeeLevel }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.department' | translate }}</td>
+                            <td>{{ committee.department }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.office' | translate }}</td>
+                            <td>{{ committee.office }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.timeRange' | translate }}</td>
+                            <td>{{ committee.beginDate | date }} - {{ committee.endDate | date }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.membersRange' | translate }}</td>
+                            <td>{{ committee.minimalMembers }} - {{ committee.maximalMembers }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.membersCount' | translate }}</td>
+                            <td>{{ committee.membersCount }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.hasVacanciesInCurrentTermOfOffice' | translate }}</td>
+                            <td>
+                                {{
+                                    committee.vacanciesInCurrentTermOfOffice !== undefined
+                                        ? committee.vacanciesInCurrentTermOfOffice
+                                        : ('common.noInformation' | translate)
+                                }}
+                            </td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+
+            <mat-card>
+                <mat-card-content>
+                    <table>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.additionalAuthorityMembers' | translate }}</td>
+                            <td>{{ (committee.additionalAuthorityMembers ? 'common.yes' : 'common.no') | translate }}</td>
+                        </tr>
+                        @if (committee.additionalAuthorityMembers) {
+                            <tr>
+                                <td class="heading-text">{{ 'committee.details.linkAuthorityWebsite' | translate }}</td>
+                                <td>{{ committee.linkAuthorityWebsite }}</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.termOfOffice' | translate }}</td>
+                            <td>{{ committee.termOfOffice }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.federalLawEstablishment' | translate }}</td>
+                            <td>{{ (committee.federalLawEstablishment ? 'common.yes' : 'common.no') | translate }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.supervisionDuty' | translate }}</td>
+                            <td>{{ (committee.supervisionDuty ? 'common.yes' : 'common.no') | translate }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committees.table.header.isMarketOrientated.label' | translate }}</td>
+                            <td>
+                                {{ (committee.marketOrientated ? 'committee.details.marketOrientated' : 'committee.details.societyOrientated') | translate }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committees.details.federalInstitution.label' | translate }}</td>
+                            <td>{{ (committee.federalInstitution ? 'common.yes' : 'common.no') | translate }}</td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+}

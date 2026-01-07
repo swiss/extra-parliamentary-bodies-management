@@ -1,0 +1,111 @@
+<!-- eslint-disable @angular-eslint/template/prefer-self-closing-tags -->
+<form [formGroup]="form" class="ob-grid">
+    <!-- Free text search -->
+    <div class="ob-span-5">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.search' | translate }}</mat-label>
+            <input title="{{ 'committees.filter.search' | translate }}" #freeText type="text" matInput [formControl]="form.controls.freeText" />
+            <button type="button" role="button" [obInputClear]="freeText" (onClear)="clearFreeText()">
+                <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+            </button>
+        </mat-form-field>
+    </div>
+
+    <!-- Department -->
+    @if (isAdmin()) {
+        <div class="ob-span-2">
+            <mat-form-field>
+                <mat-label>{{ 'committees.filter.department.label' | translate }}</mat-label>
+                <mat-select multiple [formControl]="form.controls.departments">
+                    @for (department of masterDataService.departments(); track department.id) {
+                        <mat-option [value]="department.id">{{ department.text }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+    }
+
+    <!-- Office -->
+    @if (isAdmin() || isDepartmentUser()) {
+        <div class="ob-span-2">
+            <mat-form-field>
+                <mat-label>{{ 'committees.filter.office.label' | translate }}</mat-label>
+                <mat-select multiple [formControl]="form.controls.offices">
+                    @for (office of departmentOffices(); track office.id) {
+                        <mat-option [value]="office.id">{{ office.text }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
+    }
+
+    <!-- Committee Type -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.committeeType.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.committeeTypes">
+                @for (committeeType of masterDataService.committeeTypes(); track committeeType.id) {
+                    <mat-option [value]="committeeType.id">{{ committeeType.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    @if (!isAdmin()) {
+        <div style="grid-column: span 1"></div>
+
+        @if (!isDepartmentUser()) {
+            <div style="grid-column: span 2"></div>
+        }
+    }
+
+    <!-- Is Market Orientated -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.isMarketOrientated.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.isMarketOrientated">
+                <mat-option [value]="true">{{ 'committees.table.header.marketOrientated.label' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'committees.table.header.societyOrientated.label' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Has Supervision Duty -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.hasSupervisionDuty.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.hasSupervisionDuty">
+                <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <!-- Status GEW -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'generalElection.committees.filter.status.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.status"></mat-select>
+        </mat-form-field>
+    </div>
+    <!-- Vacancies -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'generalElection.committees.filter.vacancies.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.status"></mat-select>
+        </mat-form-field>
+    </div>
+    <!-- Status BRA GEW -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'generalElection.committees.filter.statusProposal.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.statusProposal"></mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="ob-span-2 buttons">
+        <apg-help-tooltip text="committee.helpTooltip.tableGeneralElection"></apg-help-tooltip>
+        <button mat-button obButton="secondary" type="button" (click)="reset()">
+            {{ 'committees.filter.reset' | translate }}
+        </button>
+    </div>
+</form>

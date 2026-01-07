@@ -1,0 +1,182 @@
+@charset "UTF-8";
+/**
+Copyright 2024 LoopIndex, This file is part of the Track Changes plugin for CKEditor.
+
+The track changes plugin is commercial software. Details in https://www.loopindex.com/software-license-for-track-changes-ckeditor-plugin
+Written by (David *)Frenkiel - https://github.com/imdfl
+**/
+.FLITE-Tracking {
+  --ins-text-bg: #60ff60;
+  --del-text-bg: #ff6060;
+  --ins-border-color: #20e020;
+  --del-border-color: #e02020;
+  --li-marker-width: 1em;
+  --li-marker-height: 100%;
+  --li-marker-top: 0;
+  --li-marker-bottom: 0.3em;
+  --li-marker-left: clamp(-1.4em, calc(-1.4em + (1em - 16px)), -1em);
+  --li-marker-position: top left;
+  --li-del-bg: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="12" width="9" viewBox="0 0 384 512"><path fill="rgb(255,0,0)" d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>');
+  --li-ins-bg: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="12" width="10.5" viewBox="0 0 448 512" xml:space="preserve"><path fill="rgb(16,24,255)" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z"/></svg>');
+}
+
+.cke_editable:not(.FLITE-Tracking) :not(.flite-container-only).ice-del,
+.mce-content-body:not(.FLITE-Tracking) :not(.flite-container-only).ice-del,
+.fr-element:not(.FLITE-Tracking) :not(.flite-container-only).ice-del {
+  display: none;
+}
+
+.cke_editable:not(.FLITE-Tracking) .flite-container-only.flite-no-content.ice-del,
+.mce-content-body:not(.FLITE-Tracking) .flite-container-only.flite-no-content.ice-del,
+.fr-element:not(.FLITE-Tracking) .flite-container-only.flite-no-content.ice-del {
+  display: none;
+}
+
+.cke_editable.FLITE-Tracking :not(.flite-container-only).ice-del,
+.mce-content-body.FLITE-Tracking :not(.flite-container-only).ice-del {
+  display: unset;
+}
+
+.FLITE-Tracking .ice-ins {
+  background-color: var(--ins-text-bg);
+}
+
+.FLITE-Tracking .ice-del {
+  background-color: var(--del-text-bg);
+  text-decoration: line-through !important;
+}
+
+.FLITE-Tracking .flite-container-only {
+  background-color: unset;
+}
+
+.FLITE-Tracking .flite-container-only.ice-del, .FLITE-Tracking .flite-container-only.ice-ins {
+  border-width: 1px;
+  border-style: dashed;
+}
+
+.FLITE-Tracking .flite-container-only.ice-ins {
+  border-color: var(--ins-border-color) !important;
+}
+
+.FLITE-Tracking .flite-container-only.ice-del {
+  border-color: var(--del-border-color) !important;
+  text-decoration: unset !important;
+}
+
+.FLITE-Tracking .flite-container-onlyli {
+  border: none;
+}
+
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only {
+  border-width: inherit;
+}
+
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li).flite-container-only::before {
+  position: relative;
+  top: -8px;
+  left: -3px;
+  content: "¶";
+  opacity: 0.8;
+  font-size: 0.7em;
+  font-weight: normal;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only.ice-del::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li).flite-container-only.ice-del::before {
+  color: var(--del-border-color);
+}
+
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only.ice-ins::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li).flite-container-only.ice-ins::before {
+  color: var(--ins-border-color);
+}
+
+.FLITE-Tracking span[style*='background-color'] [data-userid].ice-ins {
+  background-color: inherit;
+  border: 2px dashed var(--ins-border-color);
+}
+
+.FLITE-Tracking span[style*='background-color'] [data-userid].ice-del {
+  background-color: inherit;
+  border: 2px dashed var(--del-border-color);
+}
+
+.FLITE-Tracking sup.ice-del[data-footnote-id], .FLITE-Tracking sup.ice-del.mce-footnote {
+  text-decoration: line-through;
+}
+
+.FLITE-Tracking li.flite-container-only.ice-del, .FLITE-Tracking li.flite-container-only.ice-ins {
+  border: unset;
+  background-color: unset;
+  /* Part of the new list tracking style, to use the old tracking styles see the commented out section */
+  position: relative;
+  /* Begin old style */
+  /* 		&.ice-del, */
+  /* 		&.ice-ins { */
+  /* 			position: relative; */
+  /* 			&::before { */
+  /* 				content: ""; */
+  /* 				position: absolute; */
+  /* 				top: -1px; */
+  /* 				left: -12px; */
+  /* 				width: 12px; */
+  /* 				height: 12px; */
+  /* 				background-repeat: no-repeat; */
+  /* 				background-position: left center; */
+  /* 				background-size: 12px 12px; */
+  /* 			} */
+  /* 		} */
+  /* 		&.ice-del::before { */
+  /* 			background-image: url("./redx12.png"); */
+  /* 		} */
+  /* 		&.ice-ins::before { */
+  /* 			background-image: url("./blueplus12.png"); */
+  /* 		} */
+  /* end old style */
+}
+
+.FLITE-Tracking li.flite-container-only.ice-del::before, .FLITE-Tracking li.flite-container-only.ice-ins::before {
+  /* Part of the new list tracking style, to use the old tracking styles see the commented out section */
+  content: "";
+  position: absolute;
+  width: var(--li-marker-width);
+  height: var(--li-marker-height);
+  opacity: 0.75;
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: var(--li-marker-position);
+  left: var(--li-marker-left);
+  top: var(--li-marker-top);
+}
+
+.FLITE-Tracking li.flite-container-only.ice-del::before {
+  /* Part of the new list tracking style, to use the tracking styles see the commented out section */
+  background-image: var(--li-del-bg);
+}
+
+.FLITE-Tracking li.flite-container-only.ice-ins::before {
+  /* Part of the new list tracking style, to use the tracking styles see the commented out section */
+  background-image: var(--li-ins-bg);
+}
+
+.FLITE-Tracking img.ice-del,
+.FLITE-Tracking .ice-del.cke_widget_wrapper {
+  border: 2px dashed;
+  box-sizing: border-box;
+  background-color: transparent !important;
+  border-color: var(--del-border-color);
+}
+
+.FLITE-Tracking :not(.flite-container-only).ice-ins,
+.FLITE-Tracking :not(.flite-container-only).ice-ins > :not(img),
+.FLITE-Tracking td.ice-ins.flite-container-only {
+  box-sizing: border-box;
+}
+
+.FLITE-Tracking img.ice-ins,
+.FLITE-Tracking .ice-ins.cke_widget_wrapper {
+  border: 2px dashed;
+  background-color: transparent !important;
+  box-sizing: border-box;
+  border-color: var(--ins-border-color);
+}

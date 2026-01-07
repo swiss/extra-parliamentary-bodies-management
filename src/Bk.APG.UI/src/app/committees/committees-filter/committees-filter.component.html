@@ -1,0 +1,125 @@
+<form [formGroup]="form" class="ob-grid">
+    <!-- Free text search -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.search' | translate }}</mat-label>
+            <input title="{{ 'committees.filter.search' | translate }}" #freeText type="text" matInput [formControl]="form.controls.freeText" />
+            <button type="button" role="button" [obInputClear]="freeText" (onClear)="clearFreeText()">
+                <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+            </button>
+        </mat-form-field>
+    </div>
+
+    <!-- Level -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.level.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.levels">
+                @for (level of levels(); track level.id) {
+                    <mat-option [value]="level.id">{{ level.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Department -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.department.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.departments">
+                @for (department of departments(); track department.id) {
+                    <mat-option [value]="department.id">{{ department.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Office -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.office.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.offices">
+                @for (office of departmentOffices(); track office.id) {
+                    <mat-option [value]="office.id">{{ office.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Committee Type -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.committeeType.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.committeeTypes">
+                @for (committeeType of committeeTypes(); track committeeType.id) {
+                    <mat-option [value]="committeeType.id">{{ committeeType.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Term -->
+    <div class="ob-span-2">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.term.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.terms">
+                @for (term of terms(); track term.id) {
+                    <mat-option [value]="term.id">{{ term.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Is Active (defer to fix initial value not being visible) -->
+    @defer {
+        <div class="ob-span-1">
+            <mat-form-field>
+                <mat-label>{{ 'committees.filter.isActive.label' | translate }}</mat-label>
+                <mat-select [formControl]="form.controls.isActive" multiple>
+                    <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                    <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+    }
+
+    <!-- Is Market Orientated -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.isMarketOrientated.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.isMarketOrientated">
+                <mat-option [value]="true">{{ 'committees.table.header.marketOrientated.label' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'committees.table.header.societyOrientated.label' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <!-- Has Supervision Duty -->
+    <div class="ob-span-3">
+        <mat-form-field>
+            <mat-label>{{ 'committees.filter.hasSupervisionDuty.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.hasSupervisionDuty">
+                <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="ob-span-12 buttons">
+        <apg-help-tooltip text="committee.helpTooltip.tableGeneral" />
+        <button mat-button obButton="secondary" type="button" (click)="reset()">
+            {{ 'committees.filter.reset' | translate }}
+        </button>
+        <button
+            mat-button
+            obButton="secondary"
+            type="button"
+            [disabled]="!canCreate"
+            (click)="create()"
+            [matTooltip]="'committee.details.data.create' | translate"
+        >
+            <mat-icon svgIcon="plus" />
+            {{ 'committee.details.data.create' | translate }}
+        </button>
+    </div>
+</form>

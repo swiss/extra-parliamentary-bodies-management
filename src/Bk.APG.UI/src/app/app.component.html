@@ -1,0 +1,29 @@
+<ob-master-layout [class]="generalElectionService.isGeneralElectionEnabled() ? 'general-election' : ''" [navigation]="navigation()">
+    <ng-container obHeaderTitle>{{ 'application.title' | translate }}</ng-container>
+
+    <ng-template #obHeaderControl>
+        <div class="header-actions">
+            @if (isAuthenticated()) {
+                <apg-ge-toggle />
+                <a
+                    [attr.href]="myAccountHref"
+                    [matTooltipPosition]="'below'"
+                    [matTooltip]="'application.myAccount' | translate"
+                    mat-button
+                    rel="nofollow noopener noreferrer"
+                    target="_blank"
+                >
+                    <mat-icon svgIcon="person" class="ob-icon header-icon" />
+                    <span class="profile-label">{{ userName() }}</span>
+                </a>
+                <button mat-icon-button (click)="logout()" [matTooltip]="'application.logout' | translate" [matTooltipPosition]="'below'">
+                    <mat-icon svgIcon="logout" class="ob-icon header-icon" />
+                </button>
+            }
+        </div>
+    </ng-template>
+
+    <ng-container obFooterInfo>
+        <p>&copy; {{ currentYear() }} | Version: {{ applicationVersion() }}</p>
+    </ng-container>
+</ob-master-layout>

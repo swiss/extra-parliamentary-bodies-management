@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Bk.APG.Business</RootNamespace>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="AWSSDK.S3" Version="[3.7.302]" />  <!-- RHOS S3 storage doesn't work with higher versions (yet) -->
+        <PackageReference Include="Bk.DocumentService.Client" Version="1.6.0" />
+        <PackageReference Include="Bk.MasterData" Version="2.2.1" />
+        <PackageReference Include="Bk.Utils" Version="1.7.5" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0"/>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Bk.APG.Common\Bk.APG.Common.csproj"/>
+        <ProjectReference Include="..\Bk.APG.CrossCutting\Bk.APG.CrossCutting.csproj"/>
+    </ItemGroup>
+
+</Project>

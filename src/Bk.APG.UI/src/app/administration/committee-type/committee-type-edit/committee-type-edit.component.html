@@ -1,0 +1,13 @@
+<div class="contact-point-header">
+    <h3>{{ 'committeeType.edit' | translate }}</h3>
+    <div class="buttons">
+        <button (click)="back()" mat-button obButton="secondary" type="button">{{ 'common.back' | translate }}</button>
+        <button (click)="reset()" [disabled]="!form().dirty" mat-button obButton="secondary" type="button">{{ 'common.reset' | translate }}</button>
+        <button mat-button obButton="primary" type="button" [disabled]="!form().dirty || !form().valid" (click)="save()">
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+<h4>{{ committeeTypeName }}</h4>
+
+<apg-committee-type-form [(committeeTypeModification)]="committeeTypeToUpdate" />

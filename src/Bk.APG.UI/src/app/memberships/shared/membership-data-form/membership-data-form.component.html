@@ -1,0 +1,296 @@
+@if (committeeEntity()) {
+    <apg-person-search (updateValidity)="updateValidity()" [(personSelected)]="personSelected" />
+}
+@if (personEntity()) {
+    <apg-committee-search (updateValidity)="updateValidity()" [(committeeSelected)]="committeeSelected" />
+}
+@if (validationResults().tooManyMembers) {
+    <div class="validation-text">{{ 'membership.validation.error.tooManyMembers' | translate }}</div>
+}
+@if (validationResults().maximumDurationExceeded) {
+    <div class="validation-text">{{ 'membership.validation.error.maximumDurationExceeded' | translate }}</div>
+}
+@if (validationResults().isAlreadyActiveMember) {
+    <div class="validation-text">{{ 'membership.validation.error.isAlreadyActiveMember' | translate }}</div>
+}
+@if (validationResults().isFederalAssemblyAndAuthoritiesCommission) {
+    <div class="validation-text">{{ 'membership.validation.error.isFederalAssemblyAndAuthoritiesCommission' | translate }}</div>
+}
+
+<form [formGroup]="membershipForm" id="membershipDataForm" obUnsavedChanges>
+    <fieldset>
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'membership.details.beginDate' | translate }}</mat-label>
+                    <input matInput [matDatepicker]="beginDate" [formControl]="membershipForm.controls.beginDate" />
+                    <mat-datepicker-toggle matSuffix [for]="beginDate" />
+                    <mat-datepicker #beginDate xPosition="end" />
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipForm.controls.beginDate.errors,
+                                'membership.details.beginDate' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="membership.helpTooltip.beginDate" />
+            </div>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'membership.details.endDate' | translate }}</mat-label>
+                    <input matInput [matDatepicker]="endDate" [formControl]="membershipForm.controls.endDate" />
+                    <mat-datepicker-toggle matSuffix [for]="endDate" />
+                    <mat-datepicker #endDate xPosition="end" />
+                    <mat-error>
+                        {{ errorService.getControlError(membershipForm.controls.endDate.errors, 'membership.details.endDate' | translate, 'membership.error') }}
+                    </mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="membership.helpTooltip.endDate" />
+            </div>
+
+            @if (validationResults().currentTermOfOffice || validationResults().estimatedTermOfOffice) {
+                <div class="term-of-office-text">
+                    <b>{{ 'membership.details.currentTermDuration' | translate }}:</b> {{ validationResults().currentTermOfOffice }}
+                    {{ 'membership.details.years' | translate }}
+                </div>
+
+                <div class="term-of-office-text">
+                    <b>{{ 'membership.details.estimatedTermDuration' | translate }}:</b> {{ validationResults().estimatedTermOfOffice }}
+                    {{ 'membership.details.years' | translate }}
+                </div>
+            }
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.electionType' | translate }}</mat-label>
+                <mat-select [formControl]="membershipForm.controls.electionTypeId">
+                    @for (electionType of activeElectionTypes(); track electionType.id) {
+                        <mat-option [value]="electionType.id">{{ electionType.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipForm.controls.electionTypeId.errors,
+                            'membership.details.electionType' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.function' | translate }}</mat-label>
+                <mat-select
+                    [matTooltip]="this.membershipModification() && this.hasDeletedFunction() ? this.membershipModification()!.functionName : ''"
+                    [formControl]="membershipForm.controls.functionId"
+                >
+                    @for (function of activeFunctions(); track function.id) {
+                        <mat-option [value]="function.id">{{ getFunctionText(function) }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{ errorService.getControlError(membershipForm.controls.functionId.errors, 'membership.details.function' | translate, 'membership.error') }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.electionOffice' | translate }}</mat-label>
+                <mat-select
+                    [matTooltip]="this.membershipModification() && this.hasDeletedElectionOffice() ? this.membershipModification()!.electionOfficeName : ''"
+                    [formControl]="membershipForm.controls.electionOfficeId"
+                >
+                    @for (electionOffice of activeElectionOffices(); track electionOffice.id) {
+                        <mat-option [value]="electionOffice.id">{{ electionOffice.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipForm.controls.electionOfficeId.errors,
+                            'membership.details.electionOffice' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'membership.details.membershipAddition' | translate }}</mat-label>
+
+                    <input type="text" matInput [formControl]="membershipForm.controls.membershipAdditionId" [matAutocomplete]="auto" />
+                    <mat-icon class="dropdown-icon" matSuffix>
+                        <svg viewBox="0 0 24 24" width="24px" height="24px" focusable="false" aria-hidden="true"><path d="M7 10l5 5 5-5z" /></svg>
+                    </mat-icon>
+
+                    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="setMembershipAddition($event)">
+                        @for (membershipAddition of filteredMembershipAdditions(); track membershipAddition.id) {
+                            <mat-option [value]="membershipAddition">{{ membershipAddition.text }}</mat-option>
+                        }
+                    </mat-autocomplete>
+
+                    <mat-error />
+                </mat-form-field>
+                <apg-help-tooltip text="membership.helpTooltip.membershipAddition" />
+            </div>
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'membership.details.maximumEmploymentLevel' | translate }}</mat-label>
+                    <input [formControl]="membershipForm.controls.maximumEmploymentLevel" matInput type="number" />
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipForm.controls.maximumEmploymentLevel.errors,
+                                'membership.details.maximumEmploymentLevel' | translate,
+                                'membership.error.maximumEmploymentLevel'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="membership.helpTooltip.employmentLevel" />
+            </div>
+            <div class="checkbox-with-tooltip">
+                <mat-checkbox [formControl]="membershipForm.controls.inCorrelationWithFederalDuty" (change)="validateData($event)">{{
+                    'membership.details.inCorrelationWithFederalDuty' | translate
+                }}</mat-checkbox>
+                <apg-help-tooltip text="membership.helpTooltip.inCorrelationWithFederalDuty" />
+            </div>
+
+            <div obErrorMessages>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationLongerDuty' | translate"
+                    controlName="justificationLongerDuty"
+                    [plugins]="['flite', 'lance']"
+                    [helpTooltipTexts]="['membership.helpTooltip.justificationGeneral', 'membership.helpTooltip.justificationMaximumDuration']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipForm.controls.justificationLongerDuty.errors,
+                            'membership.details.justificationLongerDuty' | translate,
+                            'membership.error.justificationLongerDuty'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessages>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationShorterDuty' | translate"
+                    controlName="justificationShorterDuty"
+                    [plugins]="['flite', 'lance']"
+                    [helpTooltipTexts]="['membership.helpTooltip.justificationGeneral', 'membership.helpTooltip.justificationShorterDuty']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipForm.controls.justificationShorterDuty.errors,
+                            'membership.details.justificationShorterDuty' | translate,
+                            'membership.error.justificationShorterDuty'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessages>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationMemberInFederalDuty' | translate"
+                    controlName="justificationMemberInFederalDuty"
+                    [plugins]="['flite', 'lance']"
+                    [helpTooltipTexts]="['membership.helpTooltip.justificationGeneral', 'membership.helpTooltip.justificationFederalDuty']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipForm.controls.justificationMemberInFederalDuty.errors,
+                            'membership.details.justificationMemberInFederalDuty' | translate,
+                            'membership.error.justificationMemberInFederalDuty'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessages>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationMemberInFederalAssembly' | translate"
+                    controlName="justificationMemberInFederalAssembly"
+                    [plugins]="['flite', 'lance']"
+                    [helpTooltipTexts]="['membership.helpTooltip.justificationGeneral', 'membership.helpTooltip.justificationFederalAssembly']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipForm.controls.justificationMemberInFederalAssembly.errors,
+                            'membership.details.justificationMemberInFederalAssembly' | translate,
+                            'membership.error.justificationMemberInFederalAssembly'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessages>
+                <apg-rich-text-editor
+                    [title]="'membership.details.requirementsProfile' | translate"
+                    controlName="requirementsProfile"
+                    [plugins]="['flite', 'lance']"
+                    [helpTooltipTexts]="['membership.helpTooltip.requirementsProfile']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipForm.controls.requirementsProfile.errors,
+                            'membership.details.requirementsProfile' | translate,
+                            'membership.error.requirementsProfile'
+                        )
+                    }}
+                </mat-error>
+            </div>
+        </div>
+    </fieldset>
+</form>
+@if (committee()) {
+    <mat-expansion-panel togglePosition="before" #expansionPanelOfficeAddress>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <strong>{{ 'membership.committee.panelTitle' | translate }}</strong>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="committee-description">
+            <h4>{{ committee()?.description }}</h4>
+            <apg-help-tooltip text="committee.helpTooltip.detailsGeneral" size="big" />
+        </div>
+
+        <div class="committee-overview">
+            <apg-committee-overview-basic-data [committee]="committee()" />
+        </div>
+        <apg-committee-justifications-overview [committeeDetails]="committee()" />
+    </mat-expansion-panel>
+}
+@if (person()) {
+    <mat-expansion-panel togglePosition="before" #expansionPanelOfficeAddress>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <strong>{{ 'membership.person.panelTitle' | translate }}</strong>
+            </mat-panel-title>
+        </mat-expansion-panel-header>
+        <apg-help-tooltip text="committee.helpTooltip.detailsGeneral" size="big" />
+        <div class="ob-flex">
+            <mat-card>
+                <mat-card-content><apg-person-overview-basic-data [personDetails]="person()" /></mat-card-content>
+            </mat-card>
+        </div>
+
+        @if (person()?.interests !== undefined) {
+            <div class="ob-flex">
+                <mat-card>
+                    <mat-card-content><apg-person-overview-interests [interests]="person()?.interests!" /></mat-card-content>
+                </mat-card>
+            </div>
+        }
+    </mat-expansion-panel>
+}

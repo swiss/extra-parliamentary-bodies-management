@@ -1,0 +1,23 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+$gap: 16px;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 150ch;
+    margin: auto;
+}
+
+.appointment-decision-data-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+}
+
+.buttons {
+    text-align: right;
+    min-width: 200px;
+    button + button {
+        margin-left: $ob-spacing-sm;
+    }
+}

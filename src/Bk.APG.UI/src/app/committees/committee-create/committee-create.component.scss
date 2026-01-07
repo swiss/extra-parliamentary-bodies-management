@@ -1,0 +1,24 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 150ch;
+    margin: auto;
+
+    .committee-data-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        margin-bottom: $ob-spacing-sm;
+    }
+
+    .buttons {
+        display: flex;
+        align-items: center;
+
+        button {
+            margin-left: $ob-spacing-sm;
+        }
+    }
+}
