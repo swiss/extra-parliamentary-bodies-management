@@ -2,7 +2,7 @@
     @if (person.needsAttentionOccupation) {
         <ob-alert type="warning">{{ 'person.details.warning.occupation' | translate }}</ob-alert>
     } @else {
-        @if (!person.occupations || person.occupations.length === 0 || !person.employer) {
+        @if (!person.noEmployment && !person.federalDuty && (!person.occupations || person.occupations.length === 0 || !person.employer)) {
             <ob-alert type="info">{{ 'person.details.info.occupation' | translate }}</ob-alert>
         }
     }
