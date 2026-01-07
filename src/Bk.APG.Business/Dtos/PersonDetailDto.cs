@@ -29,7 +29,8 @@ public class PersonDetailDto
     public bool NeedsAttentionLongerDuty { get; set; }
     public bool NeedsAttentionShorterDuty { get; set; }
     public bool NeedsAttentionFederalDuty { get; set; }
-    public bool NeedsAttentionFederalAssembly { get; set; }
+    public bool NeedsAttentionFederalAssemblyAuthoritiesCommission { get; set; }
+    public bool NeedsAttentionFederalAssemblyAdministrationCommission { get; set; }
     public bool NeedsAttentionBasicData { get; set; }
     public bool NeedsAttentionOccupation { get; set; }
     public bool NeedsAttentionInterests { get; set; }

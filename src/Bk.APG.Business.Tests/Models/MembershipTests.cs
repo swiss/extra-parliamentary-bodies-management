@@ -120,6 +120,27 @@ internal class MembershipTests
         Assert.That(membership.JustificationShorterDutyNeeded, Is.EqualTo(expected));
     }
 
+    [TestCase("2024-01-01", "2027-12-31", false)]
+    [TestCase("2024-01-01", "2027-12-30", true)]
+    [TestCase("2024-12-31", "2027-12-31", true)]
+    [TestCase("2024-01-01", "2028-01-01", false)]
+    public void JustificationShorterDutyNeeded_ExtendedCases_ShouldReturnCorrectResult(string beginDate, string endDate, bool expected)
+    {
+        var membership = new MembershipBuilder()
+            .WithCommittee(
+                new CommitteeBuilder()
+                    .WithGermanDescription("DE")
+                    .WithFrenchDescription("FR")
+                    .WithItalianDescription("IT")
+                    .WithTermOfOfficeId(new Guid(TermOfOffice.Period4YearsInGeneralElectionGuidAsString))
+                    .Build())
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(beginDate)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
+            .Build();
+
+        Assert.That(membership.JustificationShorterDutyNeeded, Is.EqualTo(expected));
+    }
+
     [TestCase(CommitteeType.AdministrationCommissionGuidAsString, true, true)]
     [TestCase(CommitteeType.AdministrationCommissionGuidAsString, false, false)]
     [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, true, true)]
@@ -374,11 +395,11 @@ internal class MembershipTests
         Assert.That(membership.NeedsAttentionFederalDuty, Is.EqualTo(expected));
     }
 
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "", true, true)]
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "justification", true, false)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "", true, true)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "justification", true, false)]
-    public void NeedsAttentionFederalAssembly_ShouldReturnExpected(string committeeTypeId, string justificationFederalAssembly, bool federalAssembly, bool expected)
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "", true, true, false)]
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "justification", true, false, false)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "", true, false, true)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "justification", true, false, false)]
+    public void NeedsAttentionFederalAssembly_ShouldReturnExpected(string committeeTypeId, string justificationFederalAssembly, bool federalAssembly, bool expectedAuthoritiesCommission, bool expectedAdministrationCommission)
     {
         var membership = new MembershipBuilder()
             .WithCommittee(
@@ -394,7 +415,8 @@ internal class MembershipTests
             .WithJustificationMemberInFederalAssembly(justificationFederalAssembly)
             .Build();
 
-        Assert.That(membership.NeedsAttentionFederalAssembly, Is.EqualTo(expected));
+        Assert.That(membership.NeedsAttentionFederalAssemblyAdministrationCommission, Is.EqualTo(expectedAdministrationCommission));
+        Assert.That(membership.NeedsAttentionFederalAssemblyAuthoritiesCommission, Is.EqualTo(expectedAuthoritiesCommission));
     }
 
     [Test]
