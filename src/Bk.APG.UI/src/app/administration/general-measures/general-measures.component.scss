@@ -1,0 +1,55 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+$gap: 16px;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 150ch;
+    margin: auto;
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: $ob-spacing-sm;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        column-gap: $gap;
+        max-width: 150ch;
+        margin: auto;
+
+        .input-grid {
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: $gap;
+
+            > * {
+                flex: 1 1 calc(50% - $gap);
+                max-width: calc(50%);
+            }
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: calc($gap / 2);
+            margin-top: $gap;
+        }
+    }
+
+    apg-rich-text-editor + mat-error {
+        font-size: small;
+    }
+
+    mat-expansion-panel {
+        margin-bottom: $gap;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+}

@@ -1,0 +1,432 @@
+<form [formGroup]="committeeForm" id="committeeDataForm" obUnsavedChanges>
+    <fieldset>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.descriptionDe' | translate }}</mat-label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" [formControl]="committeeForm.controls.descriptionGerman"></textarea>
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.descriptionGerman.errors,
+                        'committee.details.descriptionDe' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.descriptionFr' | translate }}</mat-label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" [formControl]="committeeForm.controls.descriptionFrench"></textarea>
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.descriptionFrench.errors,
+                        'committee.details.descriptionFr' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.descriptionIt' | translate }}</mat-label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" [formControl]="committeeForm.controls.descriptionItalian"></textarea>
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.descriptionItalian.errors,
+                        'committee.details.descriptionIt' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.descriptionRm' | translate }}</mat-label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" [formControl]="committeeForm.controls.descriptionRomansh"></textarea>
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.descriptionRomansh.errors,
+                        'committee.details.descriptionRm' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.committeeType' | translate }}</mat-label>
+                <mat-select [formControl]="committeeForm.controls.committeeTypeId">
+                    @for (committeeType of masterDataService.committeeTypes(); track committeeType.id) {
+                        <mat-option [value]="committeeType.id">{{ committeeType.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.committeeTypeId.errors,
+                        'committee.details.committeeType' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.committeeLevel' | translate }}</mat-label>
+                <mat-select [formControl]="committeeForm.controls.levelId">
+                    @for (level of masterDataService.levels(); track level.id) {
+                        <mat-option [value]="level.id">{{ level.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>{{
+                    errorService.getControlError(committeeForm.controls.levelId.errors, 'committee.details.committeeLevel' | translate, 'committee.error')
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.department' | translate }}</mat-label>
+                <mat-select [formControl]="committeeForm.controls.departmentId">
+                    @for (department of masterDataService.departments(); track department.id) {
+                        <mat-option [value]="department.id">{{ department.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>{{
+                    errorService.getControlError(committeeForm.controls.departmentId.errors, 'committee.details.department' | translate, 'committee.error')
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.office' | translate }}</mat-label>
+                <mat-select [formControl]="committeeForm.controls.officeId">
+                    @for (office of departmentOffices(); track office.id) {
+                        <mat-option [value]="office.id">{{ office.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>{{
+                    errorService.getControlError(committeeForm.controls.officeId.errors, 'committee.details.office' | translate, 'committee.error')
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.beginDate' | translate }}</mat-label>
+                <input [formControl]="committeeForm.controls.beginDate" [matDatepicker]="beginDate" matInput />
+                <mat-datepicker-toggle matSuffix [for]="beginDate" />
+                <mat-datepicker #beginDate [disabled]="true" xPosition="end" />
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.beginDate.errors,
+                        'committee.details.beginDate' | translate,
+                        'committee.error.beginDate'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.endDate' | translate }}</mat-label>
+                <input
+                    matInput
+                    [min]="committeeForm.controls.beginDate.disabled ? committeeForm.controls.beginDate.value : undefined"
+                    [matDatepicker]="endDate"
+                    [formControl]="committeeForm.controls.endDate"
+                />
+                <mat-datepicker-toggle matSuffix [for]="endDate" />
+                <mat-datepicker #endDate xPosition="end" />
+                <mat-error>{{
+                    errorService.getControlError(committeeForm.controls.endDate.errors, 'committee.details.endDate' | translate, 'committee.error.endDate')
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committee.details.minimalMembers' | translate }}</mat-label>
+                    <input [formControl]="committeeForm.controls.minimalMembers" matInput min="0" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.minimalMembers.errors,
+                            'committee.details.maximalMembers' | translate,
+                            'committee.error.minimalMembers'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                <apg-help-tooltip>
+                    <apg-members-tooltip-content />
+                </apg-help-tooltip>
+            </div>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committee.details.maximalMembers' | translate }}</mat-label>
+                    <input [formControl]="committeeForm.controls.maximalMembers" matInput min="0" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.maximalMembers.errors,
+                            'committee.details.maximalMembers' | translate,
+                            'committee.error.maximalMembers'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                <apg-help-tooltip>
+                    <apg-members-tooltip-content />
+                </apg-help-tooltip>
+            </div>
+        </div>
+
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field>
+                    <mat-label>{{ 'committee.details.hasVacanciesInCurrentTermOfOffice' | translate }}</mat-label>
+                    <input matInput type="text" [value]="vacanciesInCurrentTermOfOffice() ?? ('common.noInformation' | translate)" disabled />
+                </mat-form-field>
+                <apg-help-tooltip text="committee.helpTooltip.vacancies" />
+            </div>
+            <span></span>
+        </div>
+
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committee.details.additionalAuthorityMembers' | translate }}</mat-label>
+
+                    <mat-select [formControl]="committeeForm.controls.additionalAuthorityMembers">
+                        <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                        <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+                    </mat-select>
+
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.additionalAuthorityMembers.errors,
+                            'committee.details.additionalAuthorityMembers' | translate,
+                            'committee.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="committee.helpTooltip.additionalElectedByAuthority" />
+            </div>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.linkAuthorityWebsite' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="committeeForm.controls.linkAuthorityWebsite" />
+                <mat-error />
+            </mat-form-field>
+        </div>
+
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committee.details.termOfOffice' | translate }}</mat-label>
+                    <mat-select [formControl]="committeeForm.controls.termOfOfficeId">
+                        @for (term of masterDataService.terms(); track term.id) {
+                            <mat-option [value]="term.id">{{ term.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.termOfOfficeId.errors,
+                            'committee.details.termOfOffice' | translate,
+                            'committee.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                @if (!isAuthorityOrAdministration()) {
+                    <apg-help-tooltip text="committee.helpTooltip.termDuration" />
+                }
+            </div>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committee.details.federalLawEstablishment' | translate }}</mat-label>
+
+                    <mat-select [formControl]="committeeForm.controls.federalLawEstablishment">
+                        <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                        <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+                    </mat-select>
+
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.federalLawEstablishment.errors,
+                            'committee.details.federalLawEstablishment' | translate,
+                            'committee.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="committee.helpTooltip.introducedInFederalLaw" />
+            </div>
+        </div>
+
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committee.details.supervisionDuty' | translate }}</mat-label>
+
+                    <mat-select [formControl]="committeeForm.controls.supervisionDuty">
+                        <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                        <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+                    </mat-select>
+
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.supervisionDuty.errors,
+                            'committee.details.supervisionDuty' | translate,
+                            'committee.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                @if (isAuthorityOrAdministration()) {
+                    <apg-help-tooltip text="committee.helpTooltip.supervisoryAndRegulatoryTasks" />
+                }
+            </div>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committees.filter.isMarketOrientated.label' | translate }}</mat-label>
+
+                    <mat-select [formControl]="committeeForm.controls.marketOrientated">
+                        <mat-option [value]="true">{{ 'committee.details.marketOrientated' | translate }}</mat-option>
+                        <mat-option [value]="false">{{ 'committee.details.societyOrientated' | translate }}</mat-option>
+                    </mat-select>
+
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.marketOrientated.errors,
+                            'committees.filter.isMarketOrientated.label' | translate,
+                            'committee.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="committee.helpTooltip.marketOrSocietyOriented" />
+            </div>
+        </div>
+
+        <div class="input-grid">
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committees.details.federalInstitution.label' | translate }}</mat-label>
+
+                    <mat-select [formControl]="committeeForm.controls.federalInstitution">
+                        <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                        <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+                    </mat-select>
+
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.federalInstitution.errors,
+                            'committees.details.federalInstitution.label' | translate,
+                            'committee.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                @if (isManagementCommittee()) {
+                    <apg-help-tooltip toggleType="click" [openOnHover]="true">
+                        {{ 'committee.helpTooltip.federalInstitution.before' | translate }}
+                        <a [href]="'committee.helpTooltip.federalInstitution.url' | translate" target="_blank">{{
+                            'committee.helpTooltip.federalInstitution.url' | translate
+                        }}</a
+                        >{{ 'committee.helpTooltip.federalInstitution.after' | translate }}
+                    </apg-help-tooltip>
+                }
+            </div>
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.legalForm' | translate }}</mat-label>
+                <mat-select [formControl]="committeeForm.controls.legalFormId">
+                    @for (legalForm of masterDataService.legalForms(); track legalForm.id) {
+                        <mat-option [value]="legalForm.id">{{ legalForm.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>{{
+                    errorService.getControlError(committeeForm.controls.legalFormId.errors, 'committee.details.legalForm' | translate, 'committee.error')
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.legalBase' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="committeeForm.controls.legalBase" />
+
+                <mat-error>{{
+                    errorService.getControlError(committeeForm.controls.legalBase.errors, 'committee.details.legalBase' | translate, 'committee.error')
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>{{ 'committee.details.oldLegalForm' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="committeeForm.controls.oldLegalForm" />
+            </mat-form-field>
+        </div>
+
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.releaseGeneralElection' | translate }}</mat-label>
+
+                <mat-select [formControl]="committeeForm.controls.releaseGeneralElection">
+                    <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                    <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+                </mat-select>
+
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.releaseGeneralElection.errors,
+                        'committee.details.releaseGeneralElection' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+
+            <span></span>
+        </div>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.linkHomepageGerman' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="committeeForm.controls.linkHomepageGerman" />
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.linkHomepageGerman.errors,
+                        'committee.details.linkHomepageGerman' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.linkHomepageFrench' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="committeeForm.controls.linkHomepageFrench" />
+
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.linkHomepageFrench.errors,
+                        'committee.details.linkHomepageFrench' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.linkHomepageItalian' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="committeeForm.controls.linkHomepageItalian" />
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.linkHomepageItalian.errors,
+                        'committee.details.linkHomepageItalian' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'committee.details.linkHomepageRomansh' | translate }}</mat-label>
+                <input matInput type="text" [formControl]="committeeForm.controls.linkHomepageRomansh" />
+
+                <mat-error>{{
+                    errorService.getControlError(
+                        committeeForm.controls.linkHomepageRomansh.errors,
+                        'committee.details.linkHomepageRomansh' | translate,
+                        'committee.error'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+    </fieldset>
+</form>

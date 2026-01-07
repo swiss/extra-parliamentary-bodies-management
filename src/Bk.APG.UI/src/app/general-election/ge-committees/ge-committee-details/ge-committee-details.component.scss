@@ -1,0 +1,14 @@
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host {
+    .ge-tab-hint {
+        max-width: 150ch;
+        color: $ob-blue-700;
+        font-style: italic;
+        font-size: medium;
+        margin: 4px auto;
+        width: fit-content;
+        white-space: break-spaces;
+        text-align: center;
+    }
+}

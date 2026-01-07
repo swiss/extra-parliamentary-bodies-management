@@ -1,0 +1,146 @@
+<form [formGroup]="appointmentDecisionForm" id="appointmentDecisionDataForm" obUnsavedChanges>
+    <fieldset>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'appointmentDecision.details.appointmentDecisionDate' | translate }}</mat-label>
+                <input matInput [matDatepicker]="appointmentDecisionDate" [formControl]="appointmentDecisionForm.controls.appointmentDecisionDate" />
+                <mat-datepicker-toggle matSuffix [for]="appointmentDecisionDate" />
+                <mat-datepicker #appointmentDecisionDate xPosition="end" />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            appointmentDecisionForm.controls.appointmentDecisionDate.errors,
+                            'appointmentDecision.details.appointmentDecisionDate' | translate,
+                            'appointmentDecision.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'appointmentDecision.details.appointmentDecisionTypeId' | translate }}</mat-label>
+                <mat-select (selectionChange)="setDecisionType($event)" [formControl]="appointmentDecisionForm.controls.appointmentDecisionTypeId">
+                    @for (appointmentDecisionType of appointmentDecisionTypes(); track appointmentDecisionType.id) {
+                        <mat-option [value]="appointmentDecisionType.id">{{ appointmentDecisionType.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            appointmentDecisionForm.controls.appointmentDecisionTypeId.errors,
+                            'appointmentDecision.details.appointmentDecisionTypeId' | translate,
+                            'appointmentDecision.error.appointmentDecisionTypeId'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'appointmentDecision.details.appointmentDecisionLinkTypeId' | translate }}</mat-label>
+                <mat-select (selectionChange)="setDecisionLinkType()" [formControl]="appointmentDecisionForm.controls.appointmentDecisionLinkTypeId">
+                    @for (appointmentDecisionLinkType of appointmentDecisionLinkTypes(); track appointmentDecisionLinkType.id) {
+                        <mat-option [value]="appointmentDecisionLinkType.id">{{ appointmentDecisionLinkType.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            appointmentDecisionForm.controls.appointmentDecisionLinkTypeId.errors,
+                            'appointmentDecision.details.appointmentDecisionLinkTypeId' | translate,
+                            'appointmentDecision.error.appointmentDecisionLinkTypeId'
+                        )
+                    }}
+                </mat-error> </mat-form-field
+            ><mat-form-field obErrorMessages>
+                <mat-label>{{ 'appointmentDecision.details.link' | translate }}</mat-label>
+                <input [formControl]="appointmentDecisionForm.controls.link" matInput type="text" />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            appointmentDecisionForm.controls.link.errors,
+                            'appointmentDecision.details.link' | translate,
+                            'appointmentDecision.error.link'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div>
+            @if (this.isTypeDecisionFederalCouncilSelected()) {
+                <p class="hint">{{ 'appointmentDecision.hint' | translate }}</p>
+            }
+            @if (this.isInstitutionSelected()) {
+                <p class="hint">{{ 'appointmentDecision.documents.hint' | translate }}</p>
+            }
+            @if (this.isReportSelected()) {
+                <p class="hint">{{ 'appointmentDecision.report.hint' | translate }}</p>
+            }
+            @if (this.isOtherSelected()) {
+                <p class="hint">{{ 'appointmentDecision.other.hint' | translate }}</p>
+            }
+            @if (this.isRegulationsSelected()) {
+                <p class="hint">{{ 'appointmentDecision.regulations.hint' | translate }}</p>
+            }
+            @if (this.isInstitutionSelected() && this.isUpdateMode) {
+                <p class="hint">{{ 'appointmentDecision.institution.edit.hint' | translate }}</p>
+            }
+        </div>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'appointmentDecision.details.text' | translate }}</mat-label>
+                <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" [formControl]="appointmentDecisionForm.controls.text"></textarea>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            appointmentDecisionForm.controls.text.errors,
+                            'appointmentDecision.details.text' | translate,
+                            'appointmentDecision.error.text'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+            <ob-drop-zone (uploadEvent)="uploadEvent($event)" [accept]="['.pdf']" />
+        </div>
+        @if (documentsForm.controls.length > 0) {
+            <h4>{{ 'appointmentDecision.details.documents.title' | translate }}</h4>
+            <p class="hint">
+                {{ this.isInstitutionSelected() ? ('appointmentDecision.institution.info' | translate) : ('appointmentDecision.info' | translate) }}
+            </p>
+        }
+        @for (control of documentsForm.controls; track i; let i = $index) {
+            <div class="upload-document-detail" [formGroup]="$any(control)">
+                <mat-form-field class="upload-document-field-name">
+                    <mat-label>{{ 'appointmentDecision.details.documents.name' | translate }}</mat-label>
+                    <input matInput type="text" formControlName="displayName" id="displayName" />
+                </mat-form-field>
+                @if (this.isInstitutionSelected()) {
+                    <mat-form-field class="upload-document-field">
+                        <mat-label>{{ 'appointmentDecision.details.documents.isOriginal' | translate }}</mat-label>
+                        <mat-select formControlName="isOriginal" (selectionChange)="setIsOriginal($event, i)">
+                            <mat-option [value]="true">{{ 'appointmentDecision.details.documents.original' | translate }}</mat-option>
+                            <mat-option [value]="false">{{ 'appointmentDecision.details.documents.translation' | translate }}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                }
+                <mat-form-field class="upload-document-field">
+                    <mat-label>{{ 'appointmentDecision.details.documents.language' | translate }}</mat-label>
+                    <mat-select formControlName="languageId" (selectionChange)="clearLanguageDuplicates($event, i)">
+                        @for (language of masterDataService.languages(); track language.id) {
+                            <mat-option [value]="language.id">{{ language.description }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                <div>
+                    <button
+                        mat-icon-button
+                        obButton="secondary"
+                        type="button"
+                        (click)="removeUploadedDocument(i)"
+                        class="subject-button"
+                        [matTooltip]="'appointmentDecision.delete.title' | translate"
+                    >
+                        <mat-icon svgIcon="delete" class="ob-icon" />
+                    </button>
+                </div>
+            </div>
+        }
+    </fieldset>
+</form>

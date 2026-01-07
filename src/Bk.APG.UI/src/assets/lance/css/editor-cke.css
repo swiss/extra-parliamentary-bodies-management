@@ -1,0 +1,50 @@
+.quicktips-tooltip .lance-tooltip {
+  display: flex;
+  flex-direction: column;
+  font-size: .875em;
+}
+
+.quicktips-tooltip .lance-tooltip:not(:first-child) {
+  margin-top: 5px;
+}
+
+.quicktips-tooltip .lance-tooltip .lance-tt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.quicktips-tooltip .lance-tooltip .lance-tt-header .lance-tt-avatar {
+  overflow: hidden;
+}
+
+.quicktips-tooltip .lance-tooltip .lance-tt-header .lance-tt-avatar.with-avatar {
+  border-radius: 25%;
+  width: 24px;
+  height: 24px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.quicktips-tooltip .lance-tooltip .lance-tt-header .lance-tt-user {
+  flex-grow: 1;
+  max-width: 6vw;
+  max-height: 1.5em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+}
+
+.quicktips-tooltip .lance-tooltip .lance-tt-text {
+  flex-grow: 1;
+  font-weight: normal;
+  max-height: 3em;
+  padding: 2px 5px;
+  max-width: 10vw;
+  width: fit-content;
+  overflow: hidden;
+  display: inline-block;
+}

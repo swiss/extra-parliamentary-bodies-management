@@ -1,0 +1,32 @@
+export interface CommitteeCreate {
+    descriptionGerman: string;
+    descriptionFrench: string;
+    descriptionItalian: string;
+    descriptionRomansh: string;
+    levelId: string;
+    departmentId: string;
+    officeId: string;
+    committeeTypeId: string;
+    federalLawEstablishment: boolean;
+    supervisionDuty: boolean;
+    marketOrientated: boolean;
+    legalFormId?: string;
+    legalBase?: string;
+    beginDate: Date;
+    endDate?: Date;
+    termOfOfficeId: string;
+    minimalMembers?: number;
+    maximalMembers?: number;
+    additionalAuthorityMembers: boolean;
+    linkAuthorityWebsite: string;
+    federalInstitution?: boolean;
+    linkHomepageGerman?: string;
+    linkHomepageFrench?: string;
+    linkHomepageItalian?: string;
+    linkHomepageRomansh?: string;
+    vacanciesInGeneralElection?: number;
+    membershipAdditionsInGeneralElection?: string[];
+    canEditAll: boolean;
+    canEditDepartment: boolean;
+    canEditLegalbase: boolean;
+}

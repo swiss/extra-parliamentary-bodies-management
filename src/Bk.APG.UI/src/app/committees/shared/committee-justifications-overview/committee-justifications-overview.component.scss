@@ -1,0 +1,130 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host {
+    width: 100%;
+    max-width: 150ch;
+    margin: auto;
+
+    .description {
+        display: flex;
+        padding: 4px 12px;
+        gap: 8px;
+
+        .description-header {
+            flex-grow: 1;
+        }
+
+        .active-hint {
+            flex-shrink: 0;
+            font-size: xx-large;
+
+            &.active {
+                color: $ob-green-700;
+            }
+
+            &.inactive {
+                color: $ob-orange-700;
+            }
+        }
+    }
+
+    .justification-subtitle {
+        text-align: center;
+        margin-top: 24px;
+
+        &:first-of-type {
+            margin-top: 0;
+        }
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        td {
+            align-content: start;
+            padding: 4px 12px;
+            min-width: 120px;
+
+            &.heading-text {
+                font-weight: bold;
+                text-wrap: nowrap;
+                width: 10%;
+            }
+
+            .heading-subtitle {
+                font-weight: normal;
+                font-style: italic;
+                color: $ob-gray-dark;
+                margin: 0;
+            }
+        }
+
+        tr:nth-child(odd) {
+            background-color: $ob-gray-extra-light;
+        }
+
+        tr {
+            &:nth-child(2),
+            &:first-child {
+                td {
+                    border-bottom: 0;
+                }
+
+                td:first-child {
+                    border-top-left-radius: 4px;
+                }
+
+                td:last-child {
+                    border-top-right-radius: 4px;
+                }
+            }
+
+            &:last-child {
+                td:first-child {
+                    border-bottom-left-radius: 4px;
+                }
+
+                td:last-child {
+                    border-bottom-right-radius: 4px;
+                }
+            }
+        }
+
+        &.stats {
+            margin-bottom: 12px;
+            text-align: center;
+
+            tr {
+                background-color: unset !important;
+
+                td.red {
+                    background-color: $ob-red-50;
+                }
+
+                &:not(:first-child) {
+                    td {
+                        border: 1px solid $ob-gray;
+                        padding: 6px 8px 3px;
+
+                        &:not(:last-child) {
+                            border-right: 0;
+                        }
+                    }
+                }
+
+                &:nth-child(2) {
+                    td {
+                        border-bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    ::ng-deep .fr-view > * {
+        display: contents;
+    }
+}

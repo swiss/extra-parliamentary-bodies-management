@@ -1,0 +1,27 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    .paginator {
+        margin-top: $ob-spacing-default;
+    }
+
+    .ob-grid {
+        row-gap: 0;
+    }
+}
+
+.buttons {
+    margin-top: $ob-spacing-xs;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+
+    button {
+        margin-left: $ob-spacing-sm;
+        margin-bottom: $ob-spacing-sm;
+    }
+
+    apg-help-tooltip {
+        margin-bottom: 6px;
+    }
+}

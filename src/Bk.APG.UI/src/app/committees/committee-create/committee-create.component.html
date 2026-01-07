@@ -1,0 +1,18 @@
+<div class="committee-data-header">
+    <h2>
+        {{ 'committee.details.data.create' | translate }}
+        {{ isExtraParliamentaryCommission ? ('committee.details.extraParliamentaryCommissionAbbreviation' | translate) : '' }}
+    </h2>
+    <div class="buttons">
+        <apg-help-tooltip text="committee.helpTooltip.saveButton" />
+        <button mat-button obButton="secondary" type="button" (click)="close()">{{ 'common.close' | translate }}</button>
+        <button mat-button obButton="primary" type="button" [disabled]="!form().dirty || !form().valid" (click)="save()">
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+<apg-committee-data-form
+    [(committeeModification)]="committeeToCreate"
+    [isUpdateMode]="false"
+    (isExtraParliamentaryCommmission)="handleExtraParliamentaryCommission($event)"
+/>

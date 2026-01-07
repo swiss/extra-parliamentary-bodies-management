@@ -1,0 +1,29 @@
+<h4>{{ 'person.details.interests' | translate }}</h4>
+
+<table [dataSource]="dataSource" class="ob-table" mat-table>
+    <ng-container matColumnDef="text">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.interests.table.header.text' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.text }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="legalForm">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.interests.table.header.legalForm' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.legalForm }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="committee">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.interests.table.header.committee' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.committee }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="function">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.interests.table.header.function' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.function }}</td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">{{ 'person.interests.table.noEntries' | translate }}</td>
+    </tr>
+</table>
