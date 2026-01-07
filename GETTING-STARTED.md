@@ -107,7 +107,19 @@ volumes:
   apg-minio-data:
 ```
 
+This docker file contains a reference to a reference to a KeyCloak real export file which will be imported when KeyCloak is initialized.
+
+Here is an example file that can be used for this.
+
+```
+
+```
+
+
 ## Add user secrets
+
+You can add user secrets (see: https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets) to store the credentials to the local services in a secure way.
+
 ```
 {
   "UID" : {
