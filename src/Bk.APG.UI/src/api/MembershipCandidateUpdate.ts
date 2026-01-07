@@ -1,0 +1,24 @@
+export interface MembershipCandidateUpdate {
+    id: string;
+    generalElectionCommitteeId: string;
+    personId?: string;
+    surname?: string;
+    givenName?: string;
+    birthYear?: number;
+    genderId?: string;
+    languageId?: string;
+    maximumEmploymentLevel?: number;
+    beginDate: Date;
+    endDate?: Date;
+    electionTypeId: string;
+    functionId: string;
+    electionOfficeId: string;
+    membershipAdditionId?: string;
+    inCorrelationWithFederalDuty: boolean;
+    justificationLongerDuty?: string;
+    justificationShorterDuty?: string;
+    justificationMemberInFederalDuty?: string;
+    justificationMemberInFederalAssembly?: string;
+    requirementsProfile?: string;
+    rowVersion: number;
+}

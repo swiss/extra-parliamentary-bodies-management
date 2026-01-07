@@ -1,0 +1,96 @@
+@if (committeeDetails(); as committee) {
+    <mat-card>
+        <mat-card-content>
+            <h4>{{ 'committee.justifications' | translate }}</h4>
+            @if (showMembersJustifications()) {
+                <h6 class="justification-subtitle">{{ 'committee.details.members' | translate }}</h6>
+                <table>
+                    <tr>
+                        <td class="heading-text">
+                            <p>{{ 'committee.justificationMembers' | translate }}</p>
+                            <p class="heading-subtitle">{{ ('committee.currentMembersCount' | translate) + ': ' + committee.membersCount }}</p>
+                        </td>
+                        <td colspan="3" class="fr-view" [innerHTML]="justificationMembers()"></td>
+                    </tr>
+                </table>
+            }
+            @if (showGendersJustifications()) {
+                <h6 class="justification-subtitle">{{ 'committee.genders' | translate }}</h6>
+                <table class="stats">
+                    <tr>
+                        <td></td>
+                        <td>{{ 'common.female' | translate }}</td>
+                        <td>{{ 'common.male' | translate }}</td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.quota' | translate }}</td>
+                        <td>{{ committee.femaleThreshold | number: '1.0-2' }} %</td>
+                        <td>{{ committee.maleThreshold | number: '1.0-2' }} %</td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.currentQuota' | translate }}</td>
+                        <td [ngClass]="committee.femaleQuota! < committee.femaleThreshold! ? 'red' : ''">{{ committee.femaleQuota | number: '1.0-2' }} %</td>
+                        <td [ngClass]="committee.maleQuota! < committee.maleThreshold! ? 'red' : ''">{{ committee.maleQuota | number: '1.0-2' }} %</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.justificationGenders' | translate }}</td>
+                        <td class="fr-view" [innerHTML]="justificationGenders()"></td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.specificMeasure' | translate }}</td>
+                        <td class="fr-view" [innerHTML]="measuresGenders()"></td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.generalMeasure' | translate }}</td>
+                        <td [innerHTML]="committee.generalGenderMeasure ?? ('common.none' | translate)"></td>
+                    </tr>
+                </table>
+            }
+            @if (showLanguagesJustifications()) {
+                <h6 class="justification-subtitle">{{ 'committee.languages' | translate }}</h6>
+                <table class="stats">
+                    <tr>
+                        <td></td>
+                        <td>DE</td>
+                        <td>FR</td>
+                        <td>IT</td>
+                        <td>RM</td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.quota' | translate }}</td>
+                        <td>{{ committee.germanThreshold | number: '1.0-2' }} %</td>
+                        <td>{{ committee.frenchThreshold | number: '1.0-2' }} %</td>
+                        <td>{{ committee.italianThreshold | number: '1.0-2' }} %</td>
+                        <td>{{ committee.romanshThreshold | number: '1.0-2' }} %</td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.currentQuota' | translate }}</td>
+                        <td [ngClass]="committee.germanQuota! < committee.germanThreshold! ? 'red' : ''">{{ committee.germanQuota | number: '1.0-2' }} %</td>
+                        <td [ngClass]="committee.frenchQuota! < committee.frenchThreshold! ? 'red' : ''">{{ committee.frenchQuota | number: '1.0-2' }} %</td>
+                        <td [ngClass]="committee.italianQuota! < committee.italianThreshold! ? 'red' : ''">{{ committee.italianQuota | number: '1.0-2' }} %</td>
+                        <td [ngClass]="committee.romanshQuota! < committee.romanshThreshold! ? 'red' : ''">{{ committee.romanshQuota | number: '1.0-2' }} %</td>
+                    </tr>
+                </table>
+                <table>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.justificationLanguages' | translate }}</td>
+                        <td class="fr-view" [innerHTML]="justificationLanguages()"></td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.specificMeasure' | translate }}</td>
+                        <td class="fr-view" [innerHTML]="measuresLanguages()"></td>
+                    </tr>
+                    <tr>
+                        <td class="heading-text">{{ 'committee.generalMeasure' | translate }}</td>
+                        <td [innerHTML]="committee.generalLanguageMeasure ?? ('common.none' | translate)"></td>
+                    </tr>
+                </table>
+            }
+            @if (!showMembersJustifications() && !showGendersJustifications() && !showLanguagesJustifications()) {
+                <div>{{ 'common.none' | translate }}</div>
+            }
+        </mat-card-content>
+    </mat-card>
+}

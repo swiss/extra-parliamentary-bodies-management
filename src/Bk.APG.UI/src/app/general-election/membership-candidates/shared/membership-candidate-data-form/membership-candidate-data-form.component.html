@@ -1,0 +1,300 @@
+@if (selectedPerson()) {
+    <apg-person-search [(personSelected)]="selectedPerson" />
+}
+
+<form [formGroup]="membershipCandidateForm" id="membershipCandidateDataForm" obUnsavedChanges>
+    <fieldset>
+        @if (!selectedPerson()) {
+            <div class="input-grid">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'generalElection.membershipCandidate.surname' | translate }}</mat-label>
+                    <input matInput [formControl]="membershipCandidateForm.controls.surname" />
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipCandidateForm.controls.surname.errors,
+                                'generalElection.membershipCandidate.surname' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'generalElection.membershipCandidate.givenName' | translate }}</mat-label>
+                    <input matInput [formControl]="membershipCandidateForm.controls.givenName" />
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipCandidateForm.controls.givenName.errors,
+                                'generalElection.membershipCandidate.givenName' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'generalElection.membershipCandidate.birthYear' | translate }}</mat-label>
+                    <input matInput [formControl]="membershipCandidateForm.controls.birthYear" type="number" />
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipCandidateForm.controls.birthYear.errors,
+                                'generalElection.membershipCandidate.birthYear' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'generalElection.membershipCandidate.gender' | translate }}</mat-label>
+                    <mat-select [formControl]="membershipCandidateForm.controls.genderId">
+                        @for (gender of masterDataService.genders(); track gender.id) {
+                            <mat-option [value]="gender.id">{{ gender.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipCandidateForm.controls.genderId.errors,
+                                'generalElection.membershipCandidate.gender' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'generalElection.membershipCandidate.language' | translate }}</mat-label>
+                    <mat-select [formControl]="membershipCandidateForm.controls.languageId">
+                        @for (language of masterDataService.languages(); track language.id) {
+                            <mat-option [value]="language.id">{{ language.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipCandidateForm.controls.languageId.errors,
+                                'generalElection.membershipCandidate.language' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+
+                <span></span>
+            </div>
+        }
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.beginDate' | translate }}</mat-label>
+                <input matInput [matDatepicker]="beginDate" [formControl]="membershipCandidateForm.controls.beginDate" />
+                <mat-datepicker-toggle matSuffix [for]="beginDate" />
+                <mat-datepicker #beginDate xPosition="end" />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.beginDate.errors,
+                            'membership.details.beginDate' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.endDate' | translate }}</mat-label>
+                <input matInput [matDatepicker]="endDate" [formControl]="membershipCandidateForm.controls.endDate" />
+                <mat-datepicker-toggle matSuffix [for]="endDate" />
+                <mat-datepicker #endDate xPosition="end" />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.endDate.errors,
+                            'membership.details.endDate' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.electionType' | translate }}</mat-label>
+                <mat-select [formControl]="membershipCandidateForm.controls.electionTypeId">
+                    @for (electionType of masterDataService.electionTypes(); track electionType.id) {
+                        <mat-option [value]="electionType.id">{{ electionType.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.electionTypeId.errors,
+                            'membership.details.electionType' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.function' | translate }}</mat-label>
+                <mat-select [formControl]="membershipCandidateForm.controls.functionId">
+                    @for (function of masterDataService.functions(); track function.id) {
+                        <mat-option [value]="function.id">{{ getFunctionText(function) }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.functionId.errors,
+                            'membership.details.function' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.electionOffice' | translate }}</mat-label>
+                <mat-select [formControl]="membershipCandidateForm.controls.electionOfficeId">
+                    @for (electionOffice of masterDataService.electionOffices(); track electionOffice.id) {
+                        <mat-option [value]="electionOffice.id">{{ electionOffice.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.electionOfficeId.errors,
+                            'membership.details.electionOffice' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.membershipAddition' | translate }}</mat-label>
+                <mat-select [formControl]="membershipCandidateForm.controls.membershipAdditionId">
+                    @for (membershipAddition of masterDataService.membershipAdditions(); track membershipAddition.id) {
+                        <mat-option [value]="membershipAddition.id">{{ membershipAddition.text }}</mat-option>
+                    }
+                </mat-select>
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.membershipAdditionId.errors,
+                            'membership.details.membershipAddition' | translate,
+                            'membership.error'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'membership.details.maximumEmploymentLevel' | translate }}</mat-label>
+                <input [formControl]="membershipCandidateForm.controls.maximumEmploymentLevel" matInput type="number" />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.maximumEmploymentLevel.errors,
+                            'membership.details.maximumEmploymentLevel' | translate,
+                            'membership.error.maximumEmploymentLevel'
+                        )
+                    }}
+                </mat-error>
+            </mat-form-field>
+            <mat-checkbox
+                [formControl]="membershipCandidateForm.controls.inCorrelationWithFederalDuty"
+                matTooltip="{{ 'membership.details.inCorrelationWithFederalDuty' | translate }}"
+                >{{ 'membership.details.inCorrelationWithFederalDuty' | translate }}</mat-checkbox
+            >
+
+            <div obErrorMessage>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationLongerDuty' | translate"
+                    controlName="justificationLongerDuty"
+                    [plugins]="['flite', 'lance']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.justificationLongerDuty.errors,
+                            'membership.details.justificationLongerDuty' | translate,
+                            'membership.error.justificationLongerDuty'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessage>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationShorterDuty' | translate"
+                    controlName="justificationShorterDuty"
+                    [plugins]="['flite', 'lance']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.justificationShorterDuty.errors,
+                            'membership.details.justificationShorterDuty' | translate,
+                            'membership.error.justificationShorterDuty'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessage>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationMemberInFederalDuty' | translate"
+                    controlName="justificationMemberInFederalDuty"
+                    [plugins]="['flite', 'lance']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.justificationMemberInFederalDuty.errors,
+                            'membership.details.justificationMemberInFederalDuty' | translate,
+                            'membership.error.justificationMemberInFederalDuty'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessage>
+                <apg-rich-text-editor
+                    [title]="'membership.details.justificationMemberInFederalAssembly' | translate"
+                    controlName="justificationMemberInFederalAssembly"
+                    [plugins]="['flite', 'lance']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.justificationMemberInFederalAssembly.errors,
+                            'membership.details.justificationMemberInFederalAssembly' | translate,
+                            'membership.error.justificationMemberInFederalAssembly'
+                        )
+                    }}
+                </mat-error>
+            </div>
+
+            <div obErrorMessage>
+                <apg-rich-text-editor
+                    [title]="'membership.details.requirementsProfile' | translate"
+                    controlName="requirementsProfile"
+                    [plugins]="['flite', 'lance']"
+                />
+                <mat-error>
+                    {{
+                        errorService.getControlError(
+                            membershipCandidateForm.controls.requirementsProfile.errors,
+                            'membership.details.requirementsProfile' | translate,
+                            'membership.error.requirementsProfile'
+                        )
+                    }}
+                </mat-error>
+            </div>
+        </div>
+    </fieldset>
+</form>

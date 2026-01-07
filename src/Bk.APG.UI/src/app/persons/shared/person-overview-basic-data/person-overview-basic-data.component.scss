@@ -1,0 +1,33 @@
+.person-details-form {
+    max-width: 150ch;
+    margin: auto;
+}
+
+.heading-text {
+    font-weight: bold;
+}
+:host::ng-deep {
+    table {
+        width: 100%;
+        table-layout: fixed;
+        display: table;
+        thead {
+            tr {
+                th {
+                    &:nth-child(1) {
+                        width: 20%;
+                    }
+                    &:nth-child(2) {
+                        width: 10%;
+                    }
+                    &:nth-child(3) {
+                        width: 20%;
+                    }
+                    &:nth-child(4) {
+                        width: 50%;
+                    }
+                }
+            }
+        }
+    }
+}

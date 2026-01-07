@@ -1,0 +1,51 @@
+<div class="task-create-header">
+    <h3>{{ 'worklist.task.create' | translate }}</h3>
+    <div class="buttons">
+        <button (click)="close()" mat-button obButton="secondary" type="button">{{ 'common.close' | translate }}</button>
+        <button (click)="save()" [disabled]="!form.valid" mat-button obButton="primary" type="button">{{ 'common.save' | translate }}</button>
+    </div>
+</div>
+
+<form [formGroup]="form" id="worklist-task-create-form" obUnsavedChanges>
+    <fieldset>
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'worklist.task.worklistTaskType' | translate }}</mat-label>
+            <mat-select [formControl]="form.controls.worklistTaskTypeId" required>
+                @for (worklistTaskType of this.worklistTaskTypes(); track worklistTaskType.id) {
+                    <mat-option [value]="worklistTaskType.id">{{ worklistTaskType.text }}</mat-option>
+                }
+            </mat-select>
+            <mat-error />
+        </mat-form-field>
+
+        @if (form.controls.worklistTaskTypeId.value; as worklistTaskType) {
+            @if (worklistTaskType !== configsService.frontendConfig.entityIds.worklistTaskType.generalElectionStartId) {
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'worklist.task.assignedTo' | translate }}</mat-label>
+                    <mat-select required [formControl]="form.controls.assignedToId">
+                        @for (assignment of availableAssignments(); track assignment.id) {
+                            <mat-option [value]="assignment.id">{{ assignment.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error />
+                </mat-form-field>
+            }
+
+            @if (worklistTaskType === configsService.frontendConfig.entityIds.worklistTaskType.generalElectionStartId) {
+                <ob-alert type="info">{{ 'worklist.task.create.generalElectionStart.dueDateHint' | translate }}</ob-alert>
+            }
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'worklist.task.dueDate' | translate }}</mat-label>
+                <input matInput [matDatepicker]="dueDatePicker" [formControl]="form.controls.dueDate" required />
+                <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker" />
+                <mat-datepicker #dueDatePicker xPosition="end" />
+                <mat-error />
+            </mat-form-field>
+
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'worklist.task.description' | translate }}</mat-label>
+                <textarea cdkTextareaAutosize [cdkAutosizeMinRows]="3" [cdkAutosizeMaxRows]="15" matInput [formControl]="form.controls.description"></textarea>
+            </mat-form-field>
+        }
+    </fieldset>
+</form>

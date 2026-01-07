@@ -1,0 +1,38 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 150ch;
+    margin: auto;
+
+    .person-memberships-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    table {
+        margin-bottom: 16px;
+    }
+
+    .mat-column-department {
+        width: 140px;
+    }
+
+    .mat-column-function {
+        width: 160px;
+    }
+
+    .mat-column-beginDate {
+        width: 140px;
+    }
+
+    .mat-column-endDate {
+        width: 125px;
+    }
+
+    .mat-column-electionType {
+        width: 200px;
+    }
+}

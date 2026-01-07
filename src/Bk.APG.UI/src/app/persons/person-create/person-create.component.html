@@ -1,0 +1,16 @@
+<div class="person-data-header">
+    <h2>{{ 'person.details.data.create' | translate }}</h2>
+    <div class="buttons">
+        <button mat-button obButton="secondary" type="button" (click)="close()">{{ 'common.close' | translate }}</button>
+        <button
+            mat-button
+            obButton="primary"
+            type="button"
+            [disabled]="!form().dirty || !form().valid || !form().controls.confirmNewPerson.value || formComponent().hasAddressErrors()"
+            (click)="save()"
+        >
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+<apg-person-data-form [(personModification)]="personToCreate" [isUpdateMode]="false" />

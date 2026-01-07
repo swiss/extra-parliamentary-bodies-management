@@ -1,0 +1,69 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+$gap: 16px;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 150ch;
+    margin: auto;
+    form {
+        display: flex;
+        flex-direction: column;
+        column-gap: $gap;
+        max-width: 150ch;
+        margin: auto;
+
+        .input-grid {
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: $gap;
+
+            > * {
+                flex: 1 1 calc(50% - $gap);
+                max-width: calc(50%);
+            }
+        }
+    }
+
+    apg-rich-text-editor + mat-error {
+        font-size: small;
+    }
+
+    .dropdown-icon {
+        margin-right: -3px;
+    }
+}
+
+.validation-text {
+    color: $ob-red-700 !important;
+    font-weight: bold;
+    margin-bottom: $ob-spacing-xs;
+}
+
+.term-of-office-text {
+    margin-bottom: $ob-spacing-sm;
+}
+
+mat-card-content {
+    display: flex;
+}
+
+.committee-data {
+    width: 100%;
+    max-width: 150ch;
+}
+
+.committee-overview {
+    margin-bottom: $ob-spacing-lg;
+}
+
+mat-expansion-panel {
+    margin-top: $ob-spacing-default;
+}
+
+.committee-description {
+    display: flex;
+    gap: $ob-spacing-sm;
+}

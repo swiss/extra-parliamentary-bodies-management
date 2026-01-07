@@ -1,0 +1,63 @@
+<div class="contact-points">
+    <table>
+        <tr>
+            <td>
+                <h4>{{ 'committees.details.contactPoints.secretariats' | translate }}</h4>
+            </td>
+            <td>
+                <h4>{{ 'committees.details.contactPoints.dataProtectionOfficers' | translate }}</h4>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="contact-point">
+                @for (secretariat of contactPointsSecretariats(); track secretariat.id) {
+                    <div class="contact-point-entry">
+                        <p class="contact-point-line">
+                            <b>{{ secretariat.companyName }}</b>
+                        </p>
+                        <p class="contact-point-line">
+                            {{ secretariat.section }}
+                        </p>
+                        <p class="contact-point-line">
+                            <b>{{ secretariat.surname }} {{ secretariat.givenName }}</b>
+                        </p>
+                        <p class="contact-point-line">{{ secretariat.title }}</p>
+                        <p class="contact-point-line">{{ secretariat.street }}</p>
+                        <p class="contact-point-line">{{ secretariat.poBox }}</p>
+                        <p class="contact-point-line">{{ secretariat.zip }} {{ secretariat.city }}</p>
+                        <p class="contact-point-line">{{ secretariat.email }}</p>
+                        <p class="contact-point-line">{{ secretariat.phone }}</p>
+                        <p class="contact-point-line">{{ secretariat.personalEmail }}</p>
+                        <p class="contact-point-line">{{ secretariat.personalPhone }}</p>
+                        <p class="contact-point-line">{{ secretariat.personalMobile }}</p>
+                    </div>
+                }
+            </td>
+            <td class="contact-point">
+                @for (dataProtectionOfficer of contactPointsDataProtectionOfficers(); track dataProtectionOfficer.id) {
+                    <div class="contact-point-entry">
+                        <p class="contact-point-line">
+                            <b>{{ dataProtectionOfficer.companyName }}</b>
+                        </p>
+                        <p class="contact-point-line">
+                            {{ dataProtectionOfficer.section }}
+                        </p>
+                        <p class="contact-point-line">
+                            <b>{{ dataProtectionOfficer.surname }} {{ dataProtectionOfficer.givenName }}</b>
+                        </p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.title }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.street }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.poBox }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.zip }} {{ dataProtectionOfficer.city }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.email }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.phone }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.personalEmail }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.personalPhone }}</p>
+                        <p class="contact-point-line">{{ dataProtectionOfficer.personalMobile }}</p>
+                    </div>
+                }
+            </td>
+        </tr>
+    </table>
+</div>

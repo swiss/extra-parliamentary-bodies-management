@@ -1,0 +1,79 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+.froala-editor-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: $ob-spacing-xs;
+
+    apg-help-tooltip {
+        padding-top: $ob-spacing-xs;
+    }
+}
+
+.froala-editor-title {
+    font-weight: bold;
+    font-size: medium;
+    margin-top: $ob-spacing-md;
+}
+
+.annotations-container {
+    margin-top: $ob-spacing-sm;
+    height: 300px;
+}
+
+:host::ng-deep {
+    .fr-box.fr-basic {
+        .fr-toolbar {
+            border-top-left-radius: $ob-border-radius-base !important;
+            border-top-right-radius: $ob-border-radius-base !important;
+        }
+
+        // fix placeholder position
+        .fr-placeholder {
+            padding: 20px 20px 0 !important;
+        }
+
+        .fr-second-toolbar {
+            border-bottom-left-radius: $ob-border-radius-base !important;
+            border-bottom-right-radius: $ob-border-radius-base !important;
+        }
+    }
+
+    div > .fr-disabled,
+    .fr-disabled button {
+        cursor: not-allowed !important;
+        pointer-events: auto !important;
+        color: $ob-gray-light !important;
+    }
+
+    // show red border and background for invalid input
+    .invalid .fr-box {
+        outline: 1px solid $ob-red-700;
+        border-radius: 3px;
+
+        > *:not(.fr-toolbar) {
+            background-color: $ob-red-50;
+        }
+    }
+
+    // fix insert table focus
+    .fr-popup .fr-table-size .fr-select-table-size > span {
+        padding: 0;
+        margin: 1px;
+    }
+
+    // LANCE annotation plugin fixes
+    .annotation-ui-wrapper {
+        top: 5px !important;
+    }
+
+    .comments-search-container .cancel-search {
+        right: 15px !important;
+    }
+
+    .annotations-aligned {
+        margin-top: 2px !important;
+    }
+}

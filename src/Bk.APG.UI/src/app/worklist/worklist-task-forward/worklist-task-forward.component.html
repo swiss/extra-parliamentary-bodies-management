@@ -1,0 +1,50 @@
+<div class="task-header">
+    <h3>{{ 'worklist.task.forward' | translate }}</h3>
+    <div class="buttons">
+        <button (click)="forward()" [disabled]="!form.valid" mat-button obButton="primary" type="button">{{ 'common.forward' | translate }}</button>
+    </div>
+</div>
+
+<form [formGroup]="form" id="worklist-task-forward-form" obUnsavedChanges>
+    <fieldset>
+        <ob-alert type="info">
+            {{
+                (isBigDepartment() ? 'generalElection.dispatch.candidateListDueDateBigDepartment.hint' : 'generalElection.dispatch.candidateListDueDate.hint')
+                    | translate
+            }}
+        </ob-alert>
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'generalElection.dispatch.candidateListDueDate.label' | translate }}</mat-label>
+            <input matInput [matDatepicker]="candidateListDueDatePicker" [formControl]="form.controls.candidateListDueDate" required />
+            <mat-datepicker-toggle matIconSuffix [for]="candidateListDueDatePicker" />
+            <mat-datepicker #candidateListDueDatePicker xPosition="end" />
+            <mat-error />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'generalElection.dispatch.candidateListDescription' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize [cdkAutosizeMinRows]="3" matInput [formControl]="form.controls.candidateListDescription"></textarea>
+            <mat-error />
+        </mat-form-field>
+
+        <ob-alert type="info">
+            {{
+                (isBigDepartment() ? 'generalElection.dispatch.committeeDueDateBigDepartment.hint' : 'generalElection.dispatch.committeeDueDate.hint')
+                    | translate
+            }}
+        </ob-alert>
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'generalElection.dispatch.committeeDueDate.label' | translate }}</mat-label>
+            <input matInput [matDatepicker]="committeeDueDatePicker" [formControl]="form.controls.committeeDueDate" required />
+            <mat-datepicker-toggle matIconSuffix [for]="committeeDueDatePicker" />
+            <mat-datepicker #committeeDueDatePicker xPosition="end" />
+            <mat-error />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'generalElection.dispatch.committeeDescription' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize [cdkAutosizeMinRows]="3" matInput [formControl]="form.controls.committeeDescription"></textarea>
+            <mat-error />
+        </mat-form-field>
+    </fieldset>
+</form>

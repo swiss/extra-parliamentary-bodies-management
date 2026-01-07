@@ -1,0 +1,26 @@
+<form [formGroup]="personSearchForm" id="personDataForm">
+    <div class="person-search">
+        <mat-form-field obErrorMessages>
+            <input
+                type="text"
+                placeholder="{{ 'memberships.search.person' | translate }}*"
+                matInput
+                [formControl]="personSearchForm.controls.name"
+                [matAutocomplete]="auto"
+            />
+            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="setPersonName($event)">
+                @for (person of filteredOptions(); track person.id) {
+                    <mat-option [value]="person">
+                        <b>{{ person.surname }} {{ person.givenName }} ({{ person.birthYear }})</b>
+                    </mat-option>
+                }
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <span class="person-search-icon">
+            @if (this.personSelected()) {
+                <a href="persons/{{ this.personSelected()!.id }}" target="_blank"> <mat-icon svgIcon="link" class="ob-icon" /></a>
+            }
+        </span>
+    </div>
+</form>
