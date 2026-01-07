@@ -1,0 +1,7 @@
+$monoColor: rgb(64, 64, 70);
+
+.lance-ui-container {
+	--command-action-color: $monoColor;
+	--command-danger-color: $monoColor;
+	--command-success-color: $monoColor;
+}
