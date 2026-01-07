@@ -688,6 +688,8 @@ public class DatabaseService(DataContext targetContext, ILogger<DatabaseService>
             await targetContext.Database.ExecuteSqlRawAsync($"DELETE FROM \"{schemaName}\".\"persons\"");
             await targetContext.Database.ExecuteSqlRawAsync($"DELETE FROM \"{schemaName}\".\"addresses\"");
             await targetContext.Database.ExecuteSqlRawAsync($"DELETE FROM \"{schemaName}\".\"document_storages\"");
+            // reset a running general election
+            await targetContext.Database.ExecuteSqlRawAsync($"UPDATE  \"{schemaName}\".\"term_of_office_dates\" set is_general_election = null where is_general_election = true");
 
             logger.LogInformation("Cleared tables");
         }
