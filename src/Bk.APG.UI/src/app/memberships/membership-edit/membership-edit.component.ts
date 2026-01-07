@@ -30,9 +30,12 @@ export class MembershipEditComponent {
     form = computed(() => this.formComponent().membershipForm);
     personSelected = computed(() => this.formComponent().personSelected);
     committeeSelected = computed(() => this.formComponent().committeeSelected);
+
     isForCommittee = false;
     isForPerson = false;
     canDelete = false;
+
+    protected hasValidationErrors = computed(() => this.formComponent().validationResults().hasErrors);
 
     private unmodifiedMembership!: MembershipUpdate;
     private readonly deleteClick$ = new Subject<void>();
