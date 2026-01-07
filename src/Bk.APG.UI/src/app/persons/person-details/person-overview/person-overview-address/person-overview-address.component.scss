@@ -1,0 +1,14 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+.heading-text {
+    font-weight: bold;
+    padding-right: $ob-spacing-lg;
+}
+
+.active_address {
+    color: $ob-black;
+}
+
+.inactive_address {
+    color: $ob-gray-light;
+}

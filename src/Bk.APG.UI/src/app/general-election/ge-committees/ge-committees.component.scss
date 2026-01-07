@@ -1,0 +1,97 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    .paginator {
+        margin-top: $ob-spacing-default;
+    }
+}
+
+:host::ng-deep {
+    table {
+        thead {
+            tr {
+                th {
+                    &:nth-child(1) {
+                        width: 8%;
+                    }
+
+                    &:nth-child(2) {
+                        width: 8%;
+                    }
+
+                    &:nth-child(3) {
+                        width: 8%;
+                    }
+
+                    &:nth-child(4) {
+                        width: 8%;
+                    }
+
+                    &:nth-child(5) {
+                        width: 8%;
+                    }
+
+                    &:nth-child(6) {
+                        width: 8%;
+                    }
+
+                    &:nth-child(7) {
+                        width: 9%;
+                    }
+
+                    &:nth-child(8) {
+                        width: 10%;
+                    }
+
+                    &:nth-child(9) {
+                        width: 9%;
+                    }
+
+                    &:nth-child(10) {
+                        width: 9%;
+                    }
+
+                    &:nth-child(11) {
+                        width: 9%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    :host::ng-deep {
+        table {
+            display: block;
+            width: 100%;
+
+            thead {
+                display: none;
+            }
+
+            tbody {
+                display: block;
+
+                tr {
+                    display: block;
+                    margin-bottom: 1em;
+                    border-bottom: 1px solid #ddd;
+
+                    td {
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 0.5em 0;
+
+                        &:before {
+                            content: attr(data-label);
+                            font-weight: bold;
+                            flex-basis: 50%;
+                            text-align: left;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

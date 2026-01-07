@@ -1,0 +1,116 @@
+@if (committeeDetails(); as committee) {
+    <div class="committee-overview">
+        @if (committee.needsAttentionNoMembers) {
+            <ob-alert type="warning">{{ 'committee.details.warning.noMembers' | translate }}</ob-alert>
+        }
+        @if (committee.needsAttentionAboveMaxMembers) {
+            <ob-alert type="warning">{{ 'committee.details.warning.aboveMaxMembers' | translate }}</ob-alert>
+        }
+        <!-- TODO REACTIVATE -->
+        <!--@if (committee.needsAttentionDataProtectionOfficer) {
+            <ob-alert type="warning">{{ 'committee.details.warning.dataProtectionOfficer' | translate }}</ob-alert>
+        } @else 
+         -->
+        @if (!hasDataProtectionOfficer()) {
+            <ob-alert type="info">{{ 'committee.details.info.dataProtectionOfficer' | translate }}</ob-alert>
+        }
+        @if (!hasSecretariat()) {
+            <ob-alert type="info">{{ 'committee.details.info.secretariat' | translate }}</ob-alert>
+        }
+        @if (
+            committee.needsAttentionMembershipExpired ||
+            committee.needsAttentionLongerDuty ||
+            committee.needsAttentionShorterDuty ||
+            committee.needsAttentionFederalDuty ||
+            committee.needsAttentionFederalAssembly
+        ) {
+            <ob-alert type="warning">{{ 'committee.details.warning.memberships' | translate }}</ob-alert>
+        }
+        <p class="overview-hint">{{ 'common.overviewHint' | translate }}</p>
+        <div class="description">
+            <h3 class="description-header">
+                {{ committee.description }}
+                @if (committee.extraParliamentaryCommission) {
+                    ({{ 'committee.details.extraParliamentaryCommissionAbbreviation' | translate }})
+                }
+            </h3>
+            <div class="active-hint" [ngClass]="committee.isActive ? 'active' : 'inactive'">
+                {{ (committee.isActive ? 'committee.details.active' : 'committee.details.inactive') | translate }}
+            </div>
+        </div>
+
+        @if (currentLanguage$ | async; as currentLanguage) {
+            <div class="ob-flex">
+                <mat-card>
+                    <mat-card-content>
+                        <table>
+                            @if (currentLanguage !== 'de') {
+                                <tr>
+                                    <td class="heading-text">{{ 'common.german' | translate }}</td>
+                                    <td>{{ committee.descriptionDe }}</td>
+                                </tr>
+                            }
+                            @if (currentLanguage !== 'fr') {
+                                <tr>
+                                    <td class="heading-text">{{ 'common.french' | translate }}</td>
+                                    <td>{{ committee.descriptionFr }}</td>
+                                </tr>
+                            }
+                            @if (currentLanguage !== 'it') {
+                                <tr>
+                                    <td class="heading-text">{{ 'common.italian' | translate }}</td>
+                                    <td>{{ committee.descriptionIt }}</td>
+                                </tr>
+                            }
+                            @if (currentLanguage !== 'rm') {
+                                <tr>
+                                    <td class="heading-text">{{ 'common.romansh' | translate }}</td>
+                                    <td>{{ committee.descriptionRm }}</td>
+                                </tr>
+                            }
+                        </table>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        }
+
+        <div class="ob-flex">
+            <apg-committee-overview-basic-data [committee]="committeeDetailsService.committeeDetails()" />
+        </div>
+
+        <div class="ob-flex">
+            <mat-card>
+                <mat-card-content>
+                    <table>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.legalForm' | translate }}</td>
+                            <td>{{ committee.legalForm }}</td>
+                        </tr>
+                        <tr>
+                            <!-- TODO: entfernen, wenn neues APG abgenommen ist -->
+                            <td class="heading-text">{{ 'committee.details.oldLegalForm' | translate }}</td>
+                            <td>{{ committee.oldLegalForm }}</td>
+                        </tr>
+                        <tr>
+                            <td class="heading-text">{{ 'committee.details.legalBase' | translate }}</td>
+                            <td>{{ committee.legalBase }}</td>
+                        </tr>
+                    </table>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <div class="ob-flex">
+            <mat-card>
+                <mat-card-content>
+                    <apg-contact-points [contactPoints]="committee.contactPoints!" />
+                </mat-card-content>
+            </mat-card>
+        </div>
+        @if (committeeDetails()) {
+            <div class="ob-flex">
+                <apg-committee-justifications-overview [committeeDetails]="committeeDetails()" />
+            </div>
+        }
+    </div>
+}

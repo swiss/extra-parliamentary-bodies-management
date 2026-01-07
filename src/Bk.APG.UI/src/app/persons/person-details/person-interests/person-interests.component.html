@@ -1,0 +1,30 @@
+@if (personDetailsService.personDetails(); as personDetails) {
+    @if (personDetails.needsAttentionInterests) {
+        <ob-alert type="warning">{{ 'person.details.warning.interests' | translate }}<br /></ob-alert>
+    }
+}
+<form [formGroup]="form" id="interestsForm" obUnsavedChanges>
+    <div class="interest-header">
+        <h2>{{ personDetailsService.personName() }}</h2>
+        <div class="buttons">
+            @if (!noInterest()) {
+                <apg-help-tooltip text="interest.helpTooltip.dates" size="big" />
+                <button (click)="reset()" [disabled]="!form.dirty" mat-button obButton="secondary" type="button">{{ 'common.reset' | translate }}</button>
+                <button mat-button obButton="primary" type="button" (click)="saveInterests()" [disabled]="!form.dirty || !form.valid">
+                    {{ 'interest.save' | translate }}
+                </button>
+            }
+        </div>
+    </div>
+
+    @if (!noInterest()) {
+        <div>
+            <p class="overview-hint">{{ 'interest.hint1' | translate }}</p>
+            <p class="overview-hint">{{ 'interest.hint2' | translate }}</p>
+        </div>
+
+        <apg-interests-edit-form [formArray]="form.controls.interests" [personId]="personId" [reload]="reload" />
+    } @else {
+        <div>{{ 'noInterest.info' | translate }}</div>
+    }
+</form>

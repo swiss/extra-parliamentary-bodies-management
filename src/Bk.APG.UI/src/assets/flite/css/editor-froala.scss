@@ -1,0 +1,18 @@
+span.fr-video[data-flite-cid] {
+	width: -moz-fit-content;
+	width: fit-content;
+}
+
+.fr-toolbar .fr-command.fr-btn {
+	svg.loopindex-button[height='32'] {
+		width: auto;
+		transform: scale(0.75) translate(0px, -6px);
+		transform-origin: center center;
+	}
+
+
+	&.flite-froala-button-highlight {
+		border: 1px solid rgba(128, 128, 128, 0.4);
+		background-color: #eee;
+	}
+}

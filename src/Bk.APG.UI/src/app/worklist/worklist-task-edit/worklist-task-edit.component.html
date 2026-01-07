@@ -1,0 +1,50 @@
+<div class="task-header">
+    <h3>{{ (worklistTask()?.canEdit ? 'worklist.task.edit' : 'worklist.task.view') | translate }}</h3>
+    <div class="buttons">
+        <button (click)="close()" mat-button obButton="secondary" type="button">{{ 'common.close' | translate }}</button>
+        @if (worklistTask()?.canEdit) {
+            <button (click)="save()" [disabled]="!form.valid" mat-button obButton="primary" type="button">{{ 'common.save' | translate }}</button>
+        }
+    </div>
+</div>
+
+<form [formGroup]="form" id="worklist-task-edit-form" obUnsavedChanges>
+    <fieldset>
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'worklist.task.worklistTaskType' | translate }}</mat-label>
+            <input matInput [formControl]="form.controls.worklistTaskType" />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'worklist.task.worklistTaskState' | translate }}</mat-label>
+            <input matInput [formControl]="form.controls.worklistTaskState" />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'worklist.task.assignedBy' | translate }}</mat-label>
+            <input matInput [formControl]="form.controls.assignedBy" />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'worklist.task.assignedTo' | translate }}</mat-label>
+            <input matInput [formControl]="form.controls.assignedTo" />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'worklist.task.dueDate' | translate }}</mat-label>
+            <input matInput [matDatepicker]="dueDatePicker" [formControl]="form.controls.dueDate" required />
+            <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker" />
+            <mat-datepicker #dueDatePicker xPosition="end" />
+            <mat-error />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'worklist.task.description' | translate }}</mat-label>
+            <textarea cdkTextareaAutosize [cdkAutosizeMinRows]="3" [cdkAutosizeMaxRows]="15" matInput [formControl]="form.controls.description"></textarea>
+        </mat-form-field>
+    </fieldset>
+</form>
+
+@if (worklistTask()?.canForward) {
+    <apg-worklist-task-forward [worklistTaskId]="taskId" [isBigDepartment]="!!worklistTask()?.isBigDepartment" />
+}

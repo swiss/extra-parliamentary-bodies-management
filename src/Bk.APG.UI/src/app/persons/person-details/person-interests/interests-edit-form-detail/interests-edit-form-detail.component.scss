@@ -1,0 +1,55 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+
+    .interest-edit-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .interest-edit-detail {
+        display: flex;
+        justify-content: space-between;
+        margin-left: $ob-spacing-xs;
+    }
+
+    .interest-edit-field {
+        margin-left: $ob-spacing-xs;
+    }
+
+    .action-button {
+        margin-left: $ob-spacing-xs;
+        margin-top: $ob-spacing-xs;
+    }
+}
+
+.autocomplete-helper-text {
+    font-size: small;
+}
+
+.loading-option {
+    pointer-events: none;
+
+    ::ng-deep span:has(> mat-progress-bar) {
+        width: 100%;
+    }
+}
+
+.interest-from-uid {
+    background-color: yellowgreen;
+}
+
+.interest-inactive {
+    background-color: $ob-secondary-100;
+}
+
+.date-field {
+    width: 40%;
+}
+
+.select-field {
+    width: 50%;
+}

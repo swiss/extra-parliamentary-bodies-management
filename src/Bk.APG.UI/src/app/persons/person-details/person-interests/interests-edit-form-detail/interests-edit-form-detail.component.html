@@ -1,0 +1,125 @@
+@if (formGroup) {
+    <div class="interest-edit-detail" [formGroup]="formGroup" [ngClass]="isInactiveRow ? 'interest-inactive' : ''">
+        <mat-form-field [hidden]="true">
+            <input matInput type="text" formControlName="uidOrganisationId" id="uidOrganisationId" />
+        </mat-form-field>
+
+        <mat-form-field [hidden]="true">
+            <input matInput type="text" formControlName="rowVersion" id="rowVersion" />
+        </mat-form-field>
+
+        <mat-form-field [hidden]="true">
+            <input matInput type="text" formControlName="personId" id="personId" />
+        </mat-form-field>
+
+        <mat-form-field [hidden]="true">
+            <input matInput type="text" formControlName="isInactiveRow" id="isInactiveRow" />
+        </mat-form-field>
+
+        <mat-form-field [hidden]="true">
+            <input matInput type="text" formControlName="isUidRow" id="isUidRow" />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="date-field">
+            <mat-label>{{ 'interest.beginDate' | translate }}</mat-label>
+            <input formControlName="beginDate" [matDatepicker]="beginDate" matInput />
+            <mat-datepicker-toggle matSuffix [for]="beginDate" />
+            <mat-datepicker #beginDate [disabled]="false" xPosition="end" />
+            <mat-error>
+                {{ errorService.getControlError(formGroup.controls.beginDate.errors, 'interest.beginDate' | translate, 'interest.error.beginDate') }}
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="interest-edit-field date-field">
+            <mat-label>{{ 'interest.endDate' | translate }}</mat-label>
+            <input formControlName="endDate" [matDatepicker]="endDate" matInput />
+            <mat-datepicker-toggle matSuffix [for]="endDate" />
+            <mat-datepicker #endDate [disabled]="false" xPosition="end" />
+            <mat-error>
+                {{ errorService.getControlError(formGroup.controls.beginDate.errors, 'interest.beginDate' | translate, 'interest.error.beginDate') }}</mat-error
+            >
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="interest-edit-field">
+            <mat-label>{{ 'interest.interestText' | translate }}</mat-label>
+            <input
+                matInput
+                type="text"
+                formControlName="interestText"
+                id="interestText"
+                [matAutocomplete]="organizations"
+                [ngClass]="isUidRow ? 'interest-from-uid' : ''"
+            />
+            <mat-error />
+
+            <mat-autocomplete #organizations="matAutocomplete" (optionSelected)="setOrganization($event)">
+                @if (isLoadingSuggestions()) {
+                    <mat-option class="loading-option">
+                        <mat-progress-bar mode="indeterminate" />
+                    </mat-option>
+                }
+
+                @for (option of cleanOrganizations(); track option.id) {
+                    <mat-option [value]="option.id">
+                        <b>{{ option.organizationName }}</b>
+                        <span class="autocomplete-helper-text"
+                            >&nbsp;&nbsp;&nbsp;({{ option.zip }} {{ option.city }}) ({{ option.matchQuality }}{{ 'interest.matchQuality' | translate }})</span
+                        >
+                    </mat-option>
+                }
+            </mat-autocomplete>
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="interest-edit-field">
+            <mat-label>{{ 'interest.text' | translate }}</mat-label>
+            <input matInput type="text" formControlName="text" id="text" />
+            <mat-error />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="interest-edit-field">
+            <mat-label>{{ 'interest.legalForm' | translate }}</mat-label>
+            <mat-select formControlName="legalFormId">
+                @for (legalForm of masterDataService.legalForms(); track legalForm.id) {
+                    <mat-option [value]="legalForm.id">{{ legalForm.text }}</mat-option>
+                }
+            </mat-select>
+            <mat-error />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="interest-edit-field">
+            <mat-label>{{ 'interest.interestLegalForm' | translate }}</mat-label>
+            <mat-select formControlName="interestLegalFormId">
+                @for (interestLegalForm of masterDataService.interestLegalForms(); track interestLegalForm.id) {
+                    <mat-option [value]="interestLegalForm.id">{{ interestLegalForm.text }}</mat-option>
+                }
+            </mat-select>
+            <mat-error />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="interest-edit-field select-field">
+            <mat-label>{{ 'interest.interestCommittee' | translate }}</mat-label>
+            <mat-select formControlName="interestCommitteeId">
+                @for (interestCommittee of masterDataService.interestCommittees(); track interestCommittee.id) {
+                    <mat-option [value]="interestCommittee.id">{{ interestCommittee.text }}</mat-option>
+                }
+            </mat-select>
+            <mat-error />
+        </mat-form-field>
+
+        <mat-form-field obErrorMessages class="interest-edit-field select-field">
+            <mat-label>{{ 'interest.interestFunction' | translate }}</mat-label>
+            <mat-select formControlName="interestFunctionId">
+                @for (interestFunction of masterDataService.interestFunctions(); track interestFunction.id) {
+                    <mat-option [value]="interestFunction.id">{{ interestFunction.text }}</mat-option>
+                }
+            </mat-select>
+            <mat-error />
+        </mat-form-field>
+
+        <div class="action-button">
+            <button mat-icon-button obButton="secondary" type="button" (click)="remove()" [matTooltip]="'interest.remove' | translate" class="subject-button">
+                <mat-icon svgIcon="delete" class="ob-icon" />
+            </button>
+        </div>
+    </div>
+}

@@ -1,0 +1,69 @@
+<div>
+    <apg-persons-filter (filter)="onFilter($event)" />
+</div>
+
+<table
+    (matSortChange)="onSort($event)"
+    [dataSource]="dataSource"
+    [matSortActive]="currentSort.active"
+    [matSortDirection]="currentSort.direction"
+    class="ob-table"
+    mat-table
+    matSort
+    matSortDisableClear
+>
+    <ng-container matColumnDef="surname">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'persons.table.header.surname.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.surname }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="givenName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'persons.table.header.givenName.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.givenName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="hasActiveMembership">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'persons.table.header.activeMembership.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.hasActiveMembership ? ('i18n.common.yes' | translate) : ('i18n.common.no' | translate) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="birthYear">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'persons.table.header.birthYear.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.birthYear }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="canton">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'persons.table.header.canton.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.canton }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="city">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'persons.table.header.city.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.city }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="language">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'persons.table.header.language.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.language }}</td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr (click)="openPerson(row)" *matRowDef="let row; columns: displayedColumns" [ngClass]="row.needsAttention ? 'red-table-row' : ''" mat-row></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">
+            @if (isFiltered()) {
+                {{ 'persons.table.noEntriesFound' | translate }}
+            } @else {
+                {{ 'persons.table.noEntriesSearched' | translate }}
+            }
+        </td>
+    </tr>
+</table>
+<mat-paginator
+    (page)="onPageChange($event)"
+    [length]="totalCount()"
+    [pageIndex]="pagingParams.pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageSize]="pagingParams.pageSize"
+    class="paginator"
+/>

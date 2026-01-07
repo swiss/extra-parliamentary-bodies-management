@@ -1,0 +1,7 @@
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+mat-icon {
+    font-size: x-large;
+    margin-left: 8px;
+    color: $ob-red-500;
+}

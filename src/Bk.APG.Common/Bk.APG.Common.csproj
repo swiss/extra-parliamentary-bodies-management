@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Bk.APG.Common</RootNamespace>
+        <NeutralLanguage>de</NeutralLanguage>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Swiss.FCh.Cube.RawData" Version="2.0.1" />
+        <PackageReference Include="Swiss.FCh.Cube.Dimension" Version="2.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Resources\BusinessTexts.resx">
+        <Generator>PublicResXFileCodeGenerator</Generator>
+        <LastGenOutput>BusinessTexts.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\BusinessTexts.fr.resx">
+        <DependentUpon>BusinessTexts.resx</DependentUpon>
+      </EmbeddedResource>
+      <EmbeddedResource Update="Resources\BusinessTexts.it.resx">
+        <DependentUpon>BusinessTexts.resx</DependentUpon>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Resources\BusinessTexts.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>BusinessTexts.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+</Project>
