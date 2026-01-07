@@ -33,7 +33,8 @@ export interface PersonDetails {
     needsAttentionLongerDuty: boolean;
     needsAttentionShorterDuty: boolean;
     needsAttentionFederalDuty: boolean;
-    needsAttentionFederalAssembly: boolean;
+    needsAttentionFederalAssemblyAdministrationCommission: boolean;
+    needsAttentionFederalAssemblyAuthoritiesCommission: boolean;
     needsAttentionBasicData: boolean;
     needsAttentionInterests: boolean;
     needsAttentionOccupation: boolean;

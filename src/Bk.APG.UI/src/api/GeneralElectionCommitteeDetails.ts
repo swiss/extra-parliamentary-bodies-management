@@ -87,5 +87,6 @@ export interface GeneralElectionCommitteeDetails {
     needsAttentionDataProtectionOfficer: boolean;
     needsAttentionBasicData: boolean;
     needsAttentionMembershipExpired: boolean;
+    needsAttentionMembershipInterestOrOccupation: boolean;
     justificationsNeedAttention: boolean;
 }
