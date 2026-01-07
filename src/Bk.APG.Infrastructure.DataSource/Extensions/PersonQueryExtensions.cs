@@ -77,4 +77,29 @@ public static class PersonQueryExtensions
             _ => query
         };
     }
+
+    public static IQueryable<Person> FilterPersonDataByPermission(this IQueryable<Person> query, DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId)
+    {
+        if (departmentId == Guid.Empty && officeId == Guid.Empty && committeeId == Guid.Empty)
+        {
+            return query;
+        }
+
+        if (departmentId != Guid.Empty)
+        {
+            query = query.Where(c => c.Memberships.Any(m => m.Committee!.DepartmentId == departmentId && m.BeginDate <= startDate && m.EndDate >= startDate));
+        }
+
+        if (officeId != Guid.Empty)
+        {
+            query = query.Where(c => c.Memberships.Any(m => m.Committee!.OfficeId == officeId && m.BeginDate <= startDate && m.EndDate >= startDate));
+        }
+
+        if (committeeId != Guid.Empty)
+        {
+            query = query.Where(c => c.Memberships.Any(m => m.Committee!.Id == committeeId && m.BeginDate <= startDate && m.EndDate >= startDate));
+        }
+
+        return query;
+    }
 }
