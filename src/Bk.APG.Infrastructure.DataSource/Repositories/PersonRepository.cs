@@ -167,16 +167,16 @@ public class PersonRepository : IPersonRepository
         return persons;
     }
 
-    public async Task<Person[]> GetPersonsForExport(DateOnly startDate)
+    public async Task<Person[]> GetPersonsForExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId)
     {
         var persons = await GetPersons()
-            .Where(p => p.Memberships.Any(m => m.BeginDate <= startDate && m.EndDate >= startDate))
             .OrderBy(p => p.Surname)
             .ThenBy(p => p.GivenName)
             .Include(p => p.Memberships)
             .Include(p => p.CorrespondenceAddress)
             .Include(p => p.Language)
             .Include(p => p.Gender)
+            .FilterPersonDataByPermission(startDate, departmentId, officeId, committeeId)
             .AsNoTracking()
             .AsSplitQuery()
             .ToArrayAsync();
