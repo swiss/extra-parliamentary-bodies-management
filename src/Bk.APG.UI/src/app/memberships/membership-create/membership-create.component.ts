@@ -30,6 +30,8 @@ export class MembershipCreateComponent {
     isForCommittee = false;
     isForPerson = false;
 
+    protected hasValidationErrors = computed(() => this.formComponent().validationResults().hasErrors);
+
     constructor(
         private readonly router: Router,
         private readonly route: ActivatedRoute,

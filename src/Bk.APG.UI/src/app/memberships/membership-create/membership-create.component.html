@@ -9,7 +9,7 @@
 
     <div class="buttons">
         <button mat-button obButton="secondary" type="button" (click)="close()">{{ 'common.close' | translate }}</button>
-        <button mat-button obButton="primary" type="button" [disabled]="selectionMissing() || !form().valid" (click)="save()">
+        <button mat-button obButton="primary" type="button" [disabled]="selectionMissing() || !form().valid || hasValidationErrors()" (click)="save()">
             {{ 'common.save' | translate }}
         </button>
     </div>
