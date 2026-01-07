@@ -140,7 +140,8 @@ public static class CommitteeMapper
             NeedsAttentionAboveMaxMembers = committee.NeedsAttentionAboveMaxMembers,
             NeedsAttentionDataProtectionOfficer = committee.NeedsAttentionDataProtectionOfficer,
             NeedsAttentionBasicData = committee.NeedsAttentionBasicData,
-            NeedsAttentionMembershipExpired = committee.NeedsAttentionMembershipExpired
+            NeedsAttentionMembershipExpired = committee.NeedsAttentionMembershipExpired,
+            NeedsAttentionMembershipInterestOrOccupation = committee.NeedsAttentionMembershipInterestOrOccupation
         };
         return committeeDetailDto;
     }

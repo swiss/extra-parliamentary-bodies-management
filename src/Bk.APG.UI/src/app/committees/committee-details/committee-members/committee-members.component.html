@@ -12,7 +12,10 @@
         committeeDetails.needsAttentionFederalDuty ||
         committeeDetails.needsAttentionFederalAssembly
     ) {
-        <ob-alert type="warning">{{ 'committee.details.warning.memberships' | translate }}</ob-alert>
+        <ob-alert type="warning">{{ 'committee.details.warning.membershipJustificationOrStatus' | translate }}</ob-alert>
+    }
+    @if (committeeDetails.needsAttentionMembershipInterestOrOccupation) {
+        <ob-alert type="warning">{{ 'committee.details.warning.membershipInterestOrOccupation' | translate }}</ob-alert>
     }
 }
 <div class="committee-members-header">

@@ -60,14 +60,21 @@ internal class PersonTests
         Assert.That(person.ActiveCommittees.Count, Is.EqualTo(1));
     }
 
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString)]
-    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString)]
-    [TestCase(CommitteeType.ManagementCommitteeGuidAsString)]
-    public void NeedsAttentionInterests_WithInterest_ShouldReturnFalse(string committeeTypeId)
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "text", false)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "text", false)]
+    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "text", false)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "text", false)]
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "", true)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "", true)]
+    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "", true)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "", true)]
+    public void NeedsAttentionInterests_WithInterest_ShouldReturnFalse(string committeeTypeId, string interestText, bool expected)
     {
         var person = new PersonBuilder()
-            .WithInterests([new InterestBuilder().Build()])
+            .WithInterests([new InterestBuilder().WithInterestText(interestText)
+                .WithLegalForm(new LegalFormBuilder().Build())
+                .WithInterestFunction(new InterestFunctionBuilder().Build())
+                .WithInterestCommittee(new InterestCommitteeBuilder().Build()).Build()])
             .WithMemberships([new MembershipBuilder()
                 .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
                 .WithCommittee(new CommitteeBuilder()
@@ -75,7 +82,7 @@ internal class PersonTests
             .Build();
         person.NoInterest = false;
 
-        Assert.That(person.NeedsAttentionInterests, Is.False);
+        Assert.That(person.NeedsAttentionInterests, Is.EqualTo(expected));
     }
 
     [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString)]

@@ -3,8 +3,11 @@
         @if (personDetails.needsAttentionFederalDuty) {
             <ob-alert type="warning">{{ 'person.details.warning.federalDuty' | translate }}</ob-alert>
         }
-        @if (personDetails.needsAttentionFederalAssembly) {
-            <ob-alert type="warning">{{ 'person.details.warning.federalAssembly' | translate }}</ob-alert>
+        @if (personDetails.needsAttentionFederalAssemblyAdministrationCommission) {
+            <ob-alert type="warning">{{ 'person.details.warning.federalAssemblyAdministrationCommission' | translate }}</ob-alert>
+        }
+        @if (personDetails.needsAttentionFederalAssemblyAuthoritiesCommission) {
+            <ob-alert type="warning">{{ 'person.details.warning.federalAssemblyAuthoritiesCommission' | translate }}</ob-alert>
         }
         @if (personDetails.needsAttentionOccupation) {
             <ob-alert type="warning">{{ 'person.details.warning.occupation' | translate }}</ob-alert>

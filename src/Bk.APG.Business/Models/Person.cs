@@ -54,7 +54,8 @@ public class Person : EntityBase
         NeedsAttentionLongerDuty ||
         NeedsAttentionShorterDuty ||
         NeedsAttentionFederalDuty ||
-        NeedsAttentionFederalAssembly ||
+        NeedsAttentionFederalAssemblyAuthoritiesCommission ||
+        NeedsAttentionFederalAssemblyAdministrationCommission ||
         NeedsAttentionInterests ||
         NeedsAttentionOccupation;
 
@@ -68,13 +69,17 @@ public class Person : EntityBase
     public bool NeedsAttentionFederalDuty => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalDuty);
 
     [NotMapped]
-    public bool NeedsAttentionFederalAssembly => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalAssembly);
+    public bool NeedsAttentionFederalAssemblyAuthoritiesCommission => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalAssemblyAuthoritiesCommission);
 
     [NotMapped]
-    public bool NeedsAttentionInterests => !NoInterest && Interests.Count == 0 && Memberships.Any(m => m.IsActive && ((m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) ||
+    public bool NeedsAttentionFederalAssemblyAdministrationCommission => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalAssemblyAdministrationCommission);
+
+    [NotMapped]
+    public bool NeedsAttentionInterests => !NoInterest && Memberships.Any(m => m.IsActive && ((m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) ||
         m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
         m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
-        m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid));
+        m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid)) &&
+        (Interests.Count == 0 || Interests.Any(i => string.IsNullOrWhiteSpace(i.InterestText) || i.LegalForm is null || i.InterestCommittee is null || i.InterestFunction is null));
 
     [NotMapped]
 #pragma warning disable CA1051
