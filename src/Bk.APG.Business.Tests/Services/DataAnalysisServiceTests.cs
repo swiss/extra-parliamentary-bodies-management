@@ -610,6 +610,8 @@ internal class DataAnalysisServiceTests
     [Test]
     public async Task GeneratePersonExport_ShouldExportPersonCorrectly()
     {
+        var zeroGuid = Guid.Empty;
+
         var dataAnalysisDate = new DateOnly(2024, 1, 1);
         var person = new PersonBuilder()
             .WithGender(new GenderBuilder().Build())
@@ -618,7 +620,7 @@ internal class DataAnalysisServiceTests
             .WithCorrespondenceAddress(new AddressBuilder().Build())
             .WithMemberships([new MembershipBuilder().WithIsActive(true).WithEmploymentLevel(30).WithCommittee(new CommitteeBuilder().WithGermanDescription("Gremium DE").Build()).Build()])
             .Build();
-        _personRepository.GetPersonsForExport(dataAnalysisDate).Returns([person]);
+        _personRepository.GetPersonsForExport(dataAnalysisDate, zeroGuid, zeroGuid, zeroGuid).Returns([person]);
 
         _configuration["FrontendUrl"].Returns("FooBar");
 
