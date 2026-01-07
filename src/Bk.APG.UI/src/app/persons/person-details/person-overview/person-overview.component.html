@@ -12,7 +12,11 @@
         @if (personDetails.needsAttentionOccupation) {
             <ob-alert type="warning">{{ 'person.details.warning.occupation' | translate }}</ob-alert>
         } @else {
-            @if (!personDetails.occupations || personDetails.occupations === '' || !personDetails.employer) {
+            @if (
+                !personDetails.noEmployment &&
+                !personDetails.federalDuty &&
+                (!personDetails.occupations || personDetails.occupations === '' || !personDetails.employer)
+            ) {
                 <ob-alert type="info">{{ 'person.details.info.occupation' | translate }}</ob-alert>
             }
         }
