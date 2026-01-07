@@ -1,0 +1,99 @@
+<div>
+    <apg-ge-committees-filter (filter)="onFilter($event)" />
+</div>
+
+<table
+    (matSortChange)="onSort($event)"
+    [dataSource]="dataSource"
+    [matSortActive]="currentSort.active"
+    [matSortDirection]="currentSort.direction"
+    class="ob-table"
+    mat-table
+    matSort
+    matSortDisableClear
+>
+    <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committees.table.header.description.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.description.label' | translate }}">{{ element.description }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="level">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committees.table.header.level.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.level.label' | translate }}">{{ element.level }}</td>
+    </ng-container>
+
+    @if (isAdmin()) {
+        <ng-container matColumnDef="department">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committees.table.header.department.label' | translate }}</th>
+            <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.department.label' | translate }}">{{ element.department }}</td>
+        </ng-container>
+    }
+    @if (isAdmin() || isDepartmentUser()) {
+        <ng-container matColumnDef="office">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committees.table.header.office.label' | translate }}</th>
+            <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.office.label' | translate }}">{{ element.office }}</td>
+        </ng-container>
+    }
+    <ng-container matColumnDef="committeeType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committees.table.header.committeeType.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.committeeType.label' | translate }}">
+            {{ element.committeeType }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="isMarketOrientated">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committees.table.header.isMarketOrientated.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.isMarketOrientated.label' | translate }}">
+            {{
+                element.isMarketOrientated
+                    ? ('committees.table.header.marketOrientated.label' | translate)
+                    : element.isMarketOrientated === false
+                      ? ('committees.table.header.societyOrientated.label' | translate)
+                      : ''
+            }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="hasSupervisionDuty">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committees.table.header.hasSupervisionDuty.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.hasSupervisionDuty.label' | translate }}">
+            {{ element.hasSupervisionDuty ? ('i18n.common.yes' | translate) : element.hasSupervisionDuty === false ? ('i18n.common.no' | translate) : '' }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.status.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.status.label' | translate }}"></td>
+    </ng-container>
+
+    <ng-container matColumnDef="vacancies">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.vacancies.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.vacancies.label' | translate }}"></td>
+    </ng-container>
+
+    <ng-container matColumnDef="statusProposal">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.statusProposal.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.statusProposal.label' | translate }}"></td>
+    </ng-container>
+
+    <ng-container matColumnDef="modified">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.modified.label' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.modified.label' | translate }}">
+            {{ element.modifiedBy }}<br />{{ element.modified | date: 'dd.MM.yyyy hh:MM:ss' }}
+        </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr (click)="openGeneralElectionCommittee(row.committeeId)" *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">{{ 'committees.table.noEntries' | translate }}</td>
+    </tr>
+</table>
+<mat-paginator
+    (page)="onPageChange($event)"
+    [length]="totalCount()"
+    [pageIndex]="pagingParams.pageIndex"
+    [pageSizeOptions]="pageSizeOptions"
+    [pageSize]="pagingParams.pageSize"
+    class="paginator"
+/>

@@ -1,0 +1,74 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: $ob-spacing-sm;
+    }
+
+    .committee-appointment-decision-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: sticky;
+        left: 0;
+        margin-bottom: $ob-spacing-sm;
+
+        button {
+            margin-top: 4px;
+        }
+    }
+}
+
+:host::ng-deep {
+    table {
+        thead {
+            tr {
+                th {
+                    &:nth-child(1) {
+                        width: 10em;
+                    }
+
+                    &:nth-child(2) {
+                        width: 10em;
+                    }
+
+                    &:nth-child(3) {
+                        width: 45em;
+                    }
+
+                    &:nth-child(4) {
+                        width: 45em;
+                    }
+
+                    &:nth-child(5) {
+                        width: 10em;
+                    }
+
+                    &:nth-child(6) {
+                        width: 10em;
+                    }
+
+                    &:nth-child(7) {
+                        width: 10em;
+                    }
+
+                    &:nth-child(8) {
+                        width: 3em;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.ob-icon {
+    margin-top: $ob-spacing-sm;
+}
+.action-button {
+    margin-right: 2px;
+}
+.actions {
+    white-space: nowrap;
+}

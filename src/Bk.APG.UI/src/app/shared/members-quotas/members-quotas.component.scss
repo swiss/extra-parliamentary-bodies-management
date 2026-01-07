@@ -1,0 +1,95 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host {
+    .stats {
+        background-color: $ob-white;
+        width: 100%;
+        text-wrap: nowrap;
+        text-align: center;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        tr {
+            &:nth-child(2),
+            &:first-child {
+                td {
+                    border-bottom: 0;
+                }
+
+                td:first-child {
+                    border-top-left-radius: 4px;
+                }
+
+                td:last-child {
+                    border-top-right-radius: 4px;
+                }
+            }
+
+            &:last-child {
+                td:first-child {
+                    border-bottom-left-radius: 4px;
+                }
+
+                td:last-child {
+                    border-bottom-right-radius: 4px;
+                }
+            }
+
+            background-color: unset !important;
+
+            td.red {
+                background-color: $ob-red-50;
+            }
+
+            td.green {
+                background-color: $ob-green-50;
+            }
+
+            &:not(:first-child),
+            &:last-child {
+                td {
+                    border: 1px solid $ob-gray;
+                    padding: 4px 8px;
+
+                    &:not(:last-child) {
+                        border-right: 0;
+                    }
+                }
+            }
+
+            &:nth-child(2):not(:last-child) {
+                td {
+                    border-bottom: 0;
+                }
+            }
+        }
+    }
+
+    @keyframes show {
+        100% {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    ::ng-deep .ob-popover-content {
+        z-index: 1000;
+        max-width: 100%;
+        opacity: 0;
+        animation: show 100ms 100ms forwards;
+        padding: 4px 8px 8px;
+        border-radius: 4px;
+        box-shadow:
+            0 4px 16px 0 rgba(0, 0, 0, 0.2),
+            0 4px 16px 0 rgba(0, 0, 0, 0.2);
+
+        .ob-popover-content-wrapper {
+            padding: 0;
+        }
+
+        td {
+            padding: 2px 8px 4px;
+        }
+    }
+}

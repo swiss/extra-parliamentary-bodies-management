@@ -1,0 +1,25 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+.contact-point {
+    vertical-align: top;
+    padding: 4px 8px;
+}
+
+.contact-point-line {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.contact-point-entry:not(last-child) {
+    padding-bottom: $ob-spacing-default;
+    max-width: 500px;
+}
+
+table {
+    width: 100%;
+    table-layout: fixed;
+
+    td {
+        align-content: start;
+    }
+}

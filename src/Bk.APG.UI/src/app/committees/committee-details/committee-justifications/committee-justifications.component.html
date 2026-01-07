@@ -1,0 +1,100 @@
+<form [formGroup]="committeeJustificationForm" id="committeeJustificationForm">
+    <div class="committee-members-header">
+        <div class="header-title">
+            <h3>{{ committeeDetails()?.description }}</h3>
+            <apg-help-tooltip text="committee.helpTooltip.justificationsTabGeneral" />
+        </div>
+    </div>
+
+    <div class="committee-justification-header">
+        <h4>
+            @if (!!committeeJustificationUpdate()) {
+                {{ 'committee.justification.edit' | translate }}
+            }
+        </h4>
+        <div class="buttons">
+            <button (click)="reset()" [disabled]="!committeeJustificationForm.dirty" mat-button obButton="secondary" type="button">
+                {{ 'common.reset' | translate }}
+            </button>
+            <button
+                mat-button
+                obButton="primary"
+                type="button"
+                [disabled]="!committeeJustificationForm.dirty || !committeeJustificationForm.valid"
+                (click)="save()"
+            >
+                {{ 'common.save' | translate }}
+            </button>
+        </div>
+    </div>
+
+    <div class="data-panel">
+        <h4>{{ 'committee.justification.members' | translate }}</h4>
+        <div class="topic-header">{{ 'committee.justification.currentMembers' | translate }} {{ committeeJustificationUpdate()?.currentMemberCount }}</div>
+        <apg-rich-text-editor
+            controlName="justificationMembers"
+            [heightMax]="200"
+            [heightMin]="100"
+            [title]="'committee.justification.justificationMembers' | translate"
+            [plugins]="['flite', 'lance']"
+        />
+    </div>
+
+    <div class="data-panel">
+        <h4>{{ 'committee.justification.genders' | translate }}</h4>
+        <div class="topic-header">{{ 'committee.justification.currentGenderQuota' | translate }} {{ committeeJustificationUpdate()?.currentGenderQuota }}</div>
+        <apg-rich-text-editor
+            controlName="justificationGenders"
+            [heightMax]="200"
+            [heightMin]="100"
+            [title]="'committee.justification.justificationGenders' | translate"
+            [plugins]="['flite', 'lance']"
+        />
+
+        <apg-rich-text-editor
+            controlName="measuresGenders"
+            [heightMax]="200"
+            [heightMin]="100"
+            [title]="'committee.justification.measuresGenders' | translate"
+            [plugins]="['flite', 'lance']"
+        />
+
+        <div class="general-measure-with-tooltip">
+            <label class="general-measure-header">{{ 'committee.justification.generalGenderMeasure' | translate }}</label>
+            <apg-help-tooltip text="committee.helpTooltip.generalMeasureInfo" />
+        </div>
+        <div>
+            <span class="general-measure" [innerHTML]="committeeDetails()?.generalGenderMeasure"></span>
+        </div>
+    </div>
+
+    <div class="data-panel">
+        <h4>{{ 'committee.justification.languages' | translate }}</h4>
+        <div class="topic-header">
+            {{ 'committee.justification.currentLanguageQuota' | translate }} {{ committeeJustificationUpdate()?.currentLanguageQuota }}
+        </div>
+        <apg-rich-text-editor
+            controlName="justificationLanguages"
+            [heightMax]="200"
+            [heightMin]="100"
+            [title]="'committee.justification.justificationLanguages' | translate"
+            [plugins]="['flite', 'lance']"
+        />
+
+        <apg-rich-text-editor
+            controlName="measuresLanguages"
+            [heightMax]="200"
+            [heightMin]="100"
+            [title]="'committee.justification.measuresLanguages' | translate"
+            [plugins]="['flite', 'lance']"
+        />
+
+        <div class="general-measure-with-tooltip">
+            <label class="general-measure-header">{{ 'committee.justification.generalLanguageMeasure' | translate }}</label>
+            <apg-help-tooltip text="committee.helpTooltip.generalMeasureInfo" />
+        </div>
+        <div>
+            <span class="general-measure" [innerHTML]="committeeDetails()?.generalLanguageMeasure"></span>
+        </div>
+    </div>
+</form>

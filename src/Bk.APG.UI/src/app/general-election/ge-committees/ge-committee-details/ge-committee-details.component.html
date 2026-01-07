@@ -1,0 +1,52 @@
+<mat-tab-group [(selectedIndex)]="selectedIndex" mat-stretch-tabs>
+    <mat-tab label="{{ 'committee.details.overview' | translate }}"><apg-ge-committee-overview /></mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>{{ 'committee.details.data' | translate }}</ng-template>
+        <apg-ge-committee-data />
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>{{ 'ge.committee.details.memberships' | translate }}</ng-template>
+        <apg-ge-committee-memberships />
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>{{ 'generalElection.committee.details.candidateList' | translate }}</ng-template>
+        <apg-ge-committee-candidate-list />
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>{{ 'committee.details.contacts' | translate }}</ng-template>
+        <div class="ge-tab-hint">{{ 'generalElection.committee.details.contacts.hint' | translate }}</div>
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>
+            {{ 'ge.committee.details.justifications' | translate }}
+            <apg-unsaved-changes-icon
+                toolTip="common.pleaseCheckData"
+                [hidden]="!generalElectionCommitteeDetailsService.committeeDetails()?.justificationsNeedAttention"
+            />
+        </ng-template>
+        <apg-ge-committee-justifications />
+    </mat-tab>
+
+    <mat-tab>
+        <ng-template mat-tab-label>{{ 'committee.details.decisions' | translate }}</ng-template>
+        <div class="ge-tab-hint">{{ 'generalElection.committee.details.decisions.hint' | translate }}</div>
+    </mat-tab>
+
+    @if (!generalElectionCommitteeDetailsService.isObserver()) {
+        <mat-tab>
+            <ng-template mat-tab-label>
+                {{ 'common.audit' | translate }}
+            </ng-template>
+            <apg-entity-audit-log
+                [entityId]="generalElectionCommitteeDetailsService.committeeDetails()?.id ?? ''"
+                [entityType]="'generalElectionCommittee'"
+                [relatedEntityIds]="[]"
+            />
+        </mat-tab>
+    }
+</mat-tab-group>

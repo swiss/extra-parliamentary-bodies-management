@@ -1,0 +1,9 @@
+<Project>
+
+    <PropertyGroup>
+        <NuGetAudit>false</NuGetAudit>
+        <AnalysisLevel>latest-ALL</AnalysisLevel>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+</Project>

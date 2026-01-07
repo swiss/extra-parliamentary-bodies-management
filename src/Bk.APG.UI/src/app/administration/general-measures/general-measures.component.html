@@ -1,0 +1,65 @@
+<div class="header-title">
+    <h2>{{ 'generalMeasures.title' | translate }}</h2>
+    <apg-help-tooltip text="administration.helpTooltip.generalMeasuresGeneral" />
+</div>
+
+<fieldset>
+    @for (generalMeasure of generalMeasures(); track generalMeasure.departmentId) {
+        <mat-expansion-panel togglePosition="before" [expanded]="generalMeasures().length === 1">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <strong>{{ generalMeasure.department }}</strong>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <div class="ob-flex">
+                <mat-card>
+                    <mat-card-content>
+                        <form [formGroup]="getGeneralMeasureFormGroup(generalMeasure.departmentId)">
+                            <div class="input-grid">
+                                <div obErrorMessages>
+                                    <apg-rich-text-editor
+                                        [title]="'generalMeasures.justificationLanguages' | translate"
+                                        [heightMax]="200"
+                                        [heightMin]="100"
+                                        controlName="justificationLanguages"
+                                        [plugins]="['flite', 'lance']"
+                                    />
+                                </div>
+
+                                <div obErrorMessages>
+                                    <apg-rich-text-editor
+                                        [title]="'generalMeasures.justificationGenders' | translate"
+                                        [heightMax]="200"
+                                        [heightMin]="100"
+                                        controlName="justificationGenders"
+                                        [plugins]="['flite', 'lance']"
+                                    />
+                                </div>
+                            </div>
+                            <div class="actions">
+                                <button
+                                    (click)="resetGeneralMeasure(generalMeasure.departmentId)"
+                                    mat-button
+                                    obButton="secondary"
+                                    type="button"
+                                    [disabled]="!getGeneralMeasureFormGroup(generalMeasure.departmentId).dirty"
+                                >
+                                    {{ 'common.reset' | translate }}
+                                </button>
+                                <button
+                                    mat-button
+                                    obButton="primary"
+                                    type="button"
+                                    (click)="saveGeneralMeasure(generalMeasure.departmentId)"
+                                    [disabled]="!getGeneralMeasureFormGroup(generalMeasure.departmentId).dirty"
+                                >
+                                    {{ 'common.save' | translate }}
+                                </button>
+                            </div>
+                        </form>
+                    </mat-card-content>
+                </mat-card>
+            </div>
+        </mat-expansion-panel>
+    }
+</fieldset>

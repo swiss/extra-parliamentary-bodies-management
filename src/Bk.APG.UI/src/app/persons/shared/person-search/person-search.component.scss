@@ -1,0 +1,26 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+.buttons {
+    margin-top: $ob-spacing-xs;
+    text-align: left;
+
+    button {
+        margin-left: $ob-spacing-sm;
+        margin-bottom: $ob-spacing-sm;
+    }
+}
+
+.person-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.person-search mat-form-field {
+    margin-top: $ob-spacing-default;
+    flex: 1;
+}
+
+.person-search-icon {
+    cursor: pointer;
+}

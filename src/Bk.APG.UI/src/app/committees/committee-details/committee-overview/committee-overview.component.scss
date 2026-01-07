@@ -1,0 +1,80 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host .committee-overview {
+    max-width: 150ch;
+    margin: auto;
+
+    .description {
+        display: flex;
+        padding: 4px 12px;
+        gap: 8px;
+
+        .description-header {
+            flex-grow: 1;
+        }
+
+        .active-hint {
+            flex-shrink: 0;
+            font-size: x-large;
+            align-self: flex-end;
+
+            &.active {
+                color: $ob-green-700;
+            }
+
+            &.inactive {
+                color: $ob-orange-700;
+            }
+        }
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        td {
+            align-content: start;
+            padding: 4px 12px;
+            min-width: 120px;
+
+            &.heading-text {
+                font-weight: bold;
+                text-wrap: nowrap;
+                width: 10%;
+            }
+        }
+
+        tr:nth-child(odd) {
+            background-color: $ob-gray-extra-light;
+        }
+
+        tr {
+            &:nth-child(2),
+            &:first-child {
+                td {
+                    border-bottom: 0;
+                }
+
+                td:first-child {
+                    border-top-left-radius: 4px;
+                }
+
+                td:last-child {
+                    border-top-right-radius: 4px;
+                }
+            }
+
+            &:last-child {
+                td:first-child {
+                    border-bottom-left-radius: 4px;
+                }
+
+                td:last-child {
+                    border-bottom-right-radius: 4px;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+<div class="committee-data-header">
+    <h2>
+        @if (!!committeeUpdate()) {
+            {{ 'committee.details.data.edit' | translate }} - {{ committeeUpdate()!.committeeNumber }}
+            {{ committeeUpdate()!.isActive ? ('committee.details.active' | translate) : ('committee.details.inactive' | translate) }}
+            {{ isExtraParliamentaryCommission ? ('committee.details.extraParliamentaryCommissionAbbreviation' | translate) : '' }}
+        }
+    </h2>
+    <div class="buttons">
+        <button (click)="reset()" [disabled]="!form().dirty" mat-button obButton="secondary" type="button">{{ 'common.reset' | translate }}</button>
+        <button mat-button obButton="primary" type="button" [disabled]="!form().dirty || !form().valid" (click)="save()">
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+
+<apg-committee-data-form
+    [(committeeModification)]="committeeUpdate"
+    [isUpdateMode]="true"
+    (isExtraParliamentaryCommmission)="handleExtraParliamentaryCommission($event)"
+/>

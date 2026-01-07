@@ -1,0 +1,138 @@
+<form [formGroup]="form" [ngClass]="isGeneralElection ? 'ge-mode' : 'online-mode'">
+    <div>
+        <h3>{{ 'requestsAndReports.title' | translate }}</h3>
+    </div>
+    <div class="input-grid" [hidden]="!isGeneralElection">
+        <!-- Document type-->
+        <mat-form-field>
+            <mat-label>{{ 'requestsAndReports.filter.document.label' | translate }}</mat-label>
+            <mat-select [formControl]="form.controls.documentType">
+                <mat-option value="ParliamentaryReport">{{ 'requestsAndReports.filter.documentType.parliamentaryReport' | translate }}</mat-option>
+                <mat-option value="AppendixFederalCouncil">{{ 'requestsAndReports.filter.documentType.appendixFederalCouncil' | translate }}</mat-option>
+                <mat-option value="FCD">{{ 'requestsAndReports.filter.documentType.FCD' | translate }}</mat-option>
+                <mat-option value="IN_GE">{{ 'requestsAndReports.filter.documentType.IN_GE' | translate }}</mat-option>
+                <mat-option value="ElectoralListFC">{{ 'requestsAndReports.filter.documentType.electoralListFC' | translate }}</mat-option>
+                <mat-option value="ElectoralListOnline">{{ 'requestsAndReports.filter.documentType.electoralListOnline' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <div></div>
+
+        <!-- Analysis date -->
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'requestsAndReports.filter.analysisDate.label' | translate }}</mat-label>
+            <input [formControl]="form.controls.analysisDate1" [matDatepicker]="analysisDate" matInput />
+            <mat-datepicker-toggle matSuffix [for]="analysisDate" />
+            <mat-datepicker #analysisDate xPosition="end" />
+        </mat-form-field>
+
+        <!-- Checkboxes -->
+        <mat-checkbox [formControl]="form.controls.committeesWithActiveMembership">
+            {{ 'requestsAndReports.filter.committeesWithActiveMembership.label' | translate }}
+        </mat-checkbox>
+
+        <mat-checkbox [formControl]="form.controls.releasedCommittees">
+            {{ 'requestsAndReports.filter.releasedCommittees.label' | translate }}
+        </mat-checkbox>
+        <div class="buttons">
+            <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="generateReport()">
+                {{ 'requestsAndReports.download' | translate }}
+            </button>
+        </div>
+    </div>
+    <div class="input-grid" [hidden]="isGeneralElection">
+        <!-- Document type-->
+        <mat-form-field>
+            <mat-label>{{ 'requestsAndReports.filter.document.label' | translate }}</mat-label>
+            <mat-select [formControl]="form.controls.documentType">
+                <mat-option value="AppendixFederalCouncilCheck">{{
+                    'requestsAndReports.filter.documentType.appendixFederalCouncilCheck' | translate
+                }}</mat-option>
+                <mat-option value="DissolvedCommittees">{{ 'requestsAndReports.filter.documentType.dissolvedCommittees' | translate }}</mat-option>
+                <mat-option value="Vacancies">{{ 'requestsAndReports.filter.documentType.vacancies' | translate }}</mat-option>
+                <mat-option value="CompareListGE">{{ 'requestsAndReports.filter.documentType.compareListGE' | translate }}</mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Committee Type -->
+        <mat-form-field>
+            <mat-label>{{ 'requestsAndReports.filter.committeeType.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.committeeTypes">
+                @for (committeeType of masterDataService.committeeTypes(); track committeeType.id) {
+                    <mat-option [value]="committeeType.id">{{ committeeType.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Department -->
+        <mat-form-field>
+            <mat-label>{{ 'requestsAndReports.filter.department.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.departments">
+                @for (department of masterDataService.permittedDepartments(); track department.id) {
+                    <mat-option [value]="department.id">{{ department.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Office -->
+        <mat-form-field>
+            <mat-label>{{ 'requestsAndReports.filter.office.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.offices">
+                @for (office of departmentOffices(); track office.id) {
+                    <mat-option [value]="office.id">{{ office.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Analysis date 1 -->
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'requestsAndReports.filter.analysisDate1.label' | translate }}</mat-label>
+            <input [formControl]="form.controls.analysisDate1" [matDatepicker]="analysisDate1" matInput />
+            <mat-datepicker-toggle matSuffix [for]="analysisDate1" />
+            <mat-datepicker #analysisDate1 xPosition="end" />
+        </mat-form-field>
+
+        <!-- Analysis date 2 -->
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'requestsAndReports.filter.analysisDate2.label' | translate }}</mat-label>
+            <input matInput [matDatepicker]="analysisDate2" [formControl]="form.controls.analysisDate2" />
+            <mat-datepicker-toggle matSuffix [for]="analysisDate2" />
+            <mat-datepicker #analysisDate2 xPosition="end" />
+        </mat-form-field>
+        <div></div>
+        <div class="buttons">
+            <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="generateReport()">
+                {{ 'requestsAndReports.download' | translate }}
+            </button>
+        </div>
+    </div>
+
+    <table [dataSource]="dataSource" class="ob-table" mat-table [hidden]="isGeneralElection">
+        <ng-container matColumnDef="select">
+            <th *matHeaderCellDef mat-header-cell scope="col">
+                <ng-container [ngTemplateOutlet]="selectHeader" />
+            </th>
+            <td *matCellDef="let row" mat-cell>
+                <ng-container [ngTemplateOutlet]="selectContent" [ngTemplateOutletContext]="{row: row}" />
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+            <th *matHeaderCellDef mat-header-cell>{{ 'requestsAndReports.table.header.description.label' | translate }}</th>
+            <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.description.label' | translate }}">
+                {{ element.description }}
+            </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedCommitteeColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedCommitteeColumns" mat-row></tr>
+        <tr *matNoDataRow>
+            <td [colSpan]="displayedCommitteeColumns.length">{{ 'committees.table.noEntries' | translate }}</td>
+        </tr>
+    </table>
+</form>
+
+<ng-template #selectHeader>
+    <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isSomeSelected()" (change)="toggleAllCommittees(false)" />
+</ng-template>
+
+<ng-template #selectContent let-row="row">
+    <mat-checkbox [checked]="isSelected(row)" (click)="$event.stopPropagation()" (change)="toggleRow(row)" />
+</ng-template>

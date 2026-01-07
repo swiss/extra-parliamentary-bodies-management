@@ -1,0 +1,12 @@
+<h4>{{ committeeName }}</h4>
+<div class="contact-point-header">
+    <h3>{{ 'contactPoint.create' | translate }}</h3>
+    <div class="buttons">
+        <button mat-button obButton="secondary" type="button" (click)="close()">{{ 'common.close' | translate }}</button>
+        <button mat-button obButton="primary" type="button" [disabled]="!form().dirty" (click)="save()">
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+
+<apg-contact-point-form [(contactPointModification)]="contactPointToCreate" [isUpdateMode]="false" />

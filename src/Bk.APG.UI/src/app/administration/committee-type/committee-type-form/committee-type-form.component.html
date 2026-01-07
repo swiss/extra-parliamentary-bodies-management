@@ -1,0 +1,155 @@
+<form [formGroup]="committeeTypeForm" id="committeeTypeForm" obUnsavedChanges>
+    <fieldset>
+        <div class="data-panel">
+            @if (committeeTypeForm.errors?.groupGenderSumExceeded) {
+                <div class="percentage-error">
+                    {{ 'committeeType.error.moreThan100Percent' | translate }} ({{ 'committeeType.error.totalPercent' | translate }}
+                    {{ committeeTypeForm.errors?.groupGenderSumExceeded.total }}%)
+                </div>
+            }
+
+            <div class="input-grid-2-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.femaleThreshold' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.femaleThreshold" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.femaleThreshold.errors,
+                            'committeeType.detail.femaleThreshold' | translate,
+                            'committeeType.error.femaleThreshold'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.maleThreshold' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.maleThreshold" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.maleThreshold.errors,
+                            'committeeType.detail.maleThreshold' | translate,
+                            'committeeType.error.maleThreshold'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="data-panel">
+            <p class="panel-title input-field-left input-field-top">{{ 'committeeType.detail.minimalThreshold' | translate }}</p>
+
+            <div class="input-grid-4-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.germanMinimalThreshold' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.germanMinimalThreshold" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.germanMinimalThreshold.errors,
+                            'committeeType.detail.germanMinimalThreshold' | translate,
+                            'committeeType.error.germanMinimalThreshold'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.frenchMinimalThreshold' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.frenchMinimalThreshold" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.frenchMinimalThreshold.errors,
+                            'committeeType.detail.frenchMinimalThreshold' | translate,
+                            'committeeType.error.frenchMinimalThreshold'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.italianMinimalThreshold' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.italianMinimalThreshold" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.italianMinimalThreshold.errors,
+                            'committeeType.detail.italianMinimalThreshold' | translate,
+                            'committeeType.error.italianMinimalThreshold'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.romanshMinimalThreshold' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.romanshMinimalThreshold" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.romanshMinimalThreshold.errors,
+                            'committeeType.detail.romanshMinimalThreshold' | translate,
+                            'committeeType.error.romanshMinimalThreshold'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <p>{{ 'committeeType.or' | translate }}</p>
+
+        <div class="data-panel">
+            <p class="panel-title input-field-left input-field-top">{{ 'committeeType.detail.percentageThreshold' | translate }}</p>
+
+            @if (committeeTypeForm.errors?.groupLanguageSumExceeded) {
+                <div class="percentage-error">
+                    {{ 'committeeType.error.moreThan100Percent' | translate }} ({{ 'committeeType.error.totalPercent' | translate }}
+                    {{ committeeTypeForm.errors?.groupLanguageSumExceeded.total }}%)
+                </div>
+            }
+
+            <div class="input-grid-4-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.germanThresholdPercentage' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.germanThresholdPercentage" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.germanThresholdPercentage.errors,
+                            'committeeType.detail.germanThresholdPercentage' | translate,
+                            'committeeType.error.germanThresholdPercentage'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.frenchThresholdPercentage' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.frenchThresholdPercentage" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.frenchThresholdPercentage.errors,
+                            'committeeType.detail.frenchThresholdPercentage' | translate,
+                            'committeeType.error.frenchThresholdPercentage'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.italianThresholdPercentage' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.italianThresholdPercentage" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.italianThresholdPercentage.errors,
+                            'committeeType.detail.italianThresholdPercentage' | translate,
+                            'committeeType.error.italianThresholdPercentage'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'committeeType.detail.romanshThresholdPercentage' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="committeeTypeForm.controls.romanshThresholdPercentage" type="number" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeTypeForm.controls.romanshThresholdPercentage.errors,
+                            'committeeType.detail.romanshThresholdPercentage' | translate,
+                            'committeeType.error.romanshThresholdPercentage'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+    </fieldset>
+</form>

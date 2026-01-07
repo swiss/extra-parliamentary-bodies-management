@@ -1,0 +1,51 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    font-size: $ob-font-size-lg;
+
+    .mdc-icon-button {
+        padding-top: 6px;
+    }
+}
+
+:host {
+    ::ng-deep {
+        .general-election {
+            .ob-header,
+            main {
+                background-image:
+                    linear-gradient(white 1.5px, transparent 1.5px, transparent calc(100% - 1.5px), transparent calc(100% - 1.5px)),
+                    linear-gradient(90deg, white 1.5px, transparent 1.5px, transparent calc(100% - 1.5px), transparent calc(100% - 1.5px));
+                background-size: 24px 24px;
+                background-color: rgba($ob-blue-100, 0.75);
+            }
+
+            .ob-header {
+                .ob-service-navigation-list {
+                    background-color: $ob-white;
+                    border: 1px solid $ob-secondary-200;
+                    border-radius: 2px;
+
+                    mat-button-toggle-group {
+                        border: none;
+                    }
+                }
+
+                span a {
+                    text-shadow:
+                        white 0 2px 0,
+                        white 0 -2px 0,
+                        white -2px 0 0,
+                        white 2px 0 0;
+                }
+            }
+        }
+
+        .ob-service-navigation-languages .mat-mdc-form-field-icon-suffix {
+            padding-top: 4px;
+        }
+    }
+}

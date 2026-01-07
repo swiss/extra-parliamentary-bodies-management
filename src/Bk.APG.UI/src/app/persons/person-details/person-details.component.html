@@ -1,0 +1,64 @@
+<mat-tab-group (click)="onTabGroupClick($event)" [(selectedIndex)]="selectedIndex" mat-stretch-tabs>
+    <mat-tab label="{{ 'person.details.overview' | translate }}"> <apg-person-details-overview /> </mat-tab>
+
+    <mat-tab [disabled]="personDetailsService.isDataTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'person.details.data' | translate }}
+            <apg-unsaved-changes-icon
+                [toolTip]="personDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
+                [hidden]="
+                    !personDetailsService.isDataFormDirty() &&
+                    !personDetailsService.needsAttentionOccupation() &&
+                    !personDetailsService.needsAttentionBasicData()
+                "
+            />
+        </ng-template>
+        <apg-person-data />
+    </mat-tab>
+
+    <mat-tab [disabled]="personDetailsService.isInterestsTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'person.details.interests' | translate }}
+            <apg-unsaved-changes-icon
+                [toolTip]="personDetailsService.isInterestsFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
+                [hidden]="!personDetailsService.isInterestsFormDirty() && !personDetailsService.needsAttentionInterests()"
+            />
+        </ng-template>
+        <apg-person-interests />
+    </mat-tab>
+
+    <mat-tab [disabled]="personDetailsService.isMembershipsTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'person.details.memberships' | translate }}
+            <apg-unsaved-changes-icon
+                [toolTip]="'common.pleaseCheckData' | translate"
+                [hidden]="
+                    !personDetailsService.needsAttentionLongerDuty() &&
+                    !personDetailsService.needsAttentionShorterDuty() &&
+                    !personDetailsService.needsAttentionFederalDuty() &&
+                    !personDetailsService.needsAttentionFederalAssemblyAdministrationCommission() &&
+                    !personDetailsService.needsAttentionFederalAssemblyAuthoritiesCommission() &&
+                    !personDetailsService.needsAttentionMembershipExpired() &&
+                    !personDetailsService.needsAttentionInterests()
+                "
+            />
+        </ng-template>
+        <apg-person-memberships />
+    </mat-tab>
+
+    @if (!personDetailsService.isObserver()) {
+        <mat-tab>
+            <ng-template mat-tab-label>
+                {{ 'common.audit' | translate }}
+            </ng-template>
+            <apg-entity-audit-log
+                [relatedEntityIds]="[
+                    personDetailsService.personDetails().officeAddress?.id ?? '',
+                    personDetailsService.personDetails().privateAddress?.id ?? '',
+                ]"
+                [entityId]="personDetailsService.personDetails().id"
+                [entityType]="'person'"
+            />
+        </mat-tab>
+    }
+</mat-tab-group>

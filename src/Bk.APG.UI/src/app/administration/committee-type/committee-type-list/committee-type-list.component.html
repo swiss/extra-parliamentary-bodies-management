@@ -1,0 +1,88 @@
+<div class="committee-type-header">
+    <h3>{{ 'committeeTypes.table.title' | translate }}</h3>
+</div>
+
+<table [dataSource]="dataSource" class="ob-table" mat-table matSort>
+    <ng-container matColumnDef="text">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.text' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.text' | translate }}">
+            {{ element.text }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="femaleThreshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.femaleThreshold' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.femaleThreshold' | translate }}">
+            {{ element.femaleThreshold }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="maleThreshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.maleThreshold' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.maleThreshold' | translate }}">
+            {{ element.maleThreshold }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="germanMinimalThreshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.germanMinimalThreshold' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.germanMinimalThreshold' | translate }}">
+            {{ element.germanMinimalThreshold }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="frenchMinimalThreshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.frenchMinimalThreshold' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.frenchMinimalThreshold' | translate }}">
+            {{ element.frenchMinimalThreshold }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="italianMinimalThreshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.italianMinimalThreshold' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.italianMinimalThreshold' | translate }}">
+            {{ element.italianMinimalThreshold }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="romanshMinimalThreshold">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.romanshMinimalThreshold' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.romanshMinimalThreshold' | translate }}">
+            {{ element.romanshMinimalThreshold }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="germanThresholdPercentage">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.germanThresholdPercentage' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.germanThresholdPercentage' | translate }}">
+            {{ element.germanThresholdPercentage }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="frenchThresholdPercentage">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.frenchThresholdPercentage' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.frenchThresholdPercentage' | translate }}">
+            {{ element.frenchThresholdPercentage }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="italianThresholdPercentage">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.italianThresholdPercentage' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.italianThresholdPercentage' | translate }}">
+            {{ element.italianThresholdPercentage }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="romanshThresholdPercentage">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'committeeTypes.table.header.romanshThresholdPercentage' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committeeTypes.table.header.romanshThresholdPercentage' | translate }}">
+            {{ element.romanshThresholdPercentage }}
+        </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns" mat-row (click)="editCommitteeType(row.id)"></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">{{ 'committeeTypes.table.noEntries' | translate }}</td>
+    </tr>
+</table>

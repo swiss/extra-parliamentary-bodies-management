@@ -1,0 +1,33 @@
+<h4>{{ 'person.details.memberships' | translate }}</h4>
+
+<table [dataSource]="memberships()" class="ob-table" mat-table>
+    <ng-container matColumnDef="committee">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.memberships.table.header.committee' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.committee }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="function">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.memberships.table.header.function' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.function }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="beginDate">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.memberships.table.header.beginDate' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.beginDate | date: 'dd.MM.yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="endDate">
+        <th *matHeaderCellDef mat-header-cell>{{ 'person.memberships.table.header.endDate' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.endDate | date: 'dd.MM.yyyy' }}</td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr
+        *matRowDef="let row; columns: displayedColumns"
+        [ngClass]="row.needsAttention ? 'red-table-row' : !row.isActive ? 'inactive-table-row' : ''"
+        mat-row
+    ></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">{{ 'person.memberships.table.noEntries' | translate }}</td>
+    </tr>
+</table>
