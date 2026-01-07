@@ -1,0 +1,33 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    display: flex;
+    flex-direction: column;
+    max-width: 75ch;
+    margin: auto;
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $ob-spacing-sm;
+
+        .buttons {
+            display: flex;
+            gap: $ob-spacing-sm;
+            text-wrap: nowrap;
+        }
+    }
+
+    $gap: 16px;
+    fieldset {
+        display: flex;
+        gap: 0 $gap;
+        flex-wrap: wrap;
+
+        > mat-form-field:not(:has(textarea)):not(:has(mat-datepicker)) {
+            flex: 1 1 calc(50% - $gap * 0.5);
+            max-width: calc(50% - $gap * 0.5);
+        }
+    }
+}

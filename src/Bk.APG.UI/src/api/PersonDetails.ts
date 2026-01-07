@@ -1,0 +1,42 @@
+import {AddressDetails} from './AddressDetails';
+import {InterestDetails} from './InterestDetails';
+import {MembershipDetails} from './MembershipDetails';
+
+export interface PersonDetails {
+    id: string;
+    salutation?: string;
+    salutationText?: string;
+    surname: string;
+    givenName: string;
+    birthYear: number;
+    maskAddress: boolean;
+    privateAddress?: AddressDetails;
+    officeAddress?: AddressDetails;
+    language: string;
+    languageId: string;
+    correspondenceLanguage: string;
+    title?: string;
+    occupation?: string;
+    occupations?: string;
+    gender: string;
+    genderId: string;
+    employer?: string;
+    federalDuty: boolean;
+    federalAssembly: boolean;
+    legislaturePeriods: string;
+    noInterest: boolean;
+    noEmployment: boolean;
+    interests?: InterestDetails[];
+    memberships?: MembershipDetails[];
+    office?: string;
+    council?: string;
+    needsAttentionLongerDuty: boolean;
+    needsAttentionShorterDuty: boolean;
+    needsAttentionFederalDuty: boolean;
+    needsAttentionFederalAssemblyAdministrationCommission: boolean;
+    needsAttentionFederalAssemblyAuthoritiesCommission: boolean;
+    needsAttentionBasicData: boolean;
+    needsAttentionInterests: boolean;
+    needsAttentionOccupation: boolean;
+    needsAttentionMembershipExpired: boolean;
+}

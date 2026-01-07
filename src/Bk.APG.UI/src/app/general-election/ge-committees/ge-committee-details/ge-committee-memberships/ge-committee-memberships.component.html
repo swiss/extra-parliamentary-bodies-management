@@ -1,0 +1,74 @@
+<div class="committee-members-header">
+    <h3>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h3>
+</div>
+
+<div class="table-header">
+    <h4>{{ 'gecommittee.members.title' | translate }}</h4>
+    <apg-members-quotas class="quotas" [membersQuotas]="membershipList().committeeQuotas" />
+</div>
+<table
+    [dataSource]="activeMembersData()"
+    class="ob-table"
+    mat-table
+    matSort
+    matSortDisableClear
+    (matSortChange)="sortData($event, activeMembersSort)"
+    [matSortActive]="activeMembersSort().active"
+    [matSortDirection]="activeMembersSort().direction"
+>
+    <ng-container matColumnDef="surname">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.surname' | translate }}</th>
+        <td *matCellDef="let element" mat-cell data-label="surname">{{ element.surname }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="givenName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.givenName' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.givenName }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="gender">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.gender' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.gender }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="language">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.details.language' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.language }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="function">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.function' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.function }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="beginDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.beginDate' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.beginDate | date: 'dd.MM.yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="endDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.endDate' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.endDate | date: 'dd.MM.yyyy' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="electionType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.electionType' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.electionType }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="hasMembershipAddition">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.hasMembershipAddition' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ (element.hasMembershipAddition ? 'common.yes' : 'common.no') | translate }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="employmentLevel">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.employmentLevel' | translate }}</th>
+        <td *matCellDef="let element" mat-cell>{{ element.employmentLevel }}</td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns()" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns()" mat-row></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns().length">{{ 'committees.memberships.table.noEntries' | translate }}</td>
+    </tr>
+</table>

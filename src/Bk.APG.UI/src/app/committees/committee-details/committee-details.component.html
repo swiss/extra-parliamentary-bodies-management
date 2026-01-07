@@ -1,0 +1,83 @@
+<mat-tab-group (click)="onTabGroupClick($event)" [(selectedIndex)]="selectedIndex" mat-stretch-tabs>
+    <mat-tab label="{{ 'committee.details.overview' | translate }}"> <apg-committee-overview /> </mat-tab>
+
+    <mat-tab [disabled]="committeeDetailsService.isDataTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'committee.details.data' | translate }}
+            <!-- TODO REACTIVATE -->
+            <!-- 
+<apg-unsaved-changes-icon
+    [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
+    [hidden]="!committeeDetailsService.isDataFormDirty() && !committeeDetailsService.committeeDetails()?.needsAttentionBasicData"
+/> 
+-->
+            <apg-unsaved-changes-icon
+                [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
+                [hidden]="!committeeDetailsService.isDataFormDirty()"
+            />
+        </ng-template>
+        <apg-committee-data />
+    </mat-tab>
+
+    <mat-tab [disabled]="committeeDetailsService.isMembersTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'committee.details.members' | translate }}
+            <apg-unsaved-changes-icon
+                [toolTip]="committeeDetailsService.isMembersFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
+                [hidden]="
+                    !committeeDetailsService.isMembersFormDirty() &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionLongerDuty &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionShorterDuty &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionFederalDuty &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionFederalAssembly &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionNoMembers &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionAboveMaxMembers &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionMembershipExpired
+                "
+            />
+        </ng-template>
+        <apg-committee-members />
+    </mat-tab>
+
+    <mat-tab [disabled]="committeeDetailsService.isContactsTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'committee.details.contacts' | translate }}
+            <!-- TODO REACTIVATE -->
+            <!-- 
+<apg-unsaved-changes-icon
+    [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
+    [hidden]="!committeeDetailsService.isDataFormDirty() && !committeeDetailsService.committeeDetails()?.needsAttentionBasicData"
+/> 
+-->
+            <apg-unsaved-changes-icon
+                [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
+                [hidden]="!committeeDetailsService.isDataFormDirty()"
+            />
+        </ng-template>
+        <apg-contact-point-list />
+    </mat-tab>
+
+    <mat-tab [disabled]="committeeDetailsService.isJustificationsTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'committee.details.justifications' | translate }} <apg-unsaved-changes-icon [hidden]="!committeeDetailsService.isJustificationsFormDirty()" />
+        </ng-template>
+        <apg-committee-justifications />
+    </mat-tab>
+
+    <mat-tab [disabled]="committeeDetailsService.isDecisionsTabDisabled()">
+        <ng-template mat-tab-label>
+            {{ 'committee.details.decisions' | translate }}
+            <apg-unsaved-changes-icon [toolTip]="'common.saveReminder' | translate" [hidden]="!committeeDetailsService.isDecisionsFormDirty()" />
+        </ng-template>
+        <apg-appointment-decision-list />
+    </mat-tab>
+
+    @if (!committeeDetailsService.isObserver()) {
+        <mat-tab>
+            <ng-template mat-tab-label>
+                {{ 'common.audit' | translate }}
+            </ng-template>
+            <apg-entity-audit-log [entityId]="committeeDetailsService.committeeDetails()?.id ?? ''" [entityType]="'committee'" [relatedEntityIds]="[]" />
+        </mat-tab>
+    }
+</mat-tab-group>
