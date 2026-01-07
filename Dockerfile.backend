@@ -1,0 +1,32 @@
+# Build
+FROM bit-base-images-docker-hosted.nexus.bit.admin.ch/bit/ubi8/dotnet-80:latest AS build
+
+USER root
+
+WORKDIR /app
+
+COPY /src .
+COPY .editorconfig .
+COPY global.json .
+
+# Build needs to run before format (https://github.com/dotnet/sdk/issues/40427)
+RUN dotnet restore
+RUN dotnet build --no-restore --configuration Release
+
+RUN dotnet format whitespace ./Bk.APG.sln --no-restore --exclude **/Migrations --verify-no-changes
+RUN dotnet format style ./Bk.APG.sln --no-restore --exclude **/Migrations --verify-no-changes
+
+RUN dotnet test --no-build --configuration Release
+RUN dotnet publish ./Bk.APG.Api/Bk.APG.Api.csproj --no-build --configuration Release --output /app/publish
+
+# Serve
+FROM bit-base-images-docker-hosted.nexus.bit.admin.ch/bit/ubi8/dotnet-80-runtime:latest
+
+USER root
+
+WORKDIR /app
+
+COPY --from=build /app/publish .
+
+EXPOSE 5000
+ENTRYPOINT ["dotnet", "Bk.APG.Api.dll"]

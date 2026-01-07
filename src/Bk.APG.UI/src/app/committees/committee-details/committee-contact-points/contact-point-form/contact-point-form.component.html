@@ -1,0 +1,342 @@
+<form [formGroup]="contactPointForm" id="contactPointDataForm" obUnsavedChanges>
+    <fieldset>
+        <div>
+            <div class="input-grid">
+                <mat-radio-group formControlName="contactPointTypeUri">
+                    <mat-radio-button
+                        value="https://politics.ld.admin.ch/fch/apg/vocabulary/contact-point-type/1"
+                        (change)="changeContactPointType('https://politics.ld.admin.ch/fch/apg/vocabulary/contact-point-type/1')"
+                    >
+                        {{ 'contactPoint.contactPointType.secretariat' | translate }}
+                    </mat-radio-button>
+                    <mat-radio-button
+                        value="https://politics.ld.admin.ch/fch/apg/vocabulary/contact-point-type/2"
+                        (change)="changeContactPointType('https://politics.ld.admin.ch/fch/apg/vocabulary/contact-point-type/2')"
+                    >
+                        {{ 'contactPoint.contactPointType.dataProtectionOfficer' | translate }}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+
+            <div class="input-grid">
+                <div class="form-field-with-tooltip">
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'contactPoint.details.beginDate' | translate }}</mat-label>
+                        <input [formControl]="contactPointForm.controls.beginDate" [matDatepicker]="beginDate" matInput />
+                        <mat-datepicker-toggle matSuffix [for]="beginDate" />
+                        <mat-datepicker #beginDate [disabled]="false" xPosition="end" />
+                        <mat-error>{{
+                            errorService.getControlError(
+                                contactPointForm.controls.beginDate.errors,
+                                'contactPoint.details.beginDate' | translate,
+                                'contactPoint.error.beginDate'
+                            )
+                        }}</mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field-with-tooltip">
+                    <mat-form-field obErrorMessages>
+                        <mat-label>{{ 'contactPoint.details.endDate' | translate }}</mat-label>
+                        <input
+                            matInput
+                            [min]="contactPointForm.controls.beginDate.disabled ? contactPointForm.controls.beginDate.value : undefined"
+                            [matDatepicker]="endDate"
+                            [formControl]="contactPointForm.controls.endDate"
+                        />
+                        <mat-datepicker-toggle matSuffix [for]="endDate" />
+                        <mat-datepicker #endDate [disabled]="false" xPosition="end" />
+                        <mat-error>{{
+                            errorService.getControlError(
+                                contactPointForm.controls.endDate.errors,
+                                'contactPoint.details.endDate' | translate,
+                                'contactPoint.error.endDate'
+                            )
+                        }}</mat-error>
+                    </mat-form-field>
+                    <apg-help-tooltip text="committee.helpTooltip.contactPointDates" />
+                </div>
+            </div>
+
+            <div class="input-grid data-panel">
+                <p class="panel-title input-field-left input-field-top">{{ 'contactPoint.details.organizationData' | translate }}</p>
+                <p></p>
+
+                <mat-form-field obErrorMessages class="input-field-left input-field-top">
+                    <mat-label>{{ 'contactPoint.details.companyName' | translate }}</mat-label>
+                    <input [formControl]="contactPointForm.controls.companyName" [matAutocomplete]="filteredCompanyNamesUnique" matInput type="text" />
+
+                    <mat-autocomplete #filteredCompanyNamesUnique="matAutocomplete" (optionSelected)="setCompanyName($event)">
+                        @for (option of filteredCompanyNames(); track option.id) {
+                            <mat-option [value]="option">
+                                <b>{{ option.description }}</b>
+                            </mat-option>
+                        }
+                    </mat-autocomplete>
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.companyName.errors,
+                            'contactPoint.details.companyName' | translate,
+                            'contactPoint.error.companyOrName'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right input-field-top">
+                    <mat-label>{{ 'contactPoint.details.section' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.section" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.section.errors,
+                            'contactPoint.details.section' | translate,
+                            'contactPoint.error.section'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-left">
+                    <mat-label>{{ 'contactPoint.details.phone' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.phone" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.phone.errors,
+                            'contactPoint.details.phone' | translate,
+                            'contactPoint.error.phone'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right">
+                    <mat-label>{{ 'contactPoint.details.email' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.email" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.email.errors,
+                            'contactPoint.details.email' | translate,
+                            'contactPoint.error.email'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <div></div>
+            </div>
+
+            <div class="input-grid data-panel">
+                <p class="panel-title input-field-left input-field-top">{{ 'contactPoint.details.personalData' | translate }}</p>
+                <p></p>
+
+                <mat-form-field obErrorMessages class="input-field-left input-field-top">
+                    <mat-label>{{ 'contactPoint.details.surname' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.surname" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.surname.errors,
+                            'contactPoint.details.surname' | translate,
+                            'contactPoint.error.companyOrName'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right input-field-top">
+                    <mat-label>{{ 'contactPoint.details.givenName' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.givenName" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.givenName.errors,
+                            'contactPoint.details.givenName' | translate,
+                            'contactPoint.error.givenName'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-left">
+                    <mat-label>{{ 'contactPoint.details.title' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.title" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.title.errors,
+                            'contactPoint.details.title' | translate,
+                            'contactPoint.error.title'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right">
+                    <mat-label>{{ 'contactPoint.details.languageId' | translate }}</mat-label>
+                    <mat-select [formControl]="contactPointForm.controls.languageId">
+                        @for (language of masterDataService.languages(); track language.id) {
+                            <mat-option [value]="language.id">{{ language.description }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.languageId.errors,
+                            'contactPoint.details.languageId' | translate,
+                            'contactPoint.error.languageId'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-left">
+                    <mat-label>{{ 'contactPoint.details.genderId' | translate }}</mat-label>
+                    <mat-select [formControl]="contactPointForm.controls.genderId">
+                        @for (gender of masterDataService.genders(); track gender.id) {
+                            <mat-option [value]="gender.id">{{ gender.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.genderId.errors,
+                            'contactPoint.details.genderId' | translate,
+                            'contactPoint.error.genderId'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right">
+                    <mat-label>{{ 'contactPoint.details.personalPhone' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.personalPhone" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.personalPhone.errors,
+                            'contactPoint.details.personalPhone' | translate,
+                            'contactPoint.error.personalPhone'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-left">
+                    <mat-label>{{ 'contactPoint.details.personalMobile' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.personalMobile" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.personalMobile.errors,
+                            'contactPoint.details.personalMobile' | translate,
+                            'contactPoint.error.personalMobile'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right">
+                    <mat-label>{{ 'contactPoint.details.personalEmail' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.personalEmail" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.personalEmail.errors,
+                            'contactPoint.details.personalEmail' | translate,
+                            'contactPoint.error.personalEmail'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <div class="checkbox-with-tooltip">
+                    <mat-checkbox [formControl]="contactPointForm.controls.releasePersonData">{{
+                        'contactPointForm.details.releasePersonData' | translate
+                    }}</mat-checkbox>
+                    <apg-help-tooltip text="committee.helpTooltip.contactPointPublishPersonalData" />
+                </div>
+            </div>
+
+            <div class="input-grid data-panel">
+                <div class="panel-title-with-tooltip input-field-left input-field-top">
+                    <p class="panel-title">
+                        {{ 'contactPoint.details.addressData' | translate }}
+                    </p>
+                    <apg-help-tooltip text="committee.helpTooltip.contactPointAddress" />
+                </div>
+                <p></p>
+
+                <mat-form-field obErrorMessages class="input-field-left input-field-top">
+                    <mat-label>{{ 'contactPoint.details.street' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.street" #streetControl [matAutocomplete]="filteredStreetsUnique" />
+
+                    <button type="button" role="button" [obInputClear]="streetControl" (onClear)="clear()">
+                        <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                        <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                    </button>
+
+                    <mat-autocomplete #filteredStreetsUnique="matAutocomplete" (optionSelected)="setStreet($event)">
+                        @for (option of filteredZipsAndCitiesStreet(); track option.id) {
+                            <mat-option [value]="option">
+                                <b>{{ option.street }}</b>
+                                <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.zip }} {{ option.city }})</span>
+                            </mat-option>
+                        }
+                    </mat-autocomplete>
+
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.street.errors,
+                            'contactPoint.details.street' | translate,
+                            'contactPoint.error.street'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right input-field-top">
+                    <mat-label>{{ 'contactPoint.details.poBox' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.poBox" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            contactPointForm.controls.poBox.errors,
+                            'contactPoint.details.poBox' | translate,
+                            'contactPoint.error.poBox'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-left">
+                    <mat-label>{{ 'contactPoint.details.zip' | translate }}</mat-label>
+                    <input
+                        matInput
+                        type="text"
+                        [formControl]="contactPointForm.controls.zip"
+                        #privateZipControl
+                        [matAutocomplete]="filteredZipsPrivateUnique"
+                    />
+
+                    <button type="button" role="button" [obInputClear]="privateZipControl" (onClear)="clear()">
+                        <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                        <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                    </button>
+
+                    <mat-autocomplete #filteredZipsPrivateUnique="matAutocomplete" (optionSelected)="setZipOrCity($event)">
+                        @for (option of filteredZipsAndCities(); track option.id) {
+                            <mat-option [value]="option">
+                                <b>{{ option.zip }}</b>
+                                <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.city }})</span>
+                            </mat-option>
+                        }
+                    </mat-autocomplete>
+
+                    <mat-error>{{
+                        errorService.getControlError(contactPointForm.controls.zip.errors, 'committee.details.zip' | translate, 'contactPoint.error.zip')
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-right">
+                    <mat-label>{{ 'contactPoint.details.city' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="contactPointForm.controls.city" #cityControl [matAutocomplete]="filteredCitiesPrivateUnique" />
+
+                    <button type="button" role="button" [obInputClear]="cityControl" (onClear)="clear()">
+                        <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+                        <span class="ob-screen-reader-only">{{ 'common.clear' | translate }}</span>
+                    </button>
+
+                    <mat-autocomplete #filteredCitiesPrivateUnique="matAutocomplete" (optionSelected)="setZipOrCity($event)">
+                        @for (option of filteredZipsAndCities(); track option.id) {
+                            <mat-option [value]="option">
+                                <b>{{ option.city }}</b>
+                                <span class="autocomplete-helper-text">&nbsp;&nbsp;&nbsp;({{ option.zip }})</span>
+                            </mat-option>
+                        }
+                    </mat-autocomplete>
+
+                    <mat-error>{{
+                        errorService.getControlError(contactPointForm.controls.city.errors, 'contactPoint.details.city' | translate, 'contactPoint.error.city')
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+    </fieldset>
+</form>

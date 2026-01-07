@@ -1,0 +1,753 @@
+/************************************/
+.lance-ui-container {
+  --command-action-color: #4040ff;
+  --command-danger-color: red;
+  --command-success-color: #15b420;
+  --comment-info-bg-color: #f4f4f0;
+  --comment-text-info-color: #212121;
+  --comment-text-info-light-color: #373737;
+  --comment-text-info-font-size: 0.875em;
+  --comment-text-info-small-font-size: 0.75em;
+  --comment-text-font-size: 0.875em;
+  --comment-text-color: #161616;
+  --button-bg-color: #f0f0ee;
+  --button-text-color: #0a0a0a;
+  --button-border-color: rgba(128, 128, 128, 0.5);
+  --button-border-style: solid;
+  --button-border-width: 1px;
+  --button-border-radius: 4px;
+  --ui-border-light-color: #c4c4c4;
+  --ui-border-med-color: gray;
+  --ui-border-dark-color: #404040;
+  --no-comments-placeholder: "";
+  position: relative;
+  overflow: visible;
+  height: 100%;
+  flex-direction: column;
+  display: flex;
+}
+
+.lance-ui-container .annotations-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: stretch;
+  width: 100%;
+}
+
+.lance-ui-container .annotations-header.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.lance-ui-container .annotations-header .annotations-menu {
+  flex: 0 0 20px;
+  position: relative;
+  overflow: visible;
+}
+
+.lance-ui-container .annotations-header .annotations-menu .ui-menu-button {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.lance-ui-container .annotations-header .annotations-menu .ui-menu {
+  display: none;
+  opacity: 0;
+  user-select: none;
+  position: absolute;
+  right: 14px;
+  top: 11px;
+  flex-direction: column;
+  z-index: 1001;
+  border: 1px solid var(--ui-border-dark-color);
+  background-color: white;
+  font-size: 10px;
+  padding: 0;
+  border-radius: 5px;
+  border-top-right-radius: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lance-ui-container .annotations-header .annotations-menu .ui-menu .ui-menu-legend {
+  font-size: 12px;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--ui-border-med-color);
+  text-transform: capitalize;
+  padding: 2px 3px;
+  background-color: var(--button-bg-color);
+  border-top-left-radius: 5px;
+  margin-bottom: 3px;
+}
+
+.lance-ui-container .annotations-header .annotations-menu .ui-menu label {
+  margin-bottom: 2px;
+  padding: 1px 3px;
+  font-weight: normal;
+}
+
+.lance-ui-container .annotations-header .annotations-menu .ui-menu label span {
+  vertical-align: text-bottom;
+}
+
+.lance-ui-container .annotations-header .annotations-menu.menu-open .ui-menu {
+  display: flex;
+  animation: fadeIn .3s ease-in;
+  opacity: 1;
+  box-shadow: var(--ui-border-med-color) 2px 2px 2px;
+}
+
+.lance-ui-container .annotations-header .annotations-menu.menu-open .ui-menu input[type='radio'] {
+  outline: none;
+}
+
+.lance-ui-container .annotations-header .comments-search-container {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: row;
+  justify-content: stretch;
+  position: relative;
+}
+
+.lance-ui-container .annotations-header .comments-search-container input.lance-comment-search {
+  width: 99%;
+  margin: 1px;
+  border-radius: 4px;
+  border: 1px outset #666;
+  padding: 2px;
+  font-size: 0.9em;
+}
+
+.lance-ui-container .annotations-header .comments-search-container .cancel-search {
+  display: inline-block;
+  position: absolute;
+  top: 1px;
+  right: 9px;
+  background-color: transparent;
+  color: #666;
+  text-shadow: 1px 1px 1px #999;
+  user-select: none;
+  cursor: default;
+  opacity: 0.5;
+  font-family: monospace;
+  font-size: 16px;
+  animation: opacity 1;
+}
+
+.lance-ui-container .annotations-header .comments-search-container[data-has-text='true'] .cancel-search {
+  cursor: pointer;
+  opacity: 1;
+}
+
+/************************************/
+.lance-content-scroller {
+  display: block;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  border: 1px solid var(--ui-border-med-color);
+  flex: 1 1 0;
+}
+
+.lance-content-scroller:hover, .lance-content-scroller:focus-within {
+  overflow-y: auto;
+}
+
+.lance-content-scroller .lance-annotations-container {
+  overflow-x: visible;
+  overflow-y: visible;
+  border: none;
+  box-sizing: border-box;
+  position: static;
+  width: 100%;
+  padding: 0px 5px;
+  transition: all .1s ease-out;
+}
+
+.lance-content-scroller .lance-annotations-container * {
+  box-sizing: border-box;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper {
+  position: relative;
+  width: 100%;
+  transition-property: margin-top, top;
+  transition-duration: 0.1s;
+  transition-timing-function: ease-out;
+  /* End annotation-ui */
+  /* end comment ui */
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper.is-hidden {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper[data-selected='true'] {
+  position: absolute;
+  z-index: 1000;
+  margin-left: -30px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui {
+  margin-bottom: 10px;
+  overflow: hidden;
+  background-color: white;
+  padding: 0;
+  padding-bottom: 5px;
+  margin-right: 4px;
+  margin-top: 5px;
+  position: relative;
+  border-radius: 10px;
+  outline: none;
+  transition-property: left, box-shadow, margin-right, margin-top, margin-bottom, margin-left;
+  transition-duration: .5s;
+  transition-timing-function: linear;
+  border: solid 1px var(--ui-border-light-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .annotation-filtered {
+  width: 100%;
+  overflow: hidden;
+  background-color: #EEE;
+  border-bottom: 1px var(--ui-border-med-color) outset;
+  font-size: 8pt;
+  padding: 0 3px 2px 5px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .annotation-filtered summary {
+  text-align: left;
+  display: list-item;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .annotation-filtered[data-filtered-count='0'] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .annotation-filtered .annotation-filtered-caption {
+  max-width: 95%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-block;
+  white-space: nowrap;
+  position: relative;
+  top: 2px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-comment-insert='true'] .comment-reply-container .comment-controls {
+  display: flex;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .comment-reply-container {
+  display: none;
+  flex-direction: column;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui [data-controls='0'].comment-custom-container {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .comment-custom-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 2px;
+  border-top: 1px solid var(--button-border-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .comment-custom-container .custom-label {
+  font-size: 0.8em;
+  font-weight: bold;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .comment-custom-container .comment-custom-controls {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .comment-edit-controls,
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .comment-controls {
+  display: none;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  text-align: left;
+  padding: 5px;
+  align-items: center;
+  margin-top: 3px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui textarea {
+  outline: none;
+  border: 1px solid var(--ui-border-med-color);
+  border-radius: 3px;
+  color: var(--comment-text-color);
+  font-size: var(--comment-text-font-size);
+  width: 100%;
+  padding: 1px 5px;
+  resize: none;
+  box-shadow: none;
+  font-family: Roboto, Arial, Helvetica, sans-serif;
+  line-height: 18px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui textarea[readonly] {
+  border-color: transparent;
+  outline: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  background-color: transparent;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui textarea[readonly] {
+  cursor: default;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .annotation-tip {
+  position: absolute;
+  display: none;
+  width: 9px;
+  height: 18px;
+  top: 45%;
+  left: -8px;
+  background-image: url(images/annotation-tip.png);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] {
+  border: solid 1px #d0d0d0;
+  outline: none;
+  box-shadow: 0 8px 8px -2px rgba(0, 0, 0, 0.1);
+  overflow: visible;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .annotation-tip {
+  display: block;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-reply-container {
+  display: flex;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-ui .comment-edit-links {
+  display: flex;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-ui .comment-user-details {
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-ui[data-comment-edit='false'] [data-comment-can-edit='false'] [data-lance-command='comment-edit'] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-ui[data-comment-edit='false'] [data-comment-can-delete='false'] [data-lance-command='comment-delete'] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-ui[data-comment-edit='false'] [data-comment-can-resolve='false'] [data-lance-command='comment-resolve'] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-ui[data-comment-edit='false'] [data-comment-can-reopen='false'] [data-lance-command='comment-reopen'] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .annotation-filtered {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true']:focus-within, .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true']:focus {
+  box-shadow: 0 20px 20px -6px rgba(0, 0, 0, 0.24);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-annotation-resolved='true'] .comment-ui [data-lance-command][disabled] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-annotation-resolved='true'] .comment-reply-container {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui.annotation-expanded .annotation-filtered .annotation-filtered-caption {
+  opacity: 0.66;
+  font-style: italic;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui:not(.annotation-expanded) .comment-ui[data-comment-filtered='false'] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn {
+  border-width: var(--button-border-width);
+  border-style: var(--button-border-style);
+  border-color: var(--button-border-color);
+  min-width: 22px;
+  height: 22px;
+  white-space: nowrap;
+  border-radius: var(--button-border-radius);
+  text-align: center;
+  text-transform: capitalize;
+  color: var(--button-text-color);
+  background-color: var(--button-bg-color);
+  padding: 1px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn .lance-btn-label {
+  font-size: 0.8em;
+  font-weight: normal;
+  padding: 2px;
+  margin: 0;
+  max-width: 8em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn:not(:last-child) {
+  margin-right: 3px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn .icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  margin: auto;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn .icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn img {
+  width: 16px;
+  height: auto;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn :hover {
+  cursor: pointer;
+  border-color: rgba(128, 128, 128, 0.8);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[disabled='disabled'] {
+  color: #999;
+  opacity: 0.8;
+  background-color: var(--button-bg-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[disabled='disabled'] :hover {
+  cursor: default;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[disabled='disabled'] i {
+  color: #999;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[disabled='disabled'] img,
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[disabled='disabled'] .icon {
+  opacity: 0.4;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-show='auto'][disabled='disabled'] {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn a {
+  padding: 1px 5px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn a[disabled] {
+  color: #999;
+  opacity: 0.8;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-delete'] .icon svg {
+  fill: var(--command-danger-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-edit'] .icon svg {
+  fill: var(--command-action-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-resolve'] .icon svg, .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-reopen'] .icon svg {
+  fill: var(--command-action-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-edit-cancel'] .icon svg, .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-reply-cancel'] .icon svg {
+  fill: var(--command-danger-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-edit-ok'] .icon svg, .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui .lance-ui-btn[data-lance-command='comment-reply-ok'] .icon svg {
+  fill: var(--command-success-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui {
+  padding: 0;
+  width: 100%;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui:not([data-comment-first='true']) {
+  margin-top: 5px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-top {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui[data-comment-first='true'] .comment-top {
+  border-bottom: 1px solid var(--ui-border-med-color);
+  background-color: var(--comment-info-bg-color);
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 0 0 5px 0;
+  padding: 5px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui[data-comment-first='false'] .comment-body,
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui[data-comment-first='false'] .comment-top {
+  margin-left: 0;
+  padding: 0px 5px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-user-details {
+  display: inline-block;
+  vertical-align: top;
+  max-width: 90%;
+  flex-grow: 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  margin-left: 5px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-avatar {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  background-color: transparent;
+  background-size: cover;
+  border-radius: 50%;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-avatar.no-image {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-user-name {
+  color: var(--comment-text-info-color);
+  font-size: var(--comment-text-info-font-size);
+  display: inline-block;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: normal;
+  letter-spacing: normal;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-time-stamp {
+  font-size: var(--comment-text-info-small-font-size);
+  line-height: 1.1em;
+  color: var(--comment-text-info-light-color);
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui a {
+  text-transform: capitalize;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui[data-comment-insert='true'] .comment-controls {
+  display: flex;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-body {
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 5px;
+  position: relative;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-body .comment-mention {
+  color: var(--comment-mention-color);
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-body a.comment-link {
+  color: var(--comment-link-color);
+  text-transform: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-edit-links {
+  display: none;
+  white-space: nowrap;
+  text-align: right;
+  flex-grow: 1;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui[data-comment-edit='true'] .comment-edit-controls {
+  display: flex;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui[data-comment-insert='true'] .comment-reply-text {
+  display: block;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui[data-comment-new='true'] .comment-body {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-ui[data-comment-new='true'] .comment-body {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-reply-text {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .autogrow-textarea {
+  min-height: 20px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-transform: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .autogrow-textarea:not([readonly]) {
+  min-height: 2em;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .li-autogrow-mirror {
+  overflow-y: hidden;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .li-autogrow-mirror:hover, .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .li-autogrow-mirror:focus {
+  overflow-y: auto;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-reply-text {
+  line-height: 22px !important;
+  padding: 5px !important;
+  width: 95% !important;
+  margin-left: 10px !important;
+  margin-top: 5px !important;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper[disabled] a,
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper[disabled] .comment-reply-text {
+  display: none;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper + .annotation-ui-wrapper {
+  padding-top: 10px;
+}
+
+.lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper:last-child {
+  padding-bottom: 1em;
+}
+
+.lance-content-scroller .lance-annotations-container:not([disabled]).comment-reply-text[readonly] {
+  border: 1px solid #d6d6d6;
+}
+
+.lance-content-scroller .lance-annotations-container:not([disabled]):not([readonly]) {
+  margin-right: 15px;
+}
+
+.lance-content-scroller .lance-annotations-container:empty:before {
+  content: var(--no-comments-placeholder);
+  opacity: 0.7;
+  display: block;
+  text-align: center;
+  padding: 10px;
+}
+
+.lance-content-scroller.annotations-aligned.has-selection .lance-annotations-container > .annotation-ui-wrapper[data-selected='true'] {
+  position: relative;
+  margin-left: 8px;
+}
+
+.lance-content-scroller.annotations-aligned.has-selection .lance-annotations-container > .annotation-ui-wrapper[data-selected='false'] {
+  margin-left: 14px;
+}
+
+.lance-content-scroller.annotations-aligned > .annotation-ui-wrapper {
+  margin: 0 5px;
+  width: 98%;
+}
+
+.lance-content-scroller.annotations-aligned > .annotation-ui-wrapper > .annotation-ui.annotation-collapsed .annotation-filtered[data-filtered-count='0'] {
+  display: block;
+}
+
+.lance-content-scroller.annotations-aligned > .annotation-ui-wrapper > .annotation-ui.annotation-collapsed:not(.annotation-expanded) .comment-ui {
+  display: none;
+}
+
+.lance-content-scroller.annotations-aligned > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] {
+  box-shadow: 0px 0px 22px 0px #C4C4C4;
+}
+
+.lance-content-scroller.annotations-aligned[data-lance-overflow='hide'] > .annotation-ui[data-lance-visible='false'] {
+  display: none;
+}
+
+.lance-content-scroller.annotations-aligned[data-lance-overflow='fold'] > .annotation-ui[data-lance-visible='false']:not(.annotation-expanded) .comment-ui {
+  display: none;
+}
+
+.lance-content-scroller.annotations-aligned[data-lance-overflow='fold'] > .annotation-ui[data-lance-visible='false'] .annotation-filtered {
+  display: block;
+}
+
+.lance-content-scroller.resolve-policy-hide [data-annotation-resolved='true']:not([data-selected='true']).annotation-ui {
+  display: none;
+}
+
+.lance-content-scroller.resolve-policy-fold [data-annotation-resolved='true']:not([data-selected='true']).annotation-ui:not(.annotation-expanded) > .annotation-comments {
+  display: none;
+}
+
+.lance-content-scroller.resolve-policy-fold [data-annotation-resolved='true']:not([data-selected='true']).annotation-ui .annotation-filtered {
+  display: block;
+}
+
+.lance-content-scroller.mention-active .comment-mention {
+  cursor: pointer;
+}
+
+.lance-ui-container.lance-disabled .comment-reply-container,
+.lance-content-scroller.lance-disabled .comment-reply-container {
+  display: none !important;
+}

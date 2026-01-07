@@ -1,0 +1,24 @@
+.lance-ui-container {
+	--command-action-color: rgb(64, 64, 255);
+	--command-danger-color: rgb(255,64,32);
+	--command-success-color: rgb(21, 170, 32);
+
+	--comment-info-bg-color: rgb(244, 244, 240);
+	
+	--comment-text-info-color: rgb(33,33,33);
+	--comment-text-info-light-color: rgb(55, 55, 55);
+
+	--comment-text-info-font-size: 0.875em;
+	--comment-text-info-small-font-size: 0.75em;
+	--comment-mention-color: rgb(108, 171, 248);
+	--comment-link-color: rgb(84, 78, 246);
+
+	--comment-text-font-size: 0.875em;
+	--comment-text-color: rgb(22, 22, 22);
+	
+	--button-bg-color: rgb(240, 240, 238);
+
+	--ui-border-light-color: rgb(196, 196, 196);
+	--ui-border-med-color: rgb(128, 128, 128);
+	--ui-border-dark-color: rgb(64, 64, 64);
+}
