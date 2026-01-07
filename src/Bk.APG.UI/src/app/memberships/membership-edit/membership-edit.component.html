@@ -17,7 +17,7 @@
             mat-button
             obButton="primary"
             type="button"
-            [disabled]="!form().valid || !form().dirty || form().controls.electionTypeId.disabled"
+            [disabled]="!form().valid || !form().dirty || form().controls.electionTypeId.disabled || hasValidationErrors()"
             (click)="save()"
         >
             {{ 'common.save' | translate }}
