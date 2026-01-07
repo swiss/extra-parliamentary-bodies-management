@@ -172,7 +172,8 @@ internal class PersonMapperTests
             Assert.That(mappedPerson.NeedsAttentionShorterDuty, Is.EqualTo(person.NeedsAttentionShorterDuty));
             Assert.That(mappedPerson.NeedsAttentionLongerDuty, Is.EqualTo(person.NeedsAttentionLongerDuty));
             Assert.That(mappedPerson.NeedsAttentionFederalDuty, Is.EqualTo(person.NeedsAttentionFederalDuty));
-            Assert.That(mappedPerson.NeedsAttentionFederalAssembly, Is.EqualTo(person.NeedsAttentionFederalAssembly));
+            Assert.That(mappedPerson.NeedsAttentionFederalAssemblyAuthoritiesCommission, Is.EqualTo(person.NeedsAttentionFederalAssemblyAuthoritiesCommission));
+            Assert.That(mappedPerson.NeedsAttentionFederalAssemblyAdministrationCommission, Is.EqualTo(person.NeedsAttentionFederalAssemblyAdministrationCommission));
             Assert.That(mappedPerson.NeedsAttentionBasicData, Is.EqualTo(person.NeedsAttentionBasicData));
             Assert.That(mappedPerson.NeedsAttentionMembershipExpired, Is.EqualTo(person.NeedsAttentionMembershipExpired));
             Assert.That(mappedPerson.NeedsAttentionOccupation, Is.EqualTo(person.NeedsAttentionOccupation));

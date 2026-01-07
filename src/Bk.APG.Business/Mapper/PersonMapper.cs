@@ -128,7 +128,8 @@ public static class PersonMapper
         personDetail.NeedsAttentionLongerDuty = person.NeedsAttentionLongerDuty;
         personDetail.NeedsAttentionShorterDuty = person.NeedsAttentionShorterDuty;
         personDetail.NeedsAttentionFederalDuty = person.NeedsAttentionFederalDuty;
-        personDetail.NeedsAttentionFederalAssembly = person.NeedsAttentionFederalAssembly;
+        personDetail.NeedsAttentionFederalAssemblyAdministrationCommission = person.NeedsAttentionFederalAssemblyAdministrationCommission;
+        personDetail.NeedsAttentionFederalAssemblyAuthoritiesCommission = person.NeedsAttentionFederalAssemblyAuthoritiesCommission;
         personDetail.NeedsAttentionBasicData = person.NeedsAttentionBasicData;
         personDetail.NeedsAttentionOccupation = person.NeedsAttentionOccupation;
         personDetail.NeedsAttentionInterests = person.NeedsAttentionInterests;

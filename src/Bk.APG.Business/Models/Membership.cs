@@ -55,7 +55,7 @@ public class Membership : EntityBase
     public bool JustificationLongerDutyNeeded => Committee?.ExtraParliamentaryCommission == true && EndDate > BeginDate && new DateOnly(1, 1, 1).Year + (EndDate.Year - BeginDate.Year) - 1 >= 12;
 
     [NotMapped]
-    public bool JustificationShorterDutyNeeded => Committee?.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && EndDate > BeginDate && new DateOnly(1, 1, 1).Year + (EndDate.AddDays(1).Year - BeginDate.Year) - 1 < 4;
+    public bool JustificationShorterDutyNeeded => Committee?.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && EndDate > BeginDate && EndDate < BeginDate.AddYears(4).AddDays(-1);
 
     [NotMapped]
     public bool JustificationMemberInFederalDutyNeeded => Committee?.ExtraParliamentaryCommission == true && Person?.FederalDuty == true;
@@ -69,8 +69,8 @@ public class Membership : EntityBase
             NeedsAttentionLongerDuty ||
             NeedsAttentionShorterDuty ||
             NeedsAttentionFederalDuty ||
-            NeedsAttentionFederalAssembly ||
-            NeedsAttentionInterests);
+            NeedsAttentionFederalAssemblyAuthoritiesCommission ||
+            NeedsAttentionFederalAssemblyAdministrationCommission);
 
     [NotMapped]
     public bool NeedsAttentionMembershipExpired => EndDate < DateOnly.FromDateTime(DateTime.Now) && (ElectionType?.Uri is ElectionType.NewElection or ElectionType.ReElection);
@@ -85,7 +85,10 @@ public class Membership : EntityBase
     public bool NeedsAttentionFederalDuty => JustificationMemberInFederalDutyNeeded && string.IsNullOrWhiteSpace(JustificationMemberInFederalDuty);
 
     [NotMapped]
-    public bool NeedsAttentionFederalAssembly => JustificationMemberInFederalAssemblyNeeded && string.IsNullOrWhiteSpace(JustificationMemberInFederalAssembly);
+    public bool NeedsAttentionFederalAssemblyAuthoritiesCommission => JustificationMemberInFederalAssemblyNeeded && Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid && string.IsNullOrWhiteSpace(JustificationMemberInFederalAssembly);
+
+    [NotMapped]
+    public bool NeedsAttentionFederalAssemblyAdministrationCommission => JustificationMemberInFederalAssemblyNeeded && Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid && string.IsNullOrWhiteSpace(JustificationMemberInFederalAssembly);
 
     [NotMapped]
     public bool NeedsAttentionInterests => Person is not null && Person.NeedsAttentionInterests;

@@ -71,6 +71,7 @@ public class CommitteeDetailDto
     public bool NeedsAttentionDataProtectionOfficer { get; set; }
     public bool NeedsAttentionBasicData { get; set; }
     public bool NeedsAttentionMembershipExpired { get; set; }
+    public bool NeedsAttentionMembershipInterestOrOccupation { get; set; }
 
     public ICollection<ContactPointDetailDto> ContactPoints { get; set; } = new List<ContactPointDetailDto>();
 }

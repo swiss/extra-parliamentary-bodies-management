@@ -332,6 +332,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.Memberships)
             .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Gender)
             .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Language)
+            .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Interests)
             .Include(x => x.ContactPoints).ThenInclude(x => x.ContactPointType)
             .Include(x => x.ContactPoints).ThenInclude(x => x.Language)
             .Include(x => x.ContactPoints).ThenInclude(x => x.Gender)
