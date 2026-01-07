@@ -1,0 +1,8 @@
+<p class="overview-hint">{{ 'onlinePublication.hint' | translate }}</p>
+
+<div class="button-toggle-group">
+    <mat-button-toggle-group [value]="ogdPublicationEnabled()" [hideSingleSelectionIndicator]="true" (change)="onToggle($event)">
+        <mat-button-toggle class="green-active" [value]="true">{{ 'onlinePublication.toggle.activated' | translate }}</mat-button-toggle>
+        <mat-button-toggle class="blue-active" [value]="false">{{ 'onlinePublication.toggle.deactivated' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+</div>

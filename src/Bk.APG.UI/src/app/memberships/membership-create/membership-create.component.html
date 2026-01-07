@@ -1,0 +1,22 @@
+<h2>{{ getHeaderText() }}</h2>
+<div class="membership-data-header">
+    @if (isForPerson) {
+        <h4>{{ 'membership.create' | translate }}</h4>
+    }
+    @if (isForCommittee) {
+        <h4>{{ 'member.create' | translate }}</h4>
+    }
+
+    <div class="buttons">
+        <button mat-button obButton="secondary" type="button" (click)="close()">{{ 'common.close' | translate }}</button>
+        <button mat-button obButton="primary" type="button" [disabled]="selectionMissing() || !form().valid" (click)="save()">
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+<apg-membership-data-form
+    [(membershipModification)]="membershipToCreate"
+    [(personEntity)]="personEntity"
+    [(committeeEntity)]="committeeEntity"
+    [isUpdateMode]="false"
+/>

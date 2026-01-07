@@ -1,0 +1,42 @@
+<mat-card class="data-analysis">
+    <mat-card-content>
+        <div class="input-grid">
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'dataAnalysis.analysisDate' | translate }}</mat-label>
+                <input [formControl]="dataAnalysisForm.controls.analysisDate" [matDatepicker]="analysisDate" matInput />
+                <mat-datepicker-toggle matSuffix [for]="analysisDate" />
+                <mat-datepicker #analysisDate xPosition="end" />
+                <mat-error>{{
+                    errorService.getControlError(
+                        dataAnalysisForm.controls.analysisDate.errors,
+                        'dataAnalysis.analysisDate' | translate,
+                        'dataAnalysis.error.analysisDate'
+                    )
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <h5>{{ 'dataAnalysis.title' | translate }}</h5>
+
+        <ul>
+            @for (exportType of exportTypes; track exportType) {
+                <li>
+                    <button (click)="generateExport(exportType)" mat-button obButton="tertiary" type="button">
+                        <mat-icon svgIcon="file_excel" />
+                        {{ 'dataAnalysis.export.' + exportType | translate }}
+                    </button>
+                    <div class="icons">
+                        @if (successfulExports().includes(exportType)) {
+                            <mat-icon svgIcon="checkmark_circle" class="checkmark-icon" />
+                        } @else if (loadingExports().includes(exportType)) {
+                            <mat-icon svgIcon="arrow_clockwise" class="rotate" />
+                        } @else if (failedExports().includes(exportType)) {
+                            <mat-icon svgIcon="xmark_circle" class="error-icon" />
+                        }
+                        <mat-icon svgIcon="info_circle" [title]="'dataAnalysis.info.' + exportType | translate" />
+                    </div>
+                </li>
+            }
+        </ul>
+    </mat-card-content>
+</mat-card>

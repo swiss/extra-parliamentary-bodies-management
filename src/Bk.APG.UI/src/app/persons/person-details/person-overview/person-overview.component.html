@@ -1,0 +1,56 @@
+@if (personDetailsService.personDetails(); as personDetails) {
+    <div class="person-details-form">
+        @if (personDetails.needsAttentionFederalDuty) {
+            <ob-alert type="warning">{{ 'person.details.warning.federalDuty' | translate }}</ob-alert>
+        }
+        @if (personDetails.needsAttentionFederalAssembly) {
+            <ob-alert type="warning">{{ 'person.details.warning.federalAssembly' | translate }}</ob-alert>
+        }
+        @if (personDetails.needsAttentionOccupation) {
+            <ob-alert type="warning">{{ 'person.details.warning.occupation' | translate }}</ob-alert>
+        } @else {
+            @if (!personDetails.occupations || personDetails.occupations === '' || !personDetails.employer) {
+                <ob-alert type="info">{{ 'person.details.info.occupation' | translate }}</ob-alert>
+            }
+        }
+        @if (personDetails.needsAttentionInterests) {
+            <ob-alert type="warning">{{ 'person.details.warning.interests' | translate }}</ob-alert>
+        } @else {
+            @if ((personDetails?.interests?.length ?? 0) === 0 && !personDetails?.noInterest) {
+                <ob-alert type="info">{{ 'person.details.info.interests' | translate }}</ob-alert>
+            }
+        }
+        @if (personDetails.needsAttentionMembershipExpired) {
+            <ob-alert type="warning">{{ 'person.details.warning.endDate' | translate }}</ob-alert>
+        }
+        <p class="overview-hint">{{ 'common.overviewHint' | translate }}</p>
+        <apg-person-overview-basic-data [personDetails]="personDetailsService.personDetails()" />
+        <hr class="separator-line" />
+
+        <div class="two-column-grid header-column">
+            <div>
+                <h4>{{ 'person.details.address.officeAddress' | translate }}</h4>
+                @if (!personDetails.maskAddress) {
+                    <apg-person-overview-address [addressDetail]="personDetails.officeAddress!" />
+                }
+            </div>
+            <div>
+                <h4>{{ 'person.details.address.privateAddress' | translate }}</h4>
+                @if (!personDetails.maskAddress) {
+                    <apg-person-overview-address [addressDetail]="personDetails.privateAddress!" />
+                }
+            </div>
+        </div>
+        @if (personDetails.maskAddress) {
+            <ob-alert type="info">{{ 'person.details.info.maskedAddress' | translate }}</ob-alert>
+        }
+
+        <hr class="separator-line" />
+        <div class="header-column">
+            <apg-person-overview-memberships [memberships]="personDetails.memberships!" />
+        </div>
+        <div class="header-column">
+            <apg-person-overview-interests [interests]="personDetails.interests!" />
+        </div>
+    </div>
+}

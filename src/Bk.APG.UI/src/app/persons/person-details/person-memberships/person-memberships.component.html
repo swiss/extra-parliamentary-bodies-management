@@ -1,0 +1,72 @@
+@if (personDetailsService.personDetails(); as personDetails) {
+    @if (personDetails.needsAttentionFederalDuty) {
+        <ob-alert type="warning">{{ 'person.details.warning.federalDuty' | translate }}</ob-alert>
+    }
+    @if (personDetails.needsAttentionFederalAssembly) {
+        <ob-alert type="warning">{{ 'person.details.warning.federalAssembly' | translate }}</ob-alert>
+    }
+    @if (personDetails.needsAttentionMembershipExpired) {
+        <ob-alert type="warning">{{ 'person.details.warning.endDate' | translate }}</ob-alert>
+    }
+}
+<div class="person-memberships-header">
+    <h2>{{ personDetailsService.personName() }}</h2>
+    <button (click)="createMembership()" mat-button obButton="secondary" type="button" [matTooltip]="'membership.create.info' | translate">
+        <mat-icon svgIcon="plus" />
+        {{ 'membership.create.info' | translate }}
+    </button>
+</div>
+@for (memberships of tables; track memberships.name) {
+    <h4>{{ 'person.details.' + memberships.name | translate }}</h4>
+    <table
+        [dataSource]="memberships.data()"
+        class="ob-table"
+        mat-table
+        matSort
+        matSortDisableClear
+        (matSortChange)="sortData($event, memberships.currentSort)"
+        [matSortActive]="memberships.currentSort().active"
+        [matSortDirection]="memberships.currentSort().direction"
+    >
+        <ng-container matColumnDef="committee">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.committee' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.committee }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="department">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.department' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.department }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="function">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.function' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.function }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="beginDate">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.beginDate' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.beginDate | date: 'dd.MM.yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="endDate">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.endDate' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.endDate | date: 'dd.MM.yyyy' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="electionType">
+            <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'person.memberships.table.header.electionType' | translate }}</th>
+            <td *matCellDef="let element" mat-cell>{{ element.electionType }}</td>
+        </ng-container>
+
+        <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+        <tr
+            (click)="editMembership(row)"
+            *matRowDef="let row; columns: displayedColumns"
+            mat-row
+            [ngClass]="row.needsAttention ? 'red-table-row' : !row.isActive ? 'inactive-table-row' : ''"
+        ></tr>
+        <tr *matNoDataRow>
+            <td [colSpan]="displayedColumns.length">{{ 'person.memberships.table.noEntries' | translate }}</td>
+        </tr>
+    </table>
+}

@@ -1,0 +1,137 @@
+@if (personDetails) {
+    <div class="person-details-form">
+        <h2>{{ personDetails.surname }} {{ personDetails.givenName }}</h2>
+        <table class="person-info-table">
+            <tr>
+                <td class="heading-text">
+                    {{ 'person.details.birthYear' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.birthYear }}
+                </td>
+
+                <td class="heading-text">
+                    {{ 'person.details.gender' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.gender }}
+                </td>
+            </tr>
+            <tr>
+                <td class="heading-text">
+                    {{ 'person.details.language' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.language }}
+                </td>
+                <td class="heading-text">
+                    {{ 'person.details.correspondenceLanguage' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.correspondenceLanguage }}
+                </td>
+            </tr>
+
+            <tr>
+                <td class="heading-text">
+                    {{ 'person.salutation' | translate }}
+                </td>
+
+                <td>
+                    {{ personDetails.salutation }}
+                </td>
+
+                <td class="heading-text">
+                    {{ 'person.salutationText' | translate }}
+                </td>
+
+                <td>
+                    {{ personDetails.salutationText }}
+                </td>
+            </tr>
+
+            <tr>
+                <td class="heading-text">
+                    {{ 'person.details.occupationMigrated' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.occupation }}
+                </td>
+
+                <td class="heading-text">
+                    {{ 'person.details.title' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.title }}
+                </td>
+            </tr>
+
+            <tr>
+                <td class="heading-text">
+                    {{ 'person.details.occupation' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.occupations }}
+                </td>
+
+                <td class="heading-text">
+                    {{ 'person.details.employer' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.employer }}
+                </td>
+            </tr>
+
+            <tr>
+                <td class="heading-text">{{ 'person.details.additionalLabelJob' | translate }}</td>
+                @if (!personDetails.noEmployment) {
+                    <td>{{ 'common.yes' | translate }}</td>
+                } @else {
+                    <td>{{ 'common.no' | translate }}</td>
+                }
+
+                <td class="heading-text">{{ 'person.details.additionalLabelInterests' | translate }}</td>
+                @if (!personDetails.noInterest) {
+                    <td>{{ 'common.yes' | translate }}</td>
+                } @else {
+                    <td>{{ 'common.no' | translate }}</td>
+                }
+            </tr>
+
+            <tr>
+                <td class="heading-text">{{ 'person.details.federalDuty' | translate }}</td>
+                @if (personDetails.federalDuty) {
+                    <td>{{ 'common.yes' | translate }}</td>
+                } @else {
+                    <td>{{ 'common.no' | translate }}</td>
+                }
+
+                <td class="heading-text">{{ 'person.details.federalAssembly' | translate }}</td>
+                @if (personDetails.federalAssembly) {
+                    <td>
+                        {{ 'common.yes' | translate }}&nbsp;&nbsp;({{ 'person.details.legislativePeriodsAbbreviation' | translate }}:
+                        {{ personDetails.legislaturePeriods }})
+                    </td>
+                } @else {
+                    <td>{{ 'common.no' | translate }}</td>
+                }
+            </tr>
+
+            <tr>
+                <td class="heading-text">
+                    {{ 'person.details.officeId' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.office }}
+                </td>
+
+                <td class="heading-text">
+                    {{ 'person.details.councilId' | translate }}
+                </td>
+                <td>
+                    {{ personDetails.council }}
+                </td>
+            </tr>
+        </table>
+    </div>
+}

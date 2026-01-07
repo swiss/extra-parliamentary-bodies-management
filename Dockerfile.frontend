@@ -1,0 +1,33 @@
+# Build
+FROM bit-base-images-docker-hosted.nexus.bit.admin.ch/bit/ubi9/nodejs-22:latest AS builder
+
+USER root
+
+WORKDIR /app
+
+COPY /src/Bk.APG.UI/package*.json .
+RUN npm ci
+
+COPY /src/Bk.APG.UI .
+
+RUN npm run lint
+RUN npm run prettier
+RUN npm run test
+RUN npm run build
+
+
+# Serve
+FROM bit-base-images-docker-hosted.nexus.bit.admin.ch/bit/nginx-120:latest
+
+USER root
+
+COPY --from=builder /app/dist/bk.apg.ui/browser /usr/share/nginx/html
+COPY --from=builder /app/dist/bk.apg.ui/3rdpartylicenses.txt /usr/share/nginx/html
+
+# Nginx configuration
+COPY --from=builder /app/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+RUN mkdir /etc/nginx/includes
+COPY --from=builder /app/etc/nginx/security_headers.conf /etc/nginx/includes/security_headers.conf
+
+EXPOSE 8080
+CMD nginx

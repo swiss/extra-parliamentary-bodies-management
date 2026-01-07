@@ -1,0 +1,54 @@
+@if (addressDetail()) {
+    <table [ngClass]="addressDetail().activeAddress ? 'active_address' : 'inactive_address'">
+        <tr>
+            @if (addressDetail().companyName) {
+                <td class="heading-text">
+                    {{ 'person.details.address.companyName' | translate }}
+                </td>
+            }
+            <td>
+                {{ addressDetail().companyName }}
+            </td>
+        </tr>
+        <tr>
+            <td class="heading-text">
+                {{ 'person.details.address.street' | translate }}
+            </td>
+            <td>
+                {{ addressDetail().street }}
+            </td>
+        </tr>
+        <tr>
+            <td class="heading-text">
+                {{ 'person.details.address.zipCity' | translate }}
+            </td>
+            <td>
+                {{ zipCity() }}
+            </td>
+        </tr>
+        <tr>
+            <td class="heading-text">
+                {{ 'person.details.address.phone' | translate }}
+            </td>
+            <td>
+                {{ addressDetail().phone }}
+            </td>
+        </tr>
+        <tr>
+            <td class="heading-text">
+                {{ 'person.details.address.mobile' | translate }}
+            </td>
+            <td>
+                {{ addressDetail().mobile }}
+            </td>
+        </tr>
+        <tr>
+            <td class="heading-text">
+                {{ 'person.details.address.email' | translate }}
+            </td>
+            <td>
+                {{ addressDetail().email }}
+            </td>
+        </tr>
+    </table>
+}
