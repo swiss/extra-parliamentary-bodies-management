@@ -1,0 +1,90 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    .committee-members-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: sticky;
+        left: 0;
+
+        .buttons {
+            display: flex;
+            gap: $ob-spacing-sm;
+            align-items: center;
+        }
+    }
+
+    table {
+        margin-bottom: 16px;
+    }
+
+    .mat-column-surname {
+        min-width: 120px;
+        width: 10%;
+    }
+
+    .mat-column-givenName {
+        min-width: 120px;
+        width: 10%;
+    }
+
+    .mat-column-gender {
+        min-width: 100px;
+        width: 5%;
+    }
+
+    .mat-column-language {
+        min-width: 110px;
+        width: 3%;
+    }
+
+    .mat-column-function {
+        min-width: 115px;
+        width: 10%;
+    }
+
+    .mat-column-employmentLevel {
+        min-width: 100px;
+        width: 1%;
+    }
+
+    .mat-column-beginDate {
+        min-width: 140px;
+        width: 2%;
+    }
+
+    .mat-column-endDate {
+        min-width: 120px;
+        width: 2%;
+    }
+
+    .mat-column-electionType {
+        min-width: 120px;
+        width: 10%;
+    }
+
+    .mat-column-hasMembershipAddition {
+        min-width: 110px;
+        width: 1%;
+    }
+
+    .mat-mdc-header-cell {
+        white-space: nowrap;
+    }
+
+    .table-header {
+        display: flex;
+        gap: $ob-spacing-lg;
+        margin-bottom: $ob-spacing-sm;
+        align-items: end;
+
+        h4 {
+            margin: 0;
+        }
+
+        apg-help-tooltip {
+            align-self: center;
+        }
+    }
+}

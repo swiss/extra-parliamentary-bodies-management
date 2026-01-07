@@ -1,0 +1,161 @@
+@if (committeeDetails(); as committee) {
+    <!-- TODO REACTIVATE -->
+    <!--   @if (committee.needsAttentionDataProtectionOfficer) {
+        <ob-alert type="warning">{{ 'committee.details.warning.dataProtectionOfficer' | translate }}</ob-alert>
+    } @else -->
+    @if (!hasDataProtectionOfficer()) {
+        <ob-alert type="info">{{ 'committee.details.info.dataProtectionOfficer' | translate }}</ob-alert>
+    }
+    @if (!hasSecretariat()) {
+        <ob-alert type="info">{{ 'committee.details.info.secretariat' | translate }}</ob-alert>
+    }
+}
+<div class="committee-contactpoints-header">
+    <h3>{{ committeeDetailsService.committeeDetails()?.description }}</h3>
+    <button
+        (click)="createContactPoint()"
+        mat-button
+        obButton="secondary"
+        type="button"
+        [matTooltip]="'contactPoint.create.info' | translate"
+        [disabled]="!this.canEdit()"
+    >
+        <mat-icon svgIcon="plus" />
+        {{ 'contactPoint.create.info' | translate }}
+    </button>
+</div>
+
+<table [dataSource]="dataSource" class="ob-table" mat-table matSort>
+    <ng-container matColumnDef="contactPointType">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.contactPointType.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.contactPointType.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.contactPointType }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="beginDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.beginDate.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.beginDate.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.beginDate | date: 'dd.MM.yyyy' }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="endDate">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.endDate.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.endDate.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.endDate | date: 'dd.MM.yyyy' }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="companyName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.companyName.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.companyName.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.companyName }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="personName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.personName.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.personName.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.personName }}
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="phone">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.phone.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.phone.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.givenName }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="email">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.email.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.email.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.email }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="zipCity">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'contactPoints.table.header.zipCity.label' | translate }}</th>
+        <td
+            *matCellDef="let element"
+            mat-cell
+            attr.data-label="{{ 'contactPoints.table.header.zipCity.label' | translate }}"
+            [ngClass]="!element.isActive ? 'inactive-contactpoint' : 'active-contactpoint'"
+        >
+            {{ element.zipCity }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef scope="col"></th>
+
+        <td mat-cell *matCellDef="let row">
+            <button
+                (click)="$event.stopPropagation(); copyContactPoint(row.id)"
+                class="action-button"
+                mat-icon-button
+                obButton="secondary"
+                type="button"
+                [disabled]="!canEdit()"
+                [matTooltip]="'contactPoint.copy.info' | translate"
+            >
+                <mat-icon svgIcon="copy" class="ob-icon" />
+                <span class="ob-screen-reader-only">{{ 'contactPoints.table.action.copy' | translate }}</span>
+            </button>
+            @if (canEdit()) {
+                <button
+                    (click)="$event.stopPropagation(); deleteContactPoint(row.id)"
+                    [matTooltip]="'contactPoint.delete.info' | translate"
+                    class="action-button"
+                    mat-icon-button
+                    obButton="secondary"
+                    type="button"
+                >
+                    <mat-icon svgIcon="delete" class="ob-icon" />
+                    <span class="ob-screen-reader-only">{{ 'contactPoints.table.action.delete' | translate }}</span>
+                </button>
+            }
+        </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr *matRowDef="let row; columns: displayedColumns" mat-row (click)="canEdit() ? editContactPoint(row.id) : ''"></tr>
+    <tr *matNoDataRow>
+        <td [colSpan]="displayedColumns.length">{{ 'contactPoints.table.noEntries' | translate }}</td>
+    </tr>
+</table>

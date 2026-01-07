@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<div mat-dialog-content>
+    <p>{{ data.message }}</p>
+</div>
+<div mat-dialog-actions class="buttons-container">
+    <button mat-button obButton="primary" (click)="onYes()">{{ 'common.yes' | translate }}</button>
+    <button mat-button obButton="secondary" (click)="onNo()">{{ 'common.no' | translate }}</button>
+</div>

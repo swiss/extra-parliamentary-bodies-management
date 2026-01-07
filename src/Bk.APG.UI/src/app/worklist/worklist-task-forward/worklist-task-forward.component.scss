@@ -1,0 +1,16 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+:host {
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: $ob-spacing-sm;
+
+        .buttons {
+            display: flex;
+            gap: $ob-spacing-sm;
+            text-wrap: nowrap;
+        }
+    }
+}

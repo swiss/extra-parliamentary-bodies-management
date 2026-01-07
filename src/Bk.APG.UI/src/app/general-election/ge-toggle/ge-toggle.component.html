@@ -1,0 +1,6 @@
+@if (generalElectionService.isGeneralElectionVisible()) {
+    <mat-button-toggle-group [value]="generalElectionService.isGeneralElectionEnabled()" [hideSingleSelectionIndicator]="true" (change)="onToggle($event)">
+        <mat-button-toggle class="green-active" [value]="false">{{ 'generalElection.toggle.current' | translate }}</mat-button-toggle>
+        <mat-button-toggle class="blue-active" [value]="true">{{ 'generalElection.toggle.future' | translate }}</mat-button-toggle>
+    </mat-button-toggle-group>
+}

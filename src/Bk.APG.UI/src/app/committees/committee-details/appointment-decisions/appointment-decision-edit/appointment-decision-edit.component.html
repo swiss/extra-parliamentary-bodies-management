@@ -1,0 +1,26 @@
+<div class="membership-data-header">
+    <h4>{{ 'appointmentDecision.update' | translate }}</h4>
+    <div class="buttons">
+        <button (click)="back()" mat-button obButton="secondary" type="button">{{ 'common.back' | translate }}</button>
+        <button mat-button obButton="secondary" [disabled]="!form().dirty && !documentForm().dirty" type="button" (click)="reset()">
+            {{ 'common.reset' | translate }}
+        </button>
+
+        <button
+            mat-button
+            obButton="primary"
+            type="button"
+            [disabled]="
+                !form().valid ||
+                !documentForm().valid ||
+                (isInstitution() && documentForm().controls.length === 0) ||
+                (isInstitution() && documentForm().controls.length > 0 && !isOriginalSelected()) ||
+                (isReport() && documentForm().controls.length === 0 && !isLinkProvided())
+            "
+            (click)="save()"
+        >
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+<apg-appointment-decision-data-form [(appointmentDecisionModification)]="appointmentDecisionToUpdate" [isUpdateMode]="true" />

@@ -1,0 +1,65 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+$gap: 16px;
+
+:host {
+    padding-bottom: 4px;
+
+    .data-analysis {
+        max-width: 100ch;
+        margin: auto;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        column-gap: $gap;
+        margin: auto;
+
+        .input-grid {
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: $gap;
+
+            > * {
+                flex: 1 1 calc(50% - $gap);
+                max-width: calc(50%);
+            }
+        }
+    }
+
+    ul {
+        list-style-type: none;
+        padding-left: 0;
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: $ob-spacing-xs;
+
+            span {
+                flex: 0 1 auto;
+            }
+
+            mat-icon {
+                font-size: medium;
+            }
+
+            .icons {
+                margin-left: auto;
+
+                mat-icon {
+                    margin-left: $ob-spacing-xs;
+                }
+
+                .checkmark-icon {
+                    color: $ob-green-700;
+                }
+
+                .error-icon {
+                    color: $ob-red-700;
+                }
+            }
+        }
+    }
+}

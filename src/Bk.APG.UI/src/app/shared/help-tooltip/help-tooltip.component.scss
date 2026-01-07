@@ -1,0 +1,68 @@
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+$icon-size: 20px;
+$icon-size-big: $icon-size * 1.2;
+
+:host {
+    height: $icon-size;
+    width: $icon-size;
+
+    &:has(.help-icon-big) {
+        height: $icon-size-big;
+        width: $icon-size-big;
+    }
+
+    .help-icon {
+        cursor: help;
+        height: $icon-size;
+        width: $icon-size;
+        color: $ob-blue-600;
+
+        &:hover {
+            color: $ob-primary;
+        }
+
+        &.help-icon-big {
+            height: $icon-size-big;
+            width: $icon-size-big;
+        }
+    }
+
+    .help-tooltip-content {
+        max-width: 400px;
+        padding: 0.5rem;
+        font-size: 0.875rem;
+        line-height: 1.4;
+
+        // Increase max-width when custom content (ng-content) is used
+        &:has(> *) {
+            max-width: 600px;
+        }
+
+        p:is(:last-child) {
+            margin-bottom: 0;
+        }
+    }
+
+    @keyframes show {
+        100% {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    ::ng-deep .ob-popover-content {
+        opacity: 0;
+        animation: show 50ms 200ms forwards;
+        padding: 4px 8px 8px;
+        border-radius: 4px;
+        box-shadow:
+            0 4px 16px 0 rgba(0, 0, 0, 0.2),
+            0 4px 16px 0 rgba(0, 0, 0, 0.2);
+
+        .ob-popover-content-wrapper {
+            padding: 0;
+        }
+    }
+}

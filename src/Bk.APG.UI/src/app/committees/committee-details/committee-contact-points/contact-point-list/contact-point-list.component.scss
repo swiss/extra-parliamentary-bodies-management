@@ -1,0 +1,40 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+@use '@oblique/oblique/styles/scss/core/palette' as *;
+
+:host {
+    .committee-contactpoints-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        position: sticky;
+        left: 0;
+
+        button {
+            margin-top: 4px;
+            margin-bottom: $ob-spacing-sm;
+        }
+    }
+}
+
+.active-contactpoint {
+    color: $ob-black;
+}
+
+.inactive-contactpoint {
+    color: $ob-error;
+    font-style: italic;
+}
+
+.ob-icon {
+    margin-top: $ob-spacing-sm;
+}
+
+.mat-column-actions {
+    text-align: right;
+    text-wrap: nowrap;
+    width: 1%;
+
+    button + button {
+        margin-left: $ob-spacing-xs;
+    }
+}

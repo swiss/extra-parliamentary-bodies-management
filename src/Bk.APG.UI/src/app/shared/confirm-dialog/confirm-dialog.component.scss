@@ -1,0 +1,6 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+.buttons-container {
+    justify-content: flex-end;
+    padding-top: $ob-spacing-default;
+}

@@ -1,0 +1,15 @@
+{
+  "providerId": "Microsoft.Tools.ServiceModel.Svcutil",
+  "version": "2.1.0",
+  "ExtendedData": {
+    "inputs": [
+      "https://www.uid-wse-a.admin.ch/V5.0/PublicServices.svc"
+    ],
+    "namespaceMappings": [
+      "*, Bk.APG.Infrastructure.Service.UID.PublicServices"
+    ],
+    "outputFile": "UIDPublicService.cs",
+    "targetFramework": "net8.0",
+    "typeReuseMode": "All"
+  }
+}

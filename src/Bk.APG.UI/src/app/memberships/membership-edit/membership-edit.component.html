@@ -1,0 +1,32 @@
+@if (this.needsAttentionInterests) {
+    <ob-alert type="warning">{{ 'person.details.warning.interests' | translate }}<br /></ob-alert>
+}
+<h2>{{ getHeaderText() }}</h2>
+<div class="membership-data-header">
+    @if (isForPerson) {
+        <h4>{{ 'membership.edit' | translate }}</h4>
+    }
+    @if (isForCommittee) {
+        <h4>{{ 'member.edit' | translate }}</h4>
+    }
+    <div class="buttons">
+        <button (click)="back()" mat-button obButton="secondary" type="button">{{ 'common.back' | translate }}</button>
+        <button mat-button obButton="secondary" [disabled]="!form().dirty" type="button" (click)="reset()">{{ 'common.reset' | translate }}</button>
+        <button mat-button obButton="secondary" [disabled]="!canDelete" type="button" (click)="delete()">{{ 'common.delete' | translate }}</button>
+        <button
+            mat-button
+            obButton="primary"
+            type="button"
+            [disabled]="!form().valid || !form().dirty || form().controls.electionTypeId.disabled"
+            (click)="save()"
+        >
+            {{ 'common.save' | translate }}
+        </button>
+    </div>
+</div>
+<apg-membership-data-form
+    [(membershipModification)]="membershipToUpdate"
+    [(personEntity)]="personEntity"
+    [(committeeEntity)]="committeeEntity"
+    [isUpdateMode]="true"
+/>
