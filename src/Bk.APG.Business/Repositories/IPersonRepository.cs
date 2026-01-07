@@ -15,6 +15,6 @@ public interface IPersonRepository
     void CreateForMigration(Person person);
     Task<IEnumerable<Person>> GetPersonsByBirthYear(int birthYear, int range = 0);
     Task<IEnumerable<Person>> GetByName(string name);
-    Task<Person[]> GetPersonsForExport(DateOnly startDate);
+    Task<Person[]> GetPersonsForExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
     Task<IEnumerable<Person>> GetAllForDuplicateCheck();
 }

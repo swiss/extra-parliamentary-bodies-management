@@ -698,7 +698,9 @@ public class DataAnalysisService : IDataAnalysisService
 
     private async Task<List<List<Cell>>> GetPersonData(DateOnly dataAnalysisDate)
     {
-        var persons = await _personRepository.GetPersonsForExport(dataAnalysisDate);
+        var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
+
+        var persons = await _personRepository.GetPersonsForExport(dataAnalysisDate, departmentId, officeId, committeeId);
 
         var bodyCells = persons
             .Select(person => new List<Cell>
