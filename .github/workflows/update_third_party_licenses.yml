@@ -2,8 +2,6 @@ name: Update THIRD_PARTY_LICENSES
 
 on:
   push:
-    paths:
-      - '**/*.csproj' # only trigger, if the a project file, has been changed
 
 permissions:
   contents: write  # needed to push the updated file
