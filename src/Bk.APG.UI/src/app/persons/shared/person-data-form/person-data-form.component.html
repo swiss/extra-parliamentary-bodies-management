@@ -98,11 +98,14 @@
                 <mat-error />
             </mat-form-field>
 
-            <mat-form-field obErrorMessages>
-                <mat-label>{{ 'person.details.salutationText' | translate }}</mat-label>
-                <input matInput type="text" [formControl]="personForm.controls.salutationText" />
-                <mat-error />
-            </mat-form-field>
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'person.details.salutationText' | translate }}</mat-label>
+                    <input matInput type="text" [formControl]="personForm.controls.salutationText" />
+                    <mat-error />
+                </mat-form-field>
+                <apg-help-tooltip text="person.helpTooltip.salutationText" />
+            </div>
 
             <mat-form-field obErrorMessages [ngClass]="{invisible: !isUpdateMode}">
                 <mat-label>{{ 'person.details.occupationMigrated' | translate }}</mat-label>
