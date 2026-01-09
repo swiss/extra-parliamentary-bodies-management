@@ -26,6 +26,10 @@
         ) {
             <ob-alert type="warning">{{ 'committee.details.warning.membershipJustificationOrStatus' | translate }}</ob-alert>
         }
+
+        @if (committee.needsAttentionMembershipInterestOrOccupation) {
+            <ob-alert type="warning">{{ 'committee.details.warning.membershipInterestOrOccupation' | translate }}</ob-alert>
+        }
         <p class="overview-hint">{{ 'common.overviewHint' | translate }}</p>
         <div class="description">
             <h3 class="description-header">

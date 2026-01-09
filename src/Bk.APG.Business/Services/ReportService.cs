@@ -20,7 +20,6 @@ public class ReportService : IReportService
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
-    private readonly IMembershipTermCalculationService _membershipTermCalculationService;
     private readonly ILogger<ReportService> _logger;
 
     public ReportService(
@@ -33,7 +32,6 @@ public class ReportService : IReportService
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         IMasterDataRepository masterDataRepository,
         IGeneralMeasureRepository generalMeasureRepository,
-        IMembershipTermCalculationService membershipTermCalculationService,
         ILogger<ReportService> logger)
     {
         _documentService = documentService;
@@ -45,7 +43,6 @@ public class ReportService : IReportService
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _masterDataRepository = masterDataRepository;
         _generalMeasureRepository = generalMeasureRepository;
-        _membershipTermCalculationService = membershipTermCalculationService;
         _logger = logger;
     }
 
@@ -756,7 +753,7 @@ public class ReportService : IReportService
         return dtoList;
     }
 
-    private List<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFuture(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
+    private static List<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFuture(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
         IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers, IEnumerable<Department> departments)
     {
         // which members we have in the future?
@@ -808,7 +805,7 @@ public class ReportService : IReportService
                 {
                     var person = g.First().Person!; // get the Person object from first membership in the group
 
-                    var totalDurationYears = g.Sum(m => _membershipTermCalculationService.CalculateEstimatedTermInYears(m.BeginDate, m.EndDate));
+                    var totalDurationYears = g.Sum(m => MembershipTermCalculator.CalculateEstimatedTermInYears(m.BeginDate, m.EndDate));
 
                     return new
                     {

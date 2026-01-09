@@ -15,7 +15,6 @@ internal class DataAnalysisServiceTests
 {
     private DocumentService.Client.IDocumentService _documentService;
     private IEiamAssignmentService _eiamAssignmentService;
-    private IMembershipTermCalculationService _membershipTermCalculationService;
     private ICommitteeRepository _committeeRepository;
     private IPersonRepository _personRepository;
     private IMasterDataRepository _masterDataRepository;
@@ -30,13 +29,12 @@ internal class DataAnalysisServiceTests
     {
         _documentService = Substitute.For<DocumentService.Client.IDocumentService>();
         _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
-        _membershipTermCalculationService = Substitute.For<IMembershipTermCalculationService>();
         _committeeRepository = Substitute.For<ICommitteeRepository>();
         _personRepository = Substitute.For<IPersonRepository>();
         _masterDataRepository = Substitute.For<IMasterDataRepository>();
         _logger = NullLogger<DataAnalysisService>.Instance;
         _configuration = Substitute.For<IConfiguration>();
-        _service = new DataAnalysisService(_documentService, _eiamAssignmentService, _membershipTermCalculationService, _committeeRepository, _personRepository, _masterDataRepository, _logger, _configuration);
+        _service = new DataAnalysisService(_documentService, _eiamAssignmentService, _committeeRepository, _personRepository, _masterDataRepository, _logger, _configuration);
     }
 
     [TearDown]
@@ -44,7 +42,6 @@ internal class DataAnalysisServiceTests
     {
         _documentService.ClearSubstitute();
         _eiamAssignmentService.ClearSubstitute();
-        _membershipTermCalculationService.ClearSubstitute();
         _committeeRepository.ClearSubstitute();
         _personRepository.ClearSubstitute();
         _masterDataRepository.ClearSubstitute();
@@ -376,13 +373,14 @@ internal class DataAnalysisServiceTests
         var membership = new MembershipBuilder()
             .WithIsActive(true)
             .WithPerson(person)
+            .WithPersonId(person.Id)
             .WithCommittee(committee)
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddYears(-4)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddYears(2)))
             .Build();
         committee.Memberships.Add(membership);
 
         _committeeRepository.GetCommitteesForExport(dataAnalysisDate, _zeroGuid, _zeroGuid, _zeroGuid).Returns([committee]);
-
-        _membershipTermCalculationService.CalculateCurrentTermInYears(Arg.Is<IEnumerable<Membership>>(x => x.Single() == membership)).Returns(1337);
 
         _configuration["FrontendUrl"].Returns("FooBar");
 
@@ -418,7 +416,7 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[16].Text, Is.EqualTo(membership.ElectionType!.GetText()));
             Assert.That(dataRow[17].Text, Is.EqualTo(membership.ElectionOffice!.GetText()));
             Assert.That(dataRow[18].Text, Is.EqualTo(membership.MaximumEmploymentLevel.GetValueOrDefault().ToString()));
-            Assert.That(dataRow[19].Text, Is.EqualTo("1337"));
+            Assert.That(dataRow[19].Text, Is.EqualTo("4"));
             Assert.That(dataRow[20].Text, Is.EqualTo(membership.MembershipAddition!.GetText()));
             Assert.That(dataRow[21].Text, Is.EqualTo(committee.CommitteeType!.GetText()));
             Assert.That(dataRow[22].Text, Is.EqualTo(committee.Department!.GetText()));
