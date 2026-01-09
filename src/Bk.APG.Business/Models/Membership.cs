@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
+using Bk.APG.Business.Services;
 
 namespace Bk.APG.Business.Models;
 
@@ -52,7 +53,7 @@ public class Membership : EntityBase
     public bool IsFuture => _isFuturePredicate(this);
 
     [NotMapped]
-    public bool JustificationLongerDutyNeeded => Committee?.ExtraParliamentaryCommission == true && EndDate > BeginDate && new DateOnly(1, 1, 1).Year + (EndDate.Year - BeginDate.Year) - 1 >= 12;
+    public bool JustificationLongerDutyNeeded => Committee?.ExtraParliamentaryCommission == true && MembershipTermCalculator.CalculateEstimatedTermInYears(BeginDate, EndDate) >= 12;
 
     [NotMapped]
     public bool JustificationShorterDutyNeeded => Committee?.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && EndDate > BeginDate && EndDate < BeginDate.AddYears(4).AddDays(-1);
