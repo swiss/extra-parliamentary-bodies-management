@@ -628,6 +628,7 @@
   "person.details.warning.endDate": "Das Enddatum einer Mitgliedschaft ist erreicht. Bitte Status anpassen oder Amtszeit verlängern.",
   "person.details.info.interests": "Die Person hat noch keine Interessenbindungen hinterlegt.",
   "person.details.warning.interests": "Interessenbindungen unvollständig - bitte ergänzen oder 'Keine Interessenbindungen' auswählen.",
+  "committee.details.warning.interests": "Interessenbindungen unvollständig - bitte ergänzen oder 'Keine Interessenbindungen' auswählen. Hinweis: Über den Link neben dem Namensfeld gelangen Sie auf die Personenebene.",
   "person.details.info.occupation": "Die Person hat noch keinen Beruf und/oder Arbeitgeber hinterlegt.",
   "person.details.warning.occupation": "Beruf und/oder Arbeitgeber fehlen. Bitte ergänzen Sie die Angaben.",
   "committee.details.warning.endDate": "Das Enddatum der Mitgliedschaft ist erreicht. Bitte Status anpassen oder Amtszeit verlängern.",
