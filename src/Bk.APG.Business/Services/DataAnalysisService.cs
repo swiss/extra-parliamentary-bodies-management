@@ -12,7 +12,6 @@ public class DataAnalysisService : IDataAnalysisService
 {
     private readonly Bk.DocumentService.Client.IDocumentService _documentService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
-    private readonly IMembershipTermCalculationService _membershipTermCalculationService;
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IPersonRepository _personRepository;
     private readonly IMasterDataRepository _masterDataRepository;
@@ -22,7 +21,6 @@ public class DataAnalysisService : IDataAnalysisService
     public DataAnalysisService(
         Bk.DocumentService.Client.IDocumentService documentService,
         IEiamAssignmentService eiamAssignmentService,
-        IMembershipTermCalculationService membershipTermCalculationService,
         ICommitteeRepository committeeRepository,
         IPersonRepository personRepository,
         IMasterDataRepository masterDataRepository,
@@ -31,7 +29,6 @@ public class DataAnalysisService : IDataAnalysisService
     {
         _documentService = documentService;
         _eiamAssignmentService = eiamAssignmentService;
-        _membershipTermCalculationService = membershipTermCalculationService;
         _committeeRepository = committeeRepository;
         _personRepository = personRepository;
         _masterDataRepository = masterDataRepository;
@@ -433,7 +430,7 @@ public class DataAnalysisService : IDataAnalysisService
                 new() { Text = membership.ElectionType?.GetText() },
                 new() { Text = membership.ElectionOffice?.GetText() },
                 NumberCell(membership.MaximumEmploymentLevel.GetValueOrDefault()),
-                NumberCell(_membershipTermCalculationService.CalculateCurrentTermInYears([membership]), "#,0"),
+                NumberCell(MembershipTermCalculator.CalculateCurrentTermInYears([membership]), "#,0"),
                 new() { Text = membership.MembershipAddition?.GetText() },
                 // Gremium
                 new() { Text = membership.Committee!.CommitteeType?.GetText() },

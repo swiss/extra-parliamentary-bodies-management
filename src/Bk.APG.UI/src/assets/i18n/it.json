@@ -612,6 +612,7 @@
   "person.details.warning.endDate": "La data di fine della nomina a membro è stata raggiunta. Modificare lo status o prolungare il mandato.",
   "person.details.info.interests": "La persona non ha ancora inserito  relazioni di interesse.",
   "person.details.warning.interests": "Mancano le relazioni di interesse. Completare i dati.",
+  "committee.details.warning.interests": "IT_Interessenbindungen unvollständig - bitte ergänzen oder 'Keine Interessenbindungen' auswählen. Hinweis: Über den Link neben dem Namensfeld gelangen Sie auf die Personenebene.",
   "person.details.info.occupation": "La persona non ha ancora inserito la professione e/o il datore di lavoro.",
   "person.details.warning.occupation": "Mancano la professione e/o il datore di lavoro. Completare i dati.",
   "committee.details.warning.endDate": "La data di fine della nomina a membro è stata raggiunta. Modificare lo status o prolungare il mandato.",
