@@ -17,7 +17,6 @@ public class CommitteeService : ICommitteeService
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
-    private readonly IMembershipTermCalculationService _membershipTermCalculationService;
     private readonly IMembershipRepository _membershipRepository;
     private readonly ILogger<CommitteeService> _logger;
 
@@ -29,7 +28,6 @@ public class CommitteeService : ICommitteeService
         IEiamAssignmentService eiamAssignmentService,
         IMasterDataRepository masterDataRepository,
         IGeneralMeasureRepository generalMeasureRepository,
-        IMembershipTermCalculationService membershipTermCalculationService,
         IMembershipRepository membershipRepository,
         ILogger<CommitteeService> logger)
     {
@@ -40,7 +38,6 @@ public class CommitteeService : ICommitteeService
         _eiamAssignmentService = eiamAssignmentService;
         _masterDataRepository = masterDataRepository;
         _generalMeasureRepository = generalMeasureRepository;
-        _membershipTermCalculationService = membershipTermCalculationService;
         _membershipRepository = membershipRepository;
         _logger = logger;
     }
@@ -311,10 +308,10 @@ public class CommitteeService : ICommitteeService
             result.TooManyMembers = !validateDto.IsUpdateMode && filteredMemberships.Count + 1 > committee.MaximalMembers;
 
             var personMemberships = allMemberships.Where(x => x.PersonId == validateDto.PersonId).ToArray();
-            result.CurrentTermOfOffice = _membershipTermCalculationService.CalculateCurrentTermInYears(personMemberships);
+            result.CurrentTermOfOffice = MembershipTermCalculator.CalculateCurrentTermInYears(personMemberships);
 
-            var estimatedTermInYears = _membershipTermCalculationService.CalculateEstimatedTermInYears(validateDto.BeginDate, validateDto.EndDate);
-            var currentTermInYearsWithoutCurrentMembership = _membershipTermCalculationService.CalculateCurrentTermInYears(personMemberships.Where(x => x.Id != validateDto.CurrentMembershipId));
+            var estimatedTermInYears = MembershipTermCalculator.CalculateEstimatedTermInYears(validateDto.BeginDate, validateDto.EndDate);
+            var currentTermInYearsWithoutCurrentMembership = MembershipTermCalculator.CalculateCurrentTermInYears(personMemberships.Where(x => x.Id != validateDto.CurrentMembershipId));
             result.EstimatedTermOfOffice = estimatedTermInYears + currentTermInYearsWithoutCurrentMembership;
 
             if ((committee.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || committee.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) && !validateDto.InCorrelationWithFederalDuty)

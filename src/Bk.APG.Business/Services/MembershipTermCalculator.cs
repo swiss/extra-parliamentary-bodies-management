@@ -2,16 +2,17 @@ using Bk.APG.Business.Models;
 
 namespace Bk.APG.Business.Services;
 
-public class MembershipTermCalculationService : IMembershipTermCalculationService
+public static class MembershipTermCalculator
 {
-    public int CalculateCurrentTermInYears(IEnumerable<Membership> memberships)
+    public static int CalculateCurrentTermInYears(IEnumerable<Membership> memberships)
     {
+        var todayDate = DateOnly.FromDateTime(DateTime.Today);
+
         return memberships
             .Sum(x =>
             {
-                var today = DateOnly.FromDateTime(DateTime.Today);
-                var endDate = x.EndDate > today
-                    ? today
+                var endDate = x.EndDate > todayDate
+                    ? todayDate
                     : AdjustEndDate(x.EndDate);
                 return CalculateTermsInYears(x.BeginDate, endDate);
             });
@@ -44,7 +45,7 @@ public class MembershipTermCalculationService : IMembershipTermCalculationServic
         return endDate is { Month: 12, Day: 31 } ? endDate.AddDays(1) : endDate;
     }
 
-    public int CalculateEstimatedTermInYears(DateOnly beginDate, DateOnly endDate)
+    public static int CalculateEstimatedTermInYears(DateOnly beginDate, DateOnly endDate)
     {
         var isDecember31 = endDate is { Month: 12, Day: 31 };
         var numOfYears = endDate.Year - beginDate.Year;
