@@ -41,6 +41,7 @@ describe('PersonDataFormComponent', () => {
 
     const personsServiceMock = {
         getSimilarPersons: jest.fn(),
+        generateSalutation: jest.fn(),
         reload$: new Subject(),
     };
 
@@ -906,5 +907,124 @@ describe('PersonDataFormComponent', () => {
             tick(300);
             expect(component.filteredZipsAndCitiesPrivate()).toEqual([]);
         }));
+    });
+
+    describe('Salutation Generation Effect', () => {
+        beforeEach(() => {
+            personsServiceMock.generateSalutation = jest.fn().mockReturnValue(of('Sehr geehrte Frau Dr. Müller'));
+        });
+
+        it('should call generateSalutation when all required fields are filled', fakeAsync(() => {
+            component.personForm.controls.genderId.setValue('femaleId');
+            component.personForm.controls.correspondenceLanguageId.setValue('de');
+            component.personForm.controls.surname.setValue('Müller');
+            component.personForm.controls.title.setValue('Dr.');
+
+            fixture.detectChanges();
+            tick(300);
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'de', 'Müller', 'Dr.');
+            expect(component.personForm.controls.salutationText.value).toBe('Sehr geehrte Frau Dr. Müller');
+        }));
+
+        it('should update salutationText when surname changes', () => {
+            component.personForm.controls.genderId.setValue('maleId');
+            component.personForm.controls.correspondenceLanguageId.setValue('de');
+            component.personForm.controls.surname.setValue('Schmidt');
+
+            fixture.detectChanges();
+
+            personsServiceMock.generateSalutation.mockReturnValue(of('Sehr geehrter Herr Meier'));
+            component.personForm.controls.surname.setValue('Meier');
+
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('maleId', 'de', 'Meier', undefined);
+            expect(component.personForm.controls.salutationText.value).toBe('Sehr geehrter Herr Meier');
+        });
+
+        it('should update salutationText when title changes', fakeAsync(() => {
+            component.personForm.controls.genderId.setValue('femaleId');
+            component.personForm.controls.correspondenceLanguageId.setValue('de');
+            component.personForm.controls.surname.setValue('Weber');
+            component.personForm.controls.title.setValue('');
+
+            personsServiceMock.generateSalutation.mockClear();
+            personsServiceMock.generateSalutation.mockReturnValue(of('Sehr geehrte Frau Prof. Weber'));
+            component.personForm.controls.title.setValue('Prof.');
+
+            fixture.detectChanges();
+            tick(300);
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'de', 'Weber', 'Prof.');
+            expect(component.personForm.controls.salutationText.value).toBe('Sehr geehrte Frau Prof. Weber');
+        }));
+
+        it('should update salutationText when genderId changes', () => {
+            component.personForm.controls.genderId.setValue('maleId');
+            component.personForm.controls.correspondenceLanguageId.setValue('fr');
+            component.personForm.controls.surname.setValue('Dubois');
+
+            fixture.detectChanges();
+
+            personsServiceMock.generateSalutation.mockReturnValue(of('Madame Dubois'));
+            component.personForm.controls.genderId.setValue('femaleId');
+
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'fr', 'Dubois', undefined);
+            expect(component.personForm.controls.salutationText.value).toBe('Madame Dubois');
+        });
+
+        it('should update salutationText when correspondenceLanguageId changes', () => {
+            component.personForm.controls.genderId.setValue('maleId');
+            component.personForm.controls.correspondenceLanguageId.setValue('de');
+            component.personForm.controls.surname.setValue('Rossi');
+
+            fixture.detectChanges();
+
+            personsServiceMock.generateSalutation.mockReturnValue(of('Egregio Signor Rossi'));
+            component.personForm.controls.correspondenceLanguageId.setValue('it');
+
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('maleId', 'it', 'Rossi', undefined);
+            expect(component.personForm.controls.salutationText.value).toBe('Egregio Signor Rossi');
+        });
+
+        it('should not call generateSalutation when surname is missing', () => {
+            personsServiceMock.generateSalutation.mockClear();
+            component.personForm.controls.genderId.setValue('maleId');
+            component.personForm.controls.correspondenceLanguageId.setValue('de');
+            component.personForm.controls.surname.setValue('');
+
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).not.toHaveBeenCalled();
+        });
+
+        it('should not call generateSalutation when genderId is missing', () => {
+            personsServiceMock.generateSalutation.mockClear();
+            component.personForm.controls.genderId.setValue('');
+            component.personForm.controls.correspondenceLanguageId.setValue('de');
+            component.personForm.controls.surname.setValue('Mueller');
+
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).not.toHaveBeenCalled();
+        });
+
+        it('should not call generateSalutation when correspondenceLanguageId is missing', () => {
+            personsServiceMock.generateSalutation.mockClear();
+            component.personForm.controls.genderId.setValue('maleId');
+            component.personForm.controls.correspondenceLanguageId.setValue('');
+            component.personForm.controls.surname.setValue('Mueller');
+
+            fixture.detectChanges();
+
+            expect(personsServiceMock.generateSalutation).not.toHaveBeenCalled();
+        });
     });
 });

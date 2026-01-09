@@ -786,5 +786,6 @@
   "administration.helpTooltip.generalMeasuresGeneral": "Une mesure générale peut être enregistrée (mais ce n 'est pas une obligation). Ce texte sera publié dans la proposition et dans le rapport. Si une mesure générale est saisie, l 'obligation d 'enregistrer une mesure spécifique à l 'organe disparaît.",
   "committee.endDate.confirmation.title": "FR_Enddatum",
   "committee.endDate.confirmation.message": "FR_Achtung, Enddatum ist definitiv. Nach Speicherung kann es nicht mehr bearbeitet werden und das Gremium geht nach Ablauf des Enddatums offline. Möchten Sie das Enddatum speichern?",
-  "worklist.task.navigation": "FR_Zur Aufgabe navigieren"
+  "worklist.task.navigation": "FR_Zur Aufgabe navigieren",
+  "person.helpTooltip.salutationText": "FR_Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden."
 }
