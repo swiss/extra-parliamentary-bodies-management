@@ -12,13 +12,14 @@ internal class PersonsControllerTests
 {
     private readonly IPersonService _personService = Substitute.For<IPersonService>();
     private readonly IMembershipService _membershipService = Substitute.For<IMembershipService>();
+    private readonly ISalutationGeneratorService _salutationGeneratorService = Substitute.For<ISalutationGeneratorService>();
 
     private PersonsController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new PersonsController(_personService, _membershipService);
+        _controller = new PersonsController(_personService, _membershipService, _salutationGeneratorService);
     }
 
     [TearDown]
@@ -26,6 +27,7 @@ internal class PersonsControllerTests
     {
         _personService.ClearSubstitute();
         _membershipService.ClearSubstitute();
+        _salutationGeneratorService.ClearSubstitute();
     }
 
     [Test]
@@ -47,11 +49,11 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(responseObject.StatusCode, Is.EqualTo(200));
             Assert.That(responseObject.Value, Is.EqualTo(persons));
-        });
+        }
     }
 
     [Test]
@@ -78,11 +80,11 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(responseObject.StatusCode, Is.EqualTo(200));
             Assert.That(responseObject.Value, Is.EqualTo(personDetail));
-        });
+        }
     }
 
     [Test]
@@ -96,10 +98,7 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
-        });
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
@@ -126,10 +125,7 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
-        });
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
@@ -168,10 +164,7 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
-        });
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
@@ -185,10 +178,7 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
-        });
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
@@ -202,10 +192,7 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
-        });
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
@@ -220,16 +207,12 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
-        });
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
     }
 
     [Test]
     public async Task GetByName_WhenCalled_ShouldCallServiceAndReturnResult()
     {
-        var personId = Guid.NewGuid();
         var response = await _controller.GetByName("clark");
 
         await _personService.Received().GetByName("clark");
@@ -238,9 +221,27 @@ internal class PersonsControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
-        });
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
+    }
+
+    [Test]
+    public async Task GenerateSalutation_WhenCalled_ShouldCallServiceAndReturnResult()
+    {
+        var genderId = Guid.NewGuid();
+        var correspondenceLanguageId = Guid.NewGuid();
+        const string surname = "Kent";
+        const string title = "Dr.";
+        _salutationGeneratorService.CreateSalutationTextForPerson(genderId, correspondenceLanguageId, surname, title).Returns("Foo Bar");
+
+        var response = await _controller.GenerateSalutation(genderId, correspondenceLanguageId, surname, title);
+
+        await _salutationGeneratorService.Received(1).CreateSalutationTextForPerson(genderId, correspondenceLanguageId, surname, title);
+
+        Assert.That(response, Is.Not.Null);
+        var okResult = response as OkObjectResult;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(okResult.StatusCode, Is.EqualTo(200));
+        Assert.That(okResult.Value, Is.EqualTo("Foo Bar"));
     }
 }
