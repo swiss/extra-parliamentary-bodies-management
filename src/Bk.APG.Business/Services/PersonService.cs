@@ -106,7 +106,6 @@ public class PersonService : IPersonService
 
         mappedPerson.LegislaturePeriods = (await _masterDataRepository.GetLegislaturePeriodsByIds(createDto.LegislaturePeriodIds)).ToList();
         mappedPerson.Occupations = await _masterDataRepository.GetOccupationsByIds(createDto.Occupations.Select(o => o.Id).ToList());
-        mappedPerson.SalutationText = await _salutationGeneratorService.CreateSalutationTextForPerson(mappedPerson.GenderId, mappedPerson.CorrespondenceLanguageId, mappedPerson.Surname, mappedPerson.Title);
 
         mappedPerson.CreatedBy = currentUserName;
         mappedPerson.Created = DateTime.UtcNow;
@@ -168,15 +167,6 @@ public class PersonService : IPersonService
 
         var isGeneralElectionRunning = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 
-        if (updateDto.CorrespondenceLanguageId != existingEntry.CorrespondenceLanguageId)
-        {
-            existingEntry.SalutationText = await _salutationGeneratorService.CreateSalutationTextForPerson(updateDto.GenderId, updateDto.CorrespondenceLanguageId, updateDto.Surname, updateDto.Title);
-        }
-        else
-        {
-            existingEntry.SalutationText = updateDto.SalutationText;
-        }
-
         // if a person has no active membership or membership is for general election (state to be defined), it can be modified by any permitted roles. After that, only
         // Admin users are permitted to do so.
         if (existingEntry.Memberships.Any(m => m.IsActive) &&
@@ -198,6 +188,7 @@ public class PersonService : IPersonService
         existingEntry.NoEmployment = updateDto.NoEmployment;
         existingEntry.Title = updateDto.Title;
         existingEntry.NoInterest = updateDto.NoInterest;
+        existingEntry.SalutationText = updateDto.SalutationText;
 
         existingEntry.CorrespondenceLanguageId = updateDto.CorrespondenceLanguageId;
         existingEntry.SalutationId = updateDto.SalutationId;
