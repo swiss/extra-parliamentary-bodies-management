@@ -162,6 +162,16 @@ export class PersonDataFormComponent implements OnInit {
     private readonly unsubscribe = new Subject<void>();
 
     private readonly selectedGenderId = toSignal(this.personForm.controls.genderId.valueChanges);
+    private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges);
+    private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges.pipe(debounceTime(300)));
+    private readonly selectedCorrespondenceLanguageId = toSignal(this.personForm.controls.correspondenceLanguageId.valueChanges);
+
+    private readonly salutationParams = computed(() => ({
+        surname: this.selectedSurname() || this.personModification()?.surname,
+        title: this.selectedTitle() || this.personModification()?.title,
+        correspondenceLanguageId: this.selectedCorrespondenceLanguageId() || this.personModification()?.correspondenceLanguageId,
+        genderId: this.selectedGenderId() || this.personModification()?.genderId,
+    }));
 
     constructor(
         protected readonly masterDataService: MasterDataService,
@@ -316,6 +326,28 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.controls.languageId.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
             this.personForm.controls.correspondenceLanguageId.setValue(value);
             this.refreshCorrespondenceLanguageState();
+        });
+
+        // Effect to generate salutation when surname, title, correspondenceLanguageId, or genderId changes
+        effect(() => {
+            const params = this.salutationParams();
+
+            if (
+                params.correspondenceLanguageId === this.personModification()?.correspondenceLanguageId &&
+                params.genderId === this.personModification()?.genderId &&
+                params.title === this.personModification()?.title &&
+                params.surname === this.personModification()?.surname
+            ) {
+                return;
+            }
+
+            if (params.surname && params.correspondenceLanguageId && params.genderId) {
+                this.personService
+                    .generateSalutation(params.genderId, params.correspondenceLanguageId, params.surname, params.title ?? undefined)
+                    .subscribe(salutationText => {
+                        this.personForm.controls.salutationText.setValue(salutationText, {emitEvent: false});
+                    });
+            }
         });
 
         this.personForm.controls.officeId.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
@@ -613,7 +645,6 @@ export class PersonDataFormComponent implements OnInit {
     private toggleNonBasicControls(enable: boolean) {
         this.personForm.controls.officeId.disable();
         this.personForm.controls.councilId.disable();
-        this.personForm.controls.salutationText.disable();
         this.personForm.controls.occupation.disable();
 
         if (enable) {
