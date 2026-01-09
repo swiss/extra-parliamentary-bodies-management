@@ -614,6 +614,7 @@
   "person.details.warning.endDate": "La date de fin d'un mandat est atteinte. Veuillez adapter le statut ou prolonger la durée du mandat.",
   "person.details.info.interests": "La personne n'a pas encore indiqué de liens d'intérêts.",
   "person.details.warning.interests": "Les liens d'intérêts font défaut. Veuillez compléter les indications.",
+  "committee.details.warning.interests": "FR_Interessenbindungen unvollständig - bitte ergänzen oder 'Keine Interessenbindungen' auswählen. Hinweis: Über den Link neben dem Namensfeld gelangen Sie auf die Personenebene.",
   "person.details.info.occupation": "La personne n'a pas encore indiqué de profession et/ou d'employeur.",
   "person.details.warning.occupation": "La profession et/ou l'employeur font défaut. Veuillez compléter les indications.",
   "committee.details.warning.endDate": "La date de fin du mandat est atteinte. Veuillez adapter le statut ou prolonger la durée du mandat.",
