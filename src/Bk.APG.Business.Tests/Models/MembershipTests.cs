@@ -68,35 +68,6 @@ internal class MembershipTests
         Assert.That(membership.IsActive, Is.EqualTo(expected));
     }
 
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, -15, -3, true)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, -15, -4, true)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, 0, 11, true)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, 0, 12, true)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, -2, -1, false)]
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, -15, -3, true)]
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, -15, -4, true)]
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, 0, 11, true)]
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, 0, 12, true)]
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, -2, -1, false)]
-    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", -15, -3, false)]
-    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", 0, 12, false)]
-    public void JustificationLongerDutyNeeded_ShouldReturnExpected(string committeeTypeIdAsString, int yearOffsetStart, int yearOffsetEnd, bool expected)
-    {
-        var membership = new MembershipBuilder()
-            .WithCommittee(
-                new CommitteeBuilder()
-                    .WithGermanDescription("DE")
-                    .WithFrenchDescription("FR")
-                    .WithItalianDescription("IT")
-                    .WithCommitteeTypeId(new Guid(committeeTypeIdAsString))
-                    .Build())
-            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddYears(yearOffsetStart)))
-            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddYears(yearOffsetEnd)))
-            .Build();
-
-        Assert.That(membership.JustificationLongerDutyNeeded, Is.EqualTo(expected));
-    }
-
     [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, -15, -12, true)]
     [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, -15, -11, false)]
     [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, 0, 3, true)]
@@ -124,7 +95,7 @@ internal class MembershipTests
     [TestCase("2024-01-01", "2027-12-30", true)]
     [TestCase("2024-12-31", "2027-12-31", true)]
     [TestCase("2024-01-01", "2028-01-01", false)]
-    public void JustificationShorterDutyNeeded_ExtendedCases_ShouldReturnCorrectResult(string beginDate, string endDate, bool expected)
+    public void JustificationShorterDutyNeeded_WhenCalled_ShouldReturnCorrectResult(string beginDate, string endDate, bool expected)
     {
         var membership = new MembershipBuilder()
             .WithCommittee(
@@ -141,14 +112,17 @@ internal class MembershipTests
         Assert.That(membership.JustificationShorterDutyNeeded, Is.EqualTo(expected));
     }
 
-    [TestCase("2024-01-01", "2027-12-31", false)]
-    [TestCase("2024-01-01", "2035-12-29", true)]
-    [TestCase("2024-01-01", "2035-12-31", true)]
-    [TestCase("2024-12-31", "2035-12-31", false)]
-    [TestCase("2024-06-01", "2035-06-01", true)]
-    [TestCase("2024-06-01", "2035-06-01", true)]
-    [TestCase("2024-06-01", "2035-05-31", false)]
     [TestCase("2023-06-01", "2034-05-31", false)]
+    [TestCase("2023-06-01", "2034-12-31", false)]
+    [TestCase("2024-01-01", "2035-12-29", false)]
+    [TestCase("2024-01-01", "2035-12-31", false)]
+    [TestCase("2024-01-01", "2036-01-01", true)]
+    [TestCase("2024-01-01", "2027-12-31", false)]
+    [TestCase("2024-06-01", "2036-05-31", false)]
+    [TestCase("2024-06-01", "2036-06-01", true)]
+    [TestCase("2024-06-01", "2036-06-02", true)]
+    [TestCase("2024-06-01", "2037-01-01", true)]
+    [TestCase("2024-12-31", "2035-12-31", false)]
     public void JustificationLongerDutyNeeded_ExtendedCases_ShouldReturnCorrectResult(string beginDate, string endDate, bool expected)
     {
         var membership = new MembershipBuilder()
