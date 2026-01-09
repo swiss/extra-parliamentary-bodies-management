@@ -804,5 +804,6 @@
   "administration.helpTooltip.generalMeasuresGeneral": "Es kann (muss aber nicht) eine allgemeine Massnahme erfasst werden. Dieser Text wird im Antrag und im Bericht publiziert. Wenn eine allgemeine Massnahme erfasst ist, entfällt die Pflicht für eine gremiumspezifische Massnahme.",
   "committee.endDate.confirmation.title": "Enddatum",
   "committee.endDate.confirmation.message": "Achtung, Enddatum ist definitiv. Nach Speicherung kann es nicht mehr bearbeitet werden und das Gremium geht nach Ablauf des Enddatums offline. Möchten Sie das Enddatum speichern?",
-  "worklist.task.navigation": "Zur Aufgabe navigieren"
+  "worklist.task.navigation": "Zur Aufgabe navigieren",
+  "person.helpTooltip.salutationText": "Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden."
 }
