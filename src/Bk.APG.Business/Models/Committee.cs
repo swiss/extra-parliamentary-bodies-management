@@ -240,7 +240,8 @@ public class Committee : EntityBase
                                    NeedsAttentionFederalAssembly ||
                                    NeedsAttentionNoMembers ||
                                    NeedsAttentionAboveMaxMembers ||
-                                   NeedsAttentionMembershipExpired /*||
+                                   NeedsAttentionMembershipExpired ||
+                                   NeedsAttentionMembershipInterestOrOccupation /*||
                                    NeedsAttentionDataProtectionOfficer*/); // TODO REACTIVATE
 
     [NotMapped]
@@ -273,7 +274,7 @@ public class Committee : EntityBase
     public bool NeedsAttentionMembershipExpired => Memberships.Any(y => y.NeedsAttentionMembershipExpired);
 
     [NotMapped]
-    public bool NeedsAttentionMembershipInterestOrOccupation => Memberships.Any(m => m.Person is not null && (m.Person.NeedsAttentionOccupation || (!m.Person.NoInterest && m.Person.Interests.Count == 0 && ((m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) ||
+    public bool NeedsAttentionMembershipInterestOrOccupation => Memberships.Any(m => m.IsActive && m.Person is not null && (m.Person.NeedsAttentionOccupation || (!m.Person.NoInterest && m.Person.Interests.Count == 0 && ((m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) ||
         m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
         m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
         m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid))));

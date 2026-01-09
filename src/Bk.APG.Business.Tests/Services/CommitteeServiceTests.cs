@@ -17,7 +17,6 @@ internal class CommitteeServiceTests
     private IPersonRepository _personRepository;
     private ICultureService _cultureService;
     private IAuthorizationService _authorizationService;
-    private IMembershipTermCalculationService _membershipTermCalculationService;
     private IEiamAssignmentService _eiamAssignmentService;
     private IMasterDataRepository _masterDataRepository;
     private IGeneralMeasureRepository _generalMeasureRepository;
@@ -29,6 +28,7 @@ internal class CommitteeServiceTests
     private Membership _membership2;
     private Membership _membership3;
     private Membership _membership4;
+    private Membership _membership5;
 
     private Committee _committee;
     private Guid _committeeId;
@@ -49,7 +49,6 @@ internal class CommitteeServiceTests
         _personRepository = Substitute.For<IPersonRepository>();
         _cultureService = Substitute.For<ICultureService>();
         _authorizationService = Substitute.For<IAuthorizationService>();
-        _membershipTermCalculationService = Substitute.For<IMembershipTermCalculationService>();
         _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
         _masterDataRepository = Substitute.For<IMasterDataRepository>();
         _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
@@ -139,15 +138,27 @@ internal class CommitteeServiceTests
             .WithMaximumEmploymentLevel(10)
             .Build();
 
+        _membership5 = new MembershipBuilder()
+            .WithId(Guid.Parse("dfd1770c-664a-4b63-9da1-f5c6008b55ed"))
+            .WithFunction(new FunctionBuilder().Build())
+            .WithPersonId(_personId3)
+            .WithPerson(_person3)
+            .WithBeginDate(new DateOnly(2000, 1, 1))
+            .WithEndDate(new DateOnly(2001, 12, 31))
+            .WithMaximumEmploymentLevel(10)
+            .Build();
+
         _committee.Memberships.Add(_membership1);
         _committee.Memberships.Add(_membership2);
         _committee.Memberships.Add(_membership3);
         _committee.Memberships.Add(_membership4);
+        _committee.Memberships.Add(_membership5);
 
         _committeeMemberList.Add(_membership1);
         _committeeMemberList.Add(_membership2);
         _committeeMemberList.Add(_membership3);
         _committeeMemberList.Add(_membership4);
+        _committeeMemberList.Add(_membership5);
 
         _membershipRepository.GetAllByCommitteeId(_committeeId).Returns(_committeeMemberList);
 
@@ -172,7 +183,6 @@ internal class CommitteeServiceTests
             _eiamAssignmentService,
             _masterDataRepository,
             _generalMeasureRepository,
-            _membershipTermCalculationService,
             _membershipRepository,
             NullLogger<CommitteeService>.Instance);
     }
@@ -184,7 +194,6 @@ internal class CommitteeServiceTests
         _cultureService.ClearSubstitute();
         _authorizationService.ClearSubstitute();
         _personRepository.ClearSubstitute();
-        _membershipTermCalculationService.ClearSubstitute();
         _masterDataRepository.ClearSubstitute();
         _generalMeasureRepository.ClearSubstitute();
         _membershipRepository.ClearSubstitute();
@@ -946,9 +955,6 @@ internal class CommitteeServiceTests
             InCorrelationWithFederalDuty = false
         };
 
-        _membershipTermCalculationService.CalculateCurrentTermInYears(Arg.Any<IEnumerable<Membership>>()).Returns(2);
-        _membershipTermCalculationService.CalculateEstimatedTermInYears(Arg.Any<DateOnly>(), Arg.Any<DateOnly>()).Returns(2);
-
         var result = await _committeeService.ValidateCommittee(_committeeId, request);
 
         Assert.That(result, Is.Not.Null);
@@ -959,7 +965,7 @@ internal class CommitteeServiceTests
             Assert.That(result.MaximumDurationExceeded, Is.EqualTo(false));
             Assert.That(result.TooManyMembers, Is.EqualTo(false));
             Assert.That(result.CurrentTermOfOffice, Is.EqualTo(2));
-            Assert.That(result.EstimatedTermOfOffice, Is.EqualTo(4));
+            Assert.That(result.EstimatedTermOfOffice, Is.EqualTo(5));
         });
     }
 
@@ -1022,12 +1028,10 @@ internal class CommitteeServiceTests
         _committee.MaximalMembers = 2;
         _committee.CommitteeTypeId = Guid.Parse("0a4b7f1d-d8bf-4932-bece-dd2a51cc2d59");
 
-        _membershipTermCalculationService.CalculateCurrentTermInYears(Arg.Any<IEnumerable<Membership>>()).Returns(17);
-
         var beginYear = DateTime.Now.AddYears(-1).Year;
         var beginDate = new DateOnly(beginYear, 1, 1);
 
-        var request = new CommitteeMembershipValidationRequestDto { IsUpdateMode = isUpdateMode, CommitteeId = _committeeId, PersonId = _personId2, BeginDate = beginDate, EndDate = new DateOnly(2027, 12, 31), InCorrelationWithFederalDuty = false };
+        var request = new CommitteeMembershipValidationRequestDto { IsUpdateMode = isUpdateMode, CommitteeId = _committeeId, PersonId = _personId2, BeginDate = beginDate, EndDate = new DateOnly(2047, 12, 31), InCorrelationWithFederalDuty = false };
 
         var result = await _committeeService.ValidateCommittee(_committeeId, request);
 
@@ -1067,8 +1071,6 @@ internal class CommitteeServiceTests
     {
         _committee.MaximalMembers = 2;
         _committee.CommitteeTypeId = Guid.Parse("f2e2af70-d1d4-42b5-b23a-793cbc220064");
-
-        _membershipTermCalculationService.CalculateCurrentTermInYears(Arg.Any<IEnumerable<Membership>>()).Returns(17);
 
         var request = new CommitteeMembershipValidationRequestDto { IsUpdateMode = isUpdateMode, CommitteeId = _committeeId, PersonId = _personId2, BeginDate = new DateOnly(2025, 1, 1), EndDate = new DateOnly(2029, 12, 31), InCorrelationWithFederalDuty = false };
 

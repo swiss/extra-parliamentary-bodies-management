@@ -5,20 +5,12 @@ using Bk.APG.CrossCutting.Tests.Builders;
 namespace Bk.APG.Business.Tests.Services;
 
 [TestFixture]
-internal class MembershipTermCalculationServiceTests
+internal class MembershipTermCalculatorTests
 {
-    private MembershipTermCalculationService _service = null!;
-
-    [SetUp]
-    public void Setup()
-    {
-        _service = new MembershipTermCalculationService();
-    }
-
     [Test]
     public void CalculateCurrentTermInYears_EmptyList_ReturnsZero()
     {
-        var result = _service.CalculateCurrentTermInYears([]);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears([]);
 
         Assert.That(result, Is.EqualTo(0));
     }
@@ -34,7 +26,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(3));
     }
@@ -50,7 +42,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(2));
     }
@@ -70,7 +62,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(6)); // 3 years + 3 years
     }
@@ -89,7 +81,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(2));
     }
@@ -105,7 +97,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         // End date 31.12.2022 is adjusted to 01.01.2023, so it's 3 years
         Assert.That(result, Is.EqualTo(3));
@@ -122,7 +114,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(1));
     }
@@ -138,7 +130,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(2)); // Not quite 3 full years
     }
@@ -154,7 +146,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(0));
     }
@@ -171,7 +163,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(0));
     }
@@ -188,7 +180,7 @@ internal class MembershipTermCalculationServiceTests
                 .Build()
         };
 
-        var result = _service.CalculateCurrentTermInYears(memberships);
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships);
 
         Assert.That(result, Is.EqualTo(2));
     }
@@ -205,7 +197,7 @@ internal class MembershipTermCalculationServiceTests
         var beginDate = DateOnly.ParseExact(beginDateString, "dd.MM.yyyy");
         var endDate = DateOnly.ParseExact(endDateString, "dd.MM.yyyy");
 
-        var result = _service.CalculateEstimatedTermInYears(beginDate, endDate);
+        var result = MembershipTermCalculator.CalculateEstimatedTermInYears(beginDate, endDate);
 
         Assert.That(result, Is.EqualTo(16));
     }
@@ -222,7 +214,7 @@ internal class MembershipTermCalculationServiceTests
         var beginDate = DateOnly.ParseExact(beginDateString, "dd.MM.yyyy");
         var endDate = DateOnly.ParseExact(endDateString, "dd.MM.yyyy");
 
-        var result = _service.CalculateEstimatedTermInYears(beginDate, endDate);
+        var result = MembershipTermCalculator.CalculateEstimatedTermInYears(beginDate, endDate);
 
         Assert.That(result, Is.EqualTo(17));
     }

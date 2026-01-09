@@ -1,5 +1,8 @@
-@if (this.needsAttentionInterests) {
+@if (this.needsAttentionInterests && isForPerson) {
     <ob-alert type="warning">{{ 'person.details.warning.interests' | translate }}<br /></ob-alert>
+}
+@if (this.needsAttentionInterests && isForCommittee) {
+    <ob-alert type="warning">{{ 'committee.details.warning.interests' | translate }}<br /></ob-alert>
 }
 <h2>{{ getHeaderText() }}</h2>
 <div class="membership-data-header">
