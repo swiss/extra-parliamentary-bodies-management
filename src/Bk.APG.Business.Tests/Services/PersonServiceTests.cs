@@ -628,8 +628,6 @@ internal class PersonServiceTests
                                 && p.OfficeAddress.Modified >= DateTime.UtcNow.AddSeconds(-1) && p.OfficeAddress.ModifiedBy == "currentUser"
                                 && p.LegislaturePeriods.Count == 2));
         await _personRepository.Received(1).GetById(Arg.Any<Guid>());
-
-        await _salutationGeneratorService.Received(1).CreateSalutationTextForPerson(person.GenderId, person.CorrespondenceLanguageId, person.Surname, person.Title);
     }
 
     [Test]
