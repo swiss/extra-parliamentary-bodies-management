@@ -784,5 +784,6 @@
   "administration.helpTooltip.generalMeasuresGeneral": "È possibile (ma non obbligatorio) registrare misure generali. Questo testo è pubblicato nella proposta e nel rapporto. Se una misura generale viene registrata, decade l'obbligo di registrare una misura specifica per l'organo.",
   "committee.endDate.confirmation.title": "IT_Enddatum",
   "committee.endDate.confirmation.message": "IT_Achtung, Enddatum ist definitiv. Nach Speicherung kann es nicht mehr bearbeitet werden und das Gremium geht nach Ablauf des Enddatums offline. Möchten Sie das Enddatum speichern?",
-  "worklist.task.navigation": "IT_Zur Aufgabe navigieren"
+  "worklist.task.navigation": "IT_Zur Aufgabe navigieren",
+  "person.helpTooltip.salutationText": "IT_Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden."
 }
