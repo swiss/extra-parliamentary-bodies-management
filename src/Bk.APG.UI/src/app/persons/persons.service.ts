@@ -80,4 +80,16 @@ export class PersonsService {
         const params = new HttpParams().set('name', name);
         return this.http.get<PersonDetails[]>(`/api/persons/getByName`, {params});
     }
+
+    generateSalutation(genderId: string, correspondenceLanguageId: string, surname: string, title?: string) {
+        let params = new HttpParams();
+        params = params.append('genderId', genderId);
+        params = params.append('correspondenceLanguageId', correspondenceLanguageId);
+        params = params.append('surname', surname);
+        if (title) {
+            params = params.append('title', title);
+        }
+
+        return this.http.get(`/api/persons/salutation`, {params, responseType: 'text'});
+    }
 }

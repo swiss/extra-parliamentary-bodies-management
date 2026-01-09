@@ -14,11 +14,13 @@ public class PersonsController : ControllerBase
 {
     private readonly IPersonService _personService;
     private readonly IMembershipService _membershipService;
+    private readonly ISalutationGeneratorService _salutationGeneratorService;
 
-    public PersonsController(IPersonService personService, IMembershipService membershipService)
+    public PersonsController(IPersonService personService, IMembershipService membershipService, ISalutationGeneratorService salutationGeneratorService)
     {
         _personService = personService;
         _membershipService = membershipService;
+        _salutationGeneratorService = salutationGeneratorService;
     }
 
     [HttpGet("list")]
@@ -98,5 +100,12 @@ public class PersonsController : ControllerBase
     {
         var result = await _personService.GetByName(name);
         return Ok(result);
+    }
+
+    [HttpGet("salutation")]
+    public async Task<ActionResult> GenerateSalutation([FromQuery, Required] Guid genderId, [FromQuery, Required] Guid correspondenceLanguageId, [FromQuery, Required] string surname, [FromQuery] string? title)
+    {
+        var salutation = await _salutationGeneratorService.CreateSalutationTextForPerson(genderId, correspondenceLanguageId, surname, title);
+        return Ok(salutation);
     }
 }
