@@ -69,7 +69,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IGeneralMeasureService, GeneralMeasureService>();
         services.AddScoped<IEntityAuditLogService, EntityAuditLogService>();
-        services.AddScoped<IMembershipTermCalculationService, MembershipTermCalculationService>();
         services.AddScoped<IApgGeneralSettingsService, ApgGeneralSettingsService>();
         services.AddScoped<ISalutationGeneratorService, SalutationGeneratorService>();
         services.AddScoped<IOgdDocumentService, OgdDocumentService>();
