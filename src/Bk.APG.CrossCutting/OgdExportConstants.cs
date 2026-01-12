@@ -84,6 +84,9 @@ public static class OgdExportConstants
     public const string UriCommitteeCantonDetailStatistic = $"{NamespaceCommitteeCantonDetailStatistic}:1";
     public const string UriCommitteeGenderLanguageStatistic = $"{NamespaceCommitteeGenderLanguageStatistic}:1";
 
+    // set to the production date of APG
+    public const string SchemaPublishedDate = "2026-01-14";
+
     public static string CreateUriLinkForLdAdminCh(string uri)
     {
         var subPath = uri.Replace(LdAdminChLink, "");
