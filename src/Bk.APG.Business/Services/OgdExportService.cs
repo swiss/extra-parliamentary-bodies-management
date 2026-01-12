@@ -109,9 +109,6 @@ public class OgdExportService
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceW3, new Uri("http://www.w3.org/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCube, new Uri("https://cube.link/"));
 
-        // set to the production date of APG
-        var schemaPublishedDate = "2026-01-14";
-
         //TODO extract metadata triples
         List<Triple> membershipMetadataTriples =
         [
@@ -130,7 +127,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriMembership),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode(schemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriMembership),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -162,7 +159,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriVestedInterests),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode(schemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriVestedInterests),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -194,7 +191,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode(schemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -226,7 +223,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode(schemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -258,7 +255,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonDetailStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode(schemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonDetailStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -291,7 +288,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode(schemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
