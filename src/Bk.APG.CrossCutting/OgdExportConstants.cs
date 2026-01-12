@@ -69,6 +69,7 @@ public static class OgdExportConstants
     public const string NamespaceCommitteeCantonStatistic = "committee-canton-statistic";
     public const string NamespaceCommitteeCantonDetailStatistic = "committee-canton-detail-statistic";
     public const string NamespaceCommitteeGenderLanguageStatistic = "committee-gender-language-statistic";
+    public const string NamespaceCommitteeTypeStatistic = "committee-type-statistic";
     public const string NamespaceLd = "ld";
     public const string NamespaceRld = "rld";
     public const string NamespaceSchema = "schema";
@@ -83,6 +84,7 @@ public static class OgdExportConstants
     public const string UriCommitteeCantonStatistic = $"{NamespaceCommitteeCantonStatistic}:1";
     public const string UriCommitteeCantonDetailStatistic = $"{NamespaceCommitteeCantonDetailStatistic}:1";
     public const string UriCommitteeGenderLanguageStatistic = $"{NamespaceCommitteeGenderLanguageStatistic}:1";
+    public const string UriCommitteeTypeStatistic = $"{NamespaceCommitteeTypeStatistic}:1";
 
     public static string CreateUriLinkForLdAdminCh(string uri)
     {
