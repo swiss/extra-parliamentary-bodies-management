@@ -102,6 +102,7 @@ public class OgdExportService
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeCantonStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeCantonStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeCantonDetailStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeCantonDetailStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic}/"));
+        graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeTypeStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeTypeStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceLd, new Uri("https://ld.admin.ch/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceRld, new Uri("https://register.ld.admin.ch/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceSchema, new Uri("http://schema.org"));
