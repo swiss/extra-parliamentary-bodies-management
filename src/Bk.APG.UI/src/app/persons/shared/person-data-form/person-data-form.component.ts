@@ -165,6 +165,7 @@ export class PersonDataFormComponent implements OnInit {
     private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges);
     private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges.pipe(debounceTime(300)));
     private readonly selectedCorrespondenceLanguageId = toSignal(this.personForm.controls.correspondenceLanguageId.valueChanges);
+    private lastSalutationParamsKey?: string;
 
     private readonly salutationParams = computed(() => ({
         surname: this.selectedSurname() || this.personModification()?.surname,
@@ -332,22 +333,28 @@ export class PersonDataFormComponent implements OnInit {
         effect(() => {
             const params = this.salutationParams();
 
-            if (
-                params.correspondenceLanguageId === this.personModification()?.correspondenceLanguageId &&
-                params.genderId === this.personModification()?.genderId &&
-                params.title === this.personModification()?.title &&
-                params.surname === this.personModification()?.surname
-            ) {
+            if (!params.surname && !params.correspondenceLanguageId && !params.genderId) {
                 return;
             }
 
-            if (params.surname && params.correspondenceLanguageId && params.genderId) {
-                this.personService
-                    .generateSalutation(params.genderId, params.correspondenceLanguageId, params.surname, params.title ?? undefined)
-                    .subscribe(salutationText => {
-                        this.personForm.controls.salutationText.setValue(salutationText, {emitEvent: false});
-                    });
+            const key = `${params.genderId}|${params.correspondenceLanguageId}|${params.surname}|${params.title ?? ''}`;
+
+            // Prevent initial call on update mode by seeding the key from existing data
+            if (this.isUpdateMode && !this.lastSalutationParamsKey && this.personModification()) {
+                this.lastSalutationParamsKey = key;
+                return;
             }
+
+            if (key === this.lastSalutationParamsKey) {
+                return;
+            }
+            this.lastSalutationParamsKey = key;
+
+            this.personService
+                .generateSalutation(params.genderId!, params.correspondenceLanguageId!, params.surname!, params.title ?? '')
+                .subscribe(salutationText => {
+                    this.personForm.controls.salutationText.setValue(salutationText, {emitEvent: false});
+                });
         });
 
         this.personForm.controls.officeId.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
