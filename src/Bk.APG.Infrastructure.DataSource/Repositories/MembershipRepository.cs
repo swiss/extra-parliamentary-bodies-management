@@ -108,6 +108,7 @@ public class MembershipRepository : IMembershipRepository
     {
         return
             _dataContext.Memberships
+                .Where(m => m.IsActive)
                 .Include(m => m.Person!.Gender)
                 .Include(m => m.Person!.CorrespondenceAddress!.Canton)
                 .Include(m => m.Person!.Language)
