@@ -162,6 +162,13 @@ public class DatabaseService(DataContext targetContext, ILogger<DatabaseService>
             command.ExecuteNonQuery();
         }
 
+        // Mark the one dataprotection officer having it in the surname
+        commandText = "update [PAPGBK].[dbo].[Sekretariat] set Datenschutzberater = 1,  NameOrganisation = '', Nachname = 'Quan', Vorname = 'Isabel' where Nachname like '%Datenschutzberaterin%'";
+        using (var command = new SqlCommand(commandText, connection))
+        {
+            command.ExecuteNonQuery();
+        }
+
         // Cleanup the NameOrganisation column, active and inactive committees
         commandText = "update [PAPGBK].[dbo].[Sekretariat] set NameOrganisation = '' where NameOrganisation in (" +
                       "'Aeschlimann','Albisetti','Amport','Anrig','Arni','Bacher','Baer Bösch','Bär','Baumann','Baumgartner','Benzi Schmid','Biscontin','Blaser','Böhler'," +

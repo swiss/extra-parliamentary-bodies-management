@@ -127,7 +127,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriMembership),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode("2025-05-01", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriMembership),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -159,7 +159,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriVestedInterests),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode("2025-05-01", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriVestedInterests),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -191,7 +191,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode("2025-05-26", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -223,7 +223,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode("2025-05-26", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -255,7 +255,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonDetailStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode("2025-05-26", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonDetailStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -288,7 +288,7 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-                graph.CreateLiteralNode("2025-05-26", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
@@ -319,7 +319,6 @@ public class OgdExportService
         await _ogdDocumentService.SetupBucket();
         var appointmentDecisionTriples = await CreateAppointmentDecisionDimension(graph, committees);
 
-        // TODO PP, hier wohl nur die aktiven exportieren? Check MILU
         var membershipData = _membershipRepository.GetAll().ToArray();
 
         var membershipRawData =
