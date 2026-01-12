@@ -225,7 +225,7 @@ export class CommitteeDataFormComponent implements OnInit {
             }
 
             const additionalAuthorityMembers = this.additionalAuthorityMembers();
-            if (additionalAuthorityMembers) {
+            if (additionalAuthorityMembers && (this.committeeModification() as CommitteeUpdate | CommitteeCreate).canEditLegalbase) {
                 this.committeeForm.controls.linkAuthorityWebsite.enable();
             } else {
                 this.committeeForm.controls.linkAuthorityWebsite.disable();
@@ -370,8 +370,16 @@ export class CommitteeDataFormComponent implements OnInit {
             this.committeeForm.disable();
             if (!(this.committeeModification() as CommitteeUpdate | CommitteeCreate).canEditLegalbase) {
                 this.committeeForm.controls.legalBase.disable();
+                this.committeeForm.controls.linkHomepageGerman.disable();
+                this.committeeForm.controls.linkHomepageFrench.disable();
+                this.committeeForm.controls.linkHomepageItalian.disable();
+                this.committeeForm.controls.linkHomepageRomansh.disable();
             } else {
                 this.committeeForm.controls.legalBase.enable();
+                this.committeeForm.controls.linkHomepageGerman.enable();
+                this.committeeForm.controls.linkHomepageFrench.enable();
+                this.committeeForm.controls.linkHomepageItalian.enable();
+                this.committeeForm.controls.linkHomepageRomansh.enable();
             }
         }
         if (!(this.committeeModification() as CommitteeUpdate | CommitteeCreate).canEditDepartment) {
