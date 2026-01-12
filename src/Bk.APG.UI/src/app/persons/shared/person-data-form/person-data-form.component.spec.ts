@@ -122,6 +122,7 @@ describe('PersonDataFormComponent', () => {
 
         personsServiceMock.getSimilarPersons.mockReturnValue(of([{id: 'id', surname: 'Clark', givenName: 'Jimm'}]));
         addressServiceMock.getAddressSuggestions.mockReturnValue(of([{city: 'Baden', zip: '5400', street: '', canton: {id: 'AG'}}]));
+        personsServiceMock.generateSalutation.mockReturnValue(of(''));
     });
 
     afterEach(() => {
@@ -940,7 +941,7 @@ describe('PersonDataFormComponent', () => {
 
             fixture.detectChanges();
 
-            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('maleId', 'de', 'Meier', undefined);
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('maleId', 'de', 'Meier', '');
             expect(component.personForm.controls.salutationText.value).toBe('Sehr geehrter Herr Meier');
         });
 
@@ -974,7 +975,7 @@ describe('PersonDataFormComponent', () => {
 
             fixture.detectChanges();
 
-            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'fr', 'Dubois', undefined);
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'fr', 'Dubois', '');
             expect(component.personForm.controls.salutationText.value).toBe('Madame Dubois');
         });
 
@@ -990,7 +991,7 @@ describe('PersonDataFormComponent', () => {
 
             fixture.detectChanges();
 
-            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('maleId', 'it', 'Rossi', undefined);
+            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('maleId', 'it', 'Rossi', '');
             expect(component.personForm.controls.salutationText.value).toBe('Egregio Signor Rossi');
         });
 
