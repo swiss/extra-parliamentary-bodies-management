@@ -163,7 +163,7 @@ export class PersonDataFormComponent implements OnInit {
 
     private readonly selectedGenderId = toSignal(this.personForm.controls.genderId.valueChanges);
     private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges);
-    private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges.pipe(debounceTime(300)));
+    private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges.pipe(debounceTime(1000)));
     private readonly selectedCorrespondenceLanguageId = toSignal(this.personForm.controls.correspondenceLanguageId.valueChanges);
     private lastSalutationParamsKey?: string;
 
@@ -354,6 +354,7 @@ export class PersonDataFormComponent implements OnInit {
                 .generateSalutation(params.genderId!, params.correspondenceLanguageId!, params.surname!, params.title ?? '')
                 .subscribe(salutationText => {
                     this.personForm.controls.salutationText.setValue(salutationText, {emitEvent: false});
+                    this.personModification()!.salutationText = salutationText;
                 });
         });
 
