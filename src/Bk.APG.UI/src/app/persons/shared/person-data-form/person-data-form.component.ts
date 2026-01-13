@@ -25,6 +25,7 @@ import {AddressService} from '@shared/address.service';
 import {ErrorService} from '@shared/error-service.service';
 import {conditionalValidator} from '@shared/form-validators/conditional.validator';
 import {TEL_PATTERN} from '@shared/form-validators/validation-patterns';
+import {isEmptyId} from '@shared/id-util';
 import {MasterDataService} from '@shared/master-data.service';
 import {combineLatest, debounceTime, filter, map, merge, Subject, switchMap, takeUntil} from 'rxjs';
 import {AuthService} from '../../../auth/auth.service';
@@ -333,7 +334,13 @@ export class PersonDataFormComponent implements OnInit {
         effect(() => {
             const params = this.salutationParams();
 
-            if (!params.surname && !params.correspondenceLanguageId && !params.genderId) {
+            if (
+                !params.surname ||
+                !params.correspondenceLanguageId ||
+                !params.genderId ||
+                isEmptyId(params.correspondenceLanguageId) ||
+                isEmptyId(params.genderId)
+            ) {
                 return;
             }
 
@@ -351,7 +358,7 @@ export class PersonDataFormComponent implements OnInit {
             this.lastSalutationParamsKey = key;
 
             this.personService
-                .generateSalutation(params.genderId!, params.correspondenceLanguageId!, params.surname!, params.title ?? '')
+                .generateSalutation(params.genderId, params.correspondenceLanguageId, params.surname, params.title ?? '')
                 .subscribe(salutationText => {
                     this.personForm.controls.salutationText.setValue(salutationText, {emitEvent: false});
                     this.personModification()!.salutationText = salutationText;
