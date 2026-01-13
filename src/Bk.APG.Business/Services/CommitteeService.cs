@@ -332,6 +332,15 @@ public class CommitteeService : ICommitteeService
         return result;
     }
 
+    public async Task<IEnumerable<CommitteeTypeDepartmentStatisticDto>> GetCommitteeTypeStatistic()
+    {
+        var list = new List<CommitteeTypeDepartmentStatisticDto>();
+        // todo remove
+        var allMemberships = (await _membershipRepository.GetAllByCommitteeId(Guid.NewGuid())).ToArray();
+
+        return list;
+    }
+
     private async Task CheckAuthorizationForUpdate(Committee committee)
     {
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
