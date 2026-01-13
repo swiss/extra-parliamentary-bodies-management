@@ -819,6 +819,10 @@ public class DatabaseService(DataContext targetContext, ILogger<DatabaseService>
         // Set membership correlation flag for persons with federal duty
         sqlQuery = "UPDATE data.memberships m SET in_correlation_with_federal_duty = true FROM data.persons p WHERE p.id = m.person_id AND p.federal_duty = true;";
         await targetContext.Database.ExecuteSqlRawAsync(sqlQuery);
+
+        // Set all the country codes with a 4 digit ZIP to 'CH'
+        sqlQuery = "UPDATE data.addresses set country_code = 'CH' where country_code = '' and LENGTH(zip) = 4;";
+        await targetContext.Database.ExecuteSqlRawAsync(sqlQuery);
     }
 
     private static string FillOfficeMapping()
