@@ -374,4 +374,148 @@ public static class OgdMapper
 
         return dataRow;
     }
+
+    public static ObservationDataRow ToCommitteeTypeStatisticObservation(CommitteeTypeDepartmentStatisticDto statisticDto)
+    {
+        var ogdNamespace = OgdExportConstants.NamespaceCommitteeTypeStatistic;
+
+        var dataRow = new ObservationDataRow
+        {
+            KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypOdgId}"
+        };
+
+        dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
+        {
+            Predicate = $"{ogdNamespace}:hasCommitteeType",
+            Uri = $"committeeType:{statisticDto.CommitteeTypeOgdId}"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:femaleCount",
+            Object = statisticDto.FemaleCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:femalePercentage",
+            Object = statisticDto.FemalePercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:maleCount",
+            Object = statisticDto.MaleCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:malePercentage",
+            Object = statisticDto.MalePercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:germanCount",
+            Object = statisticDto.GermanCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:germanPercentage",
+            Object = statisticDto.GermanPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:frenchCount",
+            Object = statisticDto.FrenchCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:frenchPercentage",
+            Object = statisticDto.FrenchPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:italianCount",
+            Object = statisticDto.ItalianCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:italianPercentage",
+            Object = statisticDto.ItalianPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:romanshCount",
+            Object = statisticDto.RomanshCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:romanshPercentage",
+            Object = statisticDto.RomanshPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:federalDutyCount",
+            Object = statisticDto.FederalDutyCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:federalAssemblyCount",
+            Object = statisticDto.FederalAssemblyCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:over40Count",
+            Object = statisticDto.Over40Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:over40Percentage",
+            Object = statisticDto.Over40Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:underOr40Count",
+            Object = statisticDto.UnderOr40Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:underOr40Percentage",
+            Object = statisticDto.UnderOr40Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        return dataRow;
+    }
 }
