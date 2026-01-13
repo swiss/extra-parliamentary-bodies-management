@@ -922,7 +922,7 @@ describe('PersonDataFormComponent', () => {
             component.personForm.controls.title.setValue('Dr.');
 
             fixture.detectChanges();
-            tick(300);
+            tick(1000);
             fixture.detectChanges();
 
             expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'de', 'Müller', 'Dr.');
@@ -956,7 +956,7 @@ describe('PersonDataFormComponent', () => {
             component.personForm.controls.title.setValue('Prof.');
 
             fixture.detectChanges();
-            tick(300);
+            tick(1000);
             fixture.detectChanges();
 
             expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'de', 'Weber', 'Prof.');
