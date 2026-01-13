@@ -5,6 +5,10 @@
         <div class="header-actions">
             @if (isAuthenticated()) {
                 <apg-ge-toggle />
+                <a href="/assets/files/APG_Handbuch_Stand_2026_Januar.pdf" download="APG_Handbuch_Stand_2026_Januar.pdf">
+                    <mat-icon svgIcon="book" class="header-icon manual-icon" [matTooltip]="'application.manual' | translate" [matTooltipPosition]="'below'" />
+                </a>
+
                 <a
                     [attr.href]="myAccountHref"
                     [matTooltipPosition]="'below'"
