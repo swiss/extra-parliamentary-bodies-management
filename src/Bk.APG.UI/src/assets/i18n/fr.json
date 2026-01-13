@@ -792,5 +792,6 @@
   "contactPoint.delete.title": "Effacer",
   "contactPoint.delete.text": "FR_Wollen Sie die Kontaktstelle wirklich löschen?",
   "contactPoint.delete.success": "FR_Kontaktstelle erfolgreich gelöscht",
-  "contactPoint.delete.error": "FR_Fehler beim Löschen der Kontaktstelle"
+  "contactPoint.delete.error": "FR_Fehler beim Löschen der Kontaktstelle",
+  "application.manual": "Manuel"
 }

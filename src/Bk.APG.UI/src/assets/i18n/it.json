@@ -790,5 +790,6 @@
   "contactPoint.delete.title": "Elimina",
   "contactPoint.delete.text": "IT_Wollen Sie die Kontaktstelle wirklich löschen?",
   "contactPoint.delete.success": "IT_Kontaktstelle erfolgreich gelöscht",
-  "contactPoint.delete.error": "IT_Fehler beim Löschen der Kontaktstelle"
+  "contactPoint.delete.error": "IT_Fehler beim Löschen der Kontaktstelle",
+  "application.manual": "Manuale"
 }
