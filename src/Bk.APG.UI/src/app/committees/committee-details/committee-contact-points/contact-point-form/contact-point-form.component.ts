@@ -204,21 +204,24 @@ export class ContactPointFormComponent {
         ]);
         formGroup.controls.givenName.setValidators([
             Validators.maxLength(150),
-            conditionalValidator(() => !formGroup.controls.companyName.value, Validators.required),
+            conditionalValidator(() => !!formGroup.controls.surname.value?.toString()?.trim(), Validators.required),
         ]);
         formGroup.controls.email.setValidators([
             Validators.maxLength(150),
             Validators.email,
-            conditionalValidator(() => !formGroup.controls.surname.value, Validators.required),
+            conditionalValidator(
+                () => !!formGroup.controls.companyName.value?.toString()?.trim() && !formGroup.controls.surname.value?.toString()?.trim(),
+                Validators.required
+            ),
         ]);
         formGroup.controls.personalEmail.setValidators([
             Validators.maxLength(150),
             Validators.email,
-            conditionalValidator(() => !formGroup.controls.companyName.value, Validators.required),
+            conditionalValidator(() => !!formGroup.controls.surname.value?.toString()?.trim(), Validators.required),
         ]);
 
-        formGroup.controls.genderId.setValidators([conditionalValidator(() => !formGroup.controls.companyName.value, Validators.required)]);
-        formGroup.controls.languageId.setValidators([conditionalValidator(() => !formGroup.controls.companyName.value, Validators.required)]);
+        formGroup.controls.genderId.setValidators([conditionalValidator(() => !!formGroup.controls.surname.value?.toString()?.trim(), Validators.required)]);
+        formGroup.controls.languageId.setValidators([conditionalValidator(() => !!formGroup.controls.surname.value?.toString()?.trim(), Validators.required)]);
 
         formGroup.controls.beginDate.setValidators([
             Validators.required,
