@@ -18,7 +18,7 @@ export const routes: Routes = [
         loadChildren: () => import('./worklist/worklist.routes').then(m => m.worklistRoutes),
         canActivate: [AuthGuard, RoleGuard],
         data: {
-            allowedRoles: [Role.Department, Role.Office, Role.Secretariat, Role.Admin],
+            allowedRoles: [Role.Allow],
         },
         providers: [WorklistService],
     },
