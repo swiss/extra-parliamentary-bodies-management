@@ -335,8 +335,75 @@ public class CommitteeService : ICommitteeService
     public async Task<IEnumerable<CommitteeTypeDepartmentStatisticDto>> GetCommitteeTypeStatistic()
     {
         var list = new List<CommitteeTypeDepartmentStatisticDto>();
-        // todo remove
-        var allMemberships = (await _membershipRepository.GetAllByCommitteeId(Guid.NewGuid())).ToArray();
+
+        var activeCommittees = await _committeeRepository.GetCommitteeDataForStatistics();
+
+        var committeesWithActiveMembers = activeCommittees
+        .Select(c => new Committee
+        {
+            Id = c.Id,
+            CommitteeType = c.CommitteeType,
+            ModifiedBy = c.ModifiedBy,
+            Modified = c.Modified,
+            CreatedBy = c.CreatedBy,
+            Created = c.Created,
+            TermOfOfficeDateId = c.TermOfOfficeDateId,
+            Department = c.Department,
+            IsDeleted = c.IsDeleted,
+            DescriptionGerman = c.DescriptionGerman,
+            DescriptionFrench = c.DescriptionFrench,
+            DescriptionItalian = c.DescriptionItalian,
+            DescriptionRomansh = c.DescriptionRomansh,
+            Memberships = c.Memberships
+                .Where(x =>
+                    x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) &&  x.EndDate > DateOnly.FromDateTime(DateTime.Now))
+                .ToList()
+        })
+        .ToList();
+
+        var groupedCommittees = activeCommittees.GroupBy(c => new { c.CommitteeTypeId, c.DepartmentId }).ToList();
+
+        foreach (var committeeGroup in groupedCommittees)
+        {
+            // This is the key you grouped on
+            var committeeTypeId = committeeGroup.Key.CommitteeTypeId;
+            var departmentId = committeeGroup.Key.DepartmentId;
+            var activeMembers = committeeGroup.??
+
+            var dto = new CommitteeTypeDepartmentStatisticDto
+            {
+                CommitteeTypeId = committeeTypeId,
+                CommitteeTypeOdgId = committeeGroup.,
+                DepartmentOdgId = committeeGroup.Count(),
+                CommitteeTypeCount = canton.Id,
+                CantonOgdId = canton.OgdId,
+            };
+            dtos.Add(dto);
+        }
+
+
+
+
+        //public required Guid CommitteeTypeId { get; init; }
+        //public required int CommitteeTypeOdgId { get; init; }
+        //public required int DepartmentOdgId { get; init; }
+        //public required int CommitteeTypeCount { get; init; }
+        //public int FemaleCount { get; set; }
+        //public decimal FemalePercentage { get; set; }
+        //public int MaleCount { get; set; }
+        //public decimal MalePercentage { get; set; }
+        //public int GermanCount { get; set; }
+        //public decimal GermanPercentage { get; set; }
+        //public int FrenchCount { get; set; }
+        //public decimal FrenchPercentage { get; set; }
+        //public int ItalianCount { get; set; }
+        //public decimal ItalianPercentage { get; set; }
+        //public int RomanshCount { get; set; }
+        //public decimal RomanshPercentage { get; set; }
+        //public int FederalDutyCount { get; set; }
+        //public int FederalAssemblyCount { get; set; }
+
+        //var groupedMemberships = filteredMemberships.GroupBy(m => new { m.CommitteeId, m.Committee!.OgdId });
 
         return list;
     }
