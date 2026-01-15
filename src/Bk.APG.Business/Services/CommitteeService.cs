@@ -365,16 +365,19 @@ public class CommitteeService : ICommitteeService
 
         foreach (var committeeGroup in groupedCommittees)
         {
-            // This is the key you grouped on
+            var firstCommittee = committeeGroup.First();
+
             var committeeTypeId = committeeGroup.Key.CommitteeTypeId;
             var departmentId = committeeGroup.Key.DepartmentId;
-            var activeMembers = committeeGroup.??
 
             var dto = new CommitteeTypeDepartmentStatisticDto
             {
                 CommitteeTypeId = committeeTypeId,
-                CommitteeTypeOdgId = committeeGroup.,
-                DepartmentOdgId = committeeGroup.Count(),
+                CommitteeTypeOdgId = firstCommittee.CommitteeType!.OgdId,
+                DepartmentOdgId = firstCommittee.Department!.OgdId,
+                MembershipCount = committeeGroup.Count(),
+                FemaleCount = firstCommittee.Memberships.Select (m => m.Memberships!.Person!.GenderId == Gender.FemaleGuid),
+
                 CommitteeTypeCount = canton.Id,
                 CantonOgdId = canton.OgdId,
             };
