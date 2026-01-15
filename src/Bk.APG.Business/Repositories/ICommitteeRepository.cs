@@ -23,5 +23,5 @@ public interface ICommitteeRepository
     Task<Committee[]> GetCommitteesWithInterestsForExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
     Task<Committee[]> GetCommitteesWithContactPointsForExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
     Task<Committee[]> GetCommitteesForRegionExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
-    IEnumerable<MembershipFunctionStatisticDto> GetCommitteeTypeDataForStatistics();
+    Task<IEnumerable<Committee>> GetCommitteeDataForStatistics()
 }
