@@ -83,6 +83,24 @@ internal class WorklistTaskServiceTests
     }
 
     [Test]
+    public async Task GetWorklistTasks_ForObserver_ShouldReturnEmptyResult()
+    {
+        _authorizationService.IsObserver.Returns(true);
+
+        var worklistTasks = await _service.GetWorklistTasks(null!, null!, null!, null!);
+
+        await _worklistTaskRepository.DidNotReceiveWithAnyArgs().GetAll(Arg.Any<PagingParameters>(), Arg.Any<WorklistFilterParameters>(), Arg.Any<string>(), Arg.Any<SortDirection>());
+
+        Assert.That(worklistTasks, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(worklistTasks.Index, Is.Zero);
+            Assert.That(worklistTasks.Total, Is.Zero);
+            Assert.That(worklistTasks.Items, Is.Empty);
+        }
+    }
+
+    [Test]
     public async Task CreateWorklistTask_WithDto_ShouldReturnResult()
     {
         _authorizationService.GetCurrentUserName().Returns("userName");
