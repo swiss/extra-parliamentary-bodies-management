@@ -1,5 +1,7 @@
 # Changelog
 
-## 1.0.1
+## 1.0.2
+- Allow worklist task page for observers #BKDO-2627
 
--   Update contact point validators in frontend #BKDO-2620
+## 1.0.1
+- Update contact point validators in frontend #BKDO-2620
