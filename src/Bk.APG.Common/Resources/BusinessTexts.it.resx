@@ -348,26 +348,32 @@
   <data name="Report_SelectionProcedure" xml:space="preserve">
         <value>Procedura di selezione: {0}</value>
     </data>
-  <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
-        <value>IT_Anhang_Bundesratsantrag</value>
-    </data>
   <data name="Report_ShorterDutyText" xml:space="preserve">
-        <value>IT_gewählt von {0} bis {1}</value>
+        <value>selezionato da {0} a {1}</value>
     </data>
   <data name="Report_Years" xml:space="preserve">
-        <value>IT_Jahre</value>
+        <value>Anni</value>
     </data>
   <data name="AppointmentDecision_MultipleFiles" xml:space="preserve">
-        <value>IT_Mehrere Dateien</value>
+        <value>Più file</value>
     </data>
   <data name="Worklist_DepartmentRole" xml:space="preserve">
-        <value>IT_GS</value>
+        <value>SG</value>
     </data>
   <data name="Worklist_OfficeRole" xml:space="preserve">
-        <value>IT_Amt</value>
+        <value>Ufficio</value>
     </data>
   <data name="Worklist_SecretariatRole" xml:space="preserve">
-        <value>IT_Sekretariat</value>
+        <value>Segreteria</value>
+    </data>
+  <data name="Common_MaleAbbreviation" xml:space="preserve">
+        <value>m</value>
+    </data>
+  <data name="Common_FemaleAbbreviation" xml:space="preserve">
+        <value>f</value>
+    </data>
+  <data name="Person_MaskedAddress" xml:space="preserve">
+        <value>L'indirizzo viene visualizzato solo se la persona è un membro attivo.</value>
     </data>
   <data name="CandidateListValidationError_MinimumMembers" xml:space="preserve">
         <value>IT_Es sind zu wenige Personen aus dem Wahlvorschlag für die Validierung selektiert. Die minimale Mitgliederanzahl {0} ist unterschritten. Bitte selektieren Sie mehr Personen und validieren Sie Ihre Selektion nochmal.</value>
@@ -375,16 +381,10 @@
   <data name="CandidateListValidationError_MaximumMembers" xml:space="preserve">
         <value>IT_Es sind zu viele Personen aus dem Wahlvorschlag für die Validierung selektiert. Die maximale Mitgliederanzahl {0} ist überschritten. Bitte selektieren Sie weniger Personen und validieren Sie Ihre Selektion nochmal.</value>
     </data>
-  <data name="Common_MaleAbbreviation" xml:space="preserve">
-        <value>IT_m</value>
-    </data>
-  <data name="Common_FemaleAbbreviation" xml:space="preserve">
-        <value>IT_w</value>
-    </data>
   <data name="GeneralElection_MissingJustifications_TaskDescription" xml:space="preserve">
         <value>IT_Bitte die fehlenden Begründungen für die GEW nachtragen.</value>
     </data>
-  <data name="Person_MaskedAddress" xml:space="preserve">
-        <value>IT_Die Adresse wird nur angezeigt, wenn die Person eine aktive Mitgliedschaft hat.</value>
+  <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
+        <value>IT_Anhang_Bundesratsantrag</value>
     </data>
 </root>
