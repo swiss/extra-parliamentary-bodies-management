@@ -318,6 +318,21 @@ public class CommitteeRepository : ICommitteeRepository
             .ToArrayAsync();
     }
 
+    public async Task<List<Committee>> GetCommitteeDataForStatistics()
+    {
+        return await _dataContext.Committees
+            .Where(x => !x.IsDeleted)
+            .Where(x => !x.CommitteeType!.IsDeleted)
+            .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
+            .Include(x => x.Department)
+            .Include(x => x.CommitteeType)
+            .Include(x => x.Memberships)
+            .ThenInclude(x => x.Person)
+            .AsNoTracking()
+            .AsSplitQuery()
+            .ToListAsync();
+    }
+
     private IQueryable<Committee> GetCommittees()
     {
         return _dataContext.Committees

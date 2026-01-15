@@ -5,7 +5,7 @@ public class CommitteeTypeDepartmentStatisticDto
     public required Guid CommitteeTypeId { get; init; }
     public required int CommitteeTypeOdgId { get; init; }
     public required int DepartmentOdgId { get; init; }
-    public required int CommitteeCount { get; init; }
+    public required int CommitteeTypeCount { get; init; }
     public int FemaleCount { get; set; }
     public decimal FemalePercentage { get; set; }
     public int MaleCount { get; set; }
