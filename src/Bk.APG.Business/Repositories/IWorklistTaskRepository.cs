@@ -17,4 +17,5 @@ public interface IWorklistTaskRepository
     Task<IEnumerable<WorklistTask>> GetAllByGeneralElectionCommitteeId(Guid generalElectionCommitteeId);
     Task CommitChanges();
     Task<List<WorklistTask>> GetByWorklistTaskTypeId(Guid worklistTaskTypeId);
+    Task<List<WorklistTask>> GetAllByPersonId(Guid personId);
 }
