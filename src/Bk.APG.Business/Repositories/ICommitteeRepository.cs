@@ -1,4 +1,3 @@
-using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 
@@ -23,5 +22,5 @@ public interface ICommitteeRepository
     Task<Committee[]> GetCommitteesWithInterestsForExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
     Task<Committee[]> GetCommitteesWithContactPointsForExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
     Task<Committee[]> GetCommitteesForRegionExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
-    Task<IEnumerable<Committee>> GetCommitteeDataForStatistics()
+    Task<Committee[]> GetCommitteeDataForStatistics();
 }

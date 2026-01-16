@@ -334,7 +334,11 @@ public class CommitteeService : ICommitteeService
 
     public async Task<IEnumerable<CommitteeTypeDepartmentStatisticDto>> GetCommitteeTypeStatistic()
     {
-        var list = new List<CommitteeTypeDepartmentStatisticDto>();
+        // we need to have "Leitungsorgane" and "Vertretungen des Bundes" summed together, as well as "Behördenkommissionen" and "Verwaltungskommissionen" -> APK
+
+        var statisticDtos = new List<CommitteeTypeDepartmentStatisticDto>();
+
+        var statisticDto = new CommitteeTypeStatisticDto();
 
         var activeCommittees = await _committeeRepository.GetCommitteeDataForStatistics();
 
@@ -343,12 +347,14 @@ public class CommitteeService : ICommitteeService
         {
             Id = c.Id,
             CommitteeType = c.CommitteeType,
+            CommitteeTypeId = c.CommitteeTypeId,
             ModifiedBy = c.ModifiedBy,
             Modified = c.Modified,
             CreatedBy = c.CreatedBy,
             Created = c.Created,
             TermOfOfficeDateId = c.TermOfOfficeDateId,
             Department = c.Department,
+            DepartmentId = c.DepartmentId,
             IsDeleted = c.IsDeleted,
             DescriptionGerman = c.DescriptionGerman,
             DescriptionFrench = c.DescriptionFrench,
@@ -361,11 +367,183 @@ public class CommitteeService : ICommitteeService
         })
         .ToList();
 
+        var administrationCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid);
+        var authoritiesCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid);
+
+        var extraParliamentaryCommissions = administrationCommissions.Concat(authoritiesCommissions).ToList();
+
+        var federalAgenciesCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid);
+        var managmentCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid);
+
+        var nonExtraParliamentaryCommissions = federalAgenciesCommissions.Concat(managmentCommissions).ToList();
+
+        statisticDto.ExtraParliamentaryCommissionsCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count();
+        statisticDto.ExtraParliamentaryCommissionsEdaCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.ExtraParliamentaryCommissionsEdiCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.ExtraParliamentaryCommissionsEjpdCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EjpdGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.ExtraParliamentaryCommissionsVbsCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.VbsGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.ExtraParliamentaryCommissionsEfdCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EfdGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.ExtraParliamentaryCommissionsWbfCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.WbfGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.ExtraParliamentaryCommissionsUvekCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.UvekGuid).SelectMany(c => c.Memberships).Count();
+
+        statisticDto.ExtraParliamentaryCommissionsEdaFemaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsEdiFemaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsEjpdFemaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EjpdGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsVbsFemaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.VbsGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsEfdFemaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EfdGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsWbfFemaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.WbfGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsUvekFemaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.UvekGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+
+        statisticDto.ExtraParliamentaryCommissionsEdaMaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsEdiMaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsEjpdMaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EjpdGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsVbsMaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.VbsGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsEfdMaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EfdGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsWbfMaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.WbfGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        statisticDto.ExtraParliamentaryCommissionsUvekMaleCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.UvekGuid).SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+
+        // Calculate by department
+        if (statisticDto.ExtraParliamentaryCommissionsEdaCount > 0)
+        {
+            statisticDto.ExtraParliamentaryCommissionsEdaFemalePercentage = Math.Round((decimal)statisticDto.ExtraParliamentaryCommissionsEdaFemaleCount / statisticDto.ExtraParliamentaryCommissionsEdaCount * 100, 2);
+            statisticDto.ExtraParliamentaryCommissionsEdaMalePercentage = Math.Round((decimal)statisticDto.ExtraParliamentaryCommissionsEdaMaleCount / statisticDto.ExtraParliamentaryCommissionsEdaCount * 100, 2);
+        }
+
+
+        //public decimal ExtraParliamentaryCommissionsEdaFemalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEdiFemalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEjpdFemalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsVbsFemalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEfdFemalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsWbfFemalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsUvekFemalePercentage { get; init; }
+
+        //public int ExtraParliamentaryCommissionsEdaMaleCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEdiMaleCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEjpdMaleCount { get; init; }
+        //public int ExtraParliamentaryCommissionsVbsMaleCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEfdMaleCount { get; init; }
+        //public int ExtraParliamentaryCommissionsWbfMaleCount { get; init; }
+        //public int ExtraParliamentaryCommissionsUvekMaleCount { get; init; }
+
+        //public decimal ExtraParliamentaryCommissionsEdaMalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEdiMalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEjpdMalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsVbsMalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEfdMalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsWbfMalePercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsUvekMalePercentage { get; init; }
+
+        //public int ExtraParliamentaryCommissionsEdaGermanCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEdiGermanCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEjpdGermanCount { get; init; }
+        //public int ExtraParliamentaryCommissionsVbsGermanCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEfdGermanCount { get; init; }
+        //public int ExtraParliamentaryCommissionsWbfGermanCount { get; init; }
+        //public int ExtraParliamentaryCommissionsUvekGermanCount { get; init; }
+
+        //public decimal ExtraParliamentaryCommissionsEdaGermanPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEdiGermanPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEjpdGermanPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsVbsGermanPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEfdGermanPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsWbfGermanPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsUvekGermanPercentage { get; init; }
+
+        //public int ExtraParliamentaryCommissionsEdaFrenchCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEdiFrenchCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEjpdFrenchCount { get; init; }
+        //public int ExtraParliamentaryCommissionsVbsFrenchCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEfdFrenchCount { get; init; }
+        //public int ExtraParliamentaryCommissionsWbfFrenchCount { get; init; }
+        //public int ExtraParliamentaryCommissionsUvekFrenchCount { get; init; }
+
+        //public decimal ExtraParliamentaryCommissionsEdaFrenchPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEdiFrenchPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEjpdFrenchPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsVbsFrenchPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEfdFrenchPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsWbfFrenchPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsUvekFrenchPercentage { get; init; }
+
+        //public int ExtraParliamentaryCommissionsEdaItalianCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEdiItalianCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEjpdItalianCount { get; init; }
+        //public int ExtraParliamentaryCommissionsVbsItalianCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEfdItalianCount { get; init; }
+        //public int ExtraParliamentaryCommissionsWbfItalianCount { get; init; }
+        //public int ExtraParliamentaryCommissionsUvekItalianCount { get; init; }
+
+        //public decimal ExtraParliamentaryCommissionsEdaItalianPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEdiItalianPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEjpdItalianPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsVbsItalianPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEfdItalianPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsWbfItalianPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsUvekItalianPercentage { get; init; }
+
+        //public int ExtraParliamentaryCommissionsEdaRomanshCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEdiRomanshCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEjpdRomanshCount { get; init; }
+        //public int ExtraParliamentaryCommissionsVbsRomanshCount { get; init; }
+        //public int ExtraParliamentaryCommissionsEfdRomanshCount { get; init; }
+        //public int ExtraParliamentaryCommissionsWbfRomanshCount { get; init; }
+        //public int ExtraParliamentaryCommissionsUvekRomanshCount { get; init; }
+
+        //public decimal ExtraParliamentaryCommissionsEdaRomanshPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEdiRomanshPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEjpdRomanshPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsVbsRomanshPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsEfdRomanshPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsWbfRomanshPercentage { get; init; }
+        //public decimal ExtraParliamentaryCommissionsUvekRomanshPercentage { get; init; }
+
+
+
+        //foreach (var committee in committeesWithActiveMembers)
+        //{
+        //    var totalCount = committee.Memberships.Count;
+
+        //    var femaleCount = committee.Memberships.Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        //    var maleCount = committee.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        //    var germanCount = committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid);
+        //    var frenchCount = committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid);
+        //    var italianCount = committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid);
+        //    var romanshCount = committee.Memberships.Count(m => m.Person!.LanguageId == Language.RomanshGuid);
+
+
+        //    if (committee.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid)
+        //    {
+        //        // APK
+        //    }
+        //    else if (committee.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid)
+        //    {
+        //        // APK
+
+        //    }
+
+        //    else if (committee.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid)
+        //    {
+        //        // NON APK
+
+        //    }
+        //    else if (committee.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid)
+        //    {
+        //        // NON APK
+
+        //    }
+
+        //}
+
+
+        // kommt weg..
         var groupedCommittees = activeCommittees.GroupBy(c => new { c.CommitteeTypeId, c.DepartmentId }).ToList();
 
         foreach (var committeeGroup in groupedCommittees)
         {
             var firstCommittee = committeeGroup.First();
+
+            var membersCount = firstCommittee.Memberships.Count;
 
             var committeeTypeId = committeeGroup.Key.CommitteeTypeId;
             var departmentId = committeeGroup.Key.DepartmentId;
@@ -373,42 +551,33 @@ public class CommitteeService : ICommitteeService
             var dto = new CommitteeTypeDepartmentStatisticDto
             {
                 CommitteeTypeId = committeeTypeId,
-                CommitteeTypeOdgId = firstCommittee.CommitteeType!.OgdId,
-                DepartmentOdgId = firstCommittee.Department!.OgdId,
-                MembershipCount = committeeGroup.Count(),
-                FemaleCount = firstCommittee.Memberships.Select (m => m.Memberships!.Person!.GenderId == Gender.FemaleGuid),
-
-                CommitteeTypeCount = canton.Id,
-                CantonOgdId = canton.OgdId,
+                CommitteeTypeOgdId = firstCommittee.CommitteeType!.OgdId,
+                DepartmentUri = firstCommittee.Department!.Uri,
+                DepartmentOgdId = firstCommittee.Department!.OgdId,
+                CommitteeTypeCount = committeeGroup.Count(),
+                FemaleCount = firstCommittee.Memberships.Count(m => m.Person!.GenderId == Gender.FemaleGuid),
+                MaleCount = firstCommittee.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid),
+                GermanCount = firstCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid),
+                FrenchCount = firstCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid),
+                ItalianCount = firstCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid),
+                RomanshCount = firstCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.RomanshGuid),
+                FederalDutyCount = firstCommittee.Memberships.Count(m => m.Person!.FederalDuty),
+                FederalAssemblyCount = firstCommittee.Memberships.Count(m => m.Person!.FederalAssembly),
             };
-            dtos.Add(dto);
+
+            if (membersCount > 0)
+            { 
+                dto.FemalePercentage = Math.Round((decimal)dto.FemaleCount / membersCount * 100, 2);
+                dto.MalePercentage = Math.Round((decimal)dto.MaleCount / membersCount * 100, 2);
+                dto.GermanPercentage = Math.Round((decimal)dto.GermanCount / membersCount * 100, 2);
+                dto.FrenchPercentage = Math.Round((decimal)dto.FrenchCount / membersCount * 100, 2);
+                dto.ItalianPercentage = Math.Round((decimal)dto.ItalianCount / membersCount * 100, 2);
+                dto.RomanshPercentage = Math.Round((decimal)dto.RomanshCount / membersCount * 100, 2);
+            }
+            statisticDtos.Add(dto);
         }
 
-
-
-
-        //public required Guid CommitteeTypeId { get; init; }
-        //public required int CommitteeTypeOdgId { get; init; }
-        //public required int DepartmentOdgId { get; init; }
-        //public required int CommitteeTypeCount { get; init; }
-        //public int FemaleCount { get; set; }
-        //public decimal FemalePercentage { get; set; }
-        //public int MaleCount { get; set; }
-        //public decimal MalePercentage { get; set; }
-        //public int GermanCount { get; set; }
-        //public decimal GermanPercentage { get; set; }
-        //public int FrenchCount { get; set; }
-        //public decimal FrenchPercentage { get; set; }
-        //public int ItalianCount { get; set; }
-        //public decimal ItalianPercentage { get; set; }
-        //public int RomanshCount { get; set; }
-        //public decimal RomanshPercentage { get; set; }
-        //public int FederalDutyCount { get; set; }
-        //public int FederalAssemblyCount { get; set; }
-
-        //var groupedMemberships = filteredMemberships.GroupBy(m => new { m.CommitteeId, m.Committee!.OgdId });
-
-        return list;
+        return statisticDtos;
     }
 
     private async Task CheckAuthorizationForUpdate(Committee committee)
