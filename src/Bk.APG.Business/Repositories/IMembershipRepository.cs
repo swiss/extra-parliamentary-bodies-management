@@ -8,7 +8,7 @@ public interface IMembershipRepository
     void CreateForMigration(Membership membership);
     Task<IEnumerable<Membership>> GetAllByPersonId(Guid personId);
     Task<IEnumerable<Membership>> GetAllByCommitteeId(Guid committeeId);
-    IEnumerable<Membership> GetAll();
+    IEnumerable<Membership> GetAllActiveForOgdExport();
     Task<Membership> GetById(Guid id);
     Task<Membership> Create(Membership membership);
     Task<Membership> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null);
