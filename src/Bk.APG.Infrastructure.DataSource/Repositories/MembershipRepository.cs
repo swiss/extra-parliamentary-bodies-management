@@ -104,12 +104,11 @@ public class MembershipRepository : IMembershipRepository
         return membership;
     }
 
-    public IEnumerable<Membership> GetAll()
+    public IEnumerable<Membership> GetAllActiveForOgdExport()
     {
         return
             _dataContext.Memberships
-            // TODO PP, check this one
-            //    .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (m.EndDate > DateOnly.FromDateTime(DateTime.Now) || (m.ElectionType != null && (m.ElectionType.Uri == ElectionType.NewElection || m.ElectionType.Uri == ElectionType.ReElection))))
+                .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (m.EndDate > DateOnly.FromDateTime(DateTime.Now) || (m.ElectionType != null && (m.ElectionType.Uri == ElectionType.NewElection || m.ElectionType.Uri == ElectionType.ReElection))))
                 .Include(m => m.Person!.Gender)
                 .Include(m => m.Person!.CorrespondenceAddress!.Canton)
                 .Include(m => m.Person!.Language)
