@@ -15,6 +15,11 @@ public class WorklistTaskType : MasterDataBase
     public static readonly Guid ReadyForFederalCouncilProposal = Guid.Parse("46aacc55-40b7-49d1-ac13-d6ab445a9943");
 
     public static readonly Guid GeneralElectionMissingJustifications = Guid.Parse("28f59879-a211-4816-b894-66f8d60961a8");
+    public static readonly Guid GeneralElectionPersonInterests = Guid.Parse("e50e54df-081f-4f72-a7a6-246dc0538f2a");
+    public static readonly Guid GeneralElectionPersonBaseData = Guid.Parse("267fed1d-e66c-439f-bb7a-15e63848c7dd");
+    public static readonly Guid GeneralElectionMembershipValidation = Guid.Parse("c95c804c-512c-477a-8a63-ab8ae1eef2ec");
+    public static readonly Guid GeneralElectionMissingSecretariat = Guid.Parse("18e4a819-0176-409a-ace1-7c91b634f7ae");
+    public static readonly Guid GeneralElectionMissingDataProtectionOfficer = Guid.Parse("60bce508-9011-42d5-b501-907e5eaad326");
 
     public required bool CanBeCreatedManually { get; set; }
 }

@@ -18,7 +18,7 @@ public class PersonBuilder
     private int _birthYear;
     private string? _occupation;
     private string? _employer;
-    private readonly bool _noEmployment;
+    private bool _noEmployment;
     private bool _federalDuty;
     private bool _federalAssembly;
     private string? _title;
@@ -38,7 +38,7 @@ public class PersonBuilder
     private readonly int _oldId;
     private readonly string? _remarksPersonData;
     private readonly string? _remarksPersonDataAdmin;
-    private readonly bool _noInterest;
+    private bool _noInterest;
     private readonly List<LegislaturePeriod> _legislaturePeriods;
     private readonly List<Membership> _memberships;
     private readonly List<Occupation> _occupations;
@@ -230,6 +230,18 @@ public class PersonBuilder
     public PersonBuilder WithFederalAssembly(bool federalAssembly)
     {
         _federalAssembly = federalAssembly;
+        return this;
+    }
+
+    public PersonBuilder WithNoEmployment(bool noEmployment)
+    {
+        _noEmployment = noEmployment;
+        return this;
+    }
+
+    public PersonBuilder WithNoInterest(bool noInterest)
+    {
+        _noInterest = noInterest;
         return this;
     }
 

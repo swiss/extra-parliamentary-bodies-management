@@ -92,6 +92,7 @@ public class InterestBuilder
     public InterestBuilder WithInterestCommittee(InterestCommittee interestCommittee)
     {
         _interestCommittee = interestCommittee;
+        _interestCommitteeId = interestCommittee.Id;
         return this;
     }
 
@@ -116,6 +117,7 @@ public class InterestBuilder
     public InterestBuilder WithInterestFunction(InterestFunction interestFunction)
     {
         _interestFunction = interestFunction;
+        _interestFunctionId = interestFunction.Id;
         return this;
     }
 
