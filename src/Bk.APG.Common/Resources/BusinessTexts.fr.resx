@@ -1,453 +1,456 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>1.3</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <data name="DataAnalysis_CommitteeType" xml:space="preserve">
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>1.3</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    </resheader>
+    <data name="DataAnalysis_CommitteeType" xml:space="preserve">
         <value>Type d'organe</value>
     </data>
-  <data name="DataAnalysis_ActiveMemberCount" xml:space="preserve">
+    <data name="DataAnalysis_ActiveMemberCount" xml:space="preserve">
         <value>Total des membres actifs</value>
     </data>
-  <data name="DataAnalysis_ActiveCommitteeCount" xml:space="preserve">
+    <data name="DataAnalysis_ActiveCommitteeCount" xml:space="preserve">
         <value>Total des organes actifs</value>
     </data>
-  <data name="DataAnalysis_FemalePresidentCount" xml:space="preserve">
+    <data name="DataAnalysis_FemalePresidentCount" xml:space="preserve">
         <value># Présidentes</value>
     </data>
-  <data name="DataAnalysis_FemalePresidentPercentage" xml:space="preserve">
+    <data name="DataAnalysis_FemalePresidentPercentage" xml:space="preserve">
         <value>% Présidentes</value>
     </data>
-  <data name="DataAnalysis_WomanCount" xml:space="preserve">
+    <data name="DataAnalysis_WomanCount" xml:space="preserve">
         <value># Femmes</value>
     </data>
-  <data name="DataAnalysis_WomanPercentage" xml:space="preserve">
+    <data name="DataAnalysis_WomanPercentage" xml:space="preserve">
         <value>% Femmes</value>
     </data>
-  <data name="DataAnalysis_ManCount" xml:space="preserve">
+    <data name="DataAnalysis_ManCount" xml:space="preserve">
         <value># Hommes</value>
     </data>
-  <data name="DataAnalysis_ManPercentage" xml:space="preserve">
+    <data name="DataAnalysis_ManPercentage" xml:space="preserve">
         <value>% Hommes</value>
     </data>
-  <data name="DataAnalysis_ItalianCount" xml:space="preserve">
+    <data name="DataAnalysis_ItalianCount" xml:space="preserve">
         <value># Italien</value>
     </data>
-  <data name="DataAnalysis_ItalianPercentage" xml:space="preserve">
+    <data name="DataAnalysis_ItalianPercentage" xml:space="preserve">
         <value>% Italien</value>
     </data>
-  <data name="DataAnalysis_GermanCount" xml:space="preserve">
+    <data name="DataAnalysis_GermanCount" xml:space="preserve">
         <value># Allemand</value>
     </data>
-  <data name="DataAnalysis_GermanPercentage" xml:space="preserve">
+    <data name="DataAnalysis_GermanPercentage" xml:space="preserve">
         <value>% Allemand</value>
     </data>
-  <data name="DataAnalysis_FrenchCount" xml:space="preserve">
+    <data name="DataAnalysis_FrenchCount" xml:space="preserve">
         <value># Français</value>
     </data>
-  <data name="DataAnalysis_FrenchPercentage" xml:space="preserve">
+    <data name="DataAnalysis_FrenchPercentage" xml:space="preserve">
         <value>% Français</value>
     </data>
-  <data name="DataAnalysis_RomanshCount" xml:space="preserve">
+    <data name="DataAnalysis_RomanshCount" xml:space="preserve">
         <value># Romanche</value>
     </data>
-  <data name="DataAnalysis_RomanshPercentage" xml:space="preserve">
+    <data name="DataAnalysis_RomanshPercentage" xml:space="preserve">
         <value>% Romanche</value>
     </data>
-  <data name="DataAnalysis_FederalDutyCount" xml:space="preserve">
+    <data name="DataAnalysis_FederalDutyCount" xml:space="preserve">
         <value># Au service de la Confédération</value>
     </data>
-  <data name="DataAnalysis_FederalDutyPercentage" xml:space="preserve">
+    <data name="DataAnalysis_FederalDutyPercentage" xml:space="preserve">
         <value>% Au service de la Confédération</value>
     </data>
-  <data name="DataAnalysis_FederalAssemblyCount" xml:space="preserve">
+    <data name="DataAnalysis_FederalAssemblyCount" xml:space="preserve">
         <value># Membres de l'Assemblée fédérale</value>
     </data>
-  <data name="DataAnalysis_NotFederalDutyCount" xml:space="preserve">
+    <data name="DataAnalysis_NotFederalDutyCount" xml:space="preserve">
         <value># Pas au service de la Confédération</value>
     </data>
-  <data name="DataAnalysis_NotFederalDutyPercentage" xml:space="preserve">
+    <data name="DataAnalysis_NotFederalDutyPercentage" xml:space="preserve">
         <value>% Pas au service de la Confédération</value>
     </data>
-  <data name="DataAnalysis_CentralFederalAdministrationDutyCount" xml:space="preserve">
+    <data name="DataAnalysis_CentralFederalAdministrationDutyCount" xml:space="preserve">
         <value># Au service de l'administration fédérale centrale</value>
     </data>
-  <data name="DataAnalysis_CentralFederalAdministrationDutyPercentage" xml:space="preserve">
+    <data name="DataAnalysis_CentralFederalAdministrationDutyPercentage" xml:space="preserve">
         <value>% Au service de l'administration fédérale centrale</value>
     </data>
-  <data name="DataAnalysis_DecentralizedFederalAdministrationDutyCount" xml:space="preserve">
+    <data name="DataAnalysis_DecentralizedFederalAdministrationDutyCount" xml:space="preserve">
         <value># Au service de l'administration fédérale décentralisée</value>
     </data>
-  <data name="DataAnalysis_DecentralizedFederalAdministrationDutyPercentage" xml:space="preserve">
+    <data name="DataAnalysis_DecentralizedFederalAdministrationDutyPercentage" xml:space="preserve">
         <value>% Au service de l'administration fédérale décentralisée</value>
     </data>
-  <data name="DataAnalysis_FederalAssemblyPercentage" xml:space="preserve">
+    <data name="DataAnalysis_FederalAssemblyPercentage" xml:space="preserve">
         <value>% Membres de l'Assemblée fédérale</value>
     </data>
-  <data name="DataAnalysis_NotFederalAssemblyCount" xml:space="preserve">
+    <data name="DataAnalysis_NotFederalAssemblyCount" xml:space="preserve">
         <value># Membres ne faisant pas partie de l'Assemblée fédérale</value>
     </data>
-  <data name="DataAnalysis_NotFederalAssemblyPercentage" xml:space="preserve">
+    <data name="DataAnalysis_NotFederalAssemblyPercentage" xml:space="preserve">
         <value>% Membres ne faisant pas partie de l'Assemblée fédérale</value>
     </data>
-  <data name="DataAnalysis_CommitteeName" xml:space="preserve">
+    <data name="DataAnalysis_CommitteeName" xml:space="preserve">
         <value>Nom de l'organe</value>
     </data>
-  <data name="DataAnalysis_Department" xml:space="preserve">
+    <data name="DataAnalysis_Department" xml:space="preserve">
         <value>Département</value>
     </data>
-  <data name="DataAnalysis_Office" xml:space="preserve">
+    <data name="DataAnalysis_Office" xml:space="preserve">
         <value>Unité administrative</value>
     </data>
-  <data name="DataAnalysis_Level" xml:space="preserve">
+    <data name="DataAnalysis_Level" xml:space="preserve">
         <value>Échelon</value>
     </data>
-  <data name="DataAnalysis_ExtraParliamentaryCommission" xml:space="preserve">
+    <data name="DataAnalysis_ExtraParliamentaryCommission" xml:space="preserve">
         <value>Commission extraparlementaire</value>
     </data>
-  <data name="DataAnalysis_SupervisionDuty" xml:space="preserve">
+    <data name="DataAnalysis_SupervisionDuty" xml:space="preserve">
         <value>Tâches de surveillance ou de réglementation</value>
     </data>
-  <data name="DataAnalysis_TermOfOffice" xml:space="preserve">
+    <data name="DataAnalysis_TermOfOffice" xml:space="preserve">
         <value>Période de fonction</value>
     </data>
-  <data name="DataAnalysis_BeginDate" xml:space="preserve">
+    <data name="DataAnalysis_BeginDate" xml:space="preserve">
         <value>Date de début</value>
     </data>
-  <data name="DataAnalysis_EndDate" xml:space="preserve">
+    <data name="DataAnalysis_EndDate" xml:space="preserve">
         <value>Date de fin</value>
     </data>
-  <data name="DataAnalysis_Committee" xml:space="preserve">
+    <data name="DataAnalysis_Committee" xml:space="preserve">
         <value>Organe</value>
     </data>
-  <data name="DataAnalysis_Total" xml:space="preserve">
+    <data name="DataAnalysis_Total" xml:space="preserve">
         <value>Total</value>
     </data>
-  <data name="Common_Yes" xml:space="preserve">
+    <data name="Common_Yes" xml:space="preserve">
         <value>Oui</value>
     </data>
-  <data name="Common_No" xml:space="preserve">
+    <data name="Common_No" xml:space="preserve">
         <value>Non</value>
     </data>
-  <data name="DataAnalysis_LastName" xml:space="preserve">
+    <data name="DataAnalysis_LastName" xml:space="preserve">
         <value>Nom</value>
     </data>
-  <data name="DataAnalysis_FirstName" xml:space="preserve">
+    <data name="DataAnalysis_FirstName" xml:space="preserve">
         <value>Prénom</value>
     </data>
-  <data name="DataAnalysis_InterestText" xml:space="preserve">
+    <data name="DataAnalysis_InterestText" xml:space="preserve">
         <value>Lien d'intérêts texte</value>
     </data>
-  <data name="DataAnalysis_InterestLegalForm" xml:space="preserve">
+    <data name="DataAnalysis_InterestLegalForm" xml:space="preserve">
         <value>Ancienne forme juridique</value>
     </data>
-  <data name="DataAnalysis_LegalForm" xml:space="preserve">
+    <data name="DataAnalysis_LegalForm" xml:space="preserve">
         <value>Nouvelle forme juridique</value>
     </data>
-  <data name="DataAnalysis_InterestOrganization" xml:space="preserve">
+    <data name="DataAnalysis_InterestOrganization" xml:space="preserve">
         <value>Organe</value>
     </data>
-  <data name="DataAnalysis_InterestFunction" xml:space="preserve">
+    <data name="DataAnalysis_InterestFunction" xml:space="preserve">
         <value>Fonction</value>
     </data>
-  <data name="DataAnalysis_City" xml:space="preserve">
+    <data name="DataAnalysis_City" xml:space="preserve">
         <value>Lieu</value>
     </data>
-  <data name="DataAnalysis_Canton" xml:space="preserve">
+    <data name="DataAnalysis_Canton" xml:space="preserve">
         <value>Canton</value>
     </data>
-  <data name="DataAnalysis_BirthYear" xml:space="preserve">
+    <data name="DataAnalysis_BirthYear" xml:space="preserve">
         <value>Année de naissance</value>
     </data>
-  <data name="DataAnalysis_Age" xml:space="preserve">
+    <data name="DataAnalysis_Age" xml:space="preserve">
         <value>Groupe d'âge</value>
     </data>
-  <data name="DataAnalysis_Occupation" xml:space="preserve">
+    <data name="DataAnalysis_Occupation" xml:space="preserve">
         <value>Profession</value>
     </data>
-  <data name="DataAnalysis_Language" xml:space="preserve">
+    <data name="DataAnalysis_Language" xml:space="preserve">
         <value>Langue</value>
     </data>
-  <data name="DataAnalysis_Gender" xml:space="preserve">
+    <data name="DataAnalysis_Gender" xml:space="preserve">
         <value>Sexe</value>
     </data>
-  <data name="DataAnalysis_FederalDuty" xml:space="preserve">
+    <data name="DataAnalysis_FederalDuty" xml:space="preserve">
         <value>Au service de la Confédération</value>
     </data>
-  <data name="DataAnalysis_CentralFederalDuty" xml:space="preserve">
+    <data name="DataAnalysis_CentralFederalDuty" xml:space="preserve">
         <value>Service de la Confédération (administration fédérale centrale/décentralisée)</value>
     </data>
-  <data name="DataAnalysis_FederalDuty_Central" xml:space="preserve">
+    <data name="DataAnalysis_FederalDuty_Central" xml:space="preserve">
         <value>administration fédérale centrale</value>
     </data>
-  <data name="DataAnalysis_FederalDuty_Decentralized" xml:space="preserve">
+    <data name="DataAnalysis_FederalDuty_Decentralized" xml:space="preserve">
         <value>administration fédérale décentralisée</value>
     </data>
-  <data name="DataAnalysis_FederalAssembly" xml:space="preserve">
+    <data name="DataAnalysis_FederalAssembly" xml:space="preserve">
         <value>À l'Assemblée fédérale</value>
     </data>
-  <data name="DataAnalysis_Function" xml:space="preserve">
+    <data name="DataAnalysis_Function" xml:space="preserve">
         <value>Fonction</value>
     </data>
-  <data name="DataAnalysis_From" xml:space="preserve">
+    <data name="DataAnalysis_From" xml:space="preserve">
         <value>Depuis (date de début du mandat)</value>
     </data>
-  <data name="DataAnalysis_To" xml:space="preserve">
+    <data name="DataAnalysis_To" xml:space="preserve">
         <value>Jusqu'au (date de fin du mandat)</value>
     </data>
-  <data name="DataAnalysis_Status" xml:space="preserve">
+    <data name="DataAnalysis_Status" xml:space="preserve">
         <value>Statut</value>
     </data>
-  <data name="DataAnalysis_ElectionOffice" xml:space="preserve">
+    <data name="DataAnalysis_ElectionOffice" xml:space="preserve">
         <value>Autorité de nomination</value>
     </data>
-  <data name="DataAnalysis_EmploymentLevel" xml:space="preserve">
+    <data name="DataAnalysis_EmploymentLevel" xml:space="preserve">
         <value>Taux d'occupation</value>
     </data>
-  <data name="DataAnalysis_Duty" xml:space="preserve">
+    <data name="DataAnalysis_Duty" xml:space="preserve">
         <value>Durée du mandat</value>
     </data>
-  <data name="DataAnalysis_MemberAdditions" xml:space="preserve">
+    <data name="DataAnalysis_MemberAdditions" xml:space="preserve">
         <value>Complément d'informations sur le membre</value>
     </data>
-  <data name="DataAnalysis_Membership" xml:space="preserve">
+    <data name="DataAnalysis_Membership" xml:space="preserve">
         <value>Mandat</value>
     </data>
-  <data name="DataAnalysis_MembershipInterests" xml:space="preserve">
+    <data name="DataAnalysis_MembershipInterests" xml:space="preserve">
         <value>Intérêts du mandat</value>
     </data>
-  <data name="DataAnalysis_ContactPointSecretariat" xml:space="preserve">
+    <data name="DataAnalysis_ContactPointSecretariat" xml:space="preserve">
         <value>Secrétariats</value>
     </data>
-  <data name="DataAnalysis_ContactPointDataProtectionOfficer" xml:space="preserve">
+    <data name="DataAnalysis_ContactPointDataProtectionOfficer" xml:space="preserve">
         <value>Conseiller/ère à la protection des données</value>
     </data>
-  <data name="DataAnalysis_ActiveMembershipCount" xml:space="preserve">
+    <data name="DataAnalysis_ActiveMembershipCount" xml:space="preserve">
         <value>Nombre de mandats actifs</value>
     </data>
-  <data name="DataAnalysis_Person" xml:space="preserve">
+    <data name="DataAnalysis_Person" xml:space="preserve">
         <value>Personne</value>
     </data>
-  <data name="DataAnalysis_MalePresidentCount" xml:space="preserve">
+    <data name="DataAnalysis_MalePresidentCount" xml:space="preserve">
         <value># Présidents</value>
     </data>
-  <data name="DataAnalysis_MalePresidentPercentage" xml:space="preserve">
+    <data name="DataAnalysis_MalePresidentPercentage" xml:space="preserve">
         <value>% Présidents</value>
     </data>
-  <data name="DataAnalysis_CompanyName" xml:space="preserve">
+    <data name="DataAnalysis_CompanyName" xml:space="preserve">
         <value>Service/Entreprise, section</value>
     </data>
-  <data name="DataAnalysis_CompanyPhone" xml:space="preserve">
+    <data name="DataAnalysis_CompanyPhone" xml:space="preserve">
         <value>Téléphone (service/entreprise)</value>
     </data>
-  <data name="DataAnalysis_TitleSurnameGivenName" xml:space="preserve">
+    <data name="DataAnalysis_TitleSurnameGivenName" xml:space="preserve">
         <value>Titre, prénom, nom</value>
     </data>
-  <data name="DataAnalysis_PersonalPhoneMobile" xml:space="preserve">
+    <data name="DataAnalysis_PersonalPhoneMobile" xml:space="preserve">
         <value>Téléphone (personnel/portable)</value>
     </data>
-  <data name="DataAnalysis_EmailAddresses" xml:space="preserve">
+    <data name="DataAnalysis_EmailAddresses" xml:space="preserve">
         <value>Adresse électronique (service/entreprise + personnelle)</value>
     </data>
-  <data name="ElectoralList_TitleOccupation" xml:space="preserve">
+    <data name="ElectoralList_TitleOccupation" xml:space="preserve">
         <value>Titre, profession</value>
     </data>
-  <data name="ElectoralList_SalutationSurnameGivenName" xml:space="preserve">
+    <data name="ElectoralList_SalutationSurnameGivenName" xml:space="preserve">
         <value>Civilité, prénom, nom</value>
     </data>
-  <data name="ElectoralList_Canton" xml:space="preserve">
+    <data name="ElectoralList_Canton" xml:space="preserve">
         <value>Canton</value>
     </data>
-  <data name="ElectoralList_BeginDate" xml:space="preserve">
+    <data name="ElectoralList_BeginDate" xml:space="preserve">
         <value>Début</value>
     </data>
-  <data name="ElectoralList_EndDate" xml:space="preserve">
+    <data name="ElectoralList_EndDate" xml:space="preserve">
         <value>Fin</value>
     </data>
-  <data name="ElectoralList_ElectionType" xml:space="preserve">
+    <data name="ElectoralList_ElectionType" xml:space="preserve">
         <value>Type de nomination</value>
     </data>
-  <data name="ElectoralList_ElectionOffice" xml:space="preserve">
+    <data name="ElectoralList_ElectionOffice" xml:space="preserve">
         <value>Autorité de nomination</value>
     </data>
-  <data name="ElectoralList_FederalAssembly" xml:space="preserve">
+    <data name="ElectoralList_FederalAssembly" xml:space="preserve">
         <value>À l'Assemblée fédérale</value>
     </data>
-  <data name="ElectoralList_FederalDuty" xml:space="preserve">
+    <data name="ElectoralList_FederalDuty" xml:space="preserve">
         <value>Au service de la Confédération</value>
     </data>
-  <data name="ElectoralList_FederalCouncil" xml:space="preserve">
+    <data name="ElectoralList_FederalCouncil" xml:space="preserve">
         <value>Conseil fédéral</value>
     </data>
-  <data name="ElectoralList_BirthYear" xml:space="preserve">
+    <data name="ElectoralList_BirthYear" xml:space="preserve">
         <value>Année de naissance</value>
     </data>
-  <data name="ElectoralList_Language" xml:space="preserve">
+    <data name="ElectoralList_Language" xml:space="preserve">
         <value>Langue</value>
     </data>
-  <data name="ElectoralList_Interests" xml:space="preserve">
+    <data name="ElectoralList_Interests" xml:space="preserve">
         <value>Liens d'intérêts</value>
     </data>
-  <data name="ElectoralList_OtherMemberships" xml:space="preserve">
+    <data name="ElectoralList_OtherMemberships" xml:space="preserve">
         <value>Autres mandats</value>
     </data>
-  <data name="ElectoralList_EvaluationDate" xml:space="preserve">
+    <data name="ElectoralList_EvaluationDate" xml:space="preserve">
         <value>État au</value>
     </data>
-  <data name="ElectoralList_ElectoralList" xml:space="preserve">
+    <data name="ElectoralList_ElectoralList" xml:space="preserve">
         <value>Liste de candidats</value>
     </data>
-  <data name="ElectoralList_Internet" xml:space="preserve">
+    <data name="ElectoralList_Internet" xml:space="preserve">
         <value>Internet</value>
     </data>
-  <data name="Common_None" xml:space="preserve">
+    <data name="Common_None" xml:space="preserve">
         <value>Aucun</value>
     </data>
-  <data name="DataAnalysis_Region" xml:space="preserve">
+    <data name="DataAnalysis_Region" xml:space="preserve">
         <value>Région</value>
     </data>
-  <data name="GeneralElectionMaximumDurationExceeded" xml:space="preserve">
+    <data name="GeneralElectionMaximumDurationExceeded" xml:space="preserve">
         <value>La durée maximale du mandat pour ce membre a été atteinte : </value>
     </data>
-  <data name="ParliamentaryReport_Filename" xml:space="preserve">
+    <data name="ParliamentaryReport_Filename" xml:space="preserve">
         <value>Organes extraparlementaires_rapport_Parlement</value>
     </data>
-  <data name="NationalCouncilFemale" xml:space="preserve">
+    <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Conseillère nationale</value>
     </data>
-  <data name="NationalCouncilMale" xml:space="preserve">
+    <data name="NationalCouncilMale" xml:space="preserve">
         <value>Conseiller national</value>
     </data>
-  <data name="CouncilOfStateFemale" xml:space="preserve">
+    <data name="CouncilOfStateFemale" xml:space="preserve">
         <value>Conseillère aux États</value>
     </data>
-  <data name="CouncilOfStateMale" xml:space="preserve">
+    <data name="CouncilOfStateMale" xml:space="preserve">
         <value>Conseiller aux États</value>
     </data>
-  <data name="Report_LongerDutyText" xml:space="preserve">
+    <data name="Report_LongerDutyText" xml:space="preserve">
         <value>{0} ans (jusqu'à fin {1})</value>
     </data>
-  <data name="Report_BeginDateInFuture" xml:space="preserve">
+    <data name="Report_BeginDateInFuture" xml:space="preserve">
         <value>Date d'institution : {0}</value>
     </data>
-  <data name="Report_EndDateInPast" xml:space="preserve">
+    <data name="Report_EndDateInPast" xml:space="preserve">
         <value>Date de dissolution : {0}</value>
     </data>
-  <data name="Report_Vacancies" xml:space="preserve">
+    <data name="Report_Vacancies" xml:space="preserve">
         <value>Nombre de vacances : {0}</value>
     </data>
-  <data name="Report_SelectionProcedure" xml:space="preserve">
+    <data name="Report_SelectionProcedure" xml:space="preserve">
         <value>Procédure de sélection : {0}</value>
     </data>
-  <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
+    <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
         <value>Annexe_Décision du Conseil fédéral</value>
     </data>
-  <data name="Report_ShorterDutyText" xml:space="preserve">
+    <data name="Report_ShorterDutyText" xml:space="preserve">
         <value>Nommé par {0} jusqu'à {1}</value>
     </data>
-  <data name="Report_Years" xml:space="preserve">
+    <data name="Report_Years" xml:space="preserve">
         <value>Années</value>
     </data>
-  <data name="AppointmentDecision_MultipleFiles" xml:space="preserve">
+    <data name="AppointmentDecision_MultipleFiles" xml:space="preserve">
         <value>Plusieurs fichiers</value>
     </data>
-  <data name="Worklist_DepartmentRole" xml:space="preserve">
+    <data name="Worklist_DepartmentRole" xml:space="preserve">
         <value>SG</value>
     </data>
-  <data name="Worklist_OfficeRole" xml:space="preserve">
+    <data name="Worklist_OfficeRole" xml:space="preserve">
         <value>Service</value>
     </data>
-  <data name="Worklist_SecretariatRole" xml:space="preserve">
+    <data name="Worklist_SecretariatRole" xml:space="preserve">
         <value>Secrétariat</value>
     </data>
-  <data name="CandidateListValidationError_MinimumMembers" xml:space="preserve">
+    <data name="CandidateListValidationError_MinimumMembers" xml:space="preserve">
         <value>Trop peu de personnes sont sélectionnées sur la liste de candidats en vue de la validation. Le nombre minimal de membres {0} n'est pas atteint. Veuillez sélectionner plus de personnes et valider à nouveau votre sélection.</value>
     </data>
-  <data name="CandidateListValidationError_MaximumMembers" xml:space="preserve">
+    <data name="CandidateListValidationError_MaximumMembers" xml:space="preserve">
         <value>Trop de personnes sont sélectionnées sont sur la liste de candidats en vue de la validation. Le nombre maximum de membres {0} est dépassé. Veuillez sélectionner moins de personnes et valider à nouveau votre sélection.</value>
     </data>
-  <data name="Common_MaleAbbreviation" xml:space="preserve">
+    <data name="Common_MaleAbbreviation" xml:space="preserve">
         <value>m</value>
     </data>
-  <data name="Common_FemaleAbbreviation" xml:space="preserve">
+    <data name="Common_FemaleAbbreviation" xml:space="preserve">
         <value>f</value>
     </data>
-  <data name="GeneralElection_MissingJustifications_TaskDescription" xml:space="preserve">
+    <data name="GeneralElection_MissingJustifications_TaskDescription" xml:space="preserve">
         <value>Veuillez ajouter les justifications manquantes pour le RI.</value>
     </data>
-  <data name="Person_MaskedAddress" xml:space="preserve">
+    <data name="Person_MaskedAddress" xml:space="preserve">
         <value>L'adresse ne s'affiche que si la personne possède un mandat actif.</value>
     </data>
-  <data name="CandidateList_BeginDate" xml:space="preserve">
+    <data name="CandidateList_BeginDate" xml:space="preserve">
         <value>FR_Startdatum</value>
     </data>
-  <data name="CandidateList_BirthYear" xml:space="preserve">
+    <data name="CandidateList_BirthYear" xml:space="preserve">
         <value>FR_Jahrgang</value>
     </data>
-  <data name="CandidateList_City" xml:space="preserve">
+    <data name="CandidateList_City" xml:space="preserve">
         <value>FR_Ort</value>
     </data>
-  <data name="CandidateList_Committee" xml:space="preserve">
+    <data name="CandidateList_Committee" xml:space="preserve">
         <value>FR_Gremium</value>
     </data>
-  <data name="CandidateList_ElectionType" xml:space="preserve">
+    <data name="CandidateList_ElectionType" xml:space="preserve">
         <value>FR_Status</value>
     </data>
-  <data name="CandidateList_Email" xml:space="preserve">
+    <data name="CandidateList_Email" xml:space="preserve">
         <value>FR_E-Mail</value>
     </data>
-  <data name="CandidateList_EndDate" xml:space="preserve">
+    <data name="CandidateList_EndDate" xml:space="preserve">
         <value>FR_Enddatum</value>
     </data>
-  <data name="CandidateList_Function" xml:space="preserve">
+    <data name="CandidateList_Function" xml:space="preserve">
         <value>FR_Funktion</value>
     </data>
-  <data name="CandidateList_Gender" xml:space="preserve">
+    <data name="CandidateList_Gender" xml:space="preserve">
         <value>FR_Geschlecht</value>
     </data>
-  <data name="CandidateList_GivenName" xml:space="preserve">
+    <data name="CandidateList_GivenName" xml:space="preserve">
         <value>FR_Vorname</value>
     </data>
-  <data name="CandidateList_Interests" xml:space="preserve">
+    <data name="CandidateList_Interests" xml:space="preserve">
         <value>FR_Interessenbindungen</value>
     </data>
-  <data name="CandidateList_Language" xml:space="preserve">
+    <data name="CandidateList_Language" xml:space="preserve">
         <value>FR_Sprache</value>
     </data>
-  <data name="CandidateList_MembershipAddition" xml:space="preserve">
+    <data name="CandidateList_MembershipAddition" xml:space="preserve">
         <value>FR_Mitgliederzusatz</value>
     </data>
-  <data name="CandidateList_Occupation" xml:space="preserve">
+    <data name="CandidateList_Occupation" xml:space="preserve">
         <value>FR_Beruf</value>
     </data>
-  <data name="CandidateList_Office" xml:space="preserve">
+    <data name="CandidateList_Office" xml:space="preserve">
         <value>FR_Verwaltungsstelle</value>
     </data>
-  <data name="CandidateList_Phone" xml:space="preserve">
+    <data name="CandidateList_Phone" xml:space="preserve">
         <value>FR_Telefon</value>
     </data>
-  <data name="CandidateList_Remarks" xml:space="preserve">
+    <data name="CandidateList_Remarks" xml:space="preserve">
         <value>FR_Bemerkungen</value>
     </data>
-  <data name="CandidateList_RemarkStatus" xml:space="preserve">
+    <data name="CandidateList_RemarkStatus" xml:space="preserve">
         <value>FR_Vertretung</value>
     </data>
-  <data name="CandidateList_Surname" xml:space="preserve">
+    <data name="CandidateList_Surname" xml:space="preserve">
         <value>FR_Name</value>
     </data>
-  <data name="CandidateList_Title" xml:space="preserve">
+    <data name="CandidateList_Title" xml:space="preserve">
         <value>FR_Titel</value>
     </data>
-  <data name="CandidateList" xml:space="preserve">
+    <data name="CandidateList" xml:space="preserve">
         <value>FR_Wahlvorschlag</value>
+    </data>
+    <data name="GeneralElection_PersonData_TaskDescription" xml:space="preserve">
+        <value>FR_Bitte die Personendaten nachtragen.</value>
     </data>
 </root>
