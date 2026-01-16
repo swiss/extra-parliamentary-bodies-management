@@ -3,6 +3,8 @@
 ## 1.1.0
 
 -   Candidate List Export added #BKDO-924
+-   Add task for general election person interest validation #BKDO-970
+-   Add task for general election person base data validation #BKDO-966
 
 ## 1.0.2
 
