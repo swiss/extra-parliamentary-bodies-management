@@ -106,6 +106,7 @@ internal class PersonServiceTests
 
         _authorizationService.GetCurrentUserName().Returns("currentUser");
         _membershipCandidateRepository.GetByPersonIdForUpdate(Arg.Any<Guid>()).Returns(Array.Empty<MembershipCandidate>());
+        _worklistTaskRepository.GetAllByPersonId(Arg.Any<Guid>()).Returns([]);
     }
 
     [TearDown]
@@ -1004,5 +1005,99 @@ internal class PersonServiceTests
 
         Assert.That(personDetails, Is.Not.Null);
         Assert.That(personDetails.DuplicateReason, Is.EqualTo(duplicateKind));
+    }
+
+    [Test]
+    public async Task UpdatePerson_WhenGeneralElectionRunningAndPersonNoLongerNeedsBaseData_ShouldCompleteBaseDataTask()
+    {
+        var baseDataTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonBaseData)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        var updateDto = new PersonUpdateDto
+        {
+            Id = _personToUpdate.Id,
+            Surname = "surname",
+            BirthYear = 2000,
+            CorrespondenceLanguageId = _personToUpdate.CorrespondenceLanguageId,
+            GenderId = _personToUpdate.GenderId,
+            GivenName = "givenName",
+            LanguageId = _personToUpdate.LanguageId,
+            SalutationId = _personToUpdate.SalutationId,
+            MaskAddress = false,
+            FederalDuty = true,
+            RowVersion = 666
+        };
+
+        _personRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_personToUpdate);
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+        _worklistTaskRepository.GetAllByPersonId(_personToUpdate.Id).Returns([baseDataTask]);
+
+        await _service.UpdatePerson(_personToUpdate.Id, updateDto);
+
+        Assert.That(baseDataTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+        await _worklistTaskRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task UpdatePerson_WhenGeneralElectionRunningAndPersonNoLongerNeedsInterests_ShouldCompleteInterestsTask()
+    {
+        var interestsTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        _personToUpdate.NoInterest = true;
+
+        var updateDto = new PersonUpdateDto
+        {
+            Id = _personToUpdate.Id,
+            Surname = "surname",
+            BirthYear = 2000,
+            CorrespondenceLanguageId = _personToUpdate.CorrespondenceLanguageId,
+            GenderId = _personToUpdate.GenderId,
+            GivenName = "givenName",
+            LanguageId = _personToUpdate.LanguageId,
+            SalutationId = _personToUpdate.SalutationId,
+            MaskAddress = false,
+            NoInterest = true,
+            RowVersion = 666
+        };
+
+        _personRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_personToUpdate);
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+        _worklistTaskRepository.GetAllByPersonId(_personToUpdate.Id).Returns([interestsTask]);
+
+        await _service.UpdatePerson(_personToUpdate.Id, updateDto);
+
+        Assert.That(interestsTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+        await _worklistTaskRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task UpdatePerson_WhenGeneralElectionNotRunning_ShouldNotCheckPersonTasks()
+    {
+        var updateDto = new PersonUpdateDto
+        {
+            Id = _personToUpdate.Id,
+            Surname = "surname",
+            BirthYear = 2000,
+            CorrespondenceLanguageId = _personToUpdate.CorrespondenceLanguageId,
+            GenderId = _personToUpdate.GenderId,
+            GivenName = "givenName",
+            LanguageId = _personToUpdate.LanguageId,
+            SalutationId = _personToUpdate.SalutationId,
+            MaskAddress = false,
+            RowVersion = 666
+        };
+
+        _personRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_personToUpdate);
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(false);
+
+        await _service.UpdatePerson(_personToUpdate.Id, updateDto);
+
+        await _worklistTaskRepository.DidNotReceive().GetAllByPersonId(Arg.Any<Guid>());
+        await _worklistTaskRepository.DidNotReceive().CommitChanges();
     }
 }
