@@ -1,4 +1,5 @@
 using Bk.APG.Business.Dtos;
+using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.RawData.Model;
 
@@ -381,14 +382,21 @@ public static class OgdMapper
 
         var dataRow = new ObservationDataRow
         {
-            KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypOdgId}"
+            // combined key committee and department
+            KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}-{statisticDto.DepartmentOgdId}"
         };
 
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCommitteeType",
-            Uri = $"committeeType:{statisticDto.CommitteeTypeOgdId}"
+            Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}"
         });
+
+        if (!string.IsNullOrWhiteSpace(statisticDto.DepartmentUri))
+        {
+            dataRow.KeyDimensionLinks.Add(
+                new KeyDimensionLink { Predicate = $"{ogdNamespace}:hasDepartment", Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.DepartmentUri) });
+        }
 
         dataRow.Values.Add(new DimensionValue
         {
@@ -486,34 +494,6 @@ public static class OgdMapper
             Predicate = $"{ogdNamespace}:federalAssemblyCount",
             Object = statisticDto.FederalAssemblyCount.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
-        });
-
-        dataRow.Values.Add(new DimensionValue
-        {
-            Predicate = $"{ogdNamespace}:over40Count",
-            Object = statisticDto.Over40Count.ToString(),
-            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
-        });
-
-        dataRow.Values.Add(new DimensionValue
-        {
-            Predicate = $"{ogdNamespace}:over40Percentage",
-            Object = statisticDto.Over40Percentage.ToString(),
-            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
-        });
-
-        dataRow.Values.Add(new DimensionValue
-        {
-            Predicate = $"{ogdNamespace}:underOr40Count",
-            Object = statisticDto.UnderOr40Count.ToString(),
-            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
-        });
-
-        dataRow.Values.Add(new DimensionValue
-        {
-            Predicate = $"{ogdNamespace}:underOr40Percentage",
-            Object = statisticDto.UnderOr40Percentage.ToString(),
-            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
         return dataRow;

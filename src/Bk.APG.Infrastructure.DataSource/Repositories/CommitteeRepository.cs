@@ -318,7 +318,7 @@ public class CommitteeRepository : ICommitteeRepository
             .ToArrayAsync();
     }
 
-    public async Task<List<Committee>> GetCommitteeDataForStatistics()
+    public async Task<Committee[]> GetCommitteeDataForStatistics()
     {
         return await _dataContext.Committees
             .Where(x => !x.IsDeleted)
@@ -330,7 +330,7 @@ public class CommitteeRepository : ICommitteeRepository
             .ThenInclude(x => x.Person)
             .AsNoTracking()
             .AsSplitQuery()
-            .ToListAsync();
+            .ToArrayAsync();
     }
 
     private IQueryable<Committee> GetCommittees()
