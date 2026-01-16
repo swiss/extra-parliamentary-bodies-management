@@ -165,5 +165,77 @@ internal class WorklistTaskExtensionsTests
 
             Assert.That(result, Is.EqualTo($"/general-election/committees/{committeeId}?tab=justifications"));
         }
+
+        [Test]
+        public void ShouldReturnUrl_WhenTaskTypeIsGeneralElectionPersonInterests()
+        {
+            var personId = Guid.NewGuid();
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
+                .WithPersonId(personId)
+                .Build();
+
+            var result = _worklistTask.GetNavigationUrl();
+
+            Assert.That(result, Is.EqualTo($"/persons/{personId}?tab=interests"));
+        }
+
+        [Test]
+        public void ShouldReturnUrl_WhenTaskTypeIsGeneralElectionPersonBaseData()
+        {
+            var personId = Guid.NewGuid();
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonBaseData)
+                .WithPersonId(personId)
+                .Build();
+
+            var result = _worklistTask.GetNavigationUrl();
+
+            Assert.That(result, Is.EqualTo($"/persons/{personId}?tab=data"));
+        }
+
+        [Test]
+        public void ShouldReturnUrl_WhenTaskTypeIsGeneralElectionMembershipValidation()
+        {
+            var committeeId = Guid.NewGuid();
+            var membershipCandidateId = Guid.NewGuid();
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMembershipValidation)
+                .WithCommitteeId(committeeId)
+                .WithMembershipCandidateId(membershipCandidateId)
+                .Build();
+
+            var result = _worklistTask.GetNavigationUrl();
+
+            Assert.That(result, Is.EqualTo($"/general-election/committees/{committeeId}/membership-candidate/{membershipCandidateId}"));
+        }
+
+        [Test]
+        public void ShouldReturnUrl_WhenTaskTypeIsGeneralElectionMissingSecretariat()
+        {
+            var committeeId = Guid.NewGuid();
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingSecretariat)
+                .WithCommitteeId(committeeId)
+                .Build();
+
+            var result = _worklistTask.GetNavigationUrl();
+
+            Assert.That(result, Is.EqualTo($"/committees/{committeeId}?tab=contacts"));
+        }
+
+        [Test]
+        public void ShouldReturnUrl_WhenTaskTypeIsGeneralElectionMissingDataProtectionOfficer()
+        {
+            var committeeId = Guid.NewGuid();
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingDataProtectionOfficer)
+                .WithCommitteeId(committeeId)
+                .Build();
+
+            var result = _worklistTask.GetNavigationUrl();
+
+            Assert.That(result, Is.EqualTo($"/committees/{committeeId}?tab=contacts"));
+        }
     }
 }
