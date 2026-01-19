@@ -4,6 +4,7 @@ public class ContactPointDetailDto
 {
     public required Guid Id { get; set; }
     public required string ContactPointType { get; set; }
+    public required Guid ContactPointTypeId { get; set; }
     public string? CompanyName { get; set; }
     public string? Section { get; set; }
     public DateOnly BeginDate { get; set; }
