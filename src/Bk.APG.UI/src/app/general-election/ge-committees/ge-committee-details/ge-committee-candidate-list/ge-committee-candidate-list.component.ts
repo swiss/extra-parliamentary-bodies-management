@@ -222,6 +222,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
 
         merge(
             this.generalElectionCommitteeDetailsService.reload$,
+            this.membershipCandidateListService.reload$,
             this.translateService.onLangChange.pipe(distinctUntilChanged((prev, curr) => prev.lang === curr.lang))
         )
             .pipe(
