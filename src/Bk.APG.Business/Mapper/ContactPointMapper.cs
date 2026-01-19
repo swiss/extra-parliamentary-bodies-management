@@ -11,6 +11,7 @@ public static class ContactPointMapper
         {
             Id = contactPoint.Id,
             ContactPointType = contactPoint.ContactPointType?.GetText() ?? string.Empty,
+            ContactPointTypeId = contactPoint.ContactPointType?.Id ?? Guid.Empty,
             CompanyName = contactPoint.CompanyName,
             Section = contactPoint.Section,
             BeginDate = contactPoint.BeginDate,
