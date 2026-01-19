@@ -39,6 +39,16 @@ public class EntityIdOptions
 
     [Required]
     public required TermOfOfficeOptions TermOfOffice { get; init; }
+    [Required]
+    public required ContactPointIdConfig ContactPoint { get; init; }
+}
+
+public class ContactPointIdConfig
+{
+    [Required]
+    public required string SecretariatId { get; init; }
+    [Required]
+    public required string DpoId { get; init; }
 }
 
 public class TermOfOfficeOptions
