@@ -151,7 +151,6 @@
   "committee.details.legalForm": "Forme juridique",
   "committee.details.oldLegalForm": "Forme juridique (ancienne)",
   "committee.details.legalBase": "Bases légales",
-  "committee.details.oldLegalBase": "Bases légales (anciennes)",
   "committee.details.releaseGeneralElection": "Autorisation pour le renouvellement intégral",
   "committee.details.federalLawEstablishment": "Inscrit dans la loi fédérale",
   "committee.details.extraParliamentaryCommission": "Commission extraparlementaire",
@@ -232,7 +231,6 @@
   "persons.table.noEntriesSearched": "Veuillez utiliser les filtres ou le champ de recherche pour rechercher et afficher des personnes.",
   "committees.table.noEntries": "Aucun organe trouvé",
   "memberships.search.person.name": "Nom",
-  "common.search": "Rechercher",
   "committee.activeMembers": "Membres actifs",
   "committee.inactiveMembers": "Anciens membres",
   "membership.employmentLevel": "Taux d'occupation",
@@ -806,5 +804,8 @@
   "person.details.additionalLabelJob": "Existe-t-il un emploi ?",
   "committee.details.warning.membershipInterestOrOccupation": "Au moins une personne présente des liens d'intérêts ou des informations incomplètes concernant sa profession/son employeur.",
   "committee.details.warning.interests": "Liens d'intérêts incomplets - veuillez compléter ou sélectionner 'Aucun lien d'intérêts'. Remarque : le lien à côté du champ du nom vous permet d'accéder au niveau personnel.",
-  "person.helpTooltip.salutationText": "Pour la génération automatique de la formule de politesse, le nom, le sexe et la langue sont utilisés par défaut ; pour l'allemand, le titre est également utilisé. La formule de politesse peut être modifiée manuellement."
+  "person.helpTooltip.salutationText": "Pour la génération automatique de la formule de politesse, le nom, le sexe et la langue sont utilisés par défaut ; pour l'allemand, le titre est également utilisé. La formule de politesse peut être modifiée manuellement.",
+  "common.delete": "Supprimer",
+  "onlinePublication.toggle.activated": "Publication en ligne activée",
+  "onlinePublication.toggle.deactivated": "Publication en ligne désactivée"
 }
