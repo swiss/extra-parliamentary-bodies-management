@@ -398,22 +398,8 @@ public static class OgdMapper
         {
             // combined key committee and department
             // KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}-{statisticDto.DepartmentOgdId}"
-            KeyUri = $"{ogdNamespace}:{1}-{1}"
+            KeyUri = $"{ogdNamespace}:{1}"
         };
-
-        //dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
-        //{
-        //    Predicate = $"{ogdNamespace}:hasCommitteeType",
-        //    Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}"
-        //});
-
-        //if (!string.IsNullOrWhiteSpace(statisticDto.DepartmentUri))
-        //{
-        //    dataRow.KeyDimensionLinks.Add(
-        //        new KeyDimensionLink { Predicate = $"{ogdNamespace}:hasDepartment", Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.DepartmentUri) });
-        //}
-
-
 
         dataRow.Values.Add(new DimensionValue
         {
@@ -470,7 +456,6 @@ public static class OgdMapper
             Object = statisticDto.ExtraParliamentaryCommissionsUvekCount.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
         });
-
 
         dataRow.Values.Add(new DimensionValue
         {
@@ -911,7 +896,6 @@ public static class OgdMapper
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
-
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-germanPercentage",
@@ -1011,7 +995,6 @@ public static class OgdMapper
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
-
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-frenchPercentage",
@@ -1039,7 +1022,6 @@ public static class OgdMapper
             Object = statisticDto.ExtraParliamentaryCommissionsUvekFrenchPercentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
-
 
         dataRow.Values.Add(new DimensionValue
         {
@@ -1111,7 +1093,6 @@ public static class OgdMapper
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
-
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-italianPercentage",
@@ -1139,7 +1120,6 @@ public static class OgdMapper
             Object = statisticDto.ExtraParliamentaryCommissionsUvekItalianPercentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
-
 
         dataRow.Values.Add(new DimensionValue
         {
@@ -1351,6 +1331,92 @@ public static class OgdMapper
             Object = statisticDto.AdministrationCommissionsRomanshPercentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFemaleCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalMaleCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFemalePercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalMalePercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalItalianCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalRomanshCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalGermanPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalItalianPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalRomanshPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+
 
         // 2. Teil
 
@@ -2290,6 +2356,90 @@ public static class OgdMapper
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-romanshPercentage",
             Object = statisticDto.FederalAgenciesCommitteesRomanshPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFemaleCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalMaleCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFemalePercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalMalePercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalItalianCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalRomanshCount.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalGermanPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalItalianPercentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalRomanshPercentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
