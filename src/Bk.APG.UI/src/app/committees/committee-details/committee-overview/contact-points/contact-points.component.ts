@@ -2,9 +2,7 @@ import {Component, computed, input} from '@angular/core';
 import {ContactPointDetail} from '@api/ContactPointDetail';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ObAlertModule} from '@oblique/oblique';
-
-export const SECRETARIAT = 'Sekretariat';
-export const DPO = 'Datenschutzberater/in';
+import {ConfigsService} from '../../../../../app/configs.service';
 
 @Component({
     selector: 'apg-contact-points',
@@ -14,6 +12,11 @@ export const DPO = 'Datenschutzberater/in';
 })
 export class ContactPointsComponent {
     contactPoints = input.required<ContactPointDetail[]>();
-    contactPointsSecretariats = computed(() => this.contactPoints().filter(x => x.contactPointType === SECRETARIAT && x.isActive));
-    contactPointsDataProtectionOfficers = computed(() => this.contactPoints().filter(x => x.contactPointType === DPO && x.isActive));
+    contactPointsSecretariats = computed(() =>
+        this.contactPoints().filter(x => x.contactPointTypeId === this.configsService.frontendConfig.entityIds.contactPoint.secretariatId && x.isActive)
+    );
+    contactPointsDataProtectionOfficers = computed(() =>
+        this.contactPoints().filter(x => x.contactPointTypeId === this.configsService.frontendConfig.entityIds.contactPoint.dpoId && x.isActive)
+    );
+    constructor(protected readonly configsService: ConfigsService) {}
 }
