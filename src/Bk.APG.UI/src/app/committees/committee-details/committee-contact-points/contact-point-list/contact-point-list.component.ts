@@ -26,8 +26,8 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObAlertModule, ObButtonDirective, ObNotificationService} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {combineLatest, distinctUntilChanged, map, merge, of, startWith, Subject, switchMap, tap} from 'rxjs';
+import {ConfigsService} from '../../../../configs.service';
 import {CommitteeDetailsService} from '../../committee-details.service';
-import {DPO, SECRETARIAT} from '../../committee-overview/contact-points/contact-points.component';
 import {ContactPointsService} from '../contact-points.service';
 
 export type ContactPointsColumns =
@@ -107,6 +107,7 @@ export class ContactPointListComponent implements AfterViewInit, OnDestroy {
     private readonly refresh = new Subject<void>();
 
     constructor(
+        protected readonly configsService: ConfigsService,
         protected readonly committeeDetailsService: CommitteeDetailsService,
         private readonly translateService: TranslateService,
         private readonly contactPointsService: ContactPointsService,
@@ -182,10 +183,24 @@ export class ContactPointListComponent implements AfterViewInit, OnDestroy {
     }
 
     hasDataProtectionOfficer(): boolean {
-        return this.committeeDetailsService.committeeDetails()?.contactPoints?.some(y => y.contactPointType === DPO) ?? false;
+        return (
+            this.committeeDetailsService
+                .committeeDetails()
+                ?.contactPoints?.some(
+                    y => (!y.endDate || y.endDate > new Date()) && y.contactPointTypeId === this.configsService.frontendConfig.entityIds.contactPoint.dpoId
+                ) ?? false
+        );
     }
 
     hasSecretariat(): boolean {
-        return this.committeeDetailsService.committeeDetails()?.contactPoints?.some(y => y.contactPointType === SECRETARIAT) ?? false;
+        return (
+            this.committeeDetailsService
+                .committeeDetails()
+                ?.contactPoints?.some(
+                    y =>
+                        (!y.endDate || y.endDate > new Date()) &&
+                        y.contactPointTypeId === this.configsService.frontendConfig.entityIds.contactPoint.secretariatId
+                ) ?? false
+        );
     }
 }
