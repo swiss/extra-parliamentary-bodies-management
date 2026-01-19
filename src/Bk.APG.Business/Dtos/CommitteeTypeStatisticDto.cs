@@ -108,6 +108,19 @@ public class CommitteeTypeStatisticDto
     public decimal ExtraParliamentaryCommissionsWbfRomanshPercentage { get; set; }
     public decimal ExtraParliamentaryCommissionsUvekRomanshPercentage { get; set; }
 
+    public int ExtraParliamentaryCommissionsTotalFemaleCount { get; set; }
+    public decimal ExtraParliamentaryCommissionsTotalFemalePercentage { get; set; }
+    public int ExtraParliamentaryCommissionsTotalMaleCount { get; set; }
+    public decimal ExtraParliamentaryCommissionsTotalMalePercentage { get; set; }
+    public int ExtraParliamentaryCommissionsTotalGermanCount { get; set; }
+    public decimal ExtraParliamentaryCommissionsTotalGermanPercentage { get; set; }
+    public int ExtraParliamentaryCommissionsTotalFrenchCount { get; set; }
+    public decimal ExtraParliamentaryCommissionsTotalFrenchPercentage { get; set; }
+    public int ExtraParliamentaryCommissionsTotalItalianCount { get; set; }
+    public decimal ExtraParliamentaryCommissionsTotalItalianPercentage { get; set; }
+    public int ExtraParliamentaryCommissionsTotalRomanshCount { get; set; }
+    public decimal ExtraParliamentaryCommissionsTotalRomanshPercentage { get; set; }
+
     // Bereich Behördenkommissionen
     public int AuthoritiesCommissionsCount { get; set; }
     public int AuthoritiesCommissionsEdaCount { get; set; }
@@ -257,6 +270,19 @@ public class CommitteeTypeStatisticDto
     public decimal NonExtraParliamentaryCommissionsEfdRomanshPercentage { get; set; }
     public decimal NonExtraParliamentaryCommissionsWbfRomanshPercentage { get; set; }
     public decimal NonExtraParliamentaryCommissionsUvekRomanshPercentage { get; set; }
+
+    public int NonExtraParliamentaryCommissionsTotalFemaleCount { get; set; }
+    public decimal NonExtraParliamentaryCommissionsTotalFemalePercentage { get; set; }
+    public int NonExtraParliamentaryCommissionsTotalMaleCount { get; set; }
+    public decimal NonExtraParliamentaryCommissionsTotalMalePercentage { get; set; }
+    public int NonExtraParliamentaryCommissionsTotalGermanCount { get; set; }
+    public decimal NonExtraParliamentaryCommissionsTotalGermanPercentage { get; set; }
+    public int NonExtraParliamentaryCommissionsTotalFrenchCount { get; set; }
+    public decimal NonExtraParliamentaryCommissionsTotalFrenchPercentage { get; set; }
+    public int NonExtraParliamentaryCommissionsTotalItalianCount { get; set; }
+    public decimal NonExtraParliamentaryCommissionsTotalItalianPercentage { get; set; }
+    public int NonExtraParliamentaryCommissionsTotalRomanshCount { get; set; }
+    public decimal NonExtraParliamentaryCommissionsTotalRomanshPercentage { get; set; }
 
     // Bereich Leitungsorgane
     public int ManagementCommitteesCount { get; set; }
