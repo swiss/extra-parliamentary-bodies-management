@@ -130,7 +130,6 @@ public class CommitteeTypeStatisticDto
     public int AuthoritiesCommissionsRomanshCount { get; set; }
     public decimal AuthoritiesCommissionsRomanshPercentage { get; set; }
 
-
     // Bereich Verwaltungskommission
     public int AdministrationCommissionsCount { get; set; }
     public int AdministrationCommissionsEdaCount { get; set; }
@@ -153,117 +152,113 @@ public class CommitteeTypeStatisticDto
     public int AdministrationCommissionsRomanshCount { get; set; }
     public decimal AdministrationCommissionsRomanshPercentage { get; set; }
 
+    // Leitungsorgane & Vertretungen des Bundes (NICHT-Ausserparlamentarische Kommissionen)
+    public int NonExtraParliamentaryCommissionsCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdaCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdiCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEjpdCount { get; set; }
+    public int NonExtraParliamentaryCommissionsVbsCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEfdCount { get; set; }
+    public int NonExtraParliamentaryCommissionsWbfCount { get; set; }
+    public int NonExtraParliamentaryCommissionsUvekCount { get; set; }
 
-    // Leitungsorgane & Vertretungen des Bundes
+    public int NonExtraParliamentaryCommissionsEdaFemaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdiFemaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEjpdFemaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsVbsFemaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEfdFemaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsWbfFemaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsUvekFemaleCount { get; set; }
 
-    public int ManagementAndFederalAgenciesCommissionsCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdaCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdiCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEjpdCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsVbsCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEfdCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsWbfCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsUvekCount { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdaFemalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdiFemalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEjpdFemalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsVbsFemalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEfdFemalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsWbfFemalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsUvekFemalePercentage { get; set; }
 
-    public int ManagementAndFederalAgenciesCommissionsEdaFemaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdiFemaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEjpdFemaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsVbsFemaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEfdFemaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsWbfFemaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsUvekFemaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdaMaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdiMaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEjpdMaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsVbsMaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEfdMaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsWbfMaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsUvekMaleCount { get; set; }
 
-    public decimal ManagementAndFederalAgenciesCommissionsEdaFemalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEdiFemalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEjpdFemalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsVbsFemalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEfdFemalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsWbfFemalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsUvekFemalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdaMalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdiMalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEjpdMalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsVbsMalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEfdMalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsWbfMalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsUvekMalePercentage { get; set; }
 
-    public int ManagementAndFederalAgenciesCommissionsEdaMaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdiMaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEjpdMaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsVbsMaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEfdMaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsWbfMaleCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsUvekMaleCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdaGermanCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdiGermanCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEjpdGermanCount { get; set; }
+    public int NonExtraParliamentaryCommissionsVbsGermanCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEfdGermanCount { get; set; }
+    public int NonExtraParliamentaryCommissionsWbfGermanCount { get; set; }
+    public int NonExtraParliamentaryCommissionsUvekGermanCount { get; set; }
 
-    public decimal ManagementAndFederalAgenciesCommissionsEdaMalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEdiMalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEjpdMalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsVbsMalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEfdMalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsWbfMalePercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsUvekMalePercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdaGermanPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdiGermanPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEjpdGermanPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsVbsGermanPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEfdGermanPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsWbfGermanPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsUvekGermanPercentage { get; set; }
 
-    public int ManagementAndFederalAgenciesCommissionsEdaGermanCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdiGermanCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEjpdGermanCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsVbsGermanCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEfdGermanCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsWbfGermanCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsUvekGermanCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdaFrenchCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdiFrenchCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEjpdFrenchCount { get; set; }
+    public int NonExtraParliamentaryCommissionsVbsFrenchCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEfdFrenchCount { get; set; }
+    public int NonExtraParliamentaryCommissionsWbfFrenchCount { get; set; }
+    public int NonExtraParliamentaryCommissionsUvekFrenchCount { get; set; }
 
-    public decimal ManagementAndFederalAgenciesCommissionsEdaGermanPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEdiGermanPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEjpdGermanPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsVbsGermanPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEfdGermanPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsWbfGermanPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsUvekGermanPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdaFrenchPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdiFrenchPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEjpdFrenchPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsVbsFrenchPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEfdFrenchPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsWbfFrenchPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsUvekFrenchPercentage { get; set; }
 
-    public int ManagementAndFederalAgenciesCommissionsEdaFrenchCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdiFrenchCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEjpdFrenchCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsVbsFrenchCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEfdFrenchCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsWbfFrenchCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsUvekFrenchCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdaItalianCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdiItalianCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEjpdItalianCount { get; set; }
+    public int NonExtraParliamentaryCommissionsVbsItalianCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEfdItalianCount { get; set; }
+    public int NonExtraParliamentaryCommissionsWbfItalianCount { get; set; }
+    public int NonExtraParliamentaryCommissionsUvekItalianCount { get; set; }
 
-    public decimal ManagementAndFederalAgenciesCommissionsEdaFrenchPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEdiFrenchPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEjpdFrenchPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsVbsFrenchPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEfdFrenchPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsWbfFrenchPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsUvekFrenchPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdaItalianPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdiItalianPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEjpdItalianPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsVbsItalianPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEfdItalianPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsWbfItalianPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsUvekItalianPercentage { get; set; }
 
-    public int ManagementAndFederalAgenciesCommissionsEdaItalianCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdiItalianCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEjpdItalianCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsVbsItalianCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEfdItalianCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsWbfItalianCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsUvekItalianCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdaRomanshCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEdiRomanshCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEjpdRomanshCount { get; set; }
+    public int NonExtraParliamentaryCommissionsVbsRomanshCount { get; set; }
+    public int NonExtraParliamentaryCommissionsEfdRomanshCount { get; set; }
+    public int NonExtraParliamentaryCommissionsWbfRomanshCount { get; set; }
+    public int NonExtraParliamentaryCommissionsUvekRomanshCount { get; set; }
 
-    public decimal ManagementAndFederalAgenciesCommissionsEdaItalianPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEdiItalianPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEjpdItalianPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsVbsItalianPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEfdItalianPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsWbfItalianPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsUvekItalianPercentage { get; set; }
-
-    public int ManagementAndFederalAgenciesCommissionsEdaRomanshCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEdiRomanshCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEjpdRomanshCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsVbsRomanshCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsEfdRomanshCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsWbfRomanshCount { get; set; }
-    public int ManagementAndFederalAgenciesCommissionsUvekRomanshCount { get; set; }
-
-    public decimal ManagementAndFederalAgenciesCommissionsEdaRomanshPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEdiRomanshPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEjpdRomanshPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsVbsRomanshPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsEfdRomanshPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsWbfRomanshPercentage { get; set; }
-    public decimal ManagementAndFederalAgenciesCommissionsUvekRomanshPercentage { get; set; }
-
+    public decimal NonExtraParliamentaryCommissionsEdaRomanshPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEdiRomanshPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEjpdRomanshPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsVbsRomanshPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsEfdRomanshPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsWbfRomanshPercentage { get; set; }
+    public decimal NonExtraParliamentaryCommissionsUvekRomanshPercentage { get; set; }
 
     // Bereich Leitungsorgane
-
     public int ManagementCommitteesCount { get; set; }
     public int ManagementCommitteesEdaCount { get; set; }
     public int ManagementCommitteesEdiCount { get; set; }
@@ -285,9 +280,7 @@ public class CommitteeTypeStatisticDto
     public int ManagementCommitteesRomanshCount { get; set; }
     public decimal ManagementCommitteesRomanshPercentage { get; set; }
 
-
     // Vertretungen des Bundes
-
     public int FederalAgenciesCommitteesCount { get; set; }
     public int FederalAgenciesCommitteesEdaCount { get; set; }
     public int FederalAgenciesCommitteesEdiCount { get; set; }
