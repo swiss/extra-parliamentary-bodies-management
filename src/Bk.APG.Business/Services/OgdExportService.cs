@@ -360,7 +360,6 @@ public class OgdExportService
         await _ogdDocumentService.SetupBucket();
         var appointmentDecisionTriples = await CreateAppointmentDecisionDimension(graph, committees);
 
-        // TODO PP, hier wohl nur die aktiven exportieren? Check MILU
         var membershipData = _membershipRepository.GetAllActiveForOgdExport().ToArray();
 
         var membershipRawData =
