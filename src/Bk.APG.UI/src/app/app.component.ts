@@ -62,12 +62,12 @@ export class AppComponent implements OnInit {
                         isExternal: false,
                     },
                     // TODO, to be implemented in 2026
-                    // {
-                    //     id: 'requestsAndReports',
-                    //     url: 'requestsAndReports',
-                    //     label: 'navigation.exports.requestsAndReports',
-                    //     isExternal: false,
-                    // },
+                    {
+                        id: 'requestsAndReports',
+                        url: 'requestsAndReports',
+                        label: 'navigation.exports.requestsAndReports',
+                        isExternal: false,
+                    },
                     // {
                     //     id: 'formLetters',
                     //     url: 'formLetters',

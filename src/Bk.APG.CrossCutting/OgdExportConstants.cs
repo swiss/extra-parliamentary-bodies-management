@@ -50,6 +50,14 @@ public static class OgdExportConstants
     public const string LanguageIt = "it";
     public const string LanguageRm = "rm";
 
+    public const string DepartmentEda = "eda";
+    public const string DepartmentEdi = "edi";
+    public const string DepartmentEjpd = "ejpd";
+    public const string DepartmentVbs = "vbs";
+    public const string DepartmentEfd = "efd";
+    public const string DepartmentWbf = "wbf";
+    public const string DepartmentUvek = "uvek";
+
     public const string NamespaceApg = "apg";
     public const string NamespaceContactPointType = "contact-point-type";
     public const string NamespaceCommitteeType = "committee-type";
@@ -69,6 +77,14 @@ public static class OgdExportConstants
     public const string NamespaceCommitteeCantonStatistic = "committee-canton-statistic";
     public const string NamespaceCommitteeCantonDetailStatistic = "committee-canton-detail-statistic";
     public const string NamespaceCommitteeGenderLanguageStatistic = "committee-gender-language-statistic";
+    public const string NamespaceCommitteeTypeStatistic = "committee-type-statistic";
+    public const string NamespaceExtraparliamentaryCommission = "extra-parliamentary-commission";
+    public const string NamespaceNonExtraparliamentaryCommission = "non-extra-parliamentary-commission";
+    public const string NamespaceAdministrationCommission = "administration-commission";
+    public const string NamespaceAuthoritiesCommission = "authorities-commission";
+    public const string NamespaceManagementCommission = "management-commission";
+    public const string NamespaceFederalAgenciesCommission = "federal-agencies-commission";
+
     public const string NamespaceLd = "ld";
     public const string NamespaceRld = "rld";
     public const string NamespaceSchema = "schema";
@@ -83,6 +99,7 @@ public static class OgdExportConstants
     public const string UriCommitteeCantonStatistic = $"{NamespaceCommitteeCantonStatistic}:1";
     public const string UriCommitteeCantonDetailStatistic = $"{NamespaceCommitteeCantonDetailStatistic}:1";
     public const string UriCommitteeGenderLanguageStatistic = $"{NamespaceCommitteeGenderLanguageStatistic}:1";
+    public const string UriCommitteeTypeStatistic = $"{NamespaceCommitteeTypeStatistic}:1";
 
     // set to the production date of APG
     public const string SchemaPublishedDate = "2026-01-14";
