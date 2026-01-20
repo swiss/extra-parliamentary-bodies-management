@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {CandidateListForward} from '@api/CandidateListForward';
 import {MembershipCandidateCreate} from '@api/MembershipCandidateCreate';
 import {of} from 'rxjs';
@@ -82,6 +82,49 @@ describe('GeneralElectionCommitteeCandidateListService', () => {
             service.getDuplicateMembershipCandidate(createData);
 
             expect(httpClientMock.post).toHaveBeenCalledWith('/api/general-election/committees/getDuplicateMembershipCandidate', createData);
+        });
+    });
+
+    describe('generateExport', () => {
+        it('should call HttpClient.get with correct URL, headers, and options', () => {
+            const expectedUrl = '/api/general-election/committees/1/download';
+            const expectedHeaders = new HttpHeaders().set('Accept', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            const expectedOptions = {
+                headers: expectedHeaders,
+                observe: 'response' as const,
+                responseType: 'blob' as const,
+            };
+
+            const response = {body: new Blob()} as unknown;
+            httpClientMock.get.mockReturnValue(of(response));
+
+            service.generateExport('1').subscribe(res => {
+                expect(res).toBe(response);
+            });
+
+            expect(httpClientMock.get).toHaveBeenCalledWith(expectedUrl, expectedOptions);
+        });
+
+        it('should set Accept header to Excel MIME type', () => {
+            httpClientMock.get.mockReturnValue(of({} as unknown));
+
+            service.generateExport('1').subscribe();
+
+            const callArgs = httpClientMock.get.mock.calls[0];
+            const options = callArgs[1];
+            const acceptHeader = (options!.headers as HttpHeaders).get('Accept');
+            expect(acceptHeader).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        });
+
+        it('should set responseType to blob and observe to response', () => {
+            httpClientMock.get.mockReturnValue(of({} as unknown));
+
+            service.generateExport('1').subscribe();
+
+            const callArgs = httpClientMock.get.mock.calls[0];
+            const options = callArgs[1];
+            expect(options!.responseType).toBe('blob');
+            expect(options!.observe).toBe('response');
         });
     });
 });
