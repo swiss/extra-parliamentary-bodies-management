@@ -27,16 +27,13 @@ export class AppComponent implements OnInit {
 
     readonly roles = toSignal(this.authService.roles$, {initialValue: []});
     readonly navigation = computed<ObINavigationLink[]>(() => {
-        const navigationLinks: ObINavigationLink[] = [];
-        if (!this.roles().includes(Role.Observer)) {
-            navigationLinks.push({
+        const navigationLinks: ObINavigationLink[] = [
+            {
                 id: 'worklist',
                 url: 'worklist',
                 label: 'navigation.worklist',
                 isExternal: false,
-            });
-        }
-        navigationLinks.push(
+            },
             {
                 id: 'persons',
                 url: 'persons',
@@ -75,8 +72,8 @@ export class AppComponent implements OnInit {
                     //     isExternal: false,
                     // },
                 ],
-            }
-        );
+            },
+        ];
 
         if (this.roles().includes(Role.Admin) || this.roles().includes(Role.Department)) {
             const children = [];

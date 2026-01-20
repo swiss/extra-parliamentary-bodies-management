@@ -6,6 +6,7 @@ import {LangChangeEvent, TranslateModule, TranslateService} from '@ngx-translate
 import {ObAlertModule} from '@oblique/oblique';
 import {MockComponents, MockModule} from 'ng-mocks';
 import {BehaviorSubject, of, Subject} from 'rxjs';
+import {ConfigsService} from '../../../configs.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeJustificationsOverviewComponent} from '../../shared/committee-justifications-overview/committee-justifications-overview.component';
 import {CommitteeDetailsService} from '../committee-details.service';
@@ -50,6 +51,17 @@ describe('CommitteeOverviewComponent', () => {
             committeeDetails: signal<CommitteeDetails>({} as CommitteeDetails),
         };
 
+        const configsServiceMock = {
+            frontendConfig: {
+                entityIds: {
+                    contactPoint: {
+                        secretariatId: 'secretariatId',
+                        dpoId: 'dpoId',
+                    },
+                },
+            },
+        };
+
         await TestBed.configureTestingModule({
             imports: [
                 MockModule(TranslateModule),
@@ -62,6 +74,7 @@ describe('CommitteeOverviewComponent', () => {
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: CommitteesService, useValue: committeesServiceMock},
                 {provide: CommitteeDetailsService, useValue: committeeDetailsServiceMock},
+                {provide: ConfigsService, useValue: configsServiceMock},
             ],
             schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
