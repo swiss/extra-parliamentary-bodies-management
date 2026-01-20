@@ -143,8 +143,6 @@ public class MembershipService : IMembershipService
 
         foreach (var committeeGroup in groupedMemberships)
         {
-            // This is the key you grouped on
-            // var committee = committeeGroup.Key;
             var committeeId = committeeGroup.Key.CommitteeId;
             var committeeOgdId = committeeGroup.Key.OgdId;
 
