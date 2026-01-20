@@ -387,4 +387,67 @@
   <data name="Person_MaskedAddress" xml:space="preserve">
         <value>IT_Die Adresse wird nur angezeigt, wenn die Person eine aktive Mitgliedschaft hat.</value>
     </data>
+  <data name="CandidateList_BeginDate" xml:space="preserve">
+        <value>IT_Startdatum</value>
+    </data>
+  <data name="CandidateList_BirthYear" xml:space="preserve">
+        <value>IT_Jahrgang</value>
+    </data>
+  <data name="CandidateList_City" xml:space="preserve">
+        <value>IT_Ort</value>
+    </data>
+  <data name="CandidateList_Committee" xml:space="preserve">
+        <value>IT_Gremium</value>
+    </data>
+  <data name="CandidateList_ElectionType" xml:space="preserve">
+        <value>IT_Status</value>
+    </data>
+  <data name="CandidateList_Email" xml:space="preserve">
+        <value>IT_E-Mail</value>
+    </data>
+  <data name="CandidateList_EndDate" xml:space="preserve">
+        <value>IT_Enddatum</value>
+    </data>
+  <data name="CandidateList_Function" xml:space="preserve">
+        <value>IT_Funktion</value>
+    </data>
+  <data name="CandidateList_Gender" xml:space="preserve">
+        <value>IT_Geschlecht</value>
+    </data>
+  <data name="CandidateList_GivenName" xml:space="preserve">
+        <value>IT_Vorname</value>
+    </data>
+  <data name="CandidateList_Interests" xml:space="preserve">
+        <value>IT_Interessenbindungen</value>
+    </data>
+  <data name="CandidateList_Language" xml:space="preserve">
+        <value>IT_Sprache</value>
+    </data>
+  <data name="CandidateList_MembershipAddition" xml:space="preserve">
+        <value>IT_Mitgliederzusatz</value>
+    </data>
+  <data name="CandidateList_Occupation" xml:space="preserve">
+        <value>IT_Beruf</value>
+    </data>
+  <data name="CandidateList_Office" xml:space="preserve">
+        <value>IT_Verwaltungsstelle</value>
+    </data>
+  <data name="CandidateList_Phone" xml:space="preserve">
+        <value>IT_Telefon</value>
+    </data>
+  <data name="CandidateList_Remarks" xml:space="preserve">
+        <value>IT_Bemerkungen</value>
+    </data>
+  <data name="CandidateList_RemarkStatus" xml:space="preserve">
+        <value>IT_Vertretung</value>
+    </data>
+  <data name="CandidateList_Surname" xml:space="preserve">
+        <value>IT_Name</value>
+    </data>
+  <data name="CandidateList_Title" xml:space="preserve">
+        <value>IT_Titel</value>
+    </data>
+  <data name="CandidateList" xml:space="preserve">
+        <value>IT_Wahlvorschlag</value>
+    </data>
 </root>
