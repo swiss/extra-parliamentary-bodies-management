@@ -415,7 +415,7 @@ public class OgdExportService
             .Concat(occupationTriples)
             .Concat(cantonTriples)
             .Concat(contactPointTypeTriples)
-            //.Concat(contactPointTriples)
+            .Concat(contactPointTriples)
             .Concat(committeeTriples)
             .Concat(personTriples)
             .Concat(membershipRawData)
@@ -747,7 +747,8 @@ public class OgdExportService
         }
     }
 
-    private static List<Triple> CreateMetaDataTriples(Graph graph, string uri, string createDate, string publishDate, string schemaName, string schemaDescription) {
+    private static List<Triple> CreateMetaDataTriples(Graph graph, string uri, string createDate, string publishDate, string schemaName, string schemaDescription)
+    {
         var list = new List<Triple>
         {
             new(
