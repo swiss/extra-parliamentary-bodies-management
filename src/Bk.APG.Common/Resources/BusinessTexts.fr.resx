@@ -385,7 +385,7 @@
         <value>Veuillez ajouter les justifications manquantes pour le RI.</value>
     </data>
   <data name="Person_MaskedAddress" xml:space="preserve">
-        <value>FR_Die Adresse wird nur angezeigt, wenn die Person eine aktive Mitgliedschaft hat.</value>
+        <value>L'adresse ne s'affiche que si la personne possède un mandat actif.</value>
     </data>
   <data name="CandidateList_BeginDate" xml:space="preserve">
         <value>FR_Startdatum</value>

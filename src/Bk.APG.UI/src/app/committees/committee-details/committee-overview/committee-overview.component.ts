@@ -6,11 +6,12 @@ import {ActivatedRoute} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObAlertModule} from '@oblique/oblique';
 import {combineLatest, distinctUntilChanged, map, merge, Observable, startWith, switchMap, tap} from 'rxjs';
+import {ConfigsService} from '../../../../app/configs.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeJustificationsOverviewComponent} from '../../shared/committee-justifications-overview/committee-justifications-overview.component';
 import {CommitteeDetailsService} from '../committee-details.service';
 import {CommitteeOverviewBasicDataComponent} from './committee-overview-basic-data/committee-overview-basic-data.component';
-import {SECRETARIAT, DPO, ContactPointsComponent} from './contact-points/contact-points.component';
+import {ContactPointsComponent} from './contact-points/contact-points.component';
 
 @Component({
     selector: 'apg-committee-overview',
@@ -36,6 +37,7 @@ export class CommitteeOverviewComponent {
     constructor(
         private readonly route: ActivatedRoute,
         private readonly translateService: TranslateService,
+        protected readonly configsService: ConfigsService,
         private readonly committeesService: CommitteesService,
         protected readonly committeeDetailsService: CommitteeDetailsService
     ) {
@@ -55,10 +57,24 @@ export class CommitteeOverviewComponent {
     }
 
     hasDataProtectionOfficer(): boolean {
-        return this.committeeDetailsService.committeeDetails()?.contactPoints?.some(y => y.contactPointType === DPO) ?? false;
+        return (
+            this.committeeDetailsService
+                .committeeDetails()
+                ?.contactPoints?.some(
+                    y => (!y.endDate || y.endDate > new Date()) && y.contactPointTypeId === this.configsService.frontendConfig.entityIds.contactPoint.dpoId
+                ) ?? false
+        );
     }
 
     hasSecretariat(): boolean {
-        return this.committeeDetailsService.committeeDetails()?.contactPoints?.some(y => y.contactPointType === SECRETARIAT) ?? false;
+        return (
+            this.committeeDetailsService
+                .committeeDetails()
+                ?.contactPoints?.some(
+                    y =>
+                        (!y.endDate || y.endDate > new Date()) &&
+                        y.contactPointTypeId === this.configsService.frontendConfig.entityIds.contactPoint.secretariatId
+                ) ?? false
+        );
     }
 }
