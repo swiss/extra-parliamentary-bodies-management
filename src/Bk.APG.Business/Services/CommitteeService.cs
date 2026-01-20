@@ -362,10 +362,13 @@ public class CommitteeService : ICommitteeService
             DescriptionRomansh = c.DescriptionRomansh,
             Memberships = c.Memberships
                 .Where(x =>
-                    x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) &&  x.EndDate > DateOnly.FromDateTime(DateTime.Now))
+                    x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate > DateOnly.FromDateTime(DateTime.Now) || (x.ElectionType != null && (x.ElectionType.Uri == ElectionType.NewElection || x.ElectionType.Uri == ElectionType.ReElection))))
                 .ToList()
         })
         .ToList();
+
+        // .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (m.EndDate > DateOnly.FromDateTime(DateTime.Now) || (m.ElectionType != null && (m.ElectionType.Uri == ElectionType.NewElection || m.ElectionType.Uri == ElectionType.ReElection))))
+
 
         var administrationCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToList();
         var authoritiesCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).ToList();
@@ -436,10 +439,10 @@ public class CommitteeService : ICommitteeService
 
         statisticDto.ExtraParliamentaryCommissionsTotalFemaleCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
         statisticDto.ExtraParliamentaryCommissionsTotalMaleCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
-        statisticDto.ExtraParliamentaryCommissionsTotalGermanCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.GermanGuid);
-        statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.FrenchGuid);
-        statisticDto.ExtraParliamentaryCommissionsTotalItalianCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.ItalianGuid);
-        statisticDto.ExtraParliamentaryCommissionsTotalRomanshCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.RomanshGuid);
+        statisticDto.ExtraParliamentaryCommissionsTotalGermanCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.GermanGuid);
+        statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.FrenchGuid);
+        statisticDto.ExtraParliamentaryCommissionsTotalItalianCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.ItalianGuid);
+        statisticDto.ExtraParliamentaryCommissionsTotalRomanshCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.RomanshGuid);
 
         if (statisticDto.ExtraParliamentaryCommissionsTotalFemaleCount > 0)
         {
@@ -593,10 +596,10 @@ public class CommitteeService : ICommitteeService
 
         statisticDto.NonExtraParliamentaryCommissionsTotalFemaleCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
         statisticDto.NonExtraParliamentaryCommissionsTotalMaleCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
-        statisticDto.NonExtraParliamentaryCommissionsTotalGermanCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.GermanGuid);
-        statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.FrenchGuid);
-        statisticDto.NonExtraParliamentaryCommissionsTotalItalianCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.ItalianGuid);
-        statisticDto.NonExtraParliamentaryCommissionsTotalRomanshCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Language.RomanshGuid);
+        statisticDto.NonExtraParliamentaryCommissionsTotalGermanCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.GermanGuid);
+        statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.FrenchGuid);
+        statisticDto.NonExtraParliamentaryCommissionsTotalItalianCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.ItalianGuid);
+        statisticDto.NonExtraParliamentaryCommissionsTotalRomanshCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.RomanshGuid);
 
         if (statisticDto.NonExtraParliamentaryCommissionsTotalFemaleCount > 0)
         {
