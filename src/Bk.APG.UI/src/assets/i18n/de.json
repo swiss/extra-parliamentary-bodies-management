@@ -807,5 +807,10 @@
   "committee.endDate.confirmation.message": "Achtung, Enddatum ist definitiv. Nach Speicherung kann es nicht mehr bearbeitet werden und das Gremium geht nach Ablauf des Enddatums offline. Möchten Sie das Enddatum speichern?",
   "worklist.task.navigation": "Zur Aufgabe navigieren",
   "person.helpTooltip.salutationText": "Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden.",
-  "application.manual": "Handbuch"
+  "application.manual": "Handbuch",
+  "generalElection.candidateList.download": "Herunterladen",
+  "generalElection.candidateList.export.title": "Dokument wird erzeugt",
+  "generalElection.candidateList.export.message": "Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
+  "generalElection.candidateList.export.success": "Das Dokument wurde erfolgreich erzeugt.",
+  "generalElection.candidateList.exports.error": "Beim Herunterladen der Datei ist ein Fehler aufgetreten."
 }
