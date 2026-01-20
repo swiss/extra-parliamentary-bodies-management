@@ -335,9 +335,7 @@ public class CommitteeService : ICommitteeService
     public async Task<IEnumerable<CommitteeTypeStatisticDto>> GetCommitteeTypeStatistic()
     {
         // we need to have "Leitungsorgane" and "Vertretungen des Bundes" summed together, as well as "Behördenkommissionen" and "Verwaltungskommissionen" -> APK
-
         var statisticDtos = new List<CommitteeTypeStatisticDto>();
-
         var statisticDto = new CommitteeTypeStatisticDto();
 
         var activeCommittees = await _committeeRepository.GetCommitteeDataForStatistics();
@@ -366,9 +364,6 @@ public class CommitteeService : ICommitteeService
                 .ToList()
         })
         .ToList();
-
-        // .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (m.EndDate > DateOnly.FromDateTime(DateTime.Now) || (m.ElectionType != null && (m.ElectionType.Uri == ElectionType.NewElection || m.ElectionType.Uri == ElectionType.ReElection))))
-
 
         var administrationCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToList();
         var authoritiesCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).ToList();
@@ -469,7 +464,7 @@ public class CommitteeService : ICommitteeService
             statisticDto.ExtraParliamentaryCommissionsTotalRomanshPercentage = Math.Round((decimal)statisticDto.ExtraParliamentaryCommissionsTotalRomanshCount / statisticDto.ExtraParliamentaryCommissionsCount * 100, 2);
         }
 
-        // Calculate by department
+        // Calculate the values by department
         if (statisticDto.ExtraParliamentaryCommissionsEdaCount > 0)
         {
             statisticDto.ExtraParliamentaryCommissionsEdaFemalePercentage = Math.Round((decimal)statisticDto.ExtraParliamentaryCommissionsEdaFemaleCount / statisticDto.ExtraParliamentaryCommissionsEdaCount * 100, 2);
@@ -534,7 +529,7 @@ public class CommitteeService : ICommitteeService
             statisticDto.ExtraParliamentaryCommissionsUvekRomanshPercentage = Math.Round((decimal)statisticDto.ExtraParliamentaryCommissionsUvekRomanshCount / statisticDto.ExtraParliamentaryCommissionsUvekCount * 100, 2);
         }
 
-        // Nicht APKs
+        // Nicht APKs / NonExtraParliamentaryCommissions
         statisticDto.NonExtraParliamentaryCommissionsCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.NonExtraParliamentaryCommissionsEdaCount = nonExtraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
         statisticDto.NonExtraParliamentaryCommissionsEdiCount = nonExtraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
@@ -691,7 +686,7 @@ public class CommitteeService : ICommitteeService
             statisticDto.NonExtraParliamentaryCommissionsUvekRomanshPercentage = Math.Round((decimal)statisticDto.NonExtraParliamentaryCommissionsUvekRomanshCount / statisticDto.NonExtraParliamentaryCommissionsUvekCount * 100, 2);
         }
 
-        // Behördenkommissionen/AuthoritiesCommissions
+        // AuthoritiesCommissions/Behördenkommissionen
         statisticDto.AuthoritiesCommissionsCount = administrationCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.AuthoritiesCommissionsEdaCount = administrationCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
         statisticDto.AuthoritiesCommissionsEdiCount = administrationCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
@@ -718,7 +713,7 @@ public class CommitteeService : ICommitteeService
             statisticDto.AuthoritiesCommissionsRomanshPercentage = Math.Round((decimal)statisticDto.AuthoritiesCommissionsRomanshCount / statisticDto.AuthoritiesCommissionsCount * 100, 2);
         }
 
-        // Verwaltungskommissionen/AdministrationCommissions
+        // AdministrationCommissions/Verwaltungskommissionen
         statisticDto.AdministrationCommissionsCount = administrationCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.AdministrationCommissionsEdaCount = administrationCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
         statisticDto.AdministrationCommissionsEdiCount = administrationCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
@@ -745,7 +740,7 @@ public class CommitteeService : ICommitteeService
             statisticDto.AdministrationCommissionsRomanshPercentage = Math.Round((decimal)statisticDto.AdministrationCommissionsRomanshCount / statisticDto.AdministrationCommissionsCount * 100, 2);
         }
 
-        // Vertretungen des Bundes/FederalAgenciesCommissions
+        // FederalAgenciesCommissions/Vertretungen des Bundes
         statisticDto.FederalAgenciesCommitteesCount = federalAgenciesCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.FederalAgenciesCommitteesEdaCount = federalAgenciesCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
         statisticDto.FederalAgenciesCommitteesEdiCount = federalAgenciesCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
@@ -772,7 +767,7 @@ public class CommitteeService : ICommitteeService
             statisticDto.FederalAgenciesCommitteesRomanshPercentage = Math.Round((decimal)statisticDto.FederalAgenciesCommitteesRomanshCount / statisticDto.FederalAgenciesCommitteesCount * 100, 2);
         }
 
-        // Leitungsorgane/ManagmentCommissions
+        // ManagmentCommissions/Leitungsorgane
         statisticDto.ManagementCommitteesCount = managmentCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.ManagementCommitteesEdaCount = managmentCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
         statisticDto.ManagementCommitteesEdiCount = managmentCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
