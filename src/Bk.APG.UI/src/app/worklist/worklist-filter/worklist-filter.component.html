@@ -100,6 +100,7 @@
         <mat-form-field>
             <mat-label>{{ 'worklist.filter.assignedBy.label' | translate }}</mat-label>
             <mat-select [formControl]="form.controls.assignedBy">
+                <mat-option [value]="null" />
                 <mat-option value="Admin">{{ 'worklist.filter.role.admin.label' | translate }}</mat-option>
                 <mat-option value="Department">{{ 'worklist.filter.role.department.label' | translate }}</mat-option>
                 <mat-option value="Office">{{ 'worklist.filter.role.office.label' | translate }}</mat-option>
@@ -113,6 +114,7 @@
         <mat-form-field>
             <mat-label>{{ 'worklist.filter.assignedTo.label' | translate }}</mat-label>
             <mat-select [formControl]="form.controls.assignedTo">
+                <mat-option [value]="null" />
                 <mat-option value="Admin">{{ 'worklist.filter.role.admin.label' | translate }}</mat-option>
                 <mat-option value="Department">{{ 'worklist.filter.role.department.label' | translate }}</mat-option>
                 <mat-option value="Office">{{ 'worklist.filter.role.office.label' | translate }}</mat-option>
