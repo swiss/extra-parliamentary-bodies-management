@@ -788,5 +788,10 @@
   "committee.endDate.confirmation.title": "FR_Enddatum",
   "committee.endDate.confirmation.message": "FR_Achtung, Enddatum ist definitiv. Nach Speicherung kann es nicht mehr bearbeitet werden und das Gremium geht nach Ablauf des Enddatums offline. Möchten Sie das Enddatum speichern?",
   "worklist.task.navigation": "FR_Zur Aufgabe navigieren",
-  "person.helpTooltip.salutationText": "FR_Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden."
+  "person.helpTooltip.salutationText": "FR_Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden.",
+  "contactPoint.delete.title": "Effacer",
+  "contactPoint.delete.text": "FR_Wollen Sie die Kontaktstelle wirklich löschen?",
+  "contactPoint.delete.success": "FR_Kontaktstelle erfolgreich gelöscht",
+  "contactPoint.delete.error": "FR_Fehler beim Löschen der Kontaktstelle",
+  "application.manual": "Manuel"
 }

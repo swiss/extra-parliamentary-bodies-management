@@ -806,5 +806,6 @@
   "committee.endDate.confirmation.title": "Enddatum",
   "committee.endDate.confirmation.message": "Achtung, Enddatum ist definitiv. Nach Speicherung kann es nicht mehr bearbeitet werden und das Gremium geht nach Ablauf des Enddatums offline. Möchten Sie das Enddatum speichern?",
   "worklist.task.navigation": "Zur Aufgabe navigieren",
-  "person.helpTooltip.salutationText": "Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden."
+  "person.helpTooltip.salutationText": "Für die automatische Generierung der Briefanrede werden standardmässig Name, Geschlecht und Sprache verwendet; bei Deutsch zusätzlich der Titel. Die Briefanrede kann manuell angepasst werden.",
+  "application.manual": "Handbuch"
 }
