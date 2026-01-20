@@ -17,4 +17,5 @@ public interface IGeneralElectionCommitteeRepository
     Task<GeneralElectionCommittee> GetByCommitteeId(Guid committeeId);
     Task DeleteAll();
     Task<GeneralElectionCommittee> GetByCommitteeIdForUpdate(Guid committeeId, uint? updateDtoRowVersion = null);
+    Task<GeneralElectionCommittee> GetForCandidateListExport(Guid committeeId);
 }

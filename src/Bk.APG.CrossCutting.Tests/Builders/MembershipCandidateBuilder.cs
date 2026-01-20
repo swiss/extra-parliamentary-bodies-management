@@ -41,8 +41,8 @@ public class MembershipCandidateBuilder
     private readonly string? _justificationMemberInFederalDuty;
     private readonly string? _justificationMemberInFederalAssembly;
     private readonly string? _requirementsProfile;
-    private readonly string? _remarks;
-    private readonly string? _remarksStatus;
+    private string? _remarks;
+    private string? _remarksStatus;
     private readonly bool _inCorrelationWithFederalDuty;
     private bool _isDeleted;
     private bool _isSelected;
@@ -214,6 +214,18 @@ public class MembershipCandidateBuilder
     {
         _generalElectionCommittee = committee;
         _generalElectionCommitteeId = committee.Id;
+        return this;
+    }
+
+    public MembershipCandidateBuilder WithRemarks(string remarks)
+    {
+        _remarks = remarks;
+        return this;
+    }
+
+    public MembershipCandidateBuilder WithRemarksStatus(string remarksStatus)
+    {
+        _remarksStatus = remarksStatus;
         return this;
     }
 
