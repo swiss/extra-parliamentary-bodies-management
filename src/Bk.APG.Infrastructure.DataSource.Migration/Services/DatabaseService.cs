@@ -162,6 +162,13 @@ public class DatabaseService(DataContext targetContext, ILogger<DatabaseService>
             command.ExecuteNonQuery();
         }
 
+        // Mark the one dataprotection officer having it in the surname
+        commandText = "update [PAPGBK].[dbo].[Sekretariat] set Datenschutzberater = 1,  NameOrganisation = '', Nachname = 'Quan', Vorname = 'Isabel' where Nachname like '%Datenschutzberaterin%'";
+        using (var command = new SqlCommand(commandText, connection))
+        {
+            command.ExecuteNonQuery();
+        }
+
         // Cleanup the NameOrganisation column, active and inactive committees
         commandText = "update [PAPGBK].[dbo].[Sekretariat] set NameOrganisation = '' where NameOrganisation in (" +
                       "'Aeschlimann','Albisetti','Amport','Anrig','Arni','Bacher','Baer Bösch','Bär','Baumann','Baumgartner','Benzi Schmid','Biscontin','Blaser','Böhler'," +
@@ -811,6 +818,10 @@ public class DatabaseService(DataContext targetContext, ILogger<DatabaseService>
 
         // Set membership correlation flag for persons with federal duty
         sqlQuery = "UPDATE data.memberships m SET in_correlation_with_federal_duty = true FROM data.persons p WHERE p.id = m.person_id AND p.federal_duty = true;";
+        await targetContext.Database.ExecuteSqlRawAsync(sqlQuery);
+
+        // Set all the country codes with a 4 digit ZIP to 'CH'
+        sqlQuery = "UPDATE data.addresses set country_code = 'CH' where country_code = '' and LENGTH(zip) = 4;";
         await targetContext.Database.ExecuteSqlRawAsync(sqlQuery);
     }
 
