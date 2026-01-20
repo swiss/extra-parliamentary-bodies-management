@@ -1,5 +1,5 @@
 import {CommonModule, DatePipe} from '@angular/common';
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, effect, signal, viewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DOCUMENT, effect, Inject, signal, viewChild} from '@angular/core';
 import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton, MatIconButton} from '@angular/material/button';
@@ -40,7 +40,8 @@ import {MembershipCandidateDetail} from '@api/MembershipCandidateDetail';
 import {MembershipCandidatePartialUpdate} from '@api/MembershipCandidatePartialUpdate';
 import {PersonDetails} from '@api/PersonDetails';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObAlertComponent, ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
+import {ObAlertComponent, ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService, WINDOW} from '@oblique/oblique';
+import {downloadFileFromHttpResponse} from '@shared/file-util';
 import {MasterDataService} from '@shared/master-data.service';
 import {MembersQuotasComponent} from '@shared/members-quotas/members-quotas.component';
 import {distinctUntilChanged, EMPTY, merge, switchMap} from 'rxjs';
@@ -199,7 +200,9 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
         protected readonly generalElectionCommitteeDetailsService: GeneralElectionCommitteeDetailsService,
         protected readonly masterDataService: MasterDataService,
         private readonly dialog: MatDialog,
-        private readonly cdRef: ChangeDetectorRef
+        private readonly cdRef: ChangeDetectorRef,
+        @Inject(WINDOW) private readonly window: Window,
+        @Inject(DOCUMENT) private readonly document: Document
     ) {
         this.newMembershipCandidateForm = this.formBuilder.group({
             personId: [''],
@@ -396,6 +399,34 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
 
     openForwardDialog() {
         this.dialog.open(CandidateListForwardDialogComponent, {data: {committeeId: this.route.snapshot.params.id, candidateIds: this.selectedIds}});
+    }
+
+    downloadCandidateList() {
+        const fallbackFilename = `export.xlsx`;
+
+        this.httpApiInterceptorEvents.deactivateSpinnerOnNextAPICalls(1);
+        this.httpApiInterceptorEvents.deactivateNotificationOnNextAPICalls(1);
+
+        this.notificationService.info({
+            title: 'generalElection.candidateList.export.title',
+            message: 'generalElection.candidateList.export.message',
+            timeout: 10000,
+        });
+
+        return this.membershipCandidateListService.generateExport(this.route.snapshot.params.id).subscribe({
+            next: response => {
+                this.notificationService.success({
+                    message: 'generalElection.candidateList.export.success',
+                });
+
+                downloadFileFromHttpResponse(response, fallbackFilename, this.window, this.document);
+            },
+            error: () => {
+                this.notificationService.error({
+                    message: 'generalElection.candidateList.export.error',
+                });
+            },
+        });
     }
 
     saveSelectedIds() {
