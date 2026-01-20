@@ -373,6 +373,43 @@ public class CommitteeService : ICommitteeService
         var managmentCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
         var nonExtraParliamentaryCommissions = federalAgenciesCommissions.Concat(managmentCommissions).ToList();
 
+        statisticDto = FillExtraParliamentaryCommissions(statisticDto, extraParliamentaryCommissions);
+
+        statisticDto = FillNonExtraParliamentaryCommissions(statisticDto, nonExtraParliamentaryCommissions);
+
+        statisticDto = FillAuthoritiesCommissions(statisticDto, authoritiesCommissions);
+
+        statisticDto = FillAdministrationCommissions(statisticDto, administrationCommissions);
+
+        statisticDto = FillFederalAgenciesCommissions(statisticDto, federalAgenciesCommissions);
+
+        statisticDto = FillManagementCommissions(statisticDto, managmentCommissions);
+
+        statisticDtos.Add(statisticDto);
+
+        return statisticDtos;
+    }
+
+    private async Task CheckAuthorizationForUpdate(Committee committee)
+    {
+        if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
+            ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
+        {
+            _logger.LogError("User is not allowed to edit committee {CommitteeId}", committee.Id);
+
+            throw new AuthorizationException($"User is not allowed to edit committee with id: {committee.Id}");
+        }
+
+        if (committee.EndDate is not null && committee.EndDate < DateOnly.FromDateTime(DateTime.Today) && !_authorizationService.IsAdmin)
+        {
+            _logger.LogError("Committee {CommitteeId} can be updated by admin role only", committee.Id);
+
+            throw new AuthorizationException($"Committee with id: {committee.Id} can be updated by admin role only");
+        }
+    }
+
+    private static CommitteeTypeStatisticDto FillExtraParliamentaryCommissions(CommitteeTypeStatisticDto statisticDto, List<Committee> extraParliamentaryCommissions)
+    {
         statisticDto.ExtraParliamentaryCommissionsCount = extraParliamentaryCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.ExtraParliamentaryCommissionsEdaCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
         statisticDto.ExtraParliamentaryCommissionsEdiCount = extraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
@@ -529,6 +566,11 @@ public class CommitteeService : ICommitteeService
             statisticDto.ExtraParliamentaryCommissionsUvekRomanshPercentage = Math.Round((decimal)statisticDto.ExtraParliamentaryCommissionsUvekRomanshCount / statisticDto.ExtraParliamentaryCommissionsUvekCount * 100, 2);
         }
 
+        return statisticDto;
+    }
+
+    private static CommitteeTypeStatisticDto FillNonExtraParliamentaryCommissions(CommitteeTypeStatisticDto statisticDto, List<Committee> nonExtraParliamentaryCommissions)
+    {
         // Nicht APKs / NonExtraParliamentaryCommissions
         statisticDto.NonExtraParliamentaryCommissionsCount = nonExtraParliamentaryCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.NonExtraParliamentaryCommissionsEdaCount = nonExtraParliamentaryCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
@@ -686,22 +728,27 @@ public class CommitteeService : ICommitteeService
             statisticDto.NonExtraParliamentaryCommissionsUvekRomanshPercentage = Math.Round((decimal)statisticDto.NonExtraParliamentaryCommissionsUvekRomanshCount / statisticDto.NonExtraParliamentaryCommissionsUvekCount * 100, 2);
         }
 
-        // AuthoritiesCommissions/Behördenkommissionen
-        statisticDto.AuthoritiesCommissionsCount = administrationCommissions.SelectMany(c => c.Memberships).Count();
-        statisticDto.AuthoritiesCommissionsEdaCount = administrationCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
-        statisticDto.AuthoritiesCommissionsEdiCount = administrationCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
-        statisticDto.AuthoritiesCommissionsEjpdCount = administrationCommissions.Where(c => c.DepartmentId == Department.EjpdGuid).SelectMany(c => c.Memberships).Count();
-        statisticDto.AuthoritiesCommissionsVbsCount = administrationCommissions.Where(c => c.DepartmentId == Department.VbsGuid).SelectMany(c => c.Memberships).Count();
-        statisticDto.AuthoritiesCommissionsEfdCount = administrationCommissions.Where(c => c.DepartmentId == Department.EfdGuid).SelectMany(c => c.Memberships).Count();
-        statisticDto.AuthoritiesCommissionsWbfCount = administrationCommissions.Where(c => c.DepartmentId == Department.WbfGuid).SelectMany(c => c.Memberships).Count();
-        statisticDto.AuthoritiesCommissionsUvekCount = administrationCommissions.Where(c => c.DepartmentId == Department.UvekGuid).SelectMany(c => c.Memberships).Count();
+        return statisticDto;
+    }
 
-        statisticDto.AuthoritiesCommissionsFemaleCount = administrationCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
-        statisticDto.AuthoritiesCommissionsMaleCount = administrationCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
-        statisticDto.AuthoritiesCommissionsGermanCount = administrationCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.GermanGuid);
-        statisticDto.AuthoritiesCommissionsFrenchCount = administrationCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.FrenchGuid);
-        statisticDto.AuthoritiesCommissionsItalianCount = administrationCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.ItalianGuid);
-        statisticDto.AuthoritiesCommissionsRomanshCount = administrationCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.RomanshGuid);
+    private static CommitteeTypeStatisticDto FillAuthoritiesCommissions(CommitteeTypeStatisticDto statisticDto, List<Committee> authoritiesCommissions)
+    {
+        // AuthoritiesCommissions/Behördenkommissionen
+        statisticDto.AuthoritiesCommissionsCount = authoritiesCommissions.SelectMany(c => c.Memberships).Count();
+        statisticDto.AuthoritiesCommissionsEdaCount = authoritiesCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.AuthoritiesCommissionsEdiCount = authoritiesCommissions.Where(c => c.DepartmentId == Department.EdiGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.AuthoritiesCommissionsEjpdCount = authoritiesCommissions.Where(c => c.DepartmentId == Department.EjpdGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.AuthoritiesCommissionsVbsCount = authoritiesCommissions.Where(c => c.DepartmentId == Department.VbsGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.AuthoritiesCommissionsEfdCount = authoritiesCommissions.Where(c => c.DepartmentId == Department.EfdGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.AuthoritiesCommissionsWbfCount = authoritiesCommissions.Where(c => c.DepartmentId == Department.WbfGuid).SelectMany(c => c.Memberships).Count();
+        statisticDto.AuthoritiesCommissionsUvekCount = authoritiesCommissions.Where(c => c.DepartmentId == Department.UvekGuid).SelectMany(c => c.Memberships).Count();
+
+        statisticDto.AuthoritiesCommissionsFemaleCount = authoritiesCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.FemaleGuid);
+        statisticDto.AuthoritiesCommissionsMaleCount = authoritiesCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.GenderId == Gender.MaleGuid);
+        statisticDto.AuthoritiesCommissionsGermanCount = authoritiesCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.GermanGuid);
+        statisticDto.AuthoritiesCommissionsFrenchCount = authoritiesCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.FrenchGuid);
+        statisticDto.AuthoritiesCommissionsItalianCount = authoritiesCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.ItalianGuid);
+        statisticDto.AuthoritiesCommissionsRomanshCount = authoritiesCommissions.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.RomanshGuid);
 
         if (statisticDto.AuthoritiesCommissionsCount > 0)
         {
@@ -713,6 +760,11 @@ public class CommitteeService : ICommitteeService
             statisticDto.AuthoritiesCommissionsRomanshPercentage = Math.Round((decimal)statisticDto.AuthoritiesCommissionsRomanshCount / statisticDto.AuthoritiesCommissionsCount * 100, 2);
         }
 
+        return statisticDto;
+    }
+
+    private static CommitteeTypeStatisticDto FillAdministrationCommissions(CommitteeTypeStatisticDto statisticDto, List<Committee> administrationCommissions)
+    {
         // AdministrationCommissions/Verwaltungskommissionen
         statisticDto.AdministrationCommissionsCount = administrationCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.AdministrationCommissionsEdaCount = administrationCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
@@ -740,6 +792,11 @@ public class CommitteeService : ICommitteeService
             statisticDto.AdministrationCommissionsRomanshPercentage = Math.Round((decimal)statisticDto.AdministrationCommissionsRomanshCount / statisticDto.AdministrationCommissionsCount * 100, 2);
         }
 
+        return statisticDto;
+    }
+
+    private static CommitteeTypeStatisticDto FillFederalAgenciesCommissions(CommitteeTypeStatisticDto statisticDto, List<Committee> federalAgenciesCommissions)
+    {
         // FederalAgenciesCommissions/Vertretungen des Bundes
         statisticDto.FederalAgenciesCommitteesCount = federalAgenciesCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.FederalAgenciesCommitteesEdaCount = federalAgenciesCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
@@ -767,6 +824,11 @@ public class CommitteeService : ICommitteeService
             statisticDto.FederalAgenciesCommitteesRomanshPercentage = Math.Round((decimal)statisticDto.FederalAgenciesCommitteesRomanshCount / statisticDto.FederalAgenciesCommitteesCount * 100, 2);
         }
 
+        return statisticDto;
+    }
+
+    private static CommitteeTypeStatisticDto FillManagementCommissions(CommitteeTypeStatisticDto statisticDto, List<Committee> managmentCommissions)
+    {
         // ManagmentCommissions/Leitungsorgane
         statisticDto.ManagementCommitteesCount = managmentCommissions.SelectMany(c => c.Memberships).Count();
         statisticDto.ManagementCommitteesEdaCount = managmentCommissions.Where(c => c.DepartmentId == Department.EdaGuid).SelectMany(c => c.Memberships).Count();
@@ -794,26 +856,6 @@ public class CommitteeService : ICommitteeService
             statisticDto.ManagementCommitteesRomanshPercentage = Math.Round((decimal)statisticDto.ManagementCommitteesRomanshCount / statisticDto.ManagementCommitteesCount * 100, 2);
         }
 
-        statisticDtos.Add(statisticDto);
-
-        return statisticDtos;
-    }
-
-    private async Task CheckAuthorizationForUpdate(Committee committee)
-    {
-        if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
-            ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
-        {
-            _logger.LogError("User is not allowed to edit committee {CommitteeId}", committee.Id);
-
-            throw new AuthorizationException($"User is not allowed to edit committee with id: {committee.Id}");
-        }
-
-        if (committee.EndDate is not null && committee.EndDate < DateOnly.FromDateTime(DateTime.Today) && !_authorizationService.IsAdmin)
-        {
-            _logger.LogError("Committee {CommitteeId} can be updated by admin role only", committee.Id);
-
-            throw new AuthorizationException($"Committee with id: {committee.Id} can be updated by admin role only");
-        }
+        return statisticDto;
     }
 }
