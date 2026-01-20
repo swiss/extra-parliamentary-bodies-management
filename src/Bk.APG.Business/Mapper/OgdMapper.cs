@@ -375,7 +375,6 @@ public static class OgdMapper
         return dataRow;
     }
 
-
     public static ObservationDataRow ToCommitteeTypeStatisticObservation(CommitteeTypeStatisticDto statisticDto)
     {
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeTypeStatistic;

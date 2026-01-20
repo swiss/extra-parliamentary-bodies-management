@@ -308,41 +308,8 @@ public class OgdExportService
                 graph.CreateLiteralNode("Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG zu Testzwecken"))
         ];
 
-
-        //List<Triple> committeeTypeStatisticMetadataTriples =
-        //[
-        //    new(
-        //        graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
-        //        graph.CreateUriNode(OgdExportConstants.SchemaPublisher),
-        //        graph.CreateUriNode(OgdExportConstants.LdFCh)),
-        //    new(
-        //        graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
-        //        graph.CreateUriNode(OgdExportConstants.SchemaCreator),
-        //        graph.CreateUriNode(OgdExportConstants.LdFCh)),
-        //    new(
-        //        graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
-        //        graph.CreateUriNode(OgdExportConstants.SchemaDateCreated),
-        //        graph.CreateLiteralNode("2025-11-26", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
-        //    new(
-        //        graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
-        //        graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
-        //        graph.CreateLiteralNode("2025-05-26", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
-        //    new(
-        //        graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
-        //        graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
-        //        graph.CreateLiteralNode(DateTime.Now.ToString("yyyy-MM-dd"), UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
-        //    new(
-        //        graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
-        //        graph.CreateUriNode(OgdExportConstants.SchemaName),
-        //        graph.CreateLiteralNode("BK-APG Gremium Statistiken im Bereich Geschlechter und Sprachen (Test)")),
-        //    new(
-        //        graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
-        //        graph.CreateUriNode(OgdExportConstants.SchemaDescription),
-        //        graph.CreateLiteralNode("Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG zu Testzwecken"))
-        //];
-
         var committeeTypeStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeStatistic, "2026-01-14", "2026-01-14",
-            "BK-APG Gremiumtypen-Statistik", "Export der Statistiken zu Sprachen, Geschlechtern und Mengen pro Gremiumtyp (APG Test)");
+            "BK-APG Gremiumtypen-Statistik", "Export der Statistiken zu Sprachen, Geschlechtern und Mengen pro Gremiumtyp");
 
         var committeeTypeTriples = CreateCommitteeTypeDimension(graph);
         var functionTriples = await CreateFunctionDimension(graph);
