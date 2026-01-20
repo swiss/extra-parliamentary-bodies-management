@@ -35,6 +35,16 @@ public class WorklistTaskService : IWorklistTaskService
 
     public async Task<PagedResultDto<WorklistTaskDto>> GetWorklistTasks(PagingParametersDto paging, WorklistFilterParametersDto? filterParametersDto, string? sort, SortDirection? sortDirection)
     {
+        if (_authorizationService.IsObserver)
+        {
+            return new PagedResultDto<WorklistTaskDto>
+            {
+                Index = 0,
+                Total = 0,
+                Items = []
+            };
+        }
+
         var filter = WorklistTaskMapper.ToWorklistTaskFilterParameters(filterParametersDto);
         var pagingParameters = PagingMapper.ToPagingParameters(paging);
         var worklistTasks = await _worklistTaskRepository.GetAll(pagingParameters, filter, sort, sortDirection);

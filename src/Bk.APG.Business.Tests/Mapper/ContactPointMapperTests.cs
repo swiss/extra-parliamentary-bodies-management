@@ -33,6 +33,7 @@ internal class ContactPointMapperTests
             Assert.That(dto.PersonalMobile, Is.EqualTo(contactPoint.PersonalMobile));
             Assert.That(dto.PersonalEmail, Is.EqualTo(contactPoint.PersonalEmail));
             Assert.That(dto.ContactPointType, Is.EqualTo(contactPoint.ContactPointType?.TextDe));
+            Assert.That(dto.ContactPointTypeId, Is.EqualTo(contactPoint.ContactPointType!.Id));
         });
     }
 
