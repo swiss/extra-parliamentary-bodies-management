@@ -79,6 +79,195 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wahlvorschlag.
+        /// </summary>
+        public static string CandidateList {
+            get {
+                return ResourceManager.GetString("CandidateList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Startdatum.
+        /// </summary>
+        public static string CandidateList_BeginDate {
+            get {
+                return ResourceManager.GetString("CandidateList_BeginDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Jahrgang.
+        /// </summary>
+        public static string CandidateList_BirthYear {
+            get {
+                return ResourceManager.GetString("CandidateList_BirthYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ort.
+        /// </summary>
+        public static string CandidateList_City {
+            get {
+                return ResourceManager.GetString("CandidateList_City", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Gremium.
+        /// </summary>
+        public static string CandidateList_Committee {
+            get {
+                return ResourceManager.GetString("CandidateList_Committee", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Status.
+        /// </summary>
+        public static string CandidateList_ElectionType {
+            get {
+                return ResourceManager.GetString("CandidateList_ElectionType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to E-Mail.
+        /// </summary>
+        public static string CandidateList_Email {
+            get {
+                return ResourceManager.GetString("CandidateList_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enddatum.
+        /// </summary>
+        public static string CandidateList_EndDate {
+            get {
+                return ResourceManager.GetString("CandidateList_EndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Funktion.
+        /// </summary>
+        public static string CandidateList_Function {
+            get {
+                return ResourceManager.GetString("CandidateList_Function", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Geschlecht.
+        /// </summary>
+        public static string CandidateList_Gender {
+            get {
+                return ResourceManager.GetString("CandidateList_Gender", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vorname.
+        /// </summary>
+        public static string CandidateList_GivenName {
+            get {
+                return ResourceManager.GetString("CandidateList_GivenName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interessenbindungen.
+        /// </summary>
+        public static string CandidateList_Interests {
+            get {
+                return ResourceManager.GetString("CandidateList_Interests", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sprache.
+        /// </summary>
+        public static string CandidateList_Language {
+            get {
+                return ResourceManager.GetString("CandidateList_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mitgliederzusatz.
+        /// </summary>
+        public static string CandidateList_MembershipAddition {
+            get {
+                return ResourceManager.GetString("CandidateList_MembershipAddition", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Beruf.
+        /// </summary>
+        public static string CandidateList_Occupation {
+            get {
+                return ResourceManager.GetString("CandidateList_Occupation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verwaltungsstelle.
+        /// </summary>
+        public static string CandidateList_Office {
+            get {
+                return ResourceManager.GetString("CandidateList_Office", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Telefon.
+        /// </summary>
+        public static string CandidateList_Phone {
+            get {
+                return ResourceManager.GetString("CandidateList_Phone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bemerkungen.
+        /// </summary>
+        public static string CandidateList_Remarks {
+            get {
+                return ResourceManager.GetString("CandidateList_Remarks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vertretung.
+        /// </summary>
+        public static string CandidateList_RemarkStatus {
+            get {
+                return ResourceManager.GetString("CandidateList_RemarkStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        public static string CandidateList_Surname {
+            get {
+                return ResourceManager.GetString("CandidateList_Surname", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Titel.
+        /// </summary>
+        public static string CandidateList_Title {
+            get {
+                return ResourceManager.GetString("CandidateList_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Es sind zu viele Personen aus dem Wahlvorschlag für die Validierung selektiert. Die maximale Mitgliederanzahl {0} ist überschritten. Bitte selektieren Sie weniger Personen und validieren Sie Ihre Selektion nochmal..
         /// </summary>
         public static string CandidateListValidationError_MaximumMembers {
