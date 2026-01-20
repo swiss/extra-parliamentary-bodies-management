@@ -387,4 +387,67 @@
   <data name="Person_MaskedAddress" xml:space="preserve">
         <value>FR_Die Adresse wird nur angezeigt, wenn die Person eine aktive Mitgliedschaft hat.</value>
     </data>
+  <data name="CandidateList_BeginDate" xml:space="preserve">
+        <value>FR_Startdatum</value>
+    </data>
+  <data name="CandidateList_BirthYear" xml:space="preserve">
+        <value>FR_Jahrgang</value>
+    </data>
+  <data name="CandidateList_City" xml:space="preserve">
+        <value>FR_Ort</value>
+    </data>
+  <data name="CandidateList_Committee" xml:space="preserve">
+        <value>FR_Gremium</value>
+    </data>
+  <data name="CandidateList_ElectionType" xml:space="preserve">
+        <value>FR_Status</value>
+    </data>
+  <data name="CandidateList_Email" xml:space="preserve">
+        <value>FR_E-Mail</value>
+    </data>
+  <data name="CandidateList_EndDate" xml:space="preserve">
+        <value>FR_Enddatum</value>
+    </data>
+  <data name="CandidateList_Function" xml:space="preserve">
+        <value>FR_Funktion</value>
+    </data>
+  <data name="CandidateList_Gender" xml:space="preserve">
+        <value>FR_Geschlecht</value>
+    </data>
+  <data name="CandidateList_GivenName" xml:space="preserve">
+        <value>FR_Vorname</value>
+    </data>
+  <data name="CandidateList_Interests" xml:space="preserve">
+        <value>FR_Interessenbindungen</value>
+    </data>
+  <data name="CandidateList_Language" xml:space="preserve">
+        <value>FR_Sprache</value>
+    </data>
+  <data name="CandidateList_MembershipAddition" xml:space="preserve">
+        <value>FR_Mitgliederzusatz</value>
+    </data>
+  <data name="CandidateList_Occupation" xml:space="preserve">
+        <value>FR_Beruf</value>
+    </data>
+  <data name="CandidateList_Office" xml:space="preserve">
+        <value>FR_Verwaltungsstelle</value>
+    </data>
+  <data name="CandidateList_Phone" xml:space="preserve">
+        <value>FR_Telefon</value>
+    </data>
+  <data name="CandidateList_Remarks" xml:space="preserve">
+        <value>FR_Bemerkungen</value>
+    </data>
+  <data name="CandidateList_RemarkStatus" xml:space="preserve">
+        <value>FR_Vertretung</value>
+    </data>
+  <data name="CandidateList_Surname" xml:space="preserve">
+        <value>FR_Name</value>
+    </data>
+  <data name="CandidateList_Title" xml:space="preserve">
+        <value>FR_Titel</value>
+    </data>
+  <data name="CandidateList" xml:space="preserve">
+        <value>FR_Wahlvorschlag</value>
+    </data>
 </root>

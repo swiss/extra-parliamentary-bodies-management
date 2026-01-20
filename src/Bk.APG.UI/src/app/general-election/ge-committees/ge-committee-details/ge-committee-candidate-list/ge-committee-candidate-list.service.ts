@@ -1,4 +1,4 @@
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpResponse} from '@angular/common/http';
 import {Injectable} from '@angular/core';
 import {CandidateListForward} from '@api/CandidateListForward';
 import {CandidateListValidationResult} from '@api/CandidateListValidationResult';
@@ -11,6 +11,8 @@ import {Observable, Subject} from 'rxjs';
 @Injectable({providedIn: 'root'})
 export class GeneralElectionCommitteeCandidateListService {
     reload$ = new Subject<void>();
+
+    private static readonly EXCEL_ACCEPT_HEADER = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     constructor(private readonly http: HttpClient) {}
 
@@ -49,5 +51,15 @@ export class GeneralElectionCommitteeCandidateListService {
 
     getDuplicateMembershipCandidate(dto: MembershipCandidateCreate) {
         return this.http.post<MembershipCandidateDetail | null>('/api/general-election/committees/getDuplicateMembershipCandidate', dto);
+    }
+
+    generateExport(committeeId: string): Observable<HttpResponse<Blob>> {
+        const headers = new HttpHeaders().set('Accept', GeneralElectionCommitteeCandidateListService.EXCEL_ACCEPT_HEADER);
+
+        return this.http.get<Blob>(`/api/general-election/committees/${committeeId}/download`, {
+            headers,
+            observe: 'response',
+            responseType: 'blob' as 'json',
+        });
     }
 }

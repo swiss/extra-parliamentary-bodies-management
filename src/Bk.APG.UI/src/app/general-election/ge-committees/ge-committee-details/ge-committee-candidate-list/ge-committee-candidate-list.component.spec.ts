@@ -10,7 +10,9 @@ import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDeta
 import {MembershipCandidateDetail} from '@api/MembershipCandidateDetail';
 import {PersonDetails} from '@api/PersonDetails';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
+import {ObHttpApiInterceptorEvents, ObNotificationService, WINDOW} from '@oblique/oblique';
+import * as fileUtil from '@shared/file-util';
+import {DOCUMENT} from '@shared/injection.tokens';
 import {MasterDataService} from '@shared/master-data.service';
 import {MockModule, MockPipe} from 'ng-mocks';
 import {of, Subject, throwError} from 'rxjs';
@@ -73,10 +75,12 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
         getMembershipCandidates: jest.fn().mockReturnValue(of(mockMembershipCandidates)),
         partialUpdateMembershipCandidate: jest.fn().mockReturnValue(of(undefined)),
         deleteMembershipCandidate: jest.fn().mockReturnValue(of(undefined)),
+        generateExport: jest.fn().mockReturnValue(of(new Blob())),
     } as any;
 
     const httpApiInterceptorEventsMock = {
         deactivateNotificationOnNextAPICalls: jest.fn(),
+        deactivateSpinnerOnNextAPICalls: jest.fn(),
     };
 
     let authServiceMock: {
@@ -89,6 +93,7 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
 
     const notificationServiceMock = {
         success: jest.fn(),
+        info: jest.fn(),
         error: jest.fn(),
     };
 
@@ -147,6 +152,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                 {provide: GeneralElectionCommitteeDetailsService, useValue: generalElectionCommitteeDetailsServiceMock},
                 {provide: GeneralElectionCommitteesService, useValue: generalElectionCommitteeServiceMock},
                 {provide: ObHttpApiInterceptorEvents, useValue: httpApiInterceptorEventsMock},
+                {provide: WINDOW, useValue: window},
+                {provide: DOCUMENT, useValue: document},
                 provideHttpClient(),
             ],
         }).compileComponents();
@@ -725,5 +732,48 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
 
             expect(validateCandidateListMock).toHaveBeenCalledWith('committee-123', [], false);
         });
+    });
+
+    it('should show info notification when export starts', () => {
+        component.downloadCandidateList();
+
+        expect(notificationServiceMock.info).toHaveBeenCalledWith(
+            expect.objectContaining({
+                title: 'generalElection.candidateList.export.title',
+                message: 'generalElection.candidateList.export.message',
+                timeout: 10000,
+            })
+        );
+    });
+
+    it('should show success notification and update successful exports on success', () => {
+        component.downloadCandidateList();
+
+        expect(notificationServiceMock.success).toHaveBeenCalledWith(
+            expect.objectContaining({
+                message: 'generalElection.candidateList.export.success',
+            })
+        );
+    });
+
+    it('should call downloadFileFromHttpResponse on success', () => {
+        const downloadSpy = jest.spyOn(fileUtil, 'downloadFileFromHttpResponse').mockImplementation(() => {});
+
+        component.downloadCandidateList();
+
+        expect(downloadSpy).toHaveBeenCalled();
+        downloadSpy.mockRestore();
+    });
+
+    it('should show error notification and update failed exportsand update failed exports on error', () => {
+        membershipCandidateListServiceMock.generateExport = jest.fn().mockReturnValue(throwError(() => new Error('fail')));
+
+        component.downloadCandidateList();
+
+        expect(notificationServiceMock.error).toHaveBeenCalledWith(
+            expect.objectContaining({
+                message: 'generalElection.candidateList.export.error',
+            })
+        );
     });
 });

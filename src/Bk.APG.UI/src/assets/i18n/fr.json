@@ -793,5 +793,10 @@
   "contactPoint.delete.text": "FR_Wollen Sie die Kontaktstelle wirklich löschen?",
   "contactPoint.delete.success": "FR_Kontaktstelle erfolgreich gelöscht",
   "contactPoint.delete.error": "FR_Fehler beim Löschen der Kontaktstelle",
-  "application.manual": "Manuel"
+  "application.manual": "Manuel",
+  "generalElection.candidateList.download": "FR_Herunterladen",
+  "generalElection.candidateList.export.title": "FR_Dokument wird erzeugt",
+  "generalElection.candidateList.export.message": "FR_Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
+  "generalElection.candidateList.export.success": "FR_Das Dokument wurde erfolgreich erzeugt.",
+  "generalElection.candidateList.export.error": "FR_Beim Herunterladen der Datei ist ein Fehler aufgetreten."
 }
