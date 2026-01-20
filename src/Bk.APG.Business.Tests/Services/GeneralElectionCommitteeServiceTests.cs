@@ -6,8 +6,10 @@ using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
 using Bk.APG.CrossCutting.Tests.Builders;
+using Bk.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using NSubstitute.ReceivedExtensions;
 
 namespace Bk.APG.Business.Tests.Services;
 
@@ -20,6 +22,7 @@ public class GeneralElectionCommitteeServiceTests
     private readonly ICultureService _cultureService = Substitute.For<ICultureService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+    private readonly DocumentService.Client.IDocumentService _documentService = Substitute.For<DocumentService.Client.IDocumentService>();
     private readonly ILogger<GeneralElectionCommitteeService> _logger = NullLogger<GeneralElectionCommitteeService>.Instance;
 
     private GeneralElectionCommittee _generalElectionCommittee;
@@ -58,6 +61,7 @@ public class GeneralElectionCommitteeServiceTests
             _cultureService,
             _generalMeasureRepository,
             _worklistTaskRepository,
+            _documentService,
             _logger);
     }
 
@@ -258,6 +262,68 @@ public class GeneralElectionCommitteeServiceTests
 
         await _generalElectionCommitteeRepository.Received(1).GetByCommitteeIdForUpdate(committeeId);
         await _generalElectionCommitteeRepository.DidNotReceiveWithAnyArgs().CommitChanges();
+    }
+
+    [Test]
+    public async Task GenerateCandidateListExport_ShouldExportCorrectly()
+    {
+        var committeeId = Guid.NewGuid();
+
+        var geCommittee = new GeneralElectionCommitteeBuilder()
+            .WithGermanDescription("Gremium DE")
+            .WithOffice(new OfficeBuilder().WithGermanDescription("Office DE").Build())
+            .WithMembershipCandidates(
+            [new MembershipCandidateBuilder()
+                .WithBeginDate(new DateOnly(2025, 1, 1))
+                .WithEndDate(new DateOnly(2025, 12, 31))
+                .WithFunction(new FunctionBuilder().Build())
+                .WithPerson(
+                    new PersonBuilder()
+                        .WithGender(new GenderBuilder().Build())
+                        .WithLanguage(new LanguageBuilder().Build())
+                        .WithBirthYear(2000)
+                        .WithCorrespondenceAddress(new AddressBuilder().Build())
+                        .WithInterests([new InterestBuilder()
+                        .Build()]).Build())
+                .WithRemarks("remarks")
+                .WithRemarksStatus("remarksStatus")
+                .Build()])
+            .Build();
+        _generalElectionCommitteeRepository.GetForCandidateListExport(committeeId).Returns(geCommittee);
+
+        Spreadsheet? capturedSpreadsheet = null;
+        _documentService
+            .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
+            .Returns(new MemoryStream());
+
+        await _generalElectionCommitteeService.GenerateCandidateListExport(committeeId);
+
+        Assert.That(capturedSpreadsheet, Is.Not.Null);
+
+        var dataRow = capturedSpreadsheet.BodyCells[0];
+        Assert.Multiple(() =>
+        {
+            Assert.That(dataRow[0].Text, Is.EqualTo(geCommittee.DescriptionGerman));
+            Assert.That(dataRow[1].Text, Is.EqualTo(geCommittee.Office!.GetDescription()));
+            Assert.That(dataRow[2].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Title));
+            Assert.That(dataRow[3].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Surname));
+            Assert.That(dataRow[4].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.GivenName));
+            Assert.That(dataRow[5].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.BirthYear.ToString()));
+            Assert.That(dataRow[6].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Gender!.GetText()));
+            Assert.That(dataRow[7].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Language!.GetText()));
+            Assert.That(dataRow[8].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().RemarksStatus));
+            Assert.That(dataRow[9].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Function!.GetText()));
+            Assert.That(dataRow[10].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().BeginDate.ToString("yyyy-MM-dd")));
+            Assert.That(dataRow[11].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().EndDate.ToString("yyyy-MM-dd")));
+            Assert.That(dataRow[12].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().ElectionType!.GetText()));
+            Assert.That(dataRow[13].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().MembershipAddition!.GetText()));
+            Assert.That(dataRow[14].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Remarks));
+            Assert.That(dataRow[15].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Occupation));
+            Assert.That(dataRow[16].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.City));
+            Assert.That(dataRow[17].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Phone));
+            Assert.That(dataRow[18].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Email));
+            Assert.That(dataRow[19].Text, Is.EqualTo(string.Join(";", geCommittee.MembershipCandidates.First().Person!.Interests!.Select(y => y.InterestText))));
+        });
     }
 
     private static GeneralElectionCommitteeJustificationUpdateDto BuildJustificationUpdateDto()
