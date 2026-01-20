@@ -12,6 +12,8 @@ namespace Bk.APG.Api.Controllers;
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
 public class GeneralElectionCommitteeController : ControllerBase
 {
+    private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
     private readonly IMembershipCandidateService _membershipCandidateService;
     private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
@@ -128,5 +130,13 @@ public class GeneralElectionCommitteeController : ControllerBase
     {
         var committee = await _generalElectionCommitteeService.UpdateGeneralElectionCommitteeVacancies(id, vacancies);
         return Ok(committee);
+    }
+
+    [HttpGet("{id:guid}/download")]
+    public async Task<ActionResult> GenerateCommitteeTypeExport([FromRoute] Guid id)
+    {
+        var (fileName, content) = await _generalElectionCommitteeService.GenerateCandidateListExport(id);
+
+        return File(content, ExcelMimeType, fileName);
     }
 }

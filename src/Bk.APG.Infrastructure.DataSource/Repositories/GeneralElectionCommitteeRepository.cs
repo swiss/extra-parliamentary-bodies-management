@@ -39,6 +39,21 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         return generalElectionCommittee ?? throw new EntityNotFoundException($"GeneralElectionCommittee with CommitteeId={committeeId} not found");
     }
 
+    public async Task<GeneralElectionCommittee> GetForCandidateListExport(Guid committeeId)
+    {
+        var generalElectionCommittee = await GetGeneralElectionCommittees()
+            .Include(y => y.MembershipCandidates)
+                .ThenInclude(mc => mc.Person)
+                .ThenInclude(p => p != null ? p.Interests : null)
+            .Include(y => y.MembershipCandidates)
+                .ThenInclude(mc => mc.Person)
+                .ThenInclude(p => p != null ? p.CorrespondenceAddress : null)
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.CommitteeId == committeeId);
+
+        return generalElectionCommittee ?? throw new EntityNotFoundException($"GeneralElectionCommittee with CommitteeId={committeeId} not found");
+    }
+
     public async Task<IEnumerable<GeneralElectionCommittee>> GetByDepartmentId(Guid departmentId)
     {
         var generalElectionCommittees = await _dataContext.GeneralElectionCommittees
