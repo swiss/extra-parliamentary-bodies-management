@@ -791,5 +791,10 @@
   "contactPoint.delete.text": "IT_Wollen Sie die Kontaktstelle wirklich löschen?",
   "contactPoint.delete.success": "IT_Kontaktstelle erfolgreich gelöscht",
   "contactPoint.delete.error": "IT_Fehler beim Löschen der Kontaktstelle",
-  "application.manual": "Manuale"
+  "application.manual": "Manuale",
+  "generalElection.candidateList.download": "IT_Herunterladen",
+  "generalElection.candidateList.export.title": "IT_Dokument wird erzeugt",
+  "generalElection.candidateList.export.message": "IT_Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
+  "generalElection.candidateList.export.success": "IT_Das Dokument wurde erfolgreich erzeugt.",
+  "generalElection.candidateList.export.error": "IT_Beim Herunterladen der Datei ist ein Fehler aufgetreten."
 }

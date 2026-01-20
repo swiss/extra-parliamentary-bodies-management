@@ -1,9 +1,12 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
+using Bk.APG.Common.Resources;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
+using Bk.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Bk.APG.Business.Services;
@@ -15,6 +18,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly ICultureService _cultureService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
+    private readonly Bk.DocumentService.Client.IDocumentService _documentService;
     private readonly ILogger<GeneralElectionCommitteeService> _logger;
 
     public GeneralElectionCommitteeService(
@@ -23,6 +27,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         ICultureService cultureService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
+        Bk.DocumentService.Client.IDocumentService documentService,
         ILogger<GeneralElectionCommitteeService> logger
     )
     {
@@ -31,6 +36,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _cultureService = cultureService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
+        _documentService = documentService;
         _logger = logger;
     }
 
@@ -225,6 +231,103 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeUpdateDto(existingCommittee);
     }
 
+
+    public async Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id)
+    {
+        _logger.LogInformation("Generate candidate list export for general election committee {CommitteeId}", id);
+
+        string[] headers =
+        [
+            BusinessTexts.CandidateList_Committee,
+            BusinessTexts.CandidateList_Office,
+            BusinessTexts.CandidateList_Title,
+            BusinessTexts.CandidateList_Surname,
+            BusinessTexts.CandidateList_GivenName,
+            BusinessTexts.CandidateList_BirthYear,
+            BusinessTexts.CandidateList_Gender,
+            BusinessTexts.CandidateList_Language,
+            BusinessTexts.CandidateList_RemarkStatus,
+            BusinessTexts.CandidateList_Function,
+            BusinessTexts.CandidateList_BeginDate,
+            BusinessTexts.CandidateList_EndDate,
+            BusinessTexts.CandidateList_ElectionType,
+            BusinessTexts.CandidateList_MembershipAddition,
+            BusinessTexts.CandidateList_Remarks,
+            BusinessTexts.CandidateList_Occupation,
+            BusinessTexts.CandidateList_City,
+            BusinessTexts.CandidateList_Phone,
+            BusinessTexts.CandidateList_Email,
+            BusinessTexts.CandidateList_Interests
+        ];
+
+        var bodyCells = await GetCandidateListData(id);
+        var spreadsheet = new Spreadsheet
+        {
+            HeaderCells = headers.Select(header => new Cell { Text = header, Format = CellFormat.Bold }).ToList(),
+            BodyCells = bodyCells,
+
+        };
+
+        var exportStream = await _documentService.CreateExcel(spreadsheet);
+
+        return (GenerateFileName(DateTime.Now, BusinessTexts.CandidateList), exportStream);
+    }
+
+    private async Task<List<List<Cell>>> GetCandidateListData(Guid id)
+    {
+        var committee = await _generalElectionCommitteeRepository.GetForCandidateListExport(id);
+
+        var bodyCells = committee
+            .MembershipCandidates
+            .OrderBy(y => y.Person?.Surname ?? y.Surname)
+            .ThenBy(y => y.Person?.GivenName ?? y.GivenName)
+            .Select(candidate => new List<Cell>
+            {
+                new() { Text = committee.GetDescription() }, // Gremium
+                new() { Text = committee.Office?.GetDescription() }, // Verwaltungsstelle
+                new() { Text = candidate.Person is not null ?  candidate.Person!.Title : string.Empty }, // Title
+                new() { Text = candidate.Person is not null ?  candidate.Person!.Surname : string.Empty }, // Name
+                new() { Text = candidate.Person is not null ?  candidate.Person!.GivenName : string.Empty }, // Vorname
+                NumberCell(candidate.Person?.BirthYear ?? candidate.BirthYear), // Jahrgang
+                new() { Text = candidate.Person?.Gender?.GetText() ?? candidate.Gender?.GetText() ?? string.Empty }, // Geschlecht
+                new() { Text = candidate.Person?.Language?.GetText() ?? candidate.Language?.GetText() ?? string.Empty }, // Sprache
+                new() { Text = candidate.RemarksStatus }, // Vertretung
+                new() { Text = candidate.Function?.GetText() },// Funktion
+                DateCell(candidate.BeginDate), // Startdatum
+                DateCell(candidate.EndDate), // Enddatum
+                new() { Text = candidate.ElectionType?.GetText() }, // Status
+                new() { Text = candidate.MembershipAddition?.GetText() }, // Mitgliedzusatz
+                new() { Text = candidate.Remarks }, // Bemerkungen
+                new() { Text = candidate.Person?.Occupation }, // Beruf
+                new() { Text = candidate.Person?.CorrespondenceAddress?.City }, // Ort
+                new() { Text = candidate.Person?.CorrespondenceAddress?.Phone }, // Telefon
+                new() { Text = candidate.Person?.CorrespondenceAddress?.Email }, // E-Mail
+                new() { Text = string.Join(";",  candidate.Person?.Interests?.Where(y => !string.IsNullOrWhiteSpace(y.InterestText)).Select(y => y.InterestText) ?? Enumerable.Empty<string>()) } // Interessenbindungen
+            }).ToList();
+
+        return bodyCells;
+    }
+
+    private static Cell NumberCell(decimal value, string format = "0")
+    {
+        return new Cell
+        {
+            Text = value.ToString(CultureInfo.InvariantCulture),
+            FormatType = CellFormatTypes.Number,
+            Format = format
+        };
+    }
+
+    private static Cell DateCell(DateOnly? value)
+    {
+        return new Cell
+        {
+            Text = value is not null ? value.Value.ToString("O") : string.Empty,
+            FormatType = CellFormatTypes.Date,
+            Format = "dd.MM.yyyy"
+        };
+    }
+
     private async Task CheckAuthorizationForUpdate(Committee committee)
     {
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
@@ -241,5 +344,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
             throw new AuthorizationException($"General election committee with id: {committee.Id} can be updated by admin role only");
         }
+    }
+
+    private static string GenerateFileName(DateTime exportDate, string exportType)
+    {
+        return $"{exportDate:yyyyMMdd}_{exportType}.xlsx";
     }
 }
