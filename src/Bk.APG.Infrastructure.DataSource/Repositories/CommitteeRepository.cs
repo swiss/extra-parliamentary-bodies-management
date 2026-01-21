@@ -196,6 +196,20 @@ public class CommitteeRepository : ICommitteeRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Committee>> GetForOgdExport()
+    {
+        return await _dataContext.Committees
+            .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
+            .Include(x => x.CommitteeType)
+            .Include(x => x.Department)
+            .Include(x => x.Memberships)
+            .Include(x => x.ContactPoints)
+            .Include(x => x.AppointmentDecisions)
+                .ThenInclude(x => x.OriginalDocument)
+            .AsSingleQuery()
+            .ToListAsync();
+    }
+
     public IEnumerable<Committee> GetAll()
     {
         return _dataContext.Committees
