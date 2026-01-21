@@ -1,5 +1,5 @@
 <div class="membership-candidate-list-header">
-    <h3>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h3>
+    <h2>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h2>
     <h4 class="candidate-list-state">{{ generalElectionCommittee()?.candidateListState }}</h4>
 
     @if (generalElectionCommittee()?.isCandidateListCompleted && !validated) {
