@@ -298,7 +298,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
                 new() { Text = candidate.ElectionType?.GetText() }, // Status
                 new() { Text = candidate.MembershipAddition?.GetText() }, // Mitgliedzusatz
                 new() { Text = candidate.Remarks }, // Bemerkungen
-                new() { Text = candidate.Person?.Occupation ?? string.Empty }, // Beruf
+                new() { Text = string.Join(";",  candidate.Person?.Occupations?.Select(y => y.GetText()) ?? Enumerable.Empty<string>()) }, // Beruf
                 new() { Text = candidate.Person?.CorrespondenceAddress?.City ?? string.Empty }, // Ort
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Phone ?? string.Empty }, // Telefon
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Email ?? string.Empty }, // E-Mail
