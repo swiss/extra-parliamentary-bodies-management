@@ -46,9 +46,14 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
                     .ThenInclude(mc => mc.Person)
                     .ThenInclude(p => p!.Interests)
-            .Include(y => y.MembershipCandidates)
-                .ThenInclude(mc => mc.Person)
-                .ThenInclude(p => p!.CorrespondenceAddress)
+            .Include(y => y.MembershipCandidates
+                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                    .ThenInclude(mc => mc.Person)
+                    .ThenInclude(p => p!.CorrespondenceAddress)
+            .Include(y => y.MembershipCandidates
+                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                    .ThenInclude(mc => mc.Person)
+                    .ThenInclude(p => p!.Occupations)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.CommitteeId == committeeId);
 
