@@ -4,6 +4,7 @@ using Bk.APG.Business.Models;
 using Bk.APG.Common.Resources;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.Dimension.Model;
+using Swiss.FCh.Cube.RawData.Model;
 
 namespace Bk.APG.Business.Mapper;
 
@@ -263,6 +264,64 @@ public static class CommitteeMapper
         }
 
         return dimensionItem;
+    }
+
+    public static ObservationDataRow ToObservation(Committee committee)
+    {
+        var dataRow = new ObservationDataRow
+        {
+            KeyUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}"
+        };
+
+        dataRow.KeyDimensionLinks.AddRange([
+            new KeyDimensionLink
+            {
+                Predicate = $"{OgdExportConstants.NamespaceCommittee}:hasCommittee", Uri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}", ShapePropertyMetadata = new ShapePropertyMetadata
+                {
+                    NameDe = "Gremiumname",
+                    NameFr = "Nom de l'organe",
+                    NameIt = "Nome dell'organo",
+                    NameEn = "Committee name",
+                    Type = OgdExportConstants.CubeKeyDimension,
+                    NodeKind = OgdExportConstants.ShaclNodeKindIri,
+                    ScaleType = OgdExportConstants.QudtNominalScale,
+                    MinCount = 1,
+                    MaxCount = 1
+                }
+            },
+            new KeyDimensionLink
+            {
+                Predicate = $"{OgdExportConstants.NamespaceCommittee}:hasCommitteeType", Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{committee.CommitteeType!.OgdId}", ShapePropertyMetadata = new ShapePropertyMetadata
+                {
+                    NameDe = "Gremiumart",
+                    NameFr = "Type d'organe",
+                    NameIt = "Tipo di organo",
+                    NameEn = "Committee type",
+                    Type = OgdExportConstants.CubeKeyDimension,
+                    NodeKind = OgdExportConstants.ShaclNodeKindIri,
+                    ScaleType = OgdExportConstants.QudtNominalScale,
+                    MinCount = 1,
+                    MaxCount = 1
+                }
+            },
+            new KeyDimensionLink
+            {
+                Predicate = $"{OgdExportConstants.NamespaceCommittee}:hasDepartment", Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(committee.Department!.Uri), ShapePropertyMetadata = new ShapePropertyMetadata
+                {
+                    NameDe = "Department",
+                    NameFr = "Département",
+                    NameIt = "Dipartimento",
+                    NameEn = "Department",
+                    Type = OgdExportConstants.CubeKeyDimension,
+                    NodeKind = OgdExportConstants.ShaclNodeKindIri,
+                    ScaleType = OgdExportConstants.QudtNominalScale,
+                    MinCount = 1,
+                    MaxCount = 1
+                }
+            }
+        ]);
+
+        return dataRow;
     }
 
     public static CommitteeJustificationUpdateDto ToCommitteeJustificationUpdateDto(Committee committee)
