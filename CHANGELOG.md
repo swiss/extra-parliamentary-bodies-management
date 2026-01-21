@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+-   Candidate List Export added #BKDO-924
+
 ## 1.0.2
 
 -   Fixes notifications and overview for contact points #BKDO-2655
