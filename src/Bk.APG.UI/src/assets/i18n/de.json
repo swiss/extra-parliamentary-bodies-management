@@ -812,5 +812,5 @@
   "generalElection.candidateList.export.title": "Dokument wird erzeugt",
   "generalElection.candidateList.export.message": "Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
   "generalElection.candidateList.export.success": "Das Dokument wurde erfolgreich erzeugt.",
-  "generalElection.candidateList.exports.error": "Beim Herunterladen der Datei ist ein Fehler aufgetreten."
+  "generalElection.candidateList.export.error": "Beim Herunterladen der Datei ist ein Fehler aufgetreten."
 }
