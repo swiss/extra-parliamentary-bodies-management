@@ -289,7 +289,8 @@ public class GeneralElectionCommitteeServiceTests
                             .WithEmail("test@test.ch")
                             .WithPhone("+4111223344")
                             .Build())
-                        .WithOccupation("occupation")
+                        .WithOccupations([new OccupationBuilder()
+                            .WithGermanDescription("JobDE").Build()])
                         .WithInterests([new InterestBuilder()
                         .Build()]).Build())
                 .WithRemarks("remarks")
@@ -329,7 +330,7 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[12].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().ElectionType!.GetText()));
             Assert.That(dataRow[13].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().MembershipAddition!.GetText()));
             Assert.That(dataRow[14].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Remarks));
-            Assert.That(dataRow[15].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Occupation));
+            Assert.That(dataRow[15].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Occupations.First().GetText()));
             Assert.That(dataRow[16].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.City));
             Assert.That(dataRow[17].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Phone));
             Assert.That(dataRow[18].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Email));
