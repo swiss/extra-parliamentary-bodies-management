@@ -456,4 +456,7 @@
     <data name="CandidateList" xml:space="preserve">
         <value>Wahlvorschlag</value>
     </data>
+    <data name="GeneralElection_PersonData_TaskDescription" xml:space="preserve">
+        <value>Bitte die Personendaten nachtragen.</value>
+    </data>
 </root>
