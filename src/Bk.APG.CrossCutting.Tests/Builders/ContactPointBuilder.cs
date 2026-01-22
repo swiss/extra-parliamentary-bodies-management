@@ -67,7 +67,7 @@ public class ContactPointBuilder
         _personalPhone = _faker.Phone.PhoneNumber();
         _personalMobile = _faker.Phone.PhoneNumber();
         _personalEmail = _faker.Person.Email;
-        _releasePersonData = _faker.Random.Bool();
+        _releasePersonData = false;
         _oldId = _faker.Random.Int(1);
         _committee = new CommitteeBuilder().Build();
     }
