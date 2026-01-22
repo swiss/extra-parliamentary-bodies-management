@@ -29,6 +29,14 @@ export const exportsRoutes: Routes = [
             allowedRoles: [Role.Allow],
         },
     },
+    // {
+    //     path: 'recipients',
+    //     loadComponent: () => import('./recipients/recipients.component').then(m => m.RecipientsComponent),
+    //     canActivate: [AuthGuard, RoleGuard],
+    //     data: {
+    //         allowedRoles: [Role.Allow],
+    //     },
+    // },
     {
         path: '**',
         redirectTo: 'unknown-route',

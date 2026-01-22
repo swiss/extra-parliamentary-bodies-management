@@ -78,6 +78,30 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeJustificationUpdateDto(generalElectionCommittee);
     }
 
+    public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeListForExport(GeneralElectionCommitteeExportFilterParametersDto? filter)
+    {
+        var filterParameters = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeExportFilterParameters(filter);
+
+        if (_authorizationService is { IsAdmin: false, IsObserver: false })
+        {
+            var assignedCommittees = await _authorizationService.LoadCommittees();
+            var committeeIds = assignedCommittees.Select(x => x.Id).ToList();
+
+            if (committeeIds.Count == 0)
+            {
+                return new List<GeneralElectionCommitteeListDto>();
+            }
+
+            filterParameters.CommitteeIds = committeeIds;
+        }
+
+        var committees = await _generalElectionCommitteeRepository.GetAllForExport(filterParameters);
+
+        var list = committees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
+
+        return list;
+    }
+
     public async Task<PagedResultDto<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeList(PagingParametersDto paging, GeneralElectionCommitteeFilterParametersDto? filter, string? sort, SortDirection? sortDirection)
     {
         var filterParameters = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeFilterParameters(filter);
@@ -109,7 +133,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             Items = committees.Items.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()))
         };
     }
-
     public async Task<GeneralElectionCommitteeUpdateDto> GetGeneralElectionCommitteeForUpdate(Guid committeeId)
     {
         var generalElectionCommitteeUpdate = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);

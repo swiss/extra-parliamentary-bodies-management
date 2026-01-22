@@ -313,4 +313,39 @@ public static class CommitteeQueryExtensions
 
         return query;
     }
+
+    public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForExport(this IQueryable<GeneralElectionCommittee> query, GeneralElectionCommitteeExportFilterParameters filterParameter)
+    {
+        if (filterParameter.CorrespondenceLanguageId is not null && filterParameter.CorrespondenceLanguageId.Any())
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageId.Contains(m.Person!.CorrespondenceLanguageId)));
+        }
+
+        if (filterParameter.ElectionTypeIds is not null && filterParameter.ElectionTypeIds.Any())
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.ElectionTypeIds.Contains(m.ElectionTypeId)));
+        }
+
+        if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())
+        {
+            query = query.Where(c => filterParameter.DepartmentIds.Contains(c.DepartmentId));
+        }
+
+        if (filterParameter.OfficeIds is not null && filterParameter.OfficeIds.Any())
+        {
+            query = query.Where(c => filterParameter.OfficeIds.Contains(c.OfficeId));
+        }
+
+        if (filterParameter.CommitteeTypeIds is not null && filterParameter.CommitteeTypeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+        }
+
+        if (filterParameter.CommitteeIds is not null && filterParameter.CommitteeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeIds.Contains(c.CommitteeId));
+        }
+
+        return query;
+    }
 }
