@@ -11,7 +11,7 @@ $gap: 16px;
         flex-direction: column;
         column-gap: $gap;
         margin: auto;
-        &.online-mode {
+        &.ge-mode {
             max-width: 50%;
             .input-grid {
                 display: flex;
@@ -25,7 +25,7 @@ $gap: 16px;
             }
         }
 
-        &.ge-mode {
+        &.online-mode {
             max-width: 25%;
             .input-grid {
                 display: flex;

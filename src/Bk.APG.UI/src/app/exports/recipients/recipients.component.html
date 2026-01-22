@@ -2,8 +2,8 @@
     <div>
         <h3>{{ 'recipients.title' | translate }}</h3>
     </div>
-    <div class="input-grid" [hidden]="!isGeneralElection"></div>
-    <div class="input-grid" [hidden]="isGeneralElection">
+    <div class="input-grid" [hidden]="isGeneralElection"></div>
+    <div class="input-grid" [hidden]="!isGeneralElection">
         <!-- Committee Type -->
         <mat-form-field>
             <mat-label>{{ 'recipients.filter.committeeType.label' | translate }}</mat-label>
@@ -61,7 +61,7 @@
         </div>
     </div>
 
-    <table [dataSource]="dataSource" class="ob-table" mat-table [hidden]="isGeneralElection">
+    <table [dataSource]="dataSource" class="ob-table" mat-table [hidden]="!isGeneralElection">
         <ng-container matColumnDef="select">
             <th *matHeaderCellDef mat-header-cell scope="col">
                 <ng-container [ngTemplateOutlet]="selectHeader" />
