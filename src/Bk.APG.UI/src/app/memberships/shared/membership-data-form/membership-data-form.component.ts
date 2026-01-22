@@ -292,16 +292,13 @@ export class MembershipDataFormComponent implements OnInit, AfterViewChecked {
 
                         this.membershipAdditionId = this.membershipModification()?.membershipAdditionId;
 
-                        const membership = this.membershipModification();
-                        const endDate = membership?.endDate;
-
                         this.canEdit = (this.membershipModification() as MembershipUpdate).canEdit;
                         this.canEditBeginDate = (this.membershipModification() as MembershipUpdate).canEditBeginDate;
 
                         this.membershipForm.controls.beginDate.enable();
                         this.membershipForm.controls.endDate.enable();
 
-                        if ((endDate && endDate < this.currentDate && (this.isDepartment || this.isOffice || this.isSecretariat)) || !this.canEdit) {
+                        if (!this.canEdit) {
                             this.membershipForm.controls.beginDate.disable();
                             this.membershipForm.controls.endDate.disable();
                         } else if (this.canEditBeginDate) {
@@ -511,13 +508,7 @@ export class MembershipDataFormComponent implements OnInit, AfterViewChecked {
             endDate: new FormControl<Date | undefined>(undefined, {nonNullable: true}),
             electionTypeId: new FormControl(this.configsService.frontendConfig.entityIds.electionType.newElectionId, {
                 nonNullable: true,
-                validators: [
-                    Validators.required,
-                    conditionalStatusEndDateValidator([
-                        this.configsService.frontendConfig.entityIds.electionType.newElectionId,
-                        this.configsService.frontendConfig.entityIds.electionType.reElectionId,
-                    ]),
-                ],
+                validators: [Validators.required, conditionalStatusEndDateValidator([this.configsService.frontendConfig.entityIds.electionType.newElectionId])],
             }),
             functionId: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
             electionOfficeId: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
