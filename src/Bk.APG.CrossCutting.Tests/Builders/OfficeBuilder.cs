@@ -51,8 +51,8 @@ public class OfficeBuilder
         _oldId = _faker.Random.Int(1);
         _departmentId = _faker.Random.Guid();
         _department = new DepartmentBuilder().WithId(_departmentId).Build();
-        _isCentralFederalAdministration = _faker.Random.Bool();
-        _isGeneralSecretariat = _faker.Random.Bool();
+        _isCentralFederalAdministration = false;
+        _isGeneralSecretariat = false;
         _eiamAssignmentId = _faker.Random.Guid();
     }
 
