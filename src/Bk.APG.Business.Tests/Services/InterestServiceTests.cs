@@ -11,6 +11,8 @@ internal class InterestServiceTests
 {
     private readonly IInterestRepository _interestRepository = Substitute.For<IInterestRepository>();
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
+    private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+    private readonly IPersonRepository _personRepository = Substitute.For<IPersonRepository>();
 
     private InterestService _service = null!;
     private Interest _interestToUpdate = null!;
@@ -25,7 +27,7 @@ internal class InterestServiceTests
     [SetUp]
     public void SetUp()
     {
-        _service = new InterestService(_interestRepository, _authorizationService);
+        _service = new InterestService(_interestRepository, _authorizationService, _worklistTaskRepository, _personRepository);
 
         var interestCommittee = new InterestCommitteeBuilder()
             .WithId(Guid.NewGuid())
@@ -73,6 +75,8 @@ internal class InterestServiceTests
         _interestRepository.Update(Arg.Any<Interest>(), Arg.Any<Interest>()).Returns(_interestToUpdate);
         _interestRepository.GetAllByPersonId(Arg.Is(_personId)).Returns(_interestList);
 
+        _worklistTaskRepository.GetAllByPersonId(Arg.Any<Guid>()).Returns([]);
+
         _authorizationService.GetCurrentUserName().Returns("currentUser");
     }
 
@@ -81,6 +85,8 @@ internal class InterestServiceTests
     {
         _interestRepository.ClearSubstitute();
         _authorizationService.ClearSubstitute();
+        _worklistTaskRepository.ClearSubstitute();
+        _personRepository.ClearSubstitute();
     }
 
     [Test]
@@ -187,10 +193,72 @@ internal class InterestServiceTests
 
         await _interestRepository.Received(1).Create(
             Arg.Is<Interest>(i => i.Created >= DateTime.UtcNow.AddSeconds(-1)
-                                && i.CreatedBy == "currentUser"
-                                && i.Modified >= DateTime.UtcNow.AddSeconds(-1)
-                                && i.ModifiedBy == "currentUser"));
+                && i.CreatedBy == "currentUser"
+                && i.Modified >= DateTime.UtcNow.AddSeconds(-1)
+                && i.ModifiedBy == "currentUser"));
 
         _interestRepository.Received(1).Delete(_interestToUpdate3);
+    }
+
+    [Test]
+    public async Task UpdateInterests_WhenWorklistTaskExistsAndPersonNeedsNoAttention_ShouldCompleteTask()
+    {
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        _worklistTaskRepository.GetAllByPersonId(_personId).Returns(new List<WorklistTask> { worklistTask });
+
+        var person = new PersonBuilder()
+            .WithId(_personId)
+            .Build();
+        person.NoInterest = true; // This ensures NeedsAttentionInterests is false
+
+        _personRepository.GetById(_personId).Returns(person);
+
+        await _service.UpdateInterests(_personId, []);
+
+        await _worklistTaskRepository.Received(1).CommitChanges();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(worklistTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+            Assert.That(worklistTask.ModifiedBy, Is.EqualTo("System"));
+        }
+    }
+
+    [Test]
+    public async Task UpdateInterests_WhenWorklistTaskExistsAndPersonNeedsAttention_ShouldNotCompleteTask()
+    {
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        _worklistTaskRepository.GetAllByPersonId(_personId).Returns(new List<WorklistTask> { worklistTask });
+
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithIsActive(true)
+            .WithCommittee(committee)
+            .Build();
+
+        var person = new PersonBuilder()
+            .WithId(_personId)
+            .Build();
+        person.NoInterest = false;
+        person.Memberships.Add(membership);
+        person.Interests.Clear();
+
+        _personRepository.GetById(_personId).Returns(person);
+
+        await _service.UpdateInterests(_personId, []);
+
+        Assert.That(worklistTask.WorklistTaskStateId, Is.Not.EqualTo(WorklistTaskState.Completed));
+        await _worklistTaskRepository.DidNotReceive().CommitChanges();
     }
 }
