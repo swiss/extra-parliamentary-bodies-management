@@ -53,13 +53,17 @@ export class GeneralElectionCommitteeCandidateListService {
         return this.http.post<MembershipCandidateDetail | null>('/api/general-election/committees/getDuplicateMembershipCandidate', dto);
     }
 
-    generateExport(committeeId: string): Observable<HttpResponse<Blob>> {
+    generateExport(committeeId: string, membershipCandidateIds: string[]): Observable<HttpResponse<Blob>> {
         const headers = new HttpHeaders().set('Accept', GeneralElectionCommitteeCandidateListService.EXCEL_ACCEPT_HEADER);
 
-        return this.http.get<Blob>(`/api/general-election/committees/${committeeId}/download`, {
-            headers,
-            observe: 'response',
-            responseType: 'blob' as 'json',
-        });
+        return this.http.post(
+            `/api/general-election/committees/${committeeId}/download`,
+            {membershipCandidateIds},
+            {
+                headers,
+                observe: 'response',
+                responseType: 'blob',
+            }
+        );
     }
 }
