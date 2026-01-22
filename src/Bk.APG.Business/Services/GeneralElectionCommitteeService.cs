@@ -232,7 +232,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     }
 
 
-    public async Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id)
+    public async Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
         _logger.LogInformation("Generate candidate list export for general election committee {CommitteeId}", id);
 
@@ -260,7 +260,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             BusinessTexts.CandidateList_Interests
         ];
 
-        var bodyCells = await GetCandidateListData(id);
+        var bodyCells = await GetCandidateListData(id, membershipCandidateIds);
         var spreadsheet = new Spreadsheet
         {
             HeaderCells = headers.Select(header => new Cell { Text = header, Format = CellFormat.Bold }).ToList(),
@@ -273,9 +273,9 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return (GenerateFileName(DateTime.Now, BusinessTexts.CandidateList), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetCandidateListData(Guid id)
+    private async Task<List<List<Cell>>> GetCandidateListData(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
-        var committee = await _generalElectionCommitteeRepository.GetForCandidateListExport(id);
+        var committee = await _generalElectionCommitteeRepository.GetForCandidateListExport(id, membershipCandidateIds);
 
         var bodyCells = committee
             .MembershipCandidates
@@ -286,8 +286,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
                 new() { Text = committee.GetDescription() }, // Gremium
                 new() { Text = committee.Office?.GetDescription() }, // Verwaltungsstelle
                 new() { Text = candidate.Person is not null ?  candidate.Person!.Title : string.Empty }, // Title
-                new() { Text = candidate.Person is not null ?  candidate.Person!.Surname : string.Empty }, // Name
-                new() { Text = candidate.Person is not null ?  candidate.Person!.GivenName : string.Empty }, // Vorname
+                new() { Text = candidate.Person is not null ?  candidate.Person!.Surname : candidate.Surname }, // Name
+                new() { Text = candidate.Person is not null ?  candidate.Person!.GivenName : candidate.GivenName }, // Vorname
                 NumberCell(candidate.Person?.BirthYear ?? candidate.BirthYear), // Jahrgang
                 new() { Text = candidate.Person?.Gender?.GetText() ?? candidate.Gender?.GetText() ?? string.Empty }, // Geschlecht
                 new() { Text = candidate.Person?.Language?.GetText() ?? candidate.Language?.GetText() ?? string.Empty }, // Sprache
@@ -298,10 +298,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
                 new() { Text = candidate.ElectionType?.GetText() }, // Status
                 new() { Text = candidate.MembershipAddition?.GetText() }, // Mitgliedzusatz
                 new() { Text = candidate.Remarks }, // Bemerkungen
-                new() { Text = candidate.Person?.Occupation }, // Beruf
-                new() { Text = candidate.Person?.CorrespondenceAddress?.City }, // Ort
-                new() { Text = candidate.Person?.CorrespondenceAddress?.Phone }, // Telefon
-                new() { Text = candidate.Person?.CorrespondenceAddress?.Email }, // E-Mail
+                new() { Text = string.Join(";",  candidate.Person?.Occupations?.Select(y => y.GetText()) ?? Enumerable.Empty<string>()) }, // Beruf
+                new() { Text = candidate.Person?.CorrespondenceAddress?.City ?? string.Empty }, // Ort
+                new() { Text = candidate.Person?.CorrespondenceAddress?.Phone ?? string.Empty }, // Telefon
+                new() { Text = candidate.Person?.CorrespondenceAddress?.Email ?? string.Empty }, // E-Mail
                 new() { Text = string.Join(";",  candidate.Person?.Interests?.Where(y => !string.IsNullOrWhiteSpace(y.InterestText)).Select(y => y.InterestText) ?? Enumerable.Empty<string>()) } // Interessenbindungen
             }).ToList();
 
