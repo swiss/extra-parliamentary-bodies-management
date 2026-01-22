@@ -23,6 +23,19 @@ public static class GeneralElectionCommitteeMapper
         };
     }
 
+    public static GeneralElectionCommitteeExportFilterParameters ToGeneralElectionCommitteeExportFilterParameters(GeneralElectionCommitteeExportFilterParametersDto? filter)
+    {
+        return new GeneralElectionCommitteeExportFilterParameters
+        {
+            CorrespondenceLanguageId = filter?.CorrespondenceLanguageIds,
+            DepartmentIds = filter?.DepartmentIds,
+            OfficeIds = filter?.OfficeIds,
+            CommitteeTypeIds = filter?.CommitteeTypeIds,
+            ElectionTypeIds = filter?.ElectionTypeIds,
+            CommitteeIds = []
+        };
+    }
+
     public static GeneralElectionCommittee FromGeneralElectionCommitteeCreateDto(GeneralElectionCommitteeCreateDto createDto, string currentUserName)
     {
         return new GeneralElectionCommittee
