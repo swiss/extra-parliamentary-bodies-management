@@ -113,8 +113,47 @@ public class OgdExportService
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceW3, new Uri("http://www.w3.org/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCube, new Uri("https://cube.link/"));
 
-        //TODO extract metadata triples
         // TODO, put in Method
+        List<Triple> committeeCubeMetadata =
+        [
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaPublisher),
+                graph.CreateUriNode(OgdExportConstants.LdFCh)),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaCreator),
+                graph.CreateUriNode(OgdExportConstants.LdFCh)),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaDateCreated),
+                graph.CreateLiteralNode("2026-01-01", UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaDatePublished),
+                graph.CreateLiteralNode(OgdExportConstants.SchemaPublishedDate, UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
+                graph.CreateLiteralNode(DateTime.Now.ToString("yyyy-MM-dd"), UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaName),
+                graph.CreateLiteralNode("BK-APG Gremien")),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaDescription),
+                graph.CreateLiteralNode("Export der Gremien von APG")),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+            new(
+                graph.CreateUriNode(OgdExportConstants.UriCommittee),
+                graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+        ];
+
         List<Triple> membershipMetadataTriples =
         [
             new(
@@ -140,11 +179,11 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriMembership),
                 graph.CreateUriNode(OgdExportConstants.SchemaName),
-                graph.CreateLiteralNode("BK-APG Mitgliedschaften (Test)")),
+                graph.CreateLiteralNode("BK-APG Mitgliedschaften")),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriMembership),
                 graph.CreateUriNode(OgdExportConstants.SchemaDescription),
-                graph.CreateLiteralNode("Export der Mitgliedschaften von APG zu Testzwecken"))
+                graph.CreateLiteralNode("Export der Mitgliedschaften von APG"))
         ];
 
         List<Triple> interestMetadataTriples =
@@ -172,11 +211,11 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriVestedInterests),
                 graph.CreateUriNode(OgdExportConstants.SchemaName),
-                graph.CreateLiteralNode("BK-APG Interessenbindungen (Test)")),
+                graph.CreateLiteralNode("BK-APG Interessenbindungen")),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriVestedInterests),
                 graph.CreateUriNode(OgdExportConstants.SchemaDescription),
-                graph.CreateLiteralNode("Export der Interessenbindungen von APG zu Testzwecken"))
+                graph.CreateLiteralNode("Export der Interessenbindungen von APG"))
         ];
 
         List<Triple> committeeFunctionStatisticMetadataTriples =
@@ -204,11 +243,11 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaName),
-                graph.CreateLiteralNode("BK-APG Gremium Statistiken auf Funktionsebene (Test)")),
+                graph.CreateLiteralNode("BK-APG Gremium Statistiken auf Funktionsebene")),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDescription),
-                graph.CreateLiteralNode("Export der Gremium Funktions-Statistiken von APG zu Testzwecken"))
+                graph.CreateLiteralNode("Export der Gremium Funktions-Statistiken von APG"))
         ];
 
         List<Triple> committeeCantonStatisticMetadataTriples =
@@ -236,11 +275,11 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaName),
-                graph.CreateLiteralNode("BK-APG Gremium Statistiken Sicht Kantone und Mitglieder (Test)")),
+                graph.CreateLiteralNode("BK-APG Gremium Statistiken Sicht Kantone und Mitglieder")),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDescription),
-                graph.CreateLiteralNode("Export der Gremium Kantons-Statistiken von APG zu Testzwecken"))
+                graph.CreateLiteralNode("Export der Gremium Kantons-Statistiken von APG"))
         ];
 
         List<Triple> committeeCantonDetailStatisticMetadataTriples =
@@ -268,11 +307,11 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonDetailStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaName),
-                graph.CreateLiteralNode("BK-APG Gremium Statistiken detaillierte Sicht Kantone und Mitglieder (Test)")),
+                graph.CreateLiteralNode("BK-APG Gremium Statistiken detaillierte Sicht Kantone und Mitglieder")),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonDetailStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDescription),
-                graph.CreateLiteralNode("Export der Gremium detaillierten Kantons-Statistiken von APG zu Testzwecken"))
+                graph.CreateLiteralNode("Export der Gremium detaillierten Kantons-Statistiken von APG"))
         ];
 
 
@@ -301,11 +340,11 @@ public class OgdExportService
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaName),
-                graph.CreateLiteralNode("BK-APG Gremium Statistiken im Bereich Geschlechter und Sprachen (Test)")),
+                graph.CreateLiteralNode("BK-APG Gremium Statistiken im Bereich Geschlechter und Sprachen")),
             new(
                 graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                 graph.CreateUriNode(OgdExportConstants.SchemaDescription),
-                graph.CreateLiteralNode("Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG zu Testzwecken"))
+                graph.CreateLiteralNode("Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG"))
         ];
 
         var committeeTypeStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeStatistic, "2026-01-14", "2026-01-14",
@@ -321,8 +360,10 @@ public class OgdExportService
         var contactPointTriples = CreateContactPointTriples(graph);
         var personTriples = CreatePersonDimension(graph);
 
-        var committees = _committeeRepository.GetAll().ToArray();
+        var committees = (await _committeeRepository.GetForOgdExport()).ToArray();
         var committeeTriples = CreateCommitteeDimension(graph, committees);
+
+        var committeeCube = _cubeRawDataService.CreateTriples(graph, OgdExportConstants.UriCommittee, committees.Select(CommitteeMapper.ToObservation));
 
         await _ogdDocumentService.SetupBucket();
         var appointmentDecisionTriples = await CreateAppointmentDecisionDimension(graph, committees);
@@ -384,6 +425,8 @@ public class OgdExportService
             .Concat(contactPointTypeTriples)
             .Concat(contactPointTriples)
             .Concat(committeeTriples)
+            .Concat(committeeCube)
+            .Concat(committeeCubeMetadata)
             .Concat(personTriples)
             .Concat(membershipRawData)
             .Concat(membershipMetadataTriples)
