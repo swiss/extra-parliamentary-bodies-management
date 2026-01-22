@@ -43,6 +43,13 @@ export const generalElectionRoutes: Routes = [
         },
     },
     {
+        path: 'exports/recipients',
+        loadComponent: () => import('../exports/recipients/recipients.component').then(m => m.RecipientsComponent),
+        data: {
+            allowedRoles: [Role.Allow],
+        },
+    },
+    {
         path: '**',
         redirectTo: 'committees',
     },
