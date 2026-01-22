@@ -49,7 +49,7 @@ public class InterestBuilder
         _isDeleted = false;
         _rowVersion = _faker.Random.UInt();
         _oldId = _faker.Random.Int(1);
-        _verifiedSuccessfully = _faker.Random.Bool();
+        _verifiedSuccessfully = false;
     }
 
     public InterestBuilder WithId(Guid id)
