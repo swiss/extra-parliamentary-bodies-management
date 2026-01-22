@@ -199,6 +199,8 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 Department = c.Department,
                 CommitteeTypeId = c.CommitteeTypeId,
                 CommitteeType = c.CommitteeType,
+                OfficeId = c.OfficeId,
+                Office = c.Office,
                 IsDeleted = c.IsDeleted,
                 DescriptionGerman = c.DescriptionGerman,
                 DescriptionFrench = c.DescriptionFrench,
