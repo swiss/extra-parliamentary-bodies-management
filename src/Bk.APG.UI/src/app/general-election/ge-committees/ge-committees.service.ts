@@ -6,6 +6,7 @@ import {GeneralElectionCommitteeList} from '@api/GeneralElectionCommitteeList';
 import {MembershipList} from '@api/MembershipList';
 import {PagedResult} from '@api/PagedResult';
 import {PagingParameters} from '@api/PagingParameters';
+import {RecipientsFilterParameters} from '@api/RecipientsFilterParameters';
 import {SortParameter} from '@api/SortParameter';
 import {append, appendMany, appendPaging, appendSort} from '@shared/http-params-util';
 import {Observable} from 'rxjs';
@@ -57,4 +58,22 @@ export class GeneralElectionCommitteesService {
 
     updateGeneralElectionCommitteeVacancies = (committeeId: string, vacancies: number) =>
         this.http.put<GeneralElectionCommitteeJustificationUpdate>(`/api/general-election/committees/${committeeId}/vacancies`, vacancies);
+
+    getGeneralElectionCommitteeListForExport(filter: RecipientsFilterParameters): Observable<GeneralElectionCommitteeList[]> {
+        let params = new HttpParams();
+
+        params = this.appendExportFilter(params, filter);
+
+        return this.http.get<GeneralElectionCommitteeList[]>('/api/general-election/committees/export', {params});
+    }
+
+    appendExportFilter = (params: HttpParams, filterParameter?: RecipientsFilterParameters | null): HttpParams => {
+        params = appendMany(params, 'departmentIds', filterParameter?.departments);
+        params = appendMany(params, 'officeIds', filterParameter?.offices);
+        params = appendMany(params, 'committeeTypeIds', filterParameter?.committeeTypes);
+        params = appendMany(params, 'correspondenceLanguageIds', filterParameter?.correspondenceLanguages);
+        params = appendMany(params, 'electionTypeIds', filterParameter?.electionTypes);
+
+        return params;
+    };
 }
