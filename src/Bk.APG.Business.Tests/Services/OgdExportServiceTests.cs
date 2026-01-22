@@ -199,6 +199,7 @@ internal class OgdExportServiceTests
 
         _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "membership:1", Arg.Any<IEnumerable<ObservationDataRow>>());
         _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "vested-interest:1", Arg.Any<IEnumerable<ObservationDataRow>>());
+        _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "committee:1", Arg.Any<IEnumerable<ObservationDataRow>>());
 
         await _storageProvider.Received().DeleteGraphAsync("ExportGraphName", CancellationToken.None);
         await _storageProvider.Received().UpdateGraphAsync("ExportGraphName", Arg.Any<IEnumerable<Triple>>(), [], CancellationToken.None);
