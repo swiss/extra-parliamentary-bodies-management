@@ -88,10 +88,10 @@ public class GeneralElectionCommitteeBuilder
         _legalForm = new LegalFormBuilder().Build();
         _oldLegalForm = _faker.Random.String();
         _legalBase = _faker.Random.String();
-        _releaseGeneralElection = _faker.Random.Bool();
-        _federalLawEstablishment = _faker.Random.Bool();
-        _marketOrientated = _faker.Random.Bool();
-        _supervisionDuty = _faker.Random.Bool();
+        _releaseGeneralElection = false;
+        _federalLawEstablishment = false;
+        _marketOrientated = false;
+        _supervisionDuty = false;
         _termOfOfficeId = _faker.Random.Guid();
         _termOfOffice = new TermOfOfficeBuilder().WithId(_termOfOfficeId).Build();
         _termOfOfficeDateId = _faker.Random.Guid();
@@ -99,7 +99,7 @@ public class GeneralElectionCommitteeBuilder
         _minimalMembers = _faker.Random.Int();
         _maximalMembers = _faker.Random.Int();
         _vacanciesGeneralElection = _faker.Random.Int();
-        _additionalAuthorityMembers = _faker.Random.Bool();
+        _additionalAuthorityMembers = false;
         _linkAuthorityWebsite = _faker.Random.String();
         _remarksBaseData = _faker.Random.String();
         _remarksBaseDataAdmin = _faker.Random.String();
