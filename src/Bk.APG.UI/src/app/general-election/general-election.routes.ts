@@ -46,6 +46,7 @@ export const generalElectionRoutes: Routes = [
         path: 'exports/recipients',
         loadComponent: () => import('../exports/recipients/recipients.component').then(m => m.RecipientsComponent),
         data: {
+            isGeneralElection: true,
             allowedRoles: [Role.Allow],
         },
     },
