@@ -32,6 +32,8 @@ public static class OgdExportConstants
     public const string SchemaTitle = "schema:title";
     public const string SchemaSection = "schema:section";
     public const string SchemaPostOfficeBoxNumber = "schema:postOfficeBoxNumber";
+    public const string SchemaCreativeWorkStatus = "schema:creativeWorkStatus";
+    public const string SchemaWorkExample = "schema:workExample";
 
     public const string PersonHasOccupation = "person:hasOccupation";
     public const string PersonHasOffice = "person:hasOffice";
@@ -41,6 +43,8 @@ public static class OgdExportConstants
 
     public const string LdAdminChLink = "https://ld.admin.ch/";
     public const string LdFCh = "ld:FCh";
+    public const string LdCreativeWorkStatusDraft = "ld:vocabulary/CreativeWorkStatus/Draft";
+    public const string LdApplicationVisualize = "ld:application/visualize";
 
     public const string CommitteeHasSecretariat = "committee:hasSecretariat";
     public const string CommitteeHasDataProtectionOfficer = "committee:hasDataProtectionOfficer";
@@ -92,7 +96,14 @@ public static class OgdExportConstants
     public const string NamespaceW3 = "w3";
     public const string NamespaceCube = "cube";
 
+    public const string ShaclNodeKindIri = "w3:ns/shacl#IRI";
+
+    public const string CubeKeyDimension = "cube:keyDimension";
+
+    public const string QudtNominalScale = "qudt:NominalScale";
+
     public const string UriMembership = "membership:1";
+    public const string UriCommittee = "committee:1";
     public const string UriVestedInterests = "vested-interest:1";
 
     public const string UriCommitteeFunctionStatistic = $"{NamespaceCommitteeFunctionStatistic}:1";
