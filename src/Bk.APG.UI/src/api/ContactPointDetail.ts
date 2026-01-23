@@ -1,6 +1,7 @@
 export interface ContactPointDetail {
     id: string;
     contactPointType: string;
+    contactPointTypeId: string;
     companyName: string;
     section: string;
     beginDate: Date;

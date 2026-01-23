@@ -94,7 +94,7 @@ describe('AppComponent', () => {
         {role: Role.Department, name: 'Department', expected: 5},
         {role: Role.Office, name: 'Office', expected: 4},
         {role: Role.Secretariat, name: 'Secretariat', expected: 4},
-        {role: Role.Observer, name: 'Observer', expected: 3},
+        {role: Role.Observer, name: 'Observer', expected: 4},
     ])('should load navigation for role $name with $expected items', async ({role, expected}) => {
         roles$Subject.next([role]);
         fixture.detectChanges();
