@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Swiss.FCh.Cube.RawData" Version="2.0.2" />
+        <PackageReference Include="Swiss.FCh.Cube.RawData" Version="2.0.3" />
         <PackageReference Include="Swiss.FCh.Cube.Dimension" Version="2.0.1" />
     </ItemGroup>
 
