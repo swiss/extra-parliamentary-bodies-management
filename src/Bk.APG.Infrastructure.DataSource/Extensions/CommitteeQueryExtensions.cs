@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Linq.Expressions;
+using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Microsoft.EntityFrameworkCore;
@@ -189,8 +190,26 @@ public static class CommitteeQueryExtensions
         return query;
     }
 
-    public static IQueryable<Committee> FilterCommitteeByPermission(this IQueryable<Committee> query, Guid departmentId, Guid officeId, Guid committeeId)
+    public static IQueryable<Committee> FilterCommitteeByPermission(this IQueryable<Committee> query, Guid departmentId, Guid officeId, Guid committeeId, CommitteeExportFilterParametersDto? filterDto = null)
     {
+        if (filterDto != null)
+        {
+            if (filterDto.DepartmentIds is not null && filterDto.DepartmentIds.Any())
+            {
+                query = query.Where(c => filterDto.DepartmentIds.Contains(c.DepartmentId));
+            }
+
+            if (filterDto.OfficeIds is not null && filterDto.OfficeIds.Any())
+            {
+                query = query.Where(c => filterDto.OfficeIds.Contains(c.OfficeId));
+            }
+
+            if (filterDto.CommitteeTypeIds is not null && filterDto.CommitteeTypeIds.Any())
+            {
+                query = query.Where(c => filterDto.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+            }
+        }
+
         if (departmentId == Guid.Empty && officeId == Guid.Empty && committeeId == Guid.Empty)
         {
             return query;
