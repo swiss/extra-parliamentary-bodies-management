@@ -2,7 +2,7 @@ namespace Bk.APG.Business.Models;
 
 public class GeneralElectionCommitteeExportFilterParameters
 {
-    public IEnumerable<Guid>? CorrespondenceLanguageId { get; init; }
+    public IEnumerable<Guid>? CorrespondenceLanguageIds { get; init; }
     public IEnumerable<Guid>? DepartmentIds { get; init; }
     public IEnumerable<Guid>? OfficeIds { get; init; }
     public IEnumerable<Guid>? CommitteeTypeIds { get; init; }

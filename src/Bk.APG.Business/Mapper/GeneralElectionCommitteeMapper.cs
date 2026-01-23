@@ -27,7 +27,7 @@ public static class GeneralElectionCommitteeMapper
     {
         return new GeneralElectionCommitteeExportFilterParameters
         {
-            CorrespondenceLanguageId = filter?.CorrespondenceLanguageIds,
+            CorrespondenceLanguageIds = filter?.CorrespondenceLanguageIds,
             DepartmentIds = filter?.DepartmentIds,
             OfficeIds = filter?.OfficeIds,
             CommitteeTypeIds = filter?.CommitteeTypeIds,
