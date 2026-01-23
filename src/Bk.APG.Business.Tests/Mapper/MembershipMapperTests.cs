@@ -227,7 +227,7 @@ internal class MembershipMapperTests
         var electionOffice =
             new ElectionOfficeBuilder()
                 .WithId(electionOfficeId)
-                .WithUri("https://ld.admin.ch/efd/bit")
+                .WithUri("https://register.ld.admin.ch/efd/bit")
                 .Build();
 
         var membershipAddition =
@@ -294,8 +294,8 @@ internal class MembershipMapperTests
             Assert.That(result.KeyDimensionLinks[2].Predicate, Is.EqualTo("membership:hasCommitteeType"));
             Assert.That(result.KeyDimensionLinks[2].Uri, Is.EqualTo($"committee-type:{committeeTypeOgdId}"));
 
-            Assert.That(result.KeyDimensionLinks[3].Predicate, Is.EqualTo("membership:voteBody"));
-            Assert.That(result.KeyDimensionLinks[3].Uri, Is.EqualTo("ld:efd/bit"));
+            Assert.That(result.KeyDimensionLinks[3].Predicate, Is.EqualTo("membership:hasElectionOffice"));
+            Assert.That(result.KeyDimensionLinks[3].Uri, Is.EqualTo("rld:efd/bit"));
 
             Assert.That(result.KeyDimensionLinks[4].Predicate, Is.EqualTo("membership:hasDepartment"));
             Assert.That(result.KeyDimensionLinks[4].Uri, Is.EqualTo("ld:efd"));
