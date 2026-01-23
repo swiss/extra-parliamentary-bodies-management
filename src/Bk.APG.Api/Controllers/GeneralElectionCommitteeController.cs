@@ -139,10 +139,11 @@ public class GeneralElectionCommitteeController : ControllerBase
         return Ok(committee);
     }
 
-    [HttpGet("{id:guid}/download")]
-    public async Task<ActionResult> GenerateCommitteeTypeExport([FromRoute] Guid id)
+    [HttpPost("{id:guid}/download")]
+    public async Task<ActionResult> GenerateCommitteeTypeExport([FromRoute] Guid id
+        , [FromBody] CandidateListExportRequestDto request)
     {
-        var (fileName, content) = await _generalElectionCommitteeService.GenerateCandidateListExport(id);
+        var (fileName, content) = await _generalElectionCommitteeService.GenerateCandidateListExport(id, request.MembershipCandidateIds);
 
         return File(content, ExcelMimeType, fileName);
     }

@@ -25,6 +25,7 @@ internal class OgdExportServiceTests
     private IDimensionService _dimensionService;
     private ICubeRawDataService _cubeRawDataService;
     private IMembershipService _membershipService;
+    private ICommitteeService _committeeService;
     private IPersonRepository _personRepository;
     private ICommitteeRepository _committeeRepository;
     private ICommitteeTypeRepository _committeeTypeRepository;
@@ -117,6 +118,7 @@ internal class OgdExportServiceTests
         _storageProvider = Substitute.For<IAsyncStorageProvider>();
         _dimensionService = Substitute.For<IDimensionService>();
         _cubeRawDataService = Substitute.For<ICubeRawDataService>();
+        _committeeService = Substitute.For<ICommitteeService>();
         _membershipService = Substitute.For<IMembershipService>();
         _personRepository = Substitute.For<IPersonRepository>();
         _committeeRepository = Substitute.For<ICommitteeRepository>();
@@ -160,6 +162,7 @@ internal class OgdExportServiceTests
                 _cubeRawDataService,
                 _personRepository,
                 _membershipService,
+                _committeeService,
                 _committeeRepository,
                 _committeeTypeRepository,
                 _connectionFactory,
@@ -185,7 +188,7 @@ internal class OgdExportServiceTests
     {
         _committeeRepository.GetAll().Returns([_committee]);
         _personRepository.GetAll().Returns([_person]);
-        _membershipRepository.GetAll().Returns([_membership]);
+        _membershipRepository.GetAllActiveForOgdExport().Returns([_membership]);
         _interestRepository.GetAll().Returns([_interest]);
 
         await _ogdExportService.Export(CancellationToken.None);
@@ -196,6 +199,7 @@ internal class OgdExportServiceTests
 
         _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "membership:1", Arg.Any<IEnumerable<ObservationDataRow>>());
         _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "vested-interest:1", Arg.Any<IEnumerable<ObservationDataRow>>());
+        _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "committee:1", Arg.Any<IEnumerable<ObservationDataRow>>());
 
         await _storageProvider.Received().DeleteGraphAsync("ExportGraphName", CancellationToken.None);
         await _storageProvider.Received().UpdateGraphAsync("ExportGraphName", Arg.Any<IEnumerable<Triple>>(), [], CancellationToken.None);

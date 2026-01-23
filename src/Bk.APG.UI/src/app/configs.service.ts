@@ -34,6 +34,12 @@ export interface EntityIdConfig {
     electionType: ElectionTypeIdConfig;
     worklistTaskType: WorklistTaskTypeConfig;
     termOfOffice: TermOfOfficeIdConfig;
+    contactPoint: ContactPointIdConfig;
+}
+
+export interface ContactPointIdConfig {
+    secretariatId: string;
+    dpoId: string;
 }
 
 export interface TermOfOfficeIdConfig {
