@@ -8,7 +8,7 @@ public interface IGeneralElectionCommitteeService
     Task<GeneralElectionCommitteeDetailDto> GetGeneralElectionCommittee(Guid committeeId);
     Task<GeneralElectionCommitteeJustificationUpdateDto> GetGeneralElectionCommitteeJustificationForUpdate(Guid id);
     Task<PagedResultDto<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeList(PagingParametersDto paging, GeneralElectionCommitteeFilterParametersDto? filter, string? sort, SortDirection? sortDirection);
-    Task<IEnumerable<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeListForExport(GeneralElectionCommitteeExportFilterParametersDto? filter);
+    Task<IEnumerable<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeListForRecipientExport(GeneralElectionCommitteeExportFilterParametersDto? filter);
     Task<GeneralElectionCommitteeUpdateDto> GetGeneralElectionCommitteeForUpdate(Guid committeeId);
     Task<GeneralElectionCommitteeDetailDto> UpdateGeneralElectionCommittee(Guid committeeId, GeneralElectionCommitteeUpdateDto updateDto);
     Task<GeneralElectionCommitteeJustificationUpdateDto> UpdateGeneralElectionCommitteeJustifications(Guid committeeId, GeneralElectionCommitteeJustificationUpdateDto updateDto);
