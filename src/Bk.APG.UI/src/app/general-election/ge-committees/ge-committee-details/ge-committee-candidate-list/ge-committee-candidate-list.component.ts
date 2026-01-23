@@ -222,6 +222,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
 
         merge(
             this.generalElectionCommitteeDetailsService.reload$,
+            this.membershipCandidateListService.reload$,
             this.translateService.onLangChange.pipe(distinctUntilChanged((prev, curr) => prev.lang === curr.lang))
         )
             .pipe(
@@ -413,7 +414,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
             timeout: 10000,
         });
 
-        return this.membershipCandidateListService.generateExport(this.route.snapshot.params.id).subscribe({
+        return this.membershipCandidateListService.generateExport(this.route.snapshot.params.id, this.selectedIds).subscribe({
             next: response => {
                 this.notificationService.success({
                     message: 'generalElection.candidateList.export.success',

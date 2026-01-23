@@ -1240,6 +1240,15 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bitte die Personendaten nachtragen..
+        /// </summary>
+        public static string GeneralElection_PersonData_TaskDescription {
+            get {
+                return ResourceManager.GetString("GeneralElection_PersonData_TaskDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Die maximiale Mitgliedschafts-Dauer für dieses Mitglied wurde erreicht: .
         /// </summary>
         public static string GeneralElectionMaximumDurationExceeded {

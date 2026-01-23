@@ -54,8 +54,8 @@ public class PersonService : IPersonService
 
     public async Task<PagedResultDto<PersonListDto>> GetPersonList(PagingParametersDto paging, PersonFilterParametersDto? filterParametersDto, string? sort, SortDirection? sortDirection)
     {
-        if (filterParametersDto is null || (string.IsNullOrWhiteSpace(filterParametersDto.FreeText) && filterParametersDto.CantonIds is null
-                                                                                                    && filterParametersDto.LanguageIds is null && filterParametersDto.HasActiveMembership is null))
+        if (filterParametersDto is null ||
+            (string.IsNullOrWhiteSpace(filterParametersDto.FreeText) && filterParametersDto.CantonIds is null && filterParametersDto.LanguageIds is null && filterParametersDto.HasActiveMembership is null))
         {
             return new PagedResultDto<PersonListDto>();
         }
@@ -214,11 +214,36 @@ public class PersonService : IPersonService
         {
             // load all candidates with this person id
             await _generalElectionService.UpdateCandidatesFromPerson(existingEntry);
+
+            await CheckAndCompletePersonTasks(existingEntry);
         }
 
         var canDelete = await CanCurrentUserDeletePerson(existingEntry);
 
         return PersonMapper.ToPersonUpdateDto(existingEntry, ShouldMaskAddress(existingEntry), canDelete);
+    }
+
+    private async Task CheckAndCompletePersonTasks(Person person)
+    {
+        var personTasks = await _worklistTaskRepository.GetAllByPersonId(person.Id);
+
+        var baseDataTask = personTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData);
+        if (baseDataTask is not null && baseDataTask.WorklistTaskStateId != WorklistTaskState.Completed && person is { NeedsAttentionBasicData: false, NeedsAttentionOccupation: false })
+        {
+            baseDataTask.WorklistTaskStateId = WorklistTaskState.Completed;
+            baseDataTask.ModifiedBy = "System";
+            baseDataTask.Modified = DateTime.UtcNow;
+        }
+
+        var interestsTask = personTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests);
+        if (interestsTask is not null && interestsTask.WorklistTaskStateId != WorklistTaskState.Completed && person is { NeedsAttentionInterests: false })
+        {
+            interestsTask.WorklistTaskStateId = WorklistTaskState.Completed;
+            interestsTask.ModifiedBy = "System";
+            interestsTask.Modified = DateTime.UtcNow;
+        }
+
+        await _worklistTaskRepository.CommitChanges();
     }
 
     public async Task DeletePerson(Guid id)
@@ -412,22 +437,20 @@ public class PersonService : IPersonService
             }
             else
             {
-                if ((NamesAreEqual(person.Surname, membershipCandidate.Surname) && NamesAreEqual(person.GivenName, membershipCandidate.GivenName) &&
-                     person.GenderId == membershipCandidate.GenderId && Math.Abs(person.BirthYear - membershipCandidate.BirthYear) <= birthYearRange)
-                    || person.BirthYear == Convert.ToInt32(membershipCandidate.BirthYear.ToString()[..2] + membershipCandidate.BirthYear.ToString()[3] + membershipCandidate.BirthYear.ToString()[2]))
+                if (person.BirthYear == Convert.ToInt32(membershipCandidate.BirthYear.ToString()[..2] + membershipCandidate.BirthYear.ToString()[3] + membershipCandidate.BirthYear.ToString()[2]) ||
+                    (NamesAreEqual(person.Surname, membershipCandidate.Surname) && NamesAreEqual(person.GivenName, membershipCandidate.GivenName) &&
+                        person.GenderId == membershipCandidate.GenderId && Math.Abs(person.BirthYear - membershipCandidate.BirthYear) <= birthYearRange))
                 {
                     dto.DuplicateReason = DuplicateReason.InBirthYearRange;
                 }
                 else
                 {
-                    {
-                        var personGivenNameReduced = SimilaritySearchTransformer.Reduce(person.GivenName);
+                    var personGivenNameReduced = SimilaritySearchTransformer.Reduce(person.GivenName);
 
-                        if (NamesAreEqual(person.Surname, membershipCandidate.Surname) &&
-                            person.GenderId == membershipCandidate.GenderId && person.BirthYear == membershipCandidate.BirthYear && personGivenNameReduced == givenNameReduced)
-                        {
-                            dto.DuplicateReason = DuplicateReason.GivenNameMismatch;
-                        }
+                    if (NamesAreEqual(person.Surname, membershipCandidate.Surname) &&
+                        person.GenderId == membershipCandidate.GenderId && person.BirthYear == membershipCandidate.BirthYear && personGivenNameReduced == givenNameReduced)
+                    {
+                        dto.DuplicateReason = DuplicateReason.GivenNameMismatch;
                     }
                 }
             }
