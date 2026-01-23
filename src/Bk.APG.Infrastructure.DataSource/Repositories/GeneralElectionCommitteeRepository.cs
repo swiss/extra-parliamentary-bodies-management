@@ -39,15 +39,21 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         return generalElectionCommittee ?? throw new EntityNotFoundException($"GeneralElectionCommittee with CommitteeId={committeeId} not found");
     }
 
-    public async Task<GeneralElectionCommittee> GetForCandidateListExport(Guid committeeId)
+    public async Task<GeneralElectionCommittee> GetForCandidateListExport(Guid committeeId, IEnumerable<Guid> membershipCandidateIds)
     {
         var generalElectionCommittee = await GetGeneralElectionCommittees()
-            .Include(y => y.MembershipCandidates)
-                .ThenInclude(mc => mc.Person)
-                .ThenInclude(p => p != null ? p.Interests : null)
-            .Include(y => y.MembershipCandidates)
-                .ThenInclude(mc => mc.Person)
-                .ThenInclude(p => p != null ? p.CorrespondenceAddress : null)
+            .Include(y => y.MembershipCandidates
+                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                    .ThenInclude(mc => mc.Person)
+                    .ThenInclude(p => p!.Interests)
+            .Include(y => y.MembershipCandidates
+                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                    .ThenInclude(mc => mc.Person)
+                    .ThenInclude(p => p!.CorrespondenceAddress)
+            .Include(y => y.MembershipCandidates
+                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                    .ThenInclude(mc => mc.Person)
+                    .ThenInclude(p => p!.Occupations)
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.CommitteeId == committeeId);
 
@@ -298,6 +304,20 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .Include(item => item.MembershipCandidates)
                 .ThenInclude(c => c.Person)
                     .ThenInclude(p => p!.Language)
+            .Include(item => item.MembershipCandidates)
+                .ThenInclude(c => c.Person!.Memberships)
+                    .ThenInclude(m => m.Committee)
+            .Include(item => item.MembershipCandidates)
+                .ThenInclude(c => c.Person!.Interests)
+                    .ThenInclude(i => i.InterestCommittee)
+            .Include(item => item.MembershipCandidates)
+                .ThenInclude(c => c.Person!.Interests)
+                    .ThenInclude(i => i.InterestFunction)
+            .Include(item => item.MembershipCandidates)
+                .ThenInclude(c => c.Person!.Interests)
+                    .ThenInclude(i => i.InterestLegalForm)
+            .Include(item => item.MembershipCandidates)
+                .ThenInclude(c => c.Person!.Occupations)
             .Include(x => x.Department!.GeneralGenderMeasure)
             .Include(x => x.Department!.GeneralLanguageMeasure)
             .Include(item => item.Committee)
