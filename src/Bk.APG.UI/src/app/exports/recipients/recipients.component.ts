@@ -16,9 +16,9 @@ import {ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService, WI
 import {today} from '@shared/date-util';
 import {downloadFileFromHttpResponse} from '@shared/file-util';
 import {MasterDataService} from '@shared/master-data.service';
-import {combineLatest, defer, distinctUntilChanged, pairwise, startWith, Subject, switchMap} from 'rxjs';
-import {GeneralElectionCommitteesService} from 'src/app/general-election/ge-committees/ge-committees.service';
+import {combineLatest, defer, distinctUntilChanged, startWith, Subject, switchMap} from 'rxjs';
 import {AuthService} from '../../auth/auth.service';
+import {GeneralElectionCommitteesService} from '../../general-election/ge-committees/ge-committees.service';
 import {RecipientsService} from './recipients.service';
 
 @Component({
@@ -94,14 +94,10 @@ export class RecipientsComponent {
         if (routeData.isGeneralElection) {
             this.isGeneralElection = true;
         }
-        // this.form.controls.documentType.valueChanges.pipe(takeUntilDestroyed()).subscribe(_ => this.updateAnalysisDateFields());
-
-        // this.subscribeToFilterChanges();
 
         if (this.isGeneralElection) {
             this.form.valueChanges.pipe(startWith(this.form.value), takeUntilDestroyed()).subscribe(curr => {
                 this.onFilter({...curr} as RecipientsFilterParameters);
-                console.log(this.form.value);
             });
 
             combineLatest([
@@ -112,8 +108,6 @@ export class RecipientsComponent {
                 ),
             ])
                 .pipe(
-                    // TODO GEW Committees
-
                     switchMap(() => this.generalElectionCommitteesService.getGeneralElectionCommitteeListForExport(this.filterValue)),
                     takeUntilDestroyed()
                 )
@@ -137,8 +131,10 @@ export class RecipientsComponent {
             }
         });
     }
+
     generateReport(): void {
-        const fallbackFilename = `export.xlsx`;
+        // todo, the real implementation follows with another PBI!
+        const fallbackFilename = `toBeImplementedDoc.docx`;
 
         defer(() => {
             this.interceptorEvents.deactivateSpinnerOnNextAPICalls(1);
@@ -214,10 +210,4 @@ export class RecipientsComponent {
             electionTypes: this.fb.control<string[] | null>(null),
         });
     }
-
-    // private subscribeToFilterChanges() {
-    //     this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([_, value]) => {
-    //         this.generalElectionCommitteesService.getGeneralElectionCommitteeListForExport(value);
-    //     });
-    // }
 }
