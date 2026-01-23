@@ -108,7 +108,7 @@ public class MembershipRepository : IMembershipRepository
     {
         return
             _dataContext.Memberships
-                .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (m.EndDate > DateOnly.FromDateTime(DateTime.Now) || (m.ElectionType != null && (m.ElectionType.Uri == ElectionType.NewElection || m.ElectionType.Uri == ElectionType.ReElection))))
+                .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && m.EndDate > DateOnly.FromDateTime(DateTime.Today))
                 .Include(m => m.Person!.Gender)
                 .Include(m => m.Person!.CorrespondenceAddress!.Canton)
                 .Include(m => m.Person!.Language)
@@ -116,6 +116,7 @@ public class MembershipRepository : IMembershipRepository
                 .Include(m => m.Committee!.CommitteeType)
                 .Include(m => m.MembershipAddition)
                 .Include(m => m.Function)
+                .Include(m => m.ElectionOffice)
                 .AsSingleQuery()
                 .AsNoTracking()
                 .AsEnumerable();
