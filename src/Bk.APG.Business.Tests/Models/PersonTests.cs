@@ -57,33 +57,57 @@ internal class PersonTests
             )
             .Build();
 
-        Assert.That(person.ActiveCommittees.Count, Is.EqualTo(1));
+        Assert.That(person.ActiveCommittees.Count(), Is.EqualTo(1));
     }
 
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "text", false)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "text", false)]
-    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "text", false)]
-    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "text", false)]
-    /* TODO REACTIVATE
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "", true)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "", true)]
-    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "", true)]
-    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "", true)] */
-    public void NeedsAttentionInterests_WithInterest_ShouldReturnFalse(string committeeTypeId, string interestText, bool expected)
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString)]
+    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString)]
+    public void NeedsAttentionInterests_WithInterest_ShouldReturnFalse(string committeeTypeId)
     {
         var person = new PersonBuilder()
-            .WithInterests([new InterestBuilder().WithInterestText(interestText)
-                .WithLegalForm(new LegalFormBuilder().Build())
-                .WithInterestFunction(new InterestFunctionBuilder().Build())
-                .WithInterestCommittee(new InterestCommitteeBuilder().Build()).Build()])
-            .WithMemberships([new MembershipBuilder()
-                .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
-                .WithCommittee(new CommitteeBuilder()
-                    .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()])
+            .WithNoInterest(false)
+            .WithInterests([
+                new InterestBuilder().WithInterestText("interestText")
+                    .WithLegalForm(new LegalFormBuilder().Build())
+                    .WithInterestFunction(new InterestFunctionBuilder().Build())
+                    .WithInterestCommittee(new InterestCommitteeBuilder().Build()).Build()
+            ])
+            .WithMemberships([
+                new MembershipBuilder()
+                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithCommittee(new CommitteeBuilder()
+                        .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
+            ])
             .Build();
-        person.NoInterest = false;
 
-        Assert.That(person.NeedsAttentionInterests, Is.EqualTo(expected));
+        Assert.That(person.NeedsAttentionInterests, Is.False);
+    }
+
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString)]
+    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString)]
+    public void NeedsAttentionInterests_WithEmptyInterest_ShouldReturnTrue(string committeeTypeId)
+    {
+        var person = new PersonBuilder()
+            .WithNoInterest(false)
+            .WithInterests([
+                new InterestBuilder().WithInterestText("")
+                    .WithLegalForm(new LegalFormBuilder().Build())
+                    .WithInterestFunction(new InterestFunctionBuilder().Build())
+                    .WithInterestCommittee(new InterestCommitteeBuilder().Build()).Build()
+            ])
+            .WithMemberships([
+                new MembershipBuilder()
+                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithCommittee(new CommitteeBuilder()
+                        .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
+            ])
+            .Build();
+
+        Assert.That(person.NeedsAttentionInterests, Is.True);
     }
 
     [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString)]
@@ -93,12 +117,14 @@ internal class PersonTests
     public void NeedsAttentionInterests_WithoutInterestAndActiveMembership_ShouldReturnTrue(string committeeTypeId)
     {
         var person = new PersonBuilder()
-               .WithMemberships([new MembershipBuilder()
-                .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)))
-                .WithCommittee(new CommitteeBuilder()
-                    .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()])
+            .WithNoInterest(false)
+            .WithMemberships([
+                new MembershipBuilder()
+                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)))
+                    .WithCommittee(new CommitteeBuilder()
+                        .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
+            ])
             .Build();
-        person.NoInterest = false;
 
         Assert.That(person.NeedsAttentionInterests, Is.True);
     }
@@ -110,11 +136,13 @@ internal class PersonTests
     public void NeedsAttentionInterests_WithInterestAndInactiveMembership_ShouldReturnTrue(string committeeTypeId)
     {
         var person = new PersonBuilder()
-               .WithMemberships([new MembershipBuilder()
-                .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-2)))
-                .WithEndDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
-                .WithCommittee(new CommitteeBuilder()
-                    .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()])
+            .WithMemberships([
+                new MembershipBuilder()
+                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-2)))
+                    .WithEndDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithCommittee(new CommitteeBuilder()
+                        .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
+            ])
             .Build();
         person.NoInterest = false;
 
@@ -125,10 +153,12 @@ internal class PersonTests
     public void NeedsAttentionInterests_WithOtherCommitteeType_ShouldReturnFalse()
     {
         var person = new PersonBuilder()
-               .WithMemberships([new MembershipBuilder()
-                .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
-                .WithCommittee(new CommitteeBuilder()
-                    .WithCommitteeTypeId(Guid.NewGuid()).Build()).Build()])
+            .WithMemberships([
+                new MembershipBuilder()
+                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithCommittee(new CommitteeBuilder()
+                        .WithCommitteeTypeId(Guid.NewGuid()).Build()).Build()
+            ])
             .Build();
         person.NoInterest = false;
 
@@ -213,25 +243,28 @@ internal class PersonTests
         Assert.That(person.NeedsAttentionBasicData, Is.False);
     }
 
-    // TODO REACTIVATE
-    //[TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "A", "", true)]
-    //[TestCase(CommitteeType.AdministrationCommissionGuidAsString, "A", "", true)]
-    //[TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "", "B", true)]
-    //[TestCase(CommitteeType.ManagementCommitteeGuidAsString, "", "", true)]
-    //[TestCase(CommitteeType.ManagementCommitteeGuidAsString, "A", "B", false)]
-    //[TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "A", "", false)]
-    //public void NeedsAttentionBasicData_WithOrWithoutOccupation_ShouldReturnExpected(string committeeTypeId, string occupation, string employer, bool expected)
-    //{
-    //    var person = new PersonBuilder()
-    //          .WithMemberships([new MembershipBuilder()
-    //            .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-3)))
-    //            .WithEndDate(DateOnly.FromDateTime(DateTime.Now.AddDays(3)))
-    //            .WithCommittee(new CommitteeBuilder()
-    //                .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()])
-    //          .WithOccupation(occupation)
-    //          .WithEmployer(employer)
-    //        .Build();
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "A", "", true)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "A", "", true)]
+    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "", "B", true)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "", "", true)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "A", "B", false)]
+    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "A", "", false)]
+    public void NeedsAttentionOccupation_WithOrWithoutOccupation_ShouldReturnExpected(string committeeTypeId, string occupation, string employer, bool expected)
+    {
+        var person = new PersonBuilder()
+            .WithFederalDuty(false)
+            .WithNoEmployment(false)
+            .WithMemberships([
+                new MembershipBuilder()
+                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-3)))
+                    .WithEndDate(DateOnly.FromDateTime(DateTime.Now.AddDays(3)))
+                    .WithCommittee(new CommitteeBuilder()
+                        .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
+            ])
+            .WithOccupation(occupation)
+            .WithEmployer(employer)
+            .Build();
 
-    //    Assert.That(person.NeedsAttentionOccupation, Is.EqualTo(expected));
-    //}
+        Assert.That(person.NeedsAttentionOccupation, Is.EqualTo(expected));
+    }
 }

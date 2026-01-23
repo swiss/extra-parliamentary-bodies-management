@@ -18,4 +18,5 @@ public interface ICommitteeService
     Task<IEnumerable<CommitteeDetailDto>> GetByDescription(string description);
     Task<CommitteeMembershipValidationResultDto> ValidateCommittee(Guid id, CommitteeMembershipValidationRequestDto validateDto);
     Task<CommitteeCreateDto> GetEmpty();
+    Task<IEnumerable<CommitteeTypeStatisticDto>> GetCommitteeTypeStatistic();
 }

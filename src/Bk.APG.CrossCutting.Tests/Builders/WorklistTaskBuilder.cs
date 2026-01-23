@@ -28,10 +28,10 @@ public class WorklistTaskBuilder
     private Office? _office;
     private Guid? _committeeId;
     private readonly Guid? _membershipId;
-    private readonly Guid? _personId;
+    private Guid? _personId;
     private Guid? _generalElectionCommitteeId;
     private GeneralElectionCommittee? _generalElectionCommittee;
-    private readonly Guid? _membershipCandidateId;
+    private Guid? _membershipCandidateId;
     private readonly string _description;
     private readonly Guid? _termOfOfficeDateId;
 
@@ -95,9 +95,21 @@ public class WorklistTaskBuilder
         return this;
     }
 
-    public WorklistTaskBuilder WithCommitteeId(Guid membershipId)
+    public WorklistTaskBuilder WithCommitteeId(Guid committeeId)
     {
-        _committeeId = membershipId;
+        _committeeId = committeeId;
+        return this;
+    }
+
+    public WorklistTaskBuilder WithPersonId(Guid personId)
+    {
+        _personId = personId;
+        return this;
+    }
+
+    public WorklistTaskBuilder WithMembershipCandidateId(Guid membershipCandidateId)
+    {
+        _membershipCandidateId = membershipCandidateId;
         return this;
     }
 
