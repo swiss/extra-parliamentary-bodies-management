@@ -5,6 +5,7 @@ import {CommitteeJustificationUpdate} from '@api/CommitteeJustificationUpdate';
 import {CommitteeMembershipValidationRequest} from '@api/CommitteeMembershipValidationRequest';
 import {CommitteeUpdate} from '@api/CommitteeUpdate';
 import {PagingParameters} from '@api/PagingParameters';
+import {RequestsAndReportsFilterParameters} from '@api/RequestsAndReportsFilterParameters';
 import {SortParameter} from '@api/SortParameter';
 import {firstValueFrom, of} from 'rxjs';
 import {CommitteesService} from './committees.service';
@@ -76,12 +77,29 @@ describe('CommitteesService', () => {
         ];
         httpClientMock.get.mockReturnValue(of(mockResponse));
 
-        const response = await firstValueFrom(service.getCommitteeListForExport());
+        const filterParams: RequestsAndReportsFilterParameters = {
+            departments: ['department1'],
+            offices: ['office1'],
+            committeeTypes: ['committeeType1'],
+        };
+
+        const response = await firstValueFrom(service.getCommitteeListForExport(filterParams));
 
         expect(response).toBeTruthy();
         expect(response).toHaveLength(2);
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/committees/listExport');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/committees/listExport', {
+            params: {
+                cloneFrom: {cloneFrom: null, encoder: {}, map: null, updates: null},
+                encoder: {},
+                map: null,
+                updates: [
+                    {op: 'a', param: 'departmentIds', value: 'department1'},
+                    {op: 'a', param: 'officeIds', value: 'office1'},
+                    {op: 'a', param: 'committeeTypeIds', value: 'committeeType1'},
+                ],
+            },
+        });
     });
 
     it('should add filter params for valid filter-parameter', () => {
