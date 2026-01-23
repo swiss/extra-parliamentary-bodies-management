@@ -316,9 +316,9 @@ public static class CommitteeQueryExtensions
 
     public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForExport(this IQueryable<GeneralElectionCommittee> query, GeneralElectionCommitteeExportFilterParameters filterParameter)
     {
-        if (filterParameter.CorrespondenceLanguageId is not null && filterParameter.CorrespondenceLanguageId.Any())
+        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
         {
-            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageId.Contains(m.Person!.CorrespondenceLanguageId)));
+            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
         }
 
         if (filterParameter.ElectionTypeIds is not null && filterParameter.ElectionTypeIds.Any())
