@@ -1,16 +1,24 @@
-import { TestBed } from '@angular/core/testing';
-
-import { RecipientsService } from './recipients.service';
+import {HttpClient} from '@angular/common/http';
+import {TestBed} from '@angular/core/testing';
+import {RecipientsService} from './recipients.service';
 
 describe('RecipientsService', () => {
-  let service: RecipientsService;
+    let service: RecipientsService;
+    let httpClientMock: jest.Mocked<HttpClient>;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(RecipientsService);
-  });
+    beforeEach(() => {
+        httpClientMock = {
+            get: jest.fn(),
+        } as unknown as jest.Mocked<HttpClient>;
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
+        TestBed.configureTestingModule({
+            providers: [RecipientsService, {provide: HttpClient, useValue: httpClientMock}],
+        });
+
+        service = TestBed.inject(RecipientsService);
+    });
+
+    it('should be created', () => {
+        expect(service).toBeTruthy();
+    });
 });
