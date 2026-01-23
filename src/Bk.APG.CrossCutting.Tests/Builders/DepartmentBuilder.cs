@@ -47,7 +47,7 @@ public class DepartmentBuilder
         _sort = _faker.Random.Int(0);
         _oldId = _faker.Random.Int(1);
         _eiamAssignmentId = _faker.Random.Guid();
-        _isBigDepartment = _faker.Random.Bool();
+        _isBigDepartment = false;
     }
 
     public DepartmentBuilder WithId(Guid id)

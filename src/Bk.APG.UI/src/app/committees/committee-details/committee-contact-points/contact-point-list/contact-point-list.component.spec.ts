@@ -12,6 +12,7 @@ import {ObAlertModule, ObNotificationService} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {MockComponent, MockModule, MockPipe} from 'ng-mocks';
 import {BehaviorSubject, of, Subject} from 'rxjs';
+import {ConfigsService} from '../../../../configs.service';
 import {CommitteeDetailsService} from '../../committee-details.service';
 import {ContactPointsService} from '../contact-points.service';
 import {ContactPointListComponent} from './contact-point-list.component';
@@ -72,6 +73,16 @@ describe('ContactPointListComponent', () => {
             error: jest.fn(),
         };
 
+        const configsServiceMock = {
+            frontendConfig: {
+                entityIds: {
+                    contactPoint: {
+                        secretariatId: 'secretariatId',
+                        dpoId: 'dpoId',
+                    },
+                },
+            },
+        };
         await TestBed.configureTestingModule({
             imports: [
                 MockPipe(TranslatePipe),
@@ -91,6 +102,7 @@ describe('ContactPointListComponent', () => {
                 {provide: CommitteeDetailsService, useValue: committeeDetailsServiceMock},
                 {provide: MatDialog, useValue: matDialogMock},
                 {provide: ObNotificationService, useValue: notificationServiceMock},
+                {provide: ConfigsService, useValue: configsServiceMock},
             ],
         }).compileComponents();
 

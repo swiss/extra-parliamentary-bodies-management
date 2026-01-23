@@ -86,9 +86,14 @@ describe('GeneralElectionCommitteeCandidateListService', () => {
     });
 
     describe('generateExport', () => {
-        it('should call HttpClient.get with correct URL, headers, and options', () => {
-            const expectedUrl = '/api/general-election/committees/1/download';
+        it('should call HttpClient.post with correct URL, body, headers, and options', () => {
+            const committeeId = '1';
+            const entryIds = ['11111111-1111-1111-1111-111111111111'];
+            const body = {membershipCandidateIds: entryIds};
+            const expectedUrl = `/api/general-election/committees/${committeeId}/download`;
+
             const expectedHeaders = new HttpHeaders().set('Accept', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
             const expectedOptions = {
                 headers: expectedHeaders,
                 observe: 'response' as const,
@@ -96,33 +101,37 @@ describe('GeneralElectionCommitteeCandidateListService', () => {
             };
 
             const response = {body: new Blob()} as unknown;
-            httpClientMock.get.mockReturnValue(of(response));
+            httpClientMock.post.mockReturnValue(of(response));
 
-            service.generateExport('1').subscribe(res => {
+            service.generateExport(committeeId, entryIds).subscribe(res => {
                 expect(res).toBe(response);
             });
 
-            expect(httpClientMock.get).toHaveBeenCalledWith(expectedUrl, expectedOptions);
+            expect(httpClientMock.post).toHaveBeenCalledWith(expectedUrl, body, expectedOptions);
         });
 
         it('should set Accept header to Excel MIME type', () => {
-            httpClientMock.get.mockReturnValue(of({} as unknown));
+            const committeeId = '1';
+            const entryIds: string[] = [];
+            httpClientMock.post.mockReturnValue(of({} as unknown));
 
-            service.generateExport('1').subscribe();
+            service.generateExport(committeeId, entryIds).subscribe();
 
-            const callArgs = httpClientMock.get.mock.calls[0];
-            const options = callArgs[1];
+            const callArgs = httpClientMock.post.mock.calls[0];
+            const options = callArgs[2];
             const acceptHeader = (options!.headers as HttpHeaders).get('Accept');
             expect(acceptHeader).toBe('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         });
 
         it('should set responseType to blob and observe to response', () => {
-            httpClientMock.get.mockReturnValue(of({} as unknown));
+            const committeeId = '1';
+            const entryIds: string[] = [];
+            httpClientMock.post.mockReturnValue(of({} as unknown));
 
-            service.generateExport('1').subscribe();
+            service.generateExport(committeeId, entryIds).subscribe();
 
-            const callArgs = httpClientMock.get.mock.calls[0];
-            const options = callArgs[1];
+            const callArgs = httpClientMock.post.mock.calls[0];
+            const options = callArgs[2];
             expect(options!.responseType).toBe('blob');
             expect(options!.observe).toBe('response');
         });

@@ -1,5 +1,6 @@
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
+using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 
 namespace Bk.APG.Business.Services;
@@ -8,13 +9,19 @@ public class InterestService : IInterestService
 {
     private readonly IInterestRepository _interestRepository;
     private readonly IAuthorizationService _authorizationService;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
+    private readonly IPersonRepository _personRepository;
 
     public InterestService(
         IInterestRepository interestRepository,
-        IAuthorizationService authorizationService)
+        IAuthorizationService authorizationService,
+        IWorklistTaskRepository worklistTaskRepository,
+        IPersonRepository personRepository)
     {
         _interestRepository = interestRepository;
         _authorizationService = authorizationService;
+        _worklistTaskRepository = worklistTaskRepository;
+        _personRepository = personRepository;
     }
 
     public async Task<IEnumerable<InterestUpdateDto>> GetInterestsForUpdateByPersonId(Guid personId)
@@ -72,6 +79,26 @@ public class InterestService : IInterestService
 
         await _interestRepository.CommitAsync();
 
+        await CheckAndCompleteInterestWorklistTask(personId);
+
         return returnList;
+    }
+
+    private async Task CheckAndCompleteInterestWorklistTask(Guid personId)
+    {
+        var interestsTask = (await _worklistTaskRepository.GetAllByPersonId(personId)).FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests);
+        if (interestsTask is not null && interestsTask.WorklistTaskStateId != WorklistTaskState.Completed)
+        {
+            var person = await _personRepository.GetById(personId);
+
+            if (person is { NeedsAttentionInterests: false })
+            {
+                interestsTask.WorklistTaskStateId = WorklistTaskState.Completed;
+                interestsTask.ModifiedBy = "System";
+                interestsTask.Modified = DateTime.UtcNow;
+
+                await _worklistTaskRepository.CommitChanges();
+            }
+        }
     }
 }

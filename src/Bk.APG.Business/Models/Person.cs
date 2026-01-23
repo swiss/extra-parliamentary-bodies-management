@@ -75,21 +75,20 @@ public class Person : EntityBase
     public bool NeedsAttentionFederalAssemblyAdministrationCommission => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalAssemblyAdministrationCommission);
 
     [NotMapped]
-    public bool NeedsAttentionInterests => !NoInterest && Memberships.Any(m => m.IsActive && ((m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) ||
-        m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
-        m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
-        m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid)) &&
-        (Interests.Count == 0 /* TODO REACTIVATE || Interests.Any(i => string.IsNullOrWhiteSpace(i.InterestText) || i.LegalFormId is null || i.InterestCommitteeId == Guid.Empty || i.InterestFunctionId == Guid.Empty) */);
+    public bool NeedsAttentionInterests => !NoInterest &&
+        Memberships.Any(m => m.IsActive && (m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
+            m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
+            m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
+            m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid)) &&
+        (Interests.Count == 0 || Interests.Any(i => string.IsNullOrWhiteSpace(i.InterestText) || i.LegalFormId is null || i.InterestCommitteeId == Guid.Empty || i.InterestFunctionId == Guid.Empty));
 
     [NotMapped]
-#pragma warning disable CA1051
-    public bool NeedsAttentionOccupation = false; // TODO REACTIVATE
-#pragma warning restore CA1051
-    //public bool NeedsAttentionOccupation => !FederalDuty && !NoEmployment &&Memberships.Any(y => y.IsActive && (y.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
-    //    y.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
-    //    y.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
-    //    y.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid) &&
-    //    (string.IsNullOrWhiteSpace(Employer) || string.IsNullOrWhiteSpace(Occupation)));
+    public bool NeedsAttentionOccupation => !FederalDuty && !NoEmployment && Memberships.Any(y => y.IsActive &&
+        (y.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
+            y.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
+            y.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
+            y.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid) &&
+        (string.IsNullOrWhiteSpace(Employer) || string.IsNullOrWhiteSpace(Occupation)));
 
     [NotMapped]
     public bool NeedsAttentionBasicData => !IsValidPhoneNumber(OfficeAddress?.Phone) || !IsValidPhoneNumber(PrivateAddress?.Phone) ||
