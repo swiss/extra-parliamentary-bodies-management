@@ -173,7 +173,7 @@ internal class CommitteeServiceTests
 
         _committeeRepository.GetByIdForUpdate(_committee.Id, _committee.RowVersion).Returns(_committee);
         _committeeRepository.GetAllForGeneralElection(_zeroGuid, _zeroGuid, _zeroGuid).Returns(new List<Committee>().Append(_committee));
-        _committeeRepository.GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid).Returns(new List<Committee>().Append(_committee));
+        _committeeRepository.GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid, null).Returns(new List<Committee>().Append(_committee));
 
         _committeeService = new CommitteeService(
             _committeeRepository,
@@ -241,7 +241,7 @@ internal class CommitteeServiceTests
     {
         var committees = await _committeeService.GetCommitteeListForExport();
 
-        await _committeeRepository.Received(1).GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid);
+        await _committeeRepository.Received(1).GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid, null);
 
         Assert.That(committees, Is.Not.Null);
         Assert.That(committees.Count, Is.EqualTo(1));
