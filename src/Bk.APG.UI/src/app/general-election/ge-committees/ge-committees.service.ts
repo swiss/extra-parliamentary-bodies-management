@@ -59,12 +59,12 @@ export class GeneralElectionCommitteesService {
     updateGeneralElectionCommitteeVacancies = (committeeId: string, vacancies: number) =>
         this.http.put<GeneralElectionCommitteeJustificationUpdate>(`/api/general-election/committees/${committeeId}/vacancies`, vacancies);
 
-    getGeneralElectionCommitteeListForExport(filter: RecipientsFilterParameters): Observable<GeneralElectionCommitteeList[]> {
+    getGeneralElectionCommitteeListForRecipientExport(filter: RecipientsFilterParameters): Observable<GeneralElectionCommitteeList[]> {
         let params = new HttpParams();
 
         params = this.appendExportFilter(params, filter);
 
-        return this.http.get<GeneralElectionCommitteeList[]>('/api/general-election/committees/export', {params});
+        return this.http.get<GeneralElectionCommitteeList[]>('/api/general-election/committees/recipient', {params});
     }
 
     appendExportFilter = (params: HttpParams, filterParameter?: RecipientsFilterParameters | null): HttpParams => {

@@ -108,7 +108,7 @@ export class RecipientsComponent {
                 ),
             ])
                 .pipe(
-                    switchMap(() => this.generalElectionCommitteesService.getGeneralElectionCommitteeListForExport(this.filterValue)),
+                    switchMap(() => this.generalElectionCommitteesService.getGeneralElectionCommitteeListForRecipientExport(this.filterValue)),
                     takeUntilDestroyed()
                 )
                 .subscribe(result => {
