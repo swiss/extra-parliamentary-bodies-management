@@ -67,7 +67,7 @@ public class MembershipBuilder
         _requirementsProfile = _faker.Random.String().OrNull(_faker);
         _remarks = _faker.Random.String().OrNull(_faker);
         _remarksStatus = _faker.Random.String().OrNull(_faker);
-        _inCorrelationWithFederalDuty = _faker.Random.Bool();
+        _inCorrelationWithFederalDuty = false;
         _isDeleted = false;
         _oldId = _faker.Random.Int(1);
     }
