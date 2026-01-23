@@ -144,6 +144,27 @@ internal class GeneralElectionCommitteeControllerTests
     }
 
     [Test]
+    public async Task GetGeneralElectionCommitteesForRecipientExport_WhenCalled_ShouldCallServiceAndReturnResult()
+    {
+        var filterDto = new GeneralElectionCommitteeExportFilterParametersDto();
+        var committeeList = new List<GeneralElectionCommitteeListDto>();
+
+        var committee = new Faker<GeneralElectionCommitteeListDto>().Generate();
+        committeeList.Add(committee);
+
+        _generalElectionCommitteeService.GetGeneralElectionCommitteeListForRecipientExport(filterDto).Returns(committeeList);
+
+        var result = await _controller.GetGeneralElectionCommitteesForRecipientExport(filterDto) as OkObjectResult;
+
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Value, Is.EqualTo(committeeList));
+        });
+    }
+
+    [Test]
     public async Task UpdateVacancies_WhenCalled_ShouldCallServiceAndReturnResult()
     {
         var committeeJustificationUpdateDto = new Faker<GeneralElectionCommitteeUpdateDto>().Generate();
