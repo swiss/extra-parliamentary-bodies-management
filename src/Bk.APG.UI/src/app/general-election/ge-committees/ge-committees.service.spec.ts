@@ -6,6 +6,7 @@ import {GeneralElectionCommitteeFilterParameters} from '@api/GeneralElectionComm
 import {GeneralElectionCommitteeList} from '@api/GeneralElectionCommitteeList';
 import {PagedResult} from '@api/PagedResult';
 import {PagingParameters} from '@api/PagingParameters';
+import {RecipientsFilterParameters} from '@api/RecipientsFilterParameters';
 import {SortParameter} from '@api/SortParameter';
 import {Subject} from 'rxjs';
 import {GeneralElectionCommitteesService} from './ge-committees.service';
@@ -125,5 +126,48 @@ describe('GeneralElectionCommitteesService', () => {
         const params = service.appendFilter(new HttpParams(), value);
 
         expect(params.keys().length).toEqual(0);
+    });
+
+    it('should get general election committee recipient export list', () => {
+        const committeeList: GeneralElectionCommitteeList[] = [
+            {
+                id: '1',
+                committeeId: '2',
+                committeeType: 'type',
+                description: 'desc',
+                department: 'department',
+                office: 'office',
+                isMarketOrientated: 'true',
+                hasSupervisionDuty: false,
+                status: 'status',
+                vacanciesGeneralElection: 1,
+                statusProposal: 'statusP',
+                modified: new Date(2025, 1, 1),
+                modifiedBy: 'test',
+            } as GeneralElectionCommitteeList,
+            {
+                id: '2',
+                committeeType: 'type',
+                description: 'desc',
+                department: 'department',
+                office: 'office',
+                isMarketOrientated: 'true',
+                hasSupervisionDuty: false,
+                status: 'status',
+                vacanciesGeneralElection: 1,
+                statusProposal: 'statusP',
+                modified: new Date(2025, 1, 1),
+                modifiedBy: 'test',
+            } as GeneralElectionCommitteeList,
+        ];
+
+        service.getGeneralElectionCommitteeListForRecipientExport({} as RecipientsFilterParameters).subscribe(result => {
+            expect(result).toEqual(committeeList);
+        });
+
+        const req = httpMock.expectOne(request => request.url === '/api/general-election/committees/recipient');
+
+        expect(req.request.method).toBe('GET');
+        req.flush(committeeList);
     });
 });
