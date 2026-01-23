@@ -73,10 +73,10 @@ public class GeneralElectionCommitteeController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("export")]
-    public async Task<IActionResult> GetGeneralElectionCommitteesForExport([FromQuery] GeneralElectionCommitteeExportFilterParametersDto? filterParameters)
+    [HttpGet("recipient")]
+    public async Task<IActionResult> GetGeneralElectionCommitteesForRecipientExport([FromQuery] GeneralElectionCommitteeExportFilterParametersDto? filterParameters)
     {
-        var result = await _generalElectionCommitteeService.GetGeneralElectionCommitteeListForExport(filterParameters);
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommitteeListForRecipientExport(filterParameters);
         return Ok(result);
     }
 
