@@ -7,8 +7,8 @@ public static class WorklistTaskExtensions
     public static bool GetCanBeForwarded(this WorklistTask worklistTask, string currentExternalId)
     {
         return worklistTask.AssignedTo!.ExternalId == currentExternalId
-               && worklistTask.WorklistTaskStateId == WorklistTaskState.Active
-               && worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch;
+            && worklistTask.WorklistTaskStateId == WorklistTaskState.Active
+            && worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch;
     }
 
     public static string? GetNavigationUrl(this WorklistTask worklistTask)
@@ -28,6 +28,23 @@ public static class WorklistTaskExtensions
         else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal)
         {
             navigationUrl = $"/general-election/committees/{worklistTask.CommitteeId}";
+        }
+        else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests)
+        {
+            navigationUrl = $"/persons/{worklistTask.PersonId}?tab=interests";
+        }
+        else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData)
+        {
+            navigationUrl = $"/persons/{worklistTask.PersonId}?tab=data";
+        }
+        else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation)
+        {
+            navigationUrl = $"/general-election/committees/{worklistTask.CommitteeId}/membership-candidate/{worklistTask.MembershipCandidateId}";
+        }
+        else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat ||
+                 worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer)
+        {
+            navigationUrl = $"/committees/{worklistTask.CommitteeId}?tab=contacts";
         }
 
         return navigationUrl;

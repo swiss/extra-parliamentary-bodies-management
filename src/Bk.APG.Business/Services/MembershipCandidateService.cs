@@ -49,7 +49,7 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         var duplicateCandidate = generalElectionCommittee.MembershipCandidates
             .FirstOrDefault(candidate => (candidate.Person is not null && PersonService.NamesAreEqual(candidate.Person.Surname, surname) && PersonService.NamesAreEqual(candidate.Person.GivenName, givenName) && candidate.Person.BirthYear == birthYear)
-                                         || (PersonService.NamesAreEqual(candidate.Surname, surname) && PersonService.NamesAreEqual(candidate.GivenName, givenName) && candidate.GenderId == genderId && candidate.BirthYear == birthYear));
+                || (PersonService.NamesAreEqual(candidate.Surname, surname) && PersonService.NamesAreEqual(candidate.GivenName, givenName) && candidate.GenderId == genderId && candidate.BirthYear == birthYear));
 
         return duplicateCandidate is not null ? MembershipCandidateMapper.ToMembershipCandidateDetailDto(duplicateCandidate) : null;
     }
@@ -78,6 +78,7 @@ public class MembershipCandidateService : IMembershipCandidateService
                 }
 
                 validationResult.AreJustificationsMissing = await CheckJustificationsMissingAndCreateTasks(generalElectionCommittee);
+                await CheckCandidatePersonsAndCreateTasks(generalElectionCommittee);
             }
 
             await _generalElectionCommitteeRepository.CommitChanges();
@@ -108,9 +109,9 @@ public class MembershipCandidateService : IMembershipCandidateService
     private async Task CompleteCandidateList(GeneralElectionCommittee generalElectionCommittee)
     {
         var candidateListTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
-            .Where(x => x.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate
-                        || x.WorklistTaskTypeId == WorklistTaskType.CandidateListForward
-                        || x.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove).ToList();
+            .Where(x => x.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate ||
+                x.WorklistTaskTypeId == WorklistTaskType.CandidateListForward ||
+                x.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove).ToList();
 
         foreach (var candidateListTask in candidateListTasks)
         {
@@ -119,6 +120,77 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         generalElectionCommittee.CandidateListStateId = CandidateListState.Completed;
         generalElectionCommittee.IsValidated = true;
+    }
+
+    private async Task CheckCandidatePersonsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee)
+    {
+        foreach (var membershipCandidate in generalElectionCommittee.MembershipCandidates)
+        {
+            var personTasks = (await _worklistTaskRepository.GetAllByPersonId(membershipCandidate.PersonId!.Value)).ToList();
+
+            if (membershipCandidate.IsSelected)
+            {
+                if (membershipCandidate.Person is null || membershipCandidate.Person.NeedsAttentionInterests)
+                {
+                    await CreateOrActivatePersonTask(generalElectionCommittee, personTasks, membershipCandidate, WorklistTaskType.GeneralElectionPersonInterests, 7);
+                }
+
+                if (membershipCandidate.Person is null || membershipCandidate.Person.NeedsAttentionBasicData || membershipCandidate.Person.NeedsAttentionOccupation)
+                {
+                    await CreateOrActivatePersonTask(generalElectionCommittee, personTasks, membershipCandidate, WorklistTaskType.GeneralElectionPersonBaseData, 14);
+                }
+            }
+            else
+            {
+                foreach (var task in personTasks.Where(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests || x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData))
+                {
+                    if (task.WorklistTaskStateId != WorklistTaskState.Completed)
+                    {
+                        task.WorklistTaskStateId = WorklistTaskState.Completed;
+                        task.Modified = DateTime.UtcNow;
+                        task.ModifiedBy = "System";
+                    }
+                }
+            }
+        }
+    }
+
+    private async Task CreateOrActivatePersonTask(GeneralElectionCommittee generalElectionCommittee, List<WorklistTask> personTasks,
+        MembershipCandidate membershipCandidate, Guid worklistTaskTypeId, int daysBeforeProposalDueDate)
+    {
+        var interestsTask = personTasks.FirstOrDefault(x => x.WorklistTaskTypeId == worklistTaskTypeId);
+        if (interestsTask is null)
+        {
+            _logger.LogInformation("Creating task {TaskTypeId} for person {PersonId}", worklistTaskTypeId, membershipCandidate.PersonId);
+
+            await _worklistTaskRepository.Create(new WorklistTask
+            {
+                AssignedToId = generalElectionCommittee.Committee!.EiamAssignmentId!.Value,
+                AssignedById = EiamAssignment.ApgId,
+                DueDate = generalElectionCommittee.SecretariatReadyForProposalDueDate!.Value.AddDays(-daysBeforeProposalDueDate),
+                Description = BusinessTexts.GeneralElection_PersonData_TaskDescription,
+                WorklistTaskTypeId = worklistTaskTypeId,
+                WorklistTaskStateId = WorklistTaskState.Active,
+                GeneralElectionCommitteeId = generalElectionCommittee.Id,
+                DepartmentId = generalElectionCommittee.DepartmentId,
+                OfficeId = generalElectionCommittee.OfficeId,
+                CommitteeId = generalElectionCommittee.CommitteeId,
+                PersonId = membershipCandidate.PersonId,
+                Created = DateTime.UtcNow,
+                CreatedBy = "System",
+                Modified = DateTime.UtcNow,
+                ModifiedBy = "System"
+            });
+        }
+        else
+        {
+            if (interestsTask.WorklistTaskStateId != WorklistTaskState.Active)
+            {
+                interestsTask.WorklistTaskStateId = WorklistTaskState.Active;
+                interestsTask.Modified = DateTime.UtcNow;
+                interestsTask.ModifiedBy = "System";
+            }
+        }
     }
 
     private async Task<bool> CheckJustificationsMissingAndCreateTasks(GeneralElectionCommittee generalElectionCommittee)

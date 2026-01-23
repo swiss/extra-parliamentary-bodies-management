@@ -1,5 +1,5 @@
 <div class="membership-candidate-list-header">
-    <h3>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h3>
+    <h2>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h2>
     <h4 class="candidate-list-state">{{ generalElectionCommittee()?.candidateListState }}</h4>
 
     @if (generalElectionCommittee()?.isCandidateListCompleted && !validated) {
@@ -461,14 +461,13 @@
                 <div class="actions-container">
                     <button
                         type="button"
-                        mat-button
+                        mat-icon-button
                         obButton="secondary"
                         (click)="saveNewMembershipCandidate()"
                         [disabled]="!newMembershipCandidateForm.dirty || !newMembershipCandidateForm.valid"
                         [matTooltip]="'generalElection.membershipCandidate.create' | translate"
                     >
                         <mat-icon svgIcon="plus" />
-                        {{ 'generalElection.membershipCandidate.create' | translate }}
                     </button>
                 </div>
             </td>

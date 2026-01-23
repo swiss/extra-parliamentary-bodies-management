@@ -172,4 +172,11 @@ public class WorklistTaskRepository : IWorklistTaskRepository
             .Where(x => x.WorklistTaskTypeId == worklistTaskTypeId)
             .ToListAsync();
     }
+
+    public async Task<List<WorklistTask>> GetAllByPersonId(Guid personId)
+    {
+        return await _dataContext.WorklistTasks
+            .Where(x => x.PersonId == personId)
+            .ToListAsync();
+    }
 }

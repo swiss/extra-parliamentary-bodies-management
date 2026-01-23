@@ -18,7 +18,7 @@ public class PersonBuilder
     private int _birthYear;
     private string? _occupation;
     private string? _employer;
-    private readonly bool _noEmployment;
+    private bool _noEmployment;
     private bool _federalDuty;
     private bool _federalAssembly;
     private string? _title;
@@ -38,7 +38,7 @@ public class PersonBuilder
     private readonly int _oldId;
     private readonly string? _remarksPersonData;
     private readonly string? _remarksPersonDataAdmin;
-    private readonly bool _noInterest;
+    private bool _noInterest;
     private readonly List<LegislaturePeriod> _legislaturePeriods;
     private readonly List<Membership> _memberships;
     private readonly List<Occupation> _occupations;
@@ -59,9 +59,9 @@ public class PersonBuilder
         _birthYear = _faker.Person.DateOfBirth.Year;
         _occupation = _faker.Random.String().OrNull(_faker);
         _employer = _faker.Random.String().OrNull(_faker);
-        _noEmployment = _faker.Random.Bool();
-        _federalDuty = _faker.Random.Bool();
-        _federalAssembly = _faker.Random.Bool();
+        _noEmployment = false;
+        _federalDuty = false;
+        _federalAssembly = false;
         _title = _faker.Random.String().OrNull(_faker);
         _salutationId = _faker.Random.Guid();
         _languageId = _faker.Random.Guid();
@@ -73,7 +73,7 @@ public class PersonBuilder
         _oldId = _faker.Random.Int(1);
         _remarksPersonData = _faker.Random.String().OrNull(_faker);
         _remarksPersonDataAdmin = _faker.Random.String().OrNull(_faker);
-        _noInterest = _faker.Random.Bool();
+        _noInterest = false;
         _legislaturePeriods = [];
         _memberships = [];
         _office = null;
@@ -230,6 +230,18 @@ public class PersonBuilder
     public PersonBuilder WithFederalAssembly(bool federalAssembly)
     {
         _federalAssembly = federalAssembly;
+        return this;
+    }
+
+    public PersonBuilder WithNoEmployment(bool noEmployment)
+    {
+        _noEmployment = noEmployment;
+        return this;
+    }
+
+    public PersonBuilder WithNoInterest(bool noInterest)
+    {
+        _noInterest = noInterest;
         return this;
     }
 
