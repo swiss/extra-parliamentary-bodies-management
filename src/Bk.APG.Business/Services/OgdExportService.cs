@@ -127,7 +127,7 @@ public class OgdExportService
             ]
         );
 
-        var personCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriPerson,"2026-01-14", "2026-01-14", "BK-APG Personen", "Export der Personen von APG");
+        var personCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriPerson, "2026-01-14", "2026-01-14", "BK-APG Personen", "Export der Personen von APG");
         personCubeMetadata.AddRange(
             [
                 new Triple(
