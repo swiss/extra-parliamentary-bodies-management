@@ -813,7 +813,7 @@
   "generalElection.candidateList.export.message": "FR_Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
   "generalElection.candidateList.export.success": "FR_Das Dokument wurde erfolgreich erzeugt.",
   "generalElection.candidateList.export.error": "FR_Beim Herunterladen der Datei ist ein Fehler aufgetreten.",
-  "navigation.exports.recipients": "FR_Empfänger/innen",
+  "formLetter.recipients": "FR_Empfänger/innen",
   "recipients.title": "FR_Gremien & Mitglieder wählen",
   "recipients.filter.department.label": "FR_Departement",
   "recipients.filter.office.label": "FR_Verwaltungsstelle",
