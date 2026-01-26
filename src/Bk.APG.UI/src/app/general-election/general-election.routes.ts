@@ -43,6 +43,14 @@ export const generalElectionRoutes: Routes = [
         },
     },
     {
+        path: 'exports/formLetters',
+        loadComponent: () => import('../exports/form-letters/form-letters.component').then(m => m.FormLettersComponent),
+        data: {
+            isGeneralElection: true,
+            allowedRoles: [Role.Allow],
+        },
+    },
+    {
         path: '**',
         redirectTo: 'committees',
     },

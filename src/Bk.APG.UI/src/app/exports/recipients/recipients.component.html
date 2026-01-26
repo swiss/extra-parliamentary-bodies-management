@@ -1,0 +1,93 @@
+<form [formGroup]="form" [ngClass]="isGeneralElection ? 'ge-mode' : 'online-mode'">
+    <div>
+        <h3>{{ 'recipients.title' | translate }}</h3>
+    </div>
+    <div class="input-grid" [hidden]="isGeneralElection"></div>
+    <div class="input-grid" [hidden]="!isGeneralElection">
+        <!-- Committee Type -->
+        <mat-form-field>
+            <mat-label>{{ 'recipients.filter.committeeType.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.committeeTypes">
+                @for (committeeType of masterDataService.committeeTypes(); track committeeType.id) {
+                    <mat-option [value]="committeeType.id">{{ committeeType.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Department -->
+        <mat-form-field>
+            <mat-label>{{ 'recipients.filter.department.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.departments">
+                @for (department of masterDataService.permittedDepartments(); track department.id) {
+                    <mat-option [value]="department.id">{{ department.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Office -->
+        <mat-form-field>
+            <mat-label>{{ 'recipients.filter.office.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.offices">
+                @for (office of departmentOffices(); track office.id) {
+                    <mat-option [value]="office.id">{{ office.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Communication Language -->
+        <mat-form-field>
+            <mat-label>{{ 'recipients.filter.correspondenceLanguage.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.correspondenceLanguages">
+                @for (language of masterDataService.languages(); track language.id) {
+                    <mat-option [value]="language.id">{{ language.description }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Membership state (reduced to new and reelection) -->
+        <mat-form-field>
+            <mat-label>{{ 'recipients.filter.electionType.label' | translate }}</mat-label>
+            <mat-select multiple [formControl]="form.controls.electionTypes">
+                @for (electionType of reducedElectionTypes(); track electionType.id) {
+                    <mat-option [value]="electionType.id">{{ electionType.text }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <div class="buttons">
+            <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="generateReport()">
+                {{ 'recipients.download' | translate }}
+            </button>
+        </div>
+    </div>
+
+    <table [dataSource]="dataSource" class="ob-table" mat-table [hidden]="!isGeneralElection">
+        <ng-container matColumnDef="select">
+            <th *matHeaderCellDef mat-header-cell scope="col">
+                <ng-container [ngTemplateOutlet]="selectHeader" />
+            </th>
+            <td *matCellDef="let row" mat-cell>
+                <ng-container [ngTemplateOutlet]="selectContent" [ngTemplateOutletContext]="{row: row}" />
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="description">
+            <th *matHeaderCellDef mat-header-cell>{{ 'recipients.table.header.description.label' | translate }}</th>
+            <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.description.label' | translate }}">
+                {{ element.description }}
+            </td>
+        </ng-container>
+        <tr *matHeaderRowDef="displayedCommitteeColumns" mat-header-row></tr>
+        <tr *matRowDef="let row; columns: displayedCommitteeColumns" mat-row></tr>
+        <tr *matNoDataRow>
+            <td [colSpan]="displayedCommitteeColumns.length">{{ 'committees.table.noEntries' | translate }}</td>
+        </tr>
+    </table>
+</form>
+
+<ng-template #selectHeader>
+    <mat-checkbox [checked]="isAllSelected()" [indeterminate]="isSomeSelected()" (change)="toggleAllCommittees(false)" />
+</ng-template>
+
+<ng-template #selectContent let-row="row">
+    <mat-checkbox [checked]="isSelected(row)" (click)="$event.stopPropagation()" (change)="toggleRow(row)" />
+</ng-template>

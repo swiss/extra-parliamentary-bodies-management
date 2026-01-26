@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Linq.Expressions;
+using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Microsoft.EntityFrameworkCore;
@@ -189,8 +190,26 @@ public static class CommitteeQueryExtensions
         return query;
     }
 
-    public static IQueryable<Committee> FilterCommitteeByPermission(this IQueryable<Committee> query, Guid departmentId, Guid officeId, Guid committeeId)
+    public static IQueryable<Committee> FilterCommitteeByPermission(this IQueryable<Committee> query, Guid departmentId, Guid officeId, Guid committeeId, CommitteeExportFilterParametersDto? filterDto = null)
     {
+        if (filterDto != null)
+        {
+            if (filterDto.DepartmentIds is not null && filterDto.DepartmentIds.Any())
+            {
+                query = query.Where(c => filterDto.DepartmentIds.Contains(c.DepartmentId));
+            }
+
+            if (filterDto.OfficeIds is not null && filterDto.OfficeIds.Any())
+            {
+                query = query.Where(c => filterDto.OfficeIds.Contains(c.OfficeId));
+            }
+
+            if (filterDto.CommitteeTypeIds is not null && filterDto.CommitteeTypeIds.Any())
+            {
+                query = query.Where(c => filterDto.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+            }
+        }
+
         if (departmentId == Guid.Empty && officeId == Guid.Empty && committeeId == Guid.Empty)
         {
             return query;
@@ -304,6 +323,41 @@ public static class CommitteeQueryExtensions
             {
                 query = query.Where(c => c.SupervisionDuty == false);
             }
+        }
+
+        if (filterParameter.CommitteeIds is not null && filterParameter.CommitteeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeIds.Contains(c.CommitteeId));
+        }
+
+        return query;
+    }
+
+    public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForExport(this IQueryable<GeneralElectionCommittee> query, GeneralElectionCommitteeExportFilterParameters filterParameter)
+    {
+        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
+        }
+
+        if (filterParameter.ElectionTypeIds is not null && filterParameter.ElectionTypeIds.Any())
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.ElectionTypeIds.Contains(m.ElectionTypeId)));
+        }
+
+        if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())
+        {
+            query = query.Where(c => filterParameter.DepartmentIds.Contains(c.DepartmentId));
+        }
+
+        if (filterParameter.OfficeIds is not null && filterParameter.OfficeIds.Any())
+        {
+            query = query.Where(c => filterParameter.OfficeIds.Contains(c.OfficeId));
+        }
+
+        if (filterParameter.CommitteeTypeIds is not null && filterParameter.CommitteeTypeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeTypeIds.Contains(c.CommitteeTypeId));
         }
 
         if (filterParameter.CommitteeIds is not null && filterParameter.CommitteeIds.Any())

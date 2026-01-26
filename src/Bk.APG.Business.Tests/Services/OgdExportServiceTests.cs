@@ -189,7 +189,7 @@ internal class OgdExportServiceTests
         _committeeRepository.GetAll().Returns([_committee]);
         _personRepository.GetAll().Returns([_person]);
         _membershipRepository.GetAllActiveForOgdExport().Returns([_membership]);
-        _interestRepository.GetAll().Returns([_interest]);
+        _interestRepository.GetAllForOgdExport().Returns([_interest]);
 
         await _ogdExportService.Export(CancellationToken.None);
 

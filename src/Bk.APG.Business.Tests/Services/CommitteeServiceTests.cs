@@ -173,7 +173,7 @@ internal class CommitteeServiceTests
 
         _committeeRepository.GetByIdForUpdate(_committee.Id, _committee.RowVersion).Returns(_committee);
         _committeeRepository.GetAllForGeneralElection(_zeroGuid, _zeroGuid, _zeroGuid).Returns(new List<Committee>().Append(_committee));
-        _committeeRepository.GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid).Returns(new List<Committee>().Append(_committee));
+        _committeeRepository.GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid, Arg.Any<CommitteeExportFilterParametersDto>()).Returns(new List<Committee>().Append(_committee));
 
         _committeeService = new CommitteeService(
             _committeeRepository,
@@ -239,9 +239,18 @@ internal class CommitteeServiceTests
     [Test]
     public async Task GetCommitteeListForExport_ShouldReturnData()
     {
-        var committees = await _committeeService.GetCommitteeListForExport();
+        var filterDto = new RequestAndReportsFilterParametersDto
+        {
+            DepartmentIds = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            }
+        };
 
-        await _committeeRepository.Received(1).GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid);
+        var committees = await _committeeService.GetCommitteeListForExport(filterDto);
+
+        await _committeeRepository.Received(1).GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid, Arg.Any<CommitteeExportFilterParametersDto>());
 
         Assert.That(committees, Is.Not.Null);
         Assert.That(committees.Count, Is.EqualTo(1));
