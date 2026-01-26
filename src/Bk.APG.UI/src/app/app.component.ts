@@ -70,12 +70,6 @@ export class AppComponent implements OnInit {
                         label: 'navigation.exports.formLetters',
                         isExternal: false,
                     },
-                    {
-                        id: 'recipients',
-                        url: 'recipients',
-                        label: 'navigation.exports.recipients',
-                        isExternal: false,
-                    },
                 ],
             },
         ];
