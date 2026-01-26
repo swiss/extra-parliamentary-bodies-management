@@ -4,6 +4,7 @@ using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.Dimension.Model;
+using Swiss.FCh.Cube.RawData.Model;
 
 namespace Bk.APG.Business.Mapper;
 
@@ -269,10 +270,11 @@ public static class PersonMapper
         var dimensionItem =
             new DimensionItem(
                 person.OgdId,
-                new Literal($"{person.Surname} {person.GivenName}", OgdExportConstants.LanguageDe),
+                new Literal($"{person.Surname} {person.GivenName} {person.BirthYear}", OgdExportConstants.LanguageDe),
                 [
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaGivenName, new Literal(person.GivenName)),
-                    new AdditionalLiteralProperty(OgdExportConstants.SchemaFamilyName, new Literal(person.Surname))
+                    new AdditionalLiteralProperty(OgdExportConstants.SchemaFamilyName, new Literal(person.Surname)),
+                    new AdditionalLiteralProperty(OgdExportConstants.SchemaBirthDate, new Literal(person.BirthYear.ToString()))
                 ]);
 
         if (!string.IsNullOrWhiteSpace(person.Title))
@@ -300,5 +302,31 @@ public static class PersonMapper
             }
         }
         return dimensionItem;
+    }
+
+    public static ObservationDataRow ToObservation(Person person)
+    {
+        var dataRow = new ObservationDataRow
+        {
+            KeyUri = $"{OgdExportConstants.NamespacePerson}:{person.OgdId}"
+        };
+
+        dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
+        {
+            Predicate = $"{OgdExportConstants.NamespacePerson}:hasPerson", Uri = $"{OgdExportConstants.NamespacePerson}:{person.OgdId}", ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Person",
+                NameFr = "Personne",
+                NameIt = "Persone",
+                NameEn = "Person",
+                Type = OgdExportConstants.CubeKeyDimension,
+                NodeKind = OgdExportConstants.ShaclNodeKindIri,
+                ScaleType = OgdExportConstants.QudtNominalScale,
+                MinCount = 1,
+                MaxCount = 1
+            }
+        });
+
+        return dataRow;
     }
 }
