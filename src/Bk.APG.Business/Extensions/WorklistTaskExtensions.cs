@@ -11,6 +11,18 @@ public static class WorklistTaskExtensions
             && worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch;
     }
 
+    public static string GetTaskTypeText(this WorklistTask worklistTask)
+    {
+        var text = worklistTask.WorklistTaskType!.GetText();
+
+        if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData || worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests)
+        {
+            text += $" ({worklistTask.Person!.GivenName} {worklistTask.Person!.Surname})";
+        }
+
+        return text;
+    }
+
     public static string? GetNavigationUrl(this WorklistTask worklistTask)
     {
         string? navigationUrl = null;
