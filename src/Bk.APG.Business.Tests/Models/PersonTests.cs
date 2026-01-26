@@ -243,13 +243,13 @@ internal class PersonTests
         Assert.That(person.NeedsAttentionBasicData, Is.False);
     }
 
-    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "A", "", true)]
-    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "A", "", true)]
-    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "", "B", true)]
-    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "", "", true)]
-    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "A", "B", false)]
-    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "A", "", false)]
-    public void NeedsAttentionOccupation_WithOrWithoutOccupation_ShouldReturnExpected(string committeeTypeId, string occupation, string employer, bool expected)
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, true, false, true)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, true, false, true)]
+    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, false, false, true)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, false, false, true)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, true, true, false)]
+    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", true, false, false)]
+    public void NeedsAttentionOccupation_WithOrWithoutOccupation_ShouldReturnExpected(string committeeTypeId, bool hasOccupation, bool hasEmployer, bool expected)
     {
         var person = new PersonBuilder()
             .WithFederalDuty(false)
@@ -261,8 +261,8 @@ internal class PersonTests
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])
-            .WithOccupation(occupation)
-            .WithEmployer(employer)
+            .WithOccupations(hasOccupation ? [new OccupationBuilder().Build()] : [])
+            .WithEmployer(hasEmployer ? "EmployerName" : string.Empty)
             .Build();
 
         Assert.That(person.NeedsAttentionOccupation, Is.EqualTo(expected));
