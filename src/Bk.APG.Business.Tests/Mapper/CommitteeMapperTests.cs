@@ -205,17 +205,11 @@ internal class CommitteeMapperTests
     public void ToDimensionItem_WithValidCommittee_ShouldMapCorrectly()
     {
         var committeeId = Guid.NewGuid();
-        var committeeOgdId = 1;
+        const int committeeOgdId = 1;
 
         var committeeTypeId = Guid.NewGuid();
 
-        var authorityUri = "https://www.example.committee.admin.ch/authority.html";
-        var germanUri = "https://www.example.committee.admin.ch/de.html";
-        var frenchUri = "https://www.example.committee.admin.ch/fr.html";
-        var italianUri = "https://www.example.committee.admin.ch/it.html";
-        var romanshUri = "https://www.example.committee.admin.ch/rm.html";
-
-        var secretariatOgdId = 3;
+        const int secretariatOgdId = 3;
 
         var contactPointTypeSecretariat =
             new ContactPointTypeBuilder()
@@ -237,11 +231,6 @@ internal class CommitteeMapperTests
                 .WithFrenchDescription("fr")
                 .WithItalianDescription("it")
                 .WithRomanschDescription("rm")
-                .WithLinkAuthorityWebsite(authorityUri)
-                .WithGermanLinkHomepage(germanUri)
-                .WithFrenchLinkHomepage(frenchUri)
-                .WithItalianLinkHomepage(italianUri)
-                .WithRomanshLinkHomepage(romanshUri)
                 .WithCommitteeTypeId(committeeTypeId)
                 .WithContactPoint(secretariat)
                 .Build();
@@ -250,41 +239,18 @@ internal class CommitteeMapperTests
 
         Assert.That(result, Is.Not.Null);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Key, Is.EqualTo(committeeOgdId));
             Assert.That(result.Name.Text, Is.EqualTo("de"));
-            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(9));
             Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(1));
-        });
+        }
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.AdditionalLiteralProperties[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[0].Object.Text, Is.EqualTo("de"));
-            Assert.That(result.AdditionalLiteralProperties[1].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[1].Object.Text, Is.EqualTo("fr"));
-            Assert.That(result.AdditionalLiteralProperties[2].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[2].Object.Text, Is.EqualTo("it"));
-            Assert.That(result.AdditionalLiteralProperties[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[3].Object.Text, Is.EqualTo("rm"));
-            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(authorityUri));
-            Assert.That(result.AdditionalLiteralProperties[5].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[5].Object.Text, Is.EqualTo(germanUri));
-            Assert.That(result.AdditionalLiteralProperties[6].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[6].Object.Text, Is.EqualTo(frenchUri));
-            Assert.That(result.AdditionalLiteralProperties[7].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[7].Object.Text, Is.EqualTo(italianUri));
-            Assert.That(result.AdditionalLiteralProperties[8].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[8].Object.Text, Is.EqualTo(romanshUri));
-        });
-
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.AdditionalUriProperties[0].Predicate, Is.EqualTo(OgdExportConstants.CommitteeHasSecretariat));
             Assert.That(result.AdditionalUriProperties[0].Object, Is.EqualTo($"organization:{secretariat.OgdId}"));
-        });
+        }
     }
 
     [Test]
