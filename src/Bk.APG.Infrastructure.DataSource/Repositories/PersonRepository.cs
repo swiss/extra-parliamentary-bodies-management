@@ -146,17 +146,6 @@ public class PersonRepository : IPersonRepository
         _dataContext.Persons.Add(person);
     }
 
-    public async Task<IEnumerable<Person>> GetAllForDuplicateCheck()
-    {
-        return await _dataContext.Persons
-            .AsNoTracking()
-            .Include(p => p.Language)
-            .Include(p => p.Gender)
-            .Include(p => p.CorrespondenceAddress)
-            .Include(p => p.CorrespondenceLanguage)
-            .ToListAsync();
-    }
-
     public async Task<IEnumerable<Person>> GetPersonsByBirthYear(int birthYear, int range = 0)
     {
         var persons = await GetPersons()
@@ -182,6 +171,19 @@ public class PersonRepository : IPersonRepository
             .ToArrayAsync();
 
         return persons;
+    }
+
+    public async Task<IEnumerable<Person>> GetForOgdExport()
+    {
+        return await _dataContext.Persons
+            .Include(p => p.Memberships)
+            .Include(p => p.Occupations)
+            .Include(p => p.Office)
+                .ThenInclude(o => o!.Department)
+            .Where(p => p.Memberships.Any(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && m.EndDate > DateOnly.FromDateTime(DateTime.Today)))
+            .AsNoTracking()
+            .AsSingleQuery()
+            .ToListAsync();
     }
 
     private IQueryable<Person> GetPersons()
