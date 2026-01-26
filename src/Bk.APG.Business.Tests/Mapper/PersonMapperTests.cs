@@ -367,8 +367,8 @@ internal class PersonMapperTests
         Assert.Multiple(() =>
         {
             Assert.That(result.Key, Is.EqualTo(personOgdId));
-            Assert.That(result.Name.Text, Is.EqualTo("surname givenname"));
-            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(4));
+            Assert.That(result.Name.Text, Is.EqualTo($"surname givenname {person.BirthYear}"));
+            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(5));
             Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(2));
         });
 
@@ -386,11 +386,14 @@ internal class PersonMapperTests
             Assert.That(result.AdditionalLiteralProperties[1].Predicate, Is.EqualTo(OgdExportConstants.SchemaFamilyName));
             Assert.That(result.AdditionalLiteralProperties[1].Object.Text, Is.EqualTo("surname"));
 
-            Assert.That(result.AdditionalLiteralProperties[2].Predicate, Is.EqualTo(OgdExportConstants.SchemaHonorificPrefix));
-            Assert.That(result.AdditionalLiteralProperties[2].Object.Text, Is.EqualTo("Dr."));
+            Assert.That(result.AdditionalLiteralProperties[2].Predicate, Is.EqualTo(OgdExportConstants.SchemaBirthDate));
+            Assert.That(result.AdditionalLiteralProperties[2].Object.Text, Is.EqualTo(person.BirthYear.ToString()));
 
-            Assert.That(result.AdditionalLiteralProperties[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaWorksFor));
-            Assert.That(result.AdditionalLiteralProperties[3].Object.Text, Is.EqualTo("employer"));
+            Assert.That(result.AdditionalLiteralProperties[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaHonorificPrefix));
+            Assert.That(result.AdditionalLiteralProperties[3].Object.Text, Is.EqualTo("Dr."));
+
+            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaWorksFor));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo("employer"));
         });
     }
 }

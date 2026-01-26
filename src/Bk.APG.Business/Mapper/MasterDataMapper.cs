@@ -86,33 +86,48 @@ public static class MasterDataMapper
 
     public static DimensionItem ToDimensionItem(MasterDataBase masterDataItem)
     {
-        var descriptions = new List<AdditionalLiteralProperty>();
+        var textAndDescriptions = new List<AdditionalLiteralProperty>();
 
         if (!string.IsNullOrWhiteSpace(masterDataItem.DescriptionDe))
         {
-            descriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionDe, OgdExportConstants.LanguageDe)));
+            textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionDe, OgdExportConstants.LanguageDe)));
         }
 
         if (!string.IsNullOrWhiteSpace(masterDataItem.DescriptionFr))
         {
-            descriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionFr, OgdExportConstants.LanguageFr)));
+            textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionFr, OgdExportConstants.LanguageFr)));
         }
 
         if (!string.IsNullOrWhiteSpace(masterDataItem.DescriptionIt))
         {
-            descriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionIt, OgdExportConstants.LanguageIt)));
+            textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionIt, OgdExportConstants.LanguageIt)));
         }
 
         if (!string.IsNullOrWhiteSpace(masterDataItem.DescriptionRm))
         {
-            descriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionRm, OgdExportConstants.LanguageRm)));
+            textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaDescription, new Literal(masterDataItem.DescriptionRm, OgdExportConstants.LanguageRm)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(masterDataItem.TextFr))
+        {
+            textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(masterDataItem.TextFr, OgdExportConstants.LanguageFr)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(masterDataItem.TextIt))
+        {
+            textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(masterDataItem.TextIt, OgdExportConstants.LanguageIt)));
+        }
+
+        if (!string.IsNullOrWhiteSpace(masterDataItem.TextRm))
+        {
+            textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(masterDataItem.TextRm, OgdExportConstants.LanguageRm)));
         }
 
         var dimensionItem =
             new DimensionItem(
                 masterDataItem.OgdId,
                 new Literal(masterDataItem.TextDe, OgdExportConstants.LanguageDe),
-                descriptions);
+                textAndDescriptions);
 
         return dimensionItem;
     }

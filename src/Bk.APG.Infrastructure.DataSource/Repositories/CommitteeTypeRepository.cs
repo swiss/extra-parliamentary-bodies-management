@@ -14,11 +14,6 @@ public class CommitteeTypeRepository : ICommitteeTypeRepository
         _dataContext = context;
     }
 
-    public IEnumerable<CommitteeType> GetAll()
-    {
-        return _dataContext.CommitteeTypes.AsEnumerable();
-    }
-
     public async Task<IEnumerable<CommitteeType>> GetList()
     {
         return await _dataContext.CommitteeTypes.Where(ct => !ct.IsDeleted).OrderBy(ct => ct.Sort).ToListAsync();
