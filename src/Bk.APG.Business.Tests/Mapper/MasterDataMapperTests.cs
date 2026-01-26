@@ -140,16 +140,16 @@ internal class MasterDataMapperTests
 
         Assert.That(result, Is.Not.Null);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Key, Is.EqualTo(committeeTypeOgdId));
             Assert.That(result.Name.Text, Is.EqualTo("de"));
             Assert.That(result.Name.LanguageTag, Is.EqualTo("de"));
-            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(4));
+            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(7));
             Assert.That(result.AdditionalUriProperties, Is.Empty);
-        });
+        }
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.AdditionalLiteralProperties[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
             Assert.That(result.AdditionalLiteralProperties[0].Object.Text, Is.EqualTo("desc de"));
@@ -166,7 +166,19 @@ internal class MasterDataMapperTests
             Assert.That(result.AdditionalLiteralProperties[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
             Assert.That(result.AdditionalLiteralProperties[3].Object.Text, Is.EqualTo("desc rm"));
             Assert.That(result.AdditionalLiteralProperties[3].Object.LanguageTag, Is.EqualTo("rm"));
-        });
+
+            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(committeeType.TextFr));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.LanguageTag, Is.EqualTo("fr"));
+
+            Assert.That(result.AdditionalLiteralProperties[5].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
+            Assert.That(result.AdditionalLiteralProperties[5].Object.Text, Is.EqualTo(committeeType.TextIt));
+            Assert.That(result.AdditionalLiteralProperties[5].Object.LanguageTag, Is.EqualTo("it"));
+
+            Assert.That(result.AdditionalLiteralProperties[6].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
+            Assert.That(result.AdditionalLiteralProperties[6].Object.Text, Is.EqualTo(committeeType.TextRm));
+            Assert.That(result.AdditionalLiteralProperties[6].Object.LanguageTag, Is.EqualTo("rm"));
+        }
     }
 
     [Test]
