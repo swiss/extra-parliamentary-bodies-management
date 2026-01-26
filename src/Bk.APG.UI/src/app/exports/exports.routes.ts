@@ -22,14 +22,6 @@ export const exportsRoutes: Routes = [
         },
     },
     {
-        path: 'formLetters',
-        loadComponent: () => import('./form-letters/form-letters.component').then(m => m.FormLettersComponent),
-        canActivate: [AuthGuard, RoleGuard],
-        data: {
-            allowedRoles: [Role.Allow],
-        },
-    },
-    {
         path: '**',
         redirectTo: 'unknown-route',
     },

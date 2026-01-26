@@ -813,7 +813,7 @@
   "generalElection.candidateList.export.message": "Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
   "generalElection.candidateList.export.success": "Das Dokument wurde erfolgreich erzeugt.",
   "generalElection.candidateList.export.error": "Beim Herunterladen der Datei ist ein Fehler aufgetreten.",
-  "navigation.exports.recipients": "Empfänger/innen",
+  "formLetter.recipients": "Empfänger/innen",
   "recipients.title": "Gremien & Mitglieder wählen",
   "recipients.filter.department.label": "Departement",
   "recipients.filter.office.label": "Verwaltungsstelle",
