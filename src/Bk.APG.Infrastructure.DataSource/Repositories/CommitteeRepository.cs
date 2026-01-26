@@ -1,3 +1,4 @@
+using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
@@ -123,15 +124,16 @@ public class CommitteeRepository : ICommitteeRepository
         };
     }
 
-    public async Task<IEnumerable<Committee>> GetAllForExport(Guid departmentId, Guid officeId, Guid committeeId)
+    public async Task<IEnumerable<Committee>> GetAllForExport(Guid departmentId, Guid officeId, Guid committeeId, CommitteeExportFilterParametersDto? filter)
     {
         var committees = await _dataContext.Committees
+            .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
             .Include(item => item.CommitteeType)
             .Include(item => item.TermOfOffice)
-            .FilterCommitteeByPermission(departmentId, officeId, committeeId)
+            .FilterCommitteeByPermission(departmentId, officeId, committeeId, filter)
             .AsSingleQuery()
             .ToListAsync();
 
