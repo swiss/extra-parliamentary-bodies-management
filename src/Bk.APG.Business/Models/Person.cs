@@ -88,7 +88,7 @@ public class Person : EntityBase
             y.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
             y.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
             y.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid) &&
-        (string.IsNullOrWhiteSpace(Employer) || string.IsNullOrWhiteSpace(Occupation)));
+        (string.IsNullOrWhiteSpace(Employer) || Occupations.Count == 0));
 
     [NotMapped]
     public bool NeedsAttentionBasicData => !IsValidPhoneNumber(OfficeAddress?.Phone) || !IsValidPhoneNumber(PrivateAddress?.Phone) ||
