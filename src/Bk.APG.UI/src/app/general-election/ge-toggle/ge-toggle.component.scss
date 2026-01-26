@@ -1,4 +1,5 @@
 @use '@oblique/oblique/styles/scss/core/palette' as *;
+@use '@oblique/oblique/styles/scss/core/variables' as *;
 
 :host {
     mat-button-toggle-group {
@@ -29,4 +30,8 @@
             }
         }
     }
+}
+
+.gew-toggle {
+    margin-right: $ob-spacing-default;
 }

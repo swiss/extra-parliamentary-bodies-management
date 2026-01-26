@@ -1,1 +1,12 @@
-<h3>{{ 'navigation.exports.formLetters' | translate }}</h3>
+<mat-tab-group mat-stretch-tabs>
+    <mat-tab label="{{ 'committee.details.overview' | translate }}">
+        <ng-template mat-tab-label />
+    </mat-tab>
+
+    <mat-tab label="{{ 'formLetter.recipients' | translate }}">
+        <ng-template mat-tab-label>
+            {{ 'formLetter.recipients' | translate }}
+        </ng-template>
+        <apg-recipients />
+    </mat-tab>
+</mat-tab-group>

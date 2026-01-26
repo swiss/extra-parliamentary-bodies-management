@@ -73,6 +73,13 @@ public class GeneralElectionCommitteeController : ControllerBase
         return Ok(result);
     }
 
+    [HttpGet("recipient")]
+    public async Task<IActionResult> GetGeneralElectionCommitteesForRecipientExport([FromQuery] GeneralElectionCommitteeExportFilterParametersDto? filterParameters)
+    {
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommitteeListForRecipientExport(filterParameters);
+        return Ok(result);
+    }
+
     [HttpGet]
     [Route("{committeeId:guid}")]
     public async Task<IActionResult> GetGeneralElectionCommittee(Guid committeeId)
