@@ -60,9 +60,12 @@ describe('RecipientsComponent', () => {
             {id: 'off1', text: 'Office 1', description: 'Office 1'},
             {id: 'off2', text: 'Office 2', description: 'Office 2'},
         ] as Office[]),
+        electionTypes: signal([
+            {id: 'id1', text: 'type1', description: 'desc1', isDeleted: false},
+            {id: 'id2', text: 'type2', description: 'desc2', isDeleted: true},
+        ]),
         committeeTypes: jest.fn(),
         languages: jest.fn(),
-        electionTypes: jest.fn(),
     } as unknown as Partial<MasterDataService>;
 
     const languageChangeEmitter = new EventEmitter<LangChangeEvent>();
