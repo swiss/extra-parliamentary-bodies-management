@@ -170,6 +170,67 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         return committees;
     }
 
+    public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForExport(GeneralElectionCommitteeExportFilterParameters filterDto)
+    {
+        var committees = await _dataContext.GeneralElectionCommittees
+            .Include(item => item.CommitteeLevel)
+            .Include(item => item.Department)
+            .Include(item => item.Office)
+            .Include(item => item.CommitteeType)
+            .Include(item => item.TermOfOffice)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Gender)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Language)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item!.Function)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item!.ElectionType)
+            .FilterGeneralElectionCommitteesForExport(filterDto)
+        .AsSplitQuery()
+            .Select(c => new GeneralElectionCommittee
+            {
+                Id = c.Id,
+                Modified = c.Modified,
+                ModifiedBy = c.ModifiedBy,
+                Created = c.Created,
+                CreatedBy = c.CreatedBy,
+                BeginDate = c.BeginDate,
+                EndDate = c.EndDate,
+                TermOfOfficeDateId = c.TermOfOfficeDateId,
+                CommitteeId = c.CommitteeId,
+                DepartmentId = c.DepartmentId,
+                Department = c.Department,
+                CommitteeTypeId = c.CommitteeTypeId,
+                CommitteeType = c.CommitteeType,
+                OfficeId = c.OfficeId,
+                Office = c.Office,
+                IsDeleted = c.IsDeleted,
+                DescriptionGerman = c.DescriptionGerman,
+                DescriptionFrench = c.DescriptionFrench,
+                DescriptionItalian = c.DescriptionItalian,
+                DescriptionRomansh = c.DescriptionRomansh,
+                JustificationMembers = c.JustificationMembers,
+                JustificationGenders = c.JustificationGenders,
+                JustificationLanguages = c.JustificationLanguages,
+                MeasuresGenders = c.MeasuresGenders,
+                MeasuresLanguages = c.MeasuresLanguages,
+                RemarksBaseData = c.RemarksBaseData,
+                RemarksBaseDataAdmin = c.RemarksBaseDataAdmin,
+                IsValidated = c.IsValidated,
+                VacanciesGeneralElection = c.VacanciesGeneralElection,
+                SelectionProcedure = c.SelectionProcedure,
+                CandidateListStateId = c.CandidateListStateId,
+                AssignedToRole = c.AssignedToRole,
+                MembershipCandidates = c.MembershipCandidates.ToList()
+            })
+            .ToListAsync();
+
+        return committees;
+    }
+
     public async Task<GeneralElectionCommittee> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null)
     {
         var generalElectionCommittee = await GetGeneralElectionCommittees().FirstOrDefaultAsync(x => x.Id == id);

@@ -184,4 +184,37 @@ internal class GeneralElectionCommitteeMapperTests
             Assert.That(justificationUpdateDto.RowVersion, Is.EqualTo(generalElectionCommittee.RowVersion));
         });
     }
+
+    [Test]
+    public void ToGeneralElectionCommitteeExportFilterParameters_ShouldMapCorrectly()
+    {
+        var filterParameters = new GeneralElectionCommitteeExportFilterParametersDto
+        {
+            CommitteeTypeIds = new[]
+            {
+                Guid.Parse("3f8b1a62-1e4b-4c7a-9a5e-1a9e6b0a8c01"),
+                Guid.Parse("a7d2c4e9-9b6f-4d3c-8e91-0b6f2a5c7d12")
+            },
+            CorrespondenceLanguageIds = new[]
+            {
+                Guid.Parse("b1f3d9a4-5c8e-4a1f-9d6b-2e7c8a4f1b03"),
+                Guid.Parse("6e2a9f1c-7b3d-4e8a-91c5-5a2d8b9e4f10")
+            },
+            DepartmentIds = new[] { Guid.Parse("9c5e2f7a-1b4d-4c8e-a3f9-8d6b2a1e5c07") },
+            ElectionTypeIds = new[] { Guid.Parse("1d9f6b8a-4c2e-5a7b-8e3d-2f1c9a6b4d11") },
+            OfficeIds = new[] { Guid.Parse("f4a8c9e2-6b1d-4a7c-9f3e-7d5b2c1a8e06") },
+        };
+
+        var mappedDto = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeExportFilterParameters(filterParameters);
+
+        Assert.That(mappedDto, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(mappedDto.CommitteeTypeIds, Is.EqualTo(filterParameters.CommitteeTypeIds));
+            Assert.That(mappedDto.CorrespondenceLanguageIds, Is.EqualTo(filterParameters.CorrespondenceLanguageIds));
+            Assert.That(mappedDto.DepartmentIds, Is.EqualTo(filterParameters.DepartmentIds));
+            Assert.That(mappedDto.ElectionTypeIds, Is.EqualTo(filterParameters.ElectionTypeIds));
+            Assert.That(mappedDto.OfficeIds, Is.EqualTo(filterParameters.OfficeIds));
+        });
+    }
 }

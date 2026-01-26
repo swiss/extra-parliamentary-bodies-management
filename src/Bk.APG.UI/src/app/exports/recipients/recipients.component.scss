@@ -1,0 +1,51 @@
+@use '@oblique/oblique/styles/scss/core/variables' as *;
+
+$gap: 16px;
+
+:host {
+    padding-bottom: 4px;
+
+    form {
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        column-gap: $gap;
+        margin: auto;
+        &.ge-mode {
+            max-width: 50%;
+            .input-grid {
+                display: flex;
+                flex-wrap: wrap;
+                column-gap: $gap;
+
+                > * {
+                    flex: 1 1 calc(50% - $gap);
+                    max-width: calc(50%);
+                }
+            }
+        }
+
+        &.online-mode {
+            max-width: 25%;
+            .input-grid {
+                display: flex;
+                flex-wrap: wrap;
+                column-gap: $gap;
+
+                > * {
+                    flex: 1 1 100%;
+                    max-width: 100%;
+                }
+            }
+        }
+    }
+    .buttons {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding-bottom: $gap;
+        button + button {
+            margin-left: $ob-spacing-sm;
+        }
+    }
+}

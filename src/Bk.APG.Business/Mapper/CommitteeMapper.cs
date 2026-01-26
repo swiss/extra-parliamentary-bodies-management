@@ -208,6 +208,16 @@ public static class CommitteeMapper
         };
     }
 
+    public static CommitteeExportFilterParametersDto ToCommitteeExportFilterParametersDto(RequestAndReportsFilterParametersDto? filterDto)
+    {
+        return new CommitteeExportFilterParametersDto
+        {
+            DepartmentIds = filterDto?.DepartmentIds,
+            OfficeIds = filterDto?.OfficeIds,
+            CommitteeTypeIds = filterDto?.CommitteeTypeIds,
+        };
+    }
+
     public static DimensionItem ToDimensionItem(Committee committee)
     {
         var dimensionItem =

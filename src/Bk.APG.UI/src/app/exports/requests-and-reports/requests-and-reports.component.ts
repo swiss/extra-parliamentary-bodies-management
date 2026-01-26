@@ -12,6 +12,7 @@ import {ActivatedRoute} from '@angular/router';
 import {CommitteeFilterParameters} from '@api/CommitteeFilterParameters';
 import {CommitteeList} from '@api/CommitteeList';
 import {RequestsAndReportsFilterForm} from '@api/RequestsAndReportsFilterForm';
+import {RequestsAndReportsFilterParameters} from '@api/RequestsAndReportsFilterParameters';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService, WINDOW} from '@oblique/oblique';
 import {today} from '@shared/date-util';
@@ -70,7 +71,7 @@ export class RequestsAndReportsComponent {
 
     readonly reload$ = new Subject<void>();
 
-    filterValue: CommitteeFilterParameters = {isActive: [true]};
+    filterValue: RequestsAndReportsFilterParameters = {};
     isGeneralElection = false;
     analysisDateDefaultValue = today();
 
@@ -121,7 +122,7 @@ export class RequestsAndReportsComponent {
                 ),
             ])
                 .pipe(
-                    switchMap(() => this.committeesService.getCommitteeListForExport()),
+                    switchMap(() => this.committeesService.getCommitteeListForExport(this.filterValue)),
                     takeUntilDestroyed()
                 )
                 .subscribe(result => {
@@ -190,8 +191,8 @@ export class RequestsAndReportsComponent {
         });
     }
 
-    onFilter(searchQuery: CommitteeFilterParameters) {
-        this.filterValue = {...searchQuery, isActive: [true]} as CommitteeFilterParameters;
+    onFilter(searchQuery: RequestsAndReportsFilterParameters) {
+        this.filterValue = {...searchQuery} as RequestsAndReportsFilterParameters;
         this.reload$.next();
     }
 
