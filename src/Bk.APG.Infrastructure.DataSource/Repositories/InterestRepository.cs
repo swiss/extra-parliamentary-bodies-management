@@ -65,6 +65,8 @@ public class InterestRepository : IInterestRepository
                 InterestFunction = c.InterestFunction,
                 LegalForm = c.LegalForm,
                 LegalFormId = c.LegalFormId,
+                Person = c.Person,
+                PersonId = c.PersonId,
                 Created = c.Created,
                 CreatedBy = c.CreatedBy,
                 Modified = c.Modified,
