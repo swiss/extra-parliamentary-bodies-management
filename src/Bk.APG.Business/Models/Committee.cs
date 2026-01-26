@@ -234,15 +234,15 @@ public class Committee : EntityBase
 
     [NotMapped]
     public bool NeedsAttention => IsActive &&
-                                  (NeedsAttentionLongerDuty ||
-                                   NeedsAttentionShorterDuty ||
-                                   NeedsAttentionFederalDuty ||
-                                   NeedsAttentionFederalAssembly ||
-                                   NeedsAttentionNoMembers ||
-                                   NeedsAttentionAboveMaxMembers ||
-                                   NeedsAttentionMembershipExpired ||
-                                   NeedsAttentionMembershipInterestOrOccupation /*||
-                                   NeedsAttentionDataProtectionOfficer*/); // TODO REACTIVATE
+        (NeedsAttentionLongerDuty ||
+            NeedsAttentionShorterDuty ||
+            NeedsAttentionFederalDuty ||
+            NeedsAttentionFederalAssembly ||
+            NeedsAttentionNoMembers ||
+            NeedsAttentionAboveMaxMembers ||
+            NeedsAttentionMembershipExpired ||
+            NeedsAttentionMembershipInterestOrOccupation ||
+            NeedsAttentionDataProtectionOfficer);
 
     [NotMapped]
     public bool NeedsAttentionLongerDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionLongerDuty: true });
@@ -258,11 +258,11 @@ public class Committee : EntityBase
 
     [NotMapped]
     public bool NeedsAttentionBasicData => string.IsNullOrWhiteSpace(DescriptionGerman) || string.IsNullOrWhiteSpace(DescriptionFrench) || string.IsNullOrWhiteSpace(DescriptionItalian) || string.IsNullOrWhiteSpace(DescriptionRomansh) ||
-                                           (FederalLawEstablishment == true && string.IsNullOrWhiteSpace(LegalBase)) ||
-                                           (CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && (!MinimalMembers.HasValue || !MaximalMembers.HasValue)) ||
-                                           ((CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) && (!FederalLawEstablishment.HasValue || !SupervisionDuty.HasValue || !MarketOrientated.HasValue)) ||
-                                           ((CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid || CommitteeTypeId == CommitteeType.ManagementCommitteeGuid) && !FederalInstitution.HasValue) ||
-                                           (CommitteeTypeId == CommitteeType.ManagementCommitteeGuid && !LegalFormId.HasValue);
+        (FederalLawEstablishment == true && string.IsNullOrWhiteSpace(LegalBase)) ||
+        (CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && (!MinimalMembers.HasValue || !MaximalMembers.HasValue)) ||
+        ((CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) && (!FederalLawEstablishment.HasValue || !SupervisionDuty.HasValue || !MarketOrientated.HasValue)) ||
+        ((CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid || CommitteeTypeId == CommitteeType.ManagementCommitteeGuid) && !FederalInstitution.HasValue) ||
+        (CommitteeTypeId == CommitteeType.ManagementCommitteeGuid && !LegalFormId.HasValue);
 
     [NotMapped]
     public bool NeedsAttentionNoMembers => !Memberships.Any(y => y.IsActive);
@@ -281,7 +281,10 @@ public class Committee : EntityBase
 
     [NotMapped]
     public bool NeedsAttentionDataProtectionOfficer => (CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) &&
-                                                       ContactPoints.FirstOrDefault(y => (y.EndDate is null || y.EndDate > DateOnly.FromDateTime(DateTime.Now)) && y.ContactPointTypeId == ContactPointType.DataProtectionOfficerGuid) is null;
+        ContactPoints.FirstOrDefault(y => (y.EndDate is null || y.EndDate > DateOnly.FromDateTime(DateTime.Now)) && y.ContactPointTypeId == ContactPointType.DataProtectionOfficerGuid) is null;
+
+    [NotMapped]
+    public bool NeedsAttentionSecretariat => ContactPoints.FirstOrDefault(x => x.ContactPointTypeId == ContactPointType.SecretariatGuid && (x.EndDate is null || x.EndDate > DateOnly.FromDateTime(DateTime.UtcNow))) is null;
 
     [NotMapped]
     public AppointmentDecision? LatestInstitutionAppointmentDecision =>
