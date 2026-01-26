@@ -231,29 +231,6 @@ public static class CommitteeMapper
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(committee.DescriptionRomansh, OgdExportConstants.LanguageRm))
                 ]);
 
-        var uri = new Uri("http://www.w3.org/2001/XMLSchema#anyURI");
-
-        if (!string.IsNullOrWhiteSpace(committee.LinkAuthorityWebsite))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkAuthorityWebsite, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageGerman))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageGerman, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageFrench))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageFrench, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageItalian))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageItalian, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageRomansh))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageRomansh, uri)));
-        }
-
         foreach (var contactPoint in committee.ContactPoints)
         {
             if (contactPoint.ContactPointTypeId == ContactPointType.SecretariatGuid)
