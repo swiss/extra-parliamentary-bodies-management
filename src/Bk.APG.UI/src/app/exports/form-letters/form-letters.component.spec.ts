@@ -10,7 +10,9 @@ describe('FormLettersComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [FormLettersComponent, MockPipe(TranslatePipe)],
-        }).compileComponents();
+        })
+            .overrideTemplate(FormLettersComponent, '')
+            .compileComponents();
 
         fixture = TestBed.createComponent(FormLettersComponent);
         component = fixture.componentInstance;
