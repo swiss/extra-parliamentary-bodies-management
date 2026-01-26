@@ -1230,11 +1230,29 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bitte Datenschutzberater/-in nachtragen..
+        /// </summary>
+        public static string GeneralElection_MissingDataProtectionOfficer_TaskDescription {
+            get {
+                return ResourceManager.GetString("GeneralElection_MissingDataProtectionOfficer_TaskDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bitte die fehlenden Begründungen für die GEW nachtragen..
         /// </summary>
         public static string GeneralElection_MissingJustifications_TaskDescription {
             get {
                 return ResourceManager.GetString("GeneralElection_MissingJustifications_TaskDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Bitte das fehlende Sekretariat nachtragen..
+        /// </summary>
+        public static string GeneralElection_MissingSecretariat_TaskDescription {
+            get {
+                return ResourceManager.GetString("GeneralElection_MissingSecretariat_TaskDescription", resourceCulture);
             }
         }
         
