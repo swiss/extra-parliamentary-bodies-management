@@ -334,6 +334,27 @@ internal class CommitteeTests
     }
 
     [Test]
+    public void NeedsAttentionSecretariat_WithSecretariat_ShouldReturnFalse()
+    {
+        var committee = new CommitteeBuilder()
+            .WithContactPoint(new ContactPointBuilder()
+                .WithContactPointType(new ContactPointTypeBuilder().WithId(ContactPointType.SecretariatGuid).Build())
+                .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)))
+                .Build())
+            .Build();
+
+        Assert.That(committee.NeedsAttentionSecretariat, Is.False);
+    }
+
+    [Test]
+    public void NeedsAttentionSecretariat_WithoutSecretariat_ShouldReturnTrue()
+    {
+        var committee = new CommitteeBuilder().Build();
+
+        Assert.That(committee.NeedsAttentionSecretariat, Is.True);
+    }
+
+    [Test]
     public void NeedsAttention_WithActiveCommittee_ShouldReturnTrue()
     {
         var membership = new MembershipBuilder()
