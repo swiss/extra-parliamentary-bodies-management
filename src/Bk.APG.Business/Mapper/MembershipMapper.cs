@@ -145,11 +145,8 @@ public static class MembershipMapper
                 new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasCommitteeType", Uri = $"committee-type:{membership.Committee.CommitteeType.OgdId}" });
         }
 
-        if (membership.ElectionOffice is not null)
-        {
-            dataRow.KeyDimensionLinks.Add(
-                new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:voteBody", Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(membership.ElectionOffice.Uri) });
-        }
+        dataRow.KeyDimensionLinks.Add(
+            new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasElectionOffice", Uri = OgdExportConstants.CreateUriLinkForRegisterLdAdminCh(membership.ElectionOffice!.Uri) });
 
         if (membership.Committee.Department is not null)
         {
