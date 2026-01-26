@@ -813,7 +813,7 @@
   "generalElection.candidateList.export.message": "IT_Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
   "generalElection.candidateList.export.success": "IT_Das Dokument wurde erfolgreich erzeugt.",
   "generalElection.candidateList.export.error": "IT_Beim Herunterladen der Datei ist ein Fehler aufgetreten.",
-  "navigation.exports.recipients": "IT_Empfänger/innen",
+  "formLetter.recipients": "IT_Empfänger/innen",
   "recipients.title": "IT_Gremien & Mitglieder wählen",
   "recipients.filter.department.label": "IT_Departement",
   "recipients.filter.office.label": "IT_Verwaltungsstelle",

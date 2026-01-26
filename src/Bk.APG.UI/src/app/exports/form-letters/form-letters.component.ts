@@ -1,9 +1,11 @@
 import {Component} from '@angular/core';
+import {MatTabGroup, MatTab} from '@angular/material/tabs';
 import {TranslatePipe} from '@ngx-translate/core';
+import {RecipientsComponent} from '../recipients/recipients.component';
 
 @Component({
     selector: 'apg-form-letters',
-    imports: [TranslatePipe],
+    imports: [TranslatePipe, MatTabGroup, MatTab, RecipientsComponent],
     templateUrl: './form-letters.component.html',
     styleUrl: './form-letters.component.scss',
 })

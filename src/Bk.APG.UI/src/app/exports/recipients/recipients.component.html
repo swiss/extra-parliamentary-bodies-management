@@ -48,7 +48,7 @@
         <mat-form-field>
             <mat-label>{{ 'recipients.filter.electionType.label' | translate }}</mat-label>
             <mat-select multiple [formControl]="form.controls.electionTypes">
-                @for (electionType of masterDataService.electionTypes(); track electionType.id) {
+                @for (electionType of reducedElectionTypes(); track electionType.id) {
                     <mat-option [value]="electionType.id">{{ electionType.text }}</mat-option>
                 }
             </mat-select>
