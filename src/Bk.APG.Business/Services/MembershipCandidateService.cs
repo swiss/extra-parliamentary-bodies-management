@@ -81,6 +81,8 @@ public class MembershipCandidateService : IMembershipCandidateService
                 await CheckCandidatePersonsAndCreateTasks(generalElectionCommittee);
             }
 
+            await CheckContactPointsAndCreateTasks(generalElectionCommittee);
+
             await _generalElectionCommitteeRepository.CommitChanges();
 
             _logger.LogInformation("Validated candidate list for general election committee {CommitteeId}", committeeId);
@@ -91,6 +93,95 @@ public class MembershipCandidateService : IMembershipCandidateService
         }
 
         return validationResult;
+    }
+
+    private async Task CheckContactPointsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee)
+    {
+        var worklistTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).ToList();
+        var missingSecretariatTask = worklistTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat);
+        var missingDataProtectionOfficerTask = worklistTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer);
+
+        if (generalElectionCommittee.Committee!.NeedsAttentionSecretariat)
+        {
+            if (missingSecretariatTask is null)
+            {
+                _logger.LogInformation("Creating missing secretariat task for committee {CommitteeId}", generalElectionCommittee.CommitteeId);
+
+                await _worklistTaskRepository.Create(new WorklistTask
+                {
+                    AssignedToId = generalElectionCommittee.Committee.EiamAssignmentId!.Value,
+                    AssignedById = EiamAssignment.ApgId,
+                    DueDate = generalElectionCommittee.SecretariatReadyForProposalDueDate!.Value.AddDays(-14),
+                    Description = BusinessTexts.GeneralElection_MissingSecretariat_TaskDescription,
+                    WorklistTaskTypeId = WorklistTaskType.GeneralElectionMissingSecretariat,
+                    WorklistTaskStateId = WorklistTaskState.Active,
+                    GeneralElectionCommitteeId = generalElectionCommittee.Id,
+                    DepartmentId = generalElectionCommittee.DepartmentId,
+                    OfficeId = generalElectionCommittee.OfficeId,
+                    CommitteeId = generalElectionCommittee.CommitteeId,
+                    Created = DateTime.UtcNow,
+                    CreatedBy = "System",
+                    Modified = DateTime.UtcNow,
+                    ModifiedBy = "System"
+                });
+            }
+            else if (missingSecretariatTask.WorklistTaskStateId != WorklistTaskState.Active)
+            {
+                missingSecretariatTask.WorklistTaskStateId = WorklistTaskState.Active;
+                missingSecretariatTask.Modified = DateTime.UtcNow;
+                missingSecretariatTask.ModifiedBy = "System";
+            }
+        }
+        else
+        {
+            if (missingSecretariatTask is not null && missingSecretariatTask.WorklistTaskStateId != WorklistTaskState.Completed)
+            {
+                missingSecretariatTask.WorklistTaskStateId = WorklistTaskState.Completed;
+                missingSecretariatTask.Modified = DateTime.UtcNow;
+                missingSecretariatTask.ModifiedBy = "System";
+            }
+        }
+
+        if (generalElectionCommittee.Committee.NeedsAttentionDataProtectionOfficer)
+        {
+            if (missingDataProtectionOfficerTask is null)
+            {
+                _logger.LogInformation("Creating missing data protection officer task for committee {CommitteeId}", generalElectionCommittee.CommitteeId);
+
+                await _worklistTaskRepository.Create(new WorklistTask
+                {
+                    AssignedToId = generalElectionCommittee.Committee.EiamAssignmentId!.Value,
+                    AssignedById = EiamAssignment.ApgId,
+                    DueDate = generalElectionCommittee.SecretariatReadyForProposalDueDate!.Value.AddDays(-14),
+                    Description = BusinessTexts.GeneralElection_MissingDataProtectionOfficer_TaskDescription,
+                    WorklistTaskTypeId = WorklistTaskType.GeneralElectionMissingDataProtectionOfficer,
+                    WorklistTaskStateId = WorklistTaskState.Active,
+                    GeneralElectionCommitteeId = generalElectionCommittee.Id,
+                    DepartmentId = generalElectionCommittee.DepartmentId,
+                    OfficeId = generalElectionCommittee.OfficeId,
+                    CommitteeId = generalElectionCommittee.CommitteeId,
+                    Created = DateTime.UtcNow,
+                    CreatedBy = "System",
+                    Modified = DateTime.UtcNow,
+                    ModifiedBy = "System"
+                });
+            }
+            else if (missingDataProtectionOfficerTask.WorklistTaskStateId != WorklistTaskState.Active)
+            {
+                missingDataProtectionOfficerTask.WorklistTaskStateId = WorklistTaskState.Active;
+                missingDataProtectionOfficerTask.Modified = DateTime.UtcNow;
+                missingDataProtectionOfficerTask.ModifiedBy = "System";
+            }
+        }
+        else
+        {
+            if (missingDataProtectionOfficerTask is not null && missingDataProtectionOfficerTask.WorklistTaskStateId != WorklistTaskState.Completed)
+            {
+                missingDataProtectionOfficerTask.WorklistTaskStateId = WorklistTaskState.Completed;
+                missingDataProtectionOfficerTask.Modified = DateTime.UtcNow;
+                missingDataProtectionOfficerTask.ModifiedBy = "System";
+            }
+        }
     }
 
     public static void ValidateCandidateCount(int candidateCount, GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
