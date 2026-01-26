@@ -16,5 +16,5 @@ public interface IPersonRepository
     Task<IEnumerable<Person>> GetPersonsByBirthYear(int birthYear, int range = 0);
     Task<IEnumerable<Person>> GetByName(string name);
     Task<Person[]> GetPersonsForExport(DateOnly startDate, Guid departmentId, Guid officeId, Guid committeeId);
-    Task<IEnumerable<Person>> GetAllForDuplicateCheck();
+    Task<IEnumerable<Person>> GetForOgdExport();
 }
