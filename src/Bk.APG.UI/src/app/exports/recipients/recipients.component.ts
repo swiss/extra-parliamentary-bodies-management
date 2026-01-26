@@ -68,6 +68,11 @@ export class RecipientsComponent {
     isGeneralElection = false;
     analysisDateDefaultValue = today();
 
+    // No "Todesfall" and "Permanent"
+    protected readonly reducedElectionTypes = computed(() =>
+        this.masterDataService.electionTypes().filter(m => m.id !== 'c0201343-ee84-441c-8993-85abcd69535c' && m.id !== 'c5d01ed1-4a61-41de-ba01-0c415c4b87a0')
+    );
+
     protected readonly isAdmin = toSignal(this.authService.isAdmin$, {initialValue: false});
     protected readonly isDepartment = toSignal(this.authService.isDepartmentUser$, {initialValue: false});
     protected readonly isSecretariat = toSignal(this.authService.isSecretariatUser$, {initialValue: false});
