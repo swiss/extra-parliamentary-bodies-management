@@ -14,8 +14,10 @@ internal class ContactPointServiceTests
 {
     private readonly IContactPointRepository _contactPointRepository = Substitute.For<IContactPointRepository>();
     private readonly ICommitteeRepository _committeeRepository = Substitute.For<ICommitteeRepository>();
+    private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
     private readonly IMasterDataService _masterDataService = Substitute.For<IMasterDataService>();
+    private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly ILogger<ContactPointService> _logger = NullLogger<ContactPointService>.Instance;
 
     private ContactPointService _service = null!;
@@ -33,7 +35,14 @@ internal class ContactPointServiceTests
     [SetUp]
     public void SetUp()
     {
-        _service = new ContactPointService(_contactPointRepository, _committeeRepository, _authorizationService, _masterDataService, _logger);
+        _service = new ContactPointService(
+            _contactPointRepository,
+            _committeeRepository,
+            _generalElectionCommitteeRepository,
+            _authorizationService,
+            _masterDataService,
+            _worklistTaskRepository,
+            _logger);
 
         _committee = new CommitteeBuilder()
             .WithId(_committeeId)
@@ -65,13 +74,16 @@ internal class ContactPointServiceTests
             .WithCommittee(_committee)
             .Build();
 
-        _contactPointList = new List<ContactPoint> { _contactPoint1, _contactPoint2 };
+        _contactPointList = [_contactPoint1, _contactPoint2];
 
         _contactPointRepository.GetContactPointsByCommitteeId(_committeeId).Returns(_contactPointList);
         _committeeRepository.GetById(Arg.Any<Guid>()).Returns(_committee);
         _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(true);
 
         _masterDataService.GetContactPointGuidFromContactPointUri(Arg.Any<string>()).Returns(_contactPointTypeId);
+        _generalElectionCommitteeRepository.GetByCommitteeId(Arg.Any<Guid>())
+            .Returns(_ => Task.FromException<GeneralElectionCommittee>(new EntityNotFoundException("Not found")));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(Arg.Any<Guid>()).Returns([]);
     }
 
     [TearDown]
@@ -80,6 +92,8 @@ internal class ContactPointServiceTests
         _contactPointRepository.ClearSubstitute();
         _authorizationService.ClearSubstitute();
         _masterDataService.ClearSubstitute();
+        _generalElectionCommitteeRepository.ClearSubstitute();
+        _worklistTaskRepository.ClearSubstitute();
     }
 
     [Test]
@@ -175,6 +189,127 @@ internal class ContactPointServiceTests
             Assert.That(_contactPointToUpdate.LanguageId, Is.EqualTo(updateDto.LanguageId));
             Assert.That(_contactPointToUpdate.GenderId, Is.EqualTo(updateDto.GenderId));
         });
+    }
+
+    [Test]
+    public async Task UpdateContactPoint_WhenContactPointsResolveTasks_ShouldCompleteTasks()
+    {
+        var generalElectionCommitteeId = Guid.NewGuid();
+        var updateDto = new ContactPointUpdateDto
+        {
+            Id = _contactPointToUpdate.Id,
+            CommitteeId = _committeeId,
+            ContactPointTypeId = _contactPointTypeId,
+            ContactPointTypeUri = "my.uri.admin.ch",
+            CompanyName = "Test Amt",
+            Section = "Sektion Nr. 1",
+            BeginDate = new DateOnly(2020, 1, 1),
+            EndDate = new DateOnly(2027, 12, 31),
+            Street = "Teststrasse 2",
+            PoBox = "Postfach",
+            Zip = "3000",
+            City = "Bern 12",
+            Phone = "+41 77 444 33 22",
+            Email = "test@testamt.ch",
+            Surname = "Muster",
+            GivenName = "Rita",
+            Title = "Datenschutzberaterin",
+            PersonalPhone = "+41 78 777 66 55",
+            PersonalMobile = "+41 78 999 88 77",
+            PersonalEmail = "r.muster@test.ch",
+            ReleasePersonData = false,
+            OldId = 123123,
+            GenderId = _genderId,
+            LanguageId = _languageId,
+            RowVersion = 666
+        };
+
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .WithContactPoint(new ContactPointBuilder()
+                .WithContactPointType(new ContactPointTypeBuilder().WithId(ContactPointType.SecretariatGuid).Build())
+                .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)))
+                .Build())
+            .WithContactPoint(new ContactPointBuilder()
+                .WithContactPointType(new ContactPointTypeBuilder().WithId(ContactPointType.DataProtectionOfficerGuid).Build())
+                .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)))
+                .Build())
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithId(generalElectionCommitteeId)
+            .WithCommittee(committee)
+            .Build();
+
+        var missingSecretariatTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingSecretariat)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        var missingDataProtectionOfficerTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingDataProtectionOfficer)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommitteeId)
+            .Returns([missingSecretariatTask, missingDataProtectionOfficerTask]);
+        _contactPointRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_contactPointToUpdate);
+
+        await _service.Update(_contactPointToUpdate.Id, updateDto);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(missingSecretariatTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+            Assert.That(missingDataProtectionOfficerTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+        }
+
+        await _worklistTaskRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task UpdateContactPoint_WhenContactPointsStillMissing_ShouldNotCompleteTasks()
+    {
+        var generalElectionCommitteeId = Guid.NewGuid();
+        var updateDto = new ContactPointUpdateDto
+        {
+            Id = _contactPointToUpdate.Id,
+            CommitteeId = _committeeId,
+            ContactPointTypeId = _contactPointTypeId,
+            ContactPointTypeUri = "my.uri.admin.ch",
+            CompanyName = "Test Amt Missing",
+            BeginDate = new DateOnly(2020, 1, 1),
+            EndDate = new DateOnly(2027, 12, 31),
+            Zip = "3000",
+            City = "Bern 12",
+            GenderId = _genderId,
+            LanguageId = _languageId,
+            RowVersion = 666
+        };
+
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithId(generalElectionCommitteeId)
+            .WithCommittee(committee)
+            .Build();
+
+        var missingSecretariatTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingSecretariat)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommitteeId)
+            .Returns([missingSecretariatTask]);
+        _contactPointRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_contactPointToUpdate);
+
+        await _service.Update(_contactPointToUpdate.Id, updateDto);
+
+        Assert.That(missingSecretariatTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
+        await _worklistTaskRepository.DidNotReceive().CommitChanges();
     }
 
     [Test]
@@ -393,10 +528,72 @@ internal class ContactPointServiceTests
         _authorizationService.Received(1).GetCurrentUserName();
         await _contactPointRepository.Received(1).Create(
             Arg.Is<ContactPoint>(p => p.CompanyName == "Test Amt"
-                                      && p.Surname == "Muster"
-                                      && p.GivenName == "Rita"));
+                && p.Surname == "Muster"
+                && p.GivenName == "Rita"));
 
         await _contactPointRepository.Received(1).GetById(Arg.Any<Guid>());
+    }
+
+    [Test]
+    public async Task CreateContactPoint_WhenContactPointsResolveTasks_ShouldCompleteTasks()
+    {
+        var generalElectionCommitteeId = Guid.NewGuid();
+        var createDto = new ContactPointCreateDto
+        {
+            CommitteeId = _committeeId,
+            ContactPointTypeId = _contactPointTypeId,
+            ContactPointTypeUri = "my.uri.admin.ch",
+            CompanyName = "New Company",
+            BeginDate = new DateOnly(2020, 1, 1),
+            EndDate = new DateOnly(2027, 12, 31),
+            Zip = "3000",
+            City = "Bern 12",
+            GenderId = _genderId,
+            LanguageId = _languageId,
+            IsCopy = false,
+        };
+
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .WithContactPoint(new ContactPointBuilder()
+                .WithContactPointType(new ContactPointTypeBuilder().WithId(ContactPointType.SecretariatGuid).Build())
+                .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)))
+                .Build())
+            .WithContactPoint(new ContactPointBuilder()
+                .WithContactPointType(new ContactPointTypeBuilder().WithId(ContactPointType.DataProtectionOfficerGuid).Build())
+                .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)))
+                .Build())
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithId(generalElectionCommitteeId)
+            .WithCommittee(committee)
+            .Build();
+
+        var missingSecretariatTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingSecretariat)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        var missingDataProtectionOfficerTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingDataProtectionOfficer)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommitteeId)
+            .Returns([missingSecretariatTask, missingDataProtectionOfficerTask]);
+        _contactPointRepository.GetById(Arg.Any<Guid>()).Returns(new ContactPointBuilder().WithCommittee(committee).Build());
+
+        await _service.Create(createDto);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(missingSecretariatTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+            Assert.That(missingDataProtectionOfficerTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+        }
+
+        await _worklistTaskRepository.Received(1).CommitChanges();
     }
 
     [Test]

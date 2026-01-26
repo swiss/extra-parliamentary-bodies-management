@@ -453,4 +453,10 @@
     <data name="GeneralElection_PersonData_TaskDescription" xml:space="preserve">
         <value>IT_Bitte die Personendaten nachtragen.</value>
     </data>
+    <data name="GeneralElection_MissingSecretariat_TaskDescription" xml:space="preserve">
+        <value>IT_Bitte das fehlende Sekretariat nachtragen.</value>
+    </data>
+    <data name="GeneralElection_MissingDataProtectionOfficer_TaskDescription" xml:space="preserve">
+        <value>IT_Bitte Datenschutzberater/-in nachtragen.</value>
+    </data>
 </root>
