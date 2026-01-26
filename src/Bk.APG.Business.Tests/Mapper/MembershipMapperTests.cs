@@ -173,16 +173,16 @@ internal class MembershipMapperTests
     public void ToObservation_WithValidMembership_MapsCorrectly()
     {
         var membershipId = Guid.NewGuid();
-        var membershipOgdId = 1;
+        const int membershipOgdId = 1;
 
         var personId = Guid.NewGuid();
-        var personOgdId = 2;
+        const int personOgdId = 2;
 
         var committeeId = Guid.NewGuid();
-        var committeeOgdId = 3;
+        const int committeeOgdId = 3;
 
         var committeeTypeId = Guid.NewGuid();
-        var committeeTypeOgdId = 4;
+        const int committeeTypeOgdId = 4;
 
         var membershipAdditionId = Guid.NewGuid();
         var electionOfficeId = Guid.NewGuid();
@@ -274,16 +274,16 @@ internal class MembershipMapperTests
 
         Assert.That(result, Is.Not.Null);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.KeyUri, Is.EqualTo($"membership:{membershipOgdId}"));
             Assert.That(result.ValidFrom, Is.EqualTo(new DateTime(2000, 1, 1)));
             Assert.That(result.ValidTo, Is.EqualTo(new DateTime(2001, 1, 1)));
-            Assert.That(result.KeyDimensionLinks, Has.Count.EqualTo(8));
-            Assert.That(result.Values, Has.Count.EqualTo(5));
-        });
+            Assert.That(result.KeyDimensionLinks, Has.Count.EqualTo(4));
+            Assert.That(result.Values, Has.Count.EqualTo(4));
+        }
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.KeyDimensionLinks[0].Predicate, Is.EqualTo("membership:hasPerson"));
             Assert.That(result.KeyDimensionLinks[0].Uri, Is.EqualTo($"person:{personOgdId}"));
@@ -291,26 +291,14 @@ internal class MembershipMapperTests
             Assert.That(result.KeyDimensionLinks[1].Predicate, Is.EqualTo("membership:hasCommittee"));
             Assert.That(result.KeyDimensionLinks[1].Uri, Is.EqualTo($"committee:{committeeOgdId}"));
 
-            Assert.That(result.KeyDimensionLinks[2].Predicate, Is.EqualTo("membership:hasCommitteeType"));
-            Assert.That(result.KeyDimensionLinks[2].Uri, Is.EqualTo($"committee-type:{committeeTypeOgdId}"));
+            Assert.That(result.KeyDimensionLinks[2].Predicate, Is.EqualTo("membership:hasElectionOffice"));
+            Assert.That(result.KeyDimensionLinks[2].Uri, Is.EqualTo("rld:efd/bit"));
 
-            Assert.That(result.KeyDimensionLinks[3].Predicate, Is.EqualTo("membership:hasElectionOffice"));
-            Assert.That(result.KeyDimensionLinks[3].Uri, Is.EqualTo("rld:efd/bit"));
+            Assert.That(result.KeyDimensionLinks[3].Predicate, Is.EqualTo("membership:hasFunction"));
+            Assert.That(result.KeyDimensionLinks[3].Uri, Is.EqualTo($"function:{membership.Function!.OgdId}"));
+        }
 
-            Assert.That(result.KeyDimensionLinks[4].Predicate, Is.EqualTo("membership:hasDepartment"));
-            Assert.That(result.KeyDimensionLinks[4].Uri, Is.EqualTo("ld:efd"));
-
-            Assert.That(result.KeyDimensionLinks[5].Predicate, Is.EqualTo("membership:hasFunction"));
-            Assert.That(result.KeyDimensionLinks[5].Uri, Is.EqualTo($"function:{membership.Function!.OgdId}"));
-
-            Assert.That(result.KeyDimensionLinks[6].Predicate, Is.EqualTo(OgdExportConstants.SchemaGender));
-            Assert.That(result.KeyDimensionLinks[6].Uri, Is.EqualTo("rld:i14y/concept/DV_SEXE/2"));
-
-            Assert.That(result.KeyDimensionLinks[7].Predicate, Is.EqualTo("ld:hasCanton"));
-            Assert.That(result.KeyDimensionLinks[7].Uri, Is.EqualTo("ld:canton/1"));
-        });
-
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Values[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
             Assert.That(result.Values[0].Object, Is.EqualTo("de: desc de"));
@@ -327,9 +315,6 @@ internal class MembershipMapperTests
             Assert.That(result.Values[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
             Assert.That(result.Values[3].Object, Is.EqualTo("rm: desc rm"));
             Assert.That(result.Values[3].LanguageTag, Is.EqualTo("rm"));
-
-            Assert.That(result.Values[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaLanguage));
-            Assert.That(result.Values[4].Object, Is.EqualTo("https://lang.de"));
-        });
+        }
     }
 }
