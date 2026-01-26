@@ -812,5 +812,14 @@
   "generalElection.candidateList.export.title": "IT_Dokument wird erzeugt",
   "generalElection.candidateList.export.message": "IT_Das Dokument wird gerade im Hintergrund erzeugt. Der Download wird automatisch gestartet, sobald das Dokument erfolgreich generiert wurde.",
   "generalElection.candidateList.export.success": "IT_Das Dokument wurde erfolgreich erzeugt.",
-  "generalElection.candidateList.export.error": "IT_Beim Herunterladen der Datei ist ein Fehler aufgetreten."
+  "generalElection.candidateList.export.error": "IT_Beim Herunterladen der Datei ist ein Fehler aufgetreten.",
+  "formLetter.recipients": "IT_Empfänger/innen",
+  "recipients.title": "IT_Gremien & Mitglieder wählen",
+  "recipients.filter.department.label": "IT_Departement",
+  "recipients.filter.office.label": "IT_Verwaltungsstelle",
+  "recipients.filter.committeeType.label": "IT_Gremienart",
+  "recipients.filter.correspondenceLanguage.label": "IT_Korrespondenzsprache",
+  "recipients.filter.electionType.label": "IT_Status",
+  "recipients.table.header.description.label": "IT_Gremienliste",
+  "recipients.download": "IT_Herunterladen"
 }

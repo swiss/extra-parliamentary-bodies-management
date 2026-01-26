@@ -13,6 +13,7 @@ import {MembershipDetails} from '@api/MembershipDetails';
 import {MembershipList} from '@api/MembershipList';
 import {PagedResult} from '@api/PagedResult';
 import {PagingParameters} from '@api/PagingParameters';
+import {RequestsAndReportsFilterParameters} from '@api/RequestsAndReportsFilterParameters';
 import {SortParameter} from '@api/SortParameter';
 import {toDateOnlyString} from '@shared/DateAdapter';
 import {append, appendMany, appendPaging, appendSort} from '@shared/http-params-util';
@@ -34,10 +35,6 @@ export class CommitteesService {
         return this.http.get<PagedResult<CommitteeList>>('/api/committees/list', {params});
     }
 
-    getCommitteeListForExport(): Observable<CommitteeList[]> {
-        return this.http.get<CommitteeList[]>('/api/committees/listExport');
-    }
-
     appendFilter = (params: HttpParams, filterParameter?: CommitteeFilterParameters | null): HttpParams => {
         if (filterParameter?.freeText) {
             params = append(params, 'freeText', filterParameter.freeText);
@@ -51,6 +48,21 @@ export class CommitteesService {
         params = appendMany(params, 'isMarketOrientated', filterParameter?.isMarketOrientated);
         params = appendMany(params, 'hasSupervisionDuty', filterParameter?.hasSupervisionDuty);
 
+        return params;
+    };
+
+    getCommitteeListForExport(filter: RequestsAndReportsFilterParameters): Observable<CommitteeList[]> {
+        let params = new HttpParams();
+
+        params = this.appendExportFilter(params, filter);
+
+        return this.http.get<CommitteeList[]>('/api/committees/listExport', {params});
+    }
+
+    appendExportFilter = (params: HttpParams, filterParameter?: RequestsAndReportsFilterParameters | null): HttpParams => {
+        params = appendMany(params, 'departmentIds', filterParameter?.departments);
+        params = appendMany(params, 'officeIds', filterParameter?.offices);
+        params = appendMany(params, 'committeeTypeIds', filterParameter?.committeeTypes);
         return params;
     };
 
