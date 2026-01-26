@@ -270,7 +270,7 @@ public static class PersonMapper
         var dimensionItem =
             new DimensionItem(
                 person.OgdId,
-                new Literal($"{person.Surname} {person.GivenName} {person.BirthYear}", OgdExportConstants.LanguageDe),
+                new Literal($"{person.Surname}, {person.GivenName} {person.BirthYear}", OgdExportConstants.LanguageDe),
                 [
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaGivenName, new Literal(person.GivenName)),
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaFamilyName, new Literal(person.Surname)),
