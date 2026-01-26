@@ -34,6 +34,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
             .Include(item => item.Department)
             .Include(item => item.Office)
             .Include(item => item.Committee)
+            .Include(item => item.Person)
             .Include(item => item.AssignedTo!.Department!.Offices)
             .Include(item => item.AssignedTo!.Office)
             .Include(item => item.AssignedTo!.Committee)
