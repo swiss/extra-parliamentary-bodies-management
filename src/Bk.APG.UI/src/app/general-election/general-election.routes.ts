@@ -43,8 +43,8 @@ export const generalElectionRoutes: Routes = [
         },
     },
     {
-        path: 'exports/recipients',
-        loadComponent: () => import('../exports/recipients/recipients.component').then(m => m.RecipientsComponent),
+        path: 'exports/formLetters',
+        loadComponent: () => import('../exports/form-letters/form-letters.component').then(m => m.FormLettersComponent),
         data: {
             isGeneralElection: true,
             allowedRoles: [Role.Allow],
