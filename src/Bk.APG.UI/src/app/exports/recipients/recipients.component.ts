@@ -1,31 +1,28 @@
 import {CommonModule, NgTemplateOutlet} from '@angular/common';
 import {Component, computed, effect, Inject, signal, DOCUMENT} from '@angular/core';
 import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatButton, MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
-import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatFormField, MatInputModule} from '@angular/material/input';
 import {MatLabel, MatSelectModule} from '@angular/material/select';
 import {MatCell, MatCellDef, MatColumnDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {ActivatedRoute} from '@angular/router';
-import {CommitteeFilterParameters} from '@api/CommitteeFilterParameters';
-import {CommitteeList} from '@api/CommitteeList';
-import {RequestsAndReportsFilterForm} from '@api/RequestsAndReportsFilterForm';
-import {RequestsAndReportsFilterParameters} from '@api/RequestsAndReportsFilterParameters';
+import {GeneralElectionCommitteeList} from '@api/GeneralElectionCommitteeList';
+import {RecipientsFilterForm} from '@api/RecipientsFilterForm';
+import {RecipientsFilterParameters} from '@api/RecipientsFilterParameters';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService, WINDOW} from '@oblique/oblique';
 import {today} from '@shared/date-util';
 import {downloadFileFromHttpResponse} from '@shared/file-util';
 import {MasterDataService} from '@shared/master-data.service';
-import {combineLatest, defer, distinctUntilChanged, pairwise, startWith, Subject, switchMap} from 'rxjs';
+import {combineLatest, defer, distinctUntilChanged, startWith, Subject, switchMap} from 'rxjs';
 import {AuthService} from '../../auth/auth.service';
-import {CommitteesService} from '../../committees/committees.service';
-import {ReportType} from '../ReportType';
-import {RequestsAndReportsService} from './requests-and-reports.service';
+import {GeneralElectionCommitteesService} from '../../general-election/ge-committees/ge-committees.service';
+import {RecipientsService} from './recipients.service';
 
 @Component({
-    selector: 'apg-requests-and-reports',
+    selector: 'apg-recipients',
     imports: [
         MatFormField,
         MatSelectModule,
@@ -40,9 +37,6 @@ import {RequestsAndReportsService} from './requests-and-reports.service';
         MatRow,
         MatCell,
         TranslatePipe,
-        MatDatepickerInput,
-        MatDatepicker,
-        MatDatepickerToggle,
         MatButtonModule,
         MatButton,
         MatLabel,
@@ -51,12 +45,11 @@ import {RequestsAndReportsService} from './requests-and-reports.service';
         NgTemplateOutlet,
         CommonModule,
     ],
-    templateUrl: './requests-and-reports.component.html',
-    styleUrl: './requests-and-reports.component.scss',
+    templateUrl: './recipients.component.html',
+    styleUrl: './recipients.component.scss',
 })
-export class RequestsAndReportsComponent {
+export class RecipientsComponent {
     readonly displayedCommitteeColumns: string[] = ['select', 'description'];
-    ReportType = ReportType;
 
     readonly form = this.setupRequestsAndReportsForm();
     readonly departmentOffices = computed(() => {
@@ -65,15 +58,20 @@ export class RequestsAndReportsComponent {
         return selectedDepartmentIds?.length ? offices.filter(office => selectedDepartmentIds.includes(office.departmentId)) : offices;
     });
     readonly termDates = computed(() => this.masterDataService.termDates());
-    dataSource = new MatTableDataSource<CommitteeList>();
-    selectedItems = new Set<CommitteeList>();
+    dataSource = new MatTableDataSource<GeneralElectionCommitteeList>();
+    selectedItems = new Set<GeneralElectionCommitteeList>();
     readonly totalCount = signal(0);
 
     readonly reload$ = new Subject<void>();
 
-    filterValue: RequestsAndReportsFilterParameters = {};
+    filterValue: RecipientsFilterParameters = {};
     isGeneralElection = false;
     analysisDateDefaultValue = today();
+
+    // No "Todesfall" and "Permanent"
+    protected readonly reducedElectionTypes = computed(() =>
+        this.masterDataService.electionTypes().filter(m => m.id !== 'c0201343-ee84-441c-8993-85abcd69535c' && m.id !== 'c5d01ed1-4a61-41de-ba01-0c415c4b87a0')
+    );
 
     protected readonly isAdmin = toSignal(this.authService.isAdmin$, {initialValue: false});
     protected readonly isDepartment = toSignal(this.authService.isDepartmentUser$, {initialValue: false});
@@ -89,8 +87,8 @@ export class RequestsAndReportsComponent {
         private readonly interceptorEvents: ObHttpApiInterceptorEvents,
         protected readonly masterDataService: MasterDataService,
         private readonly notificationService: ObNotificationService,
-        private readonly requestsAndReportsService: RequestsAndReportsService,
-        private readonly committeesService: CommitteesService,
+        private readonly recipientsService: RecipientsService,
+        private readonly generalElectionCommitteesService: GeneralElectionCommitteesService,
         private readonly translateService: TranslateService,
         private readonly authService: AuthService,
 
@@ -101,17 +99,10 @@ export class RequestsAndReportsComponent {
         if (routeData.isGeneralElection) {
             this.isGeneralElection = true;
         }
-        this.form.controls.documentType.valueChanges.pipe(takeUntilDestroyed()).subscribe(_ => this.updateAnalysisDateFields());
 
-        if (!this.isGeneralElection) {
-            this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([prev, curr]) => {
-                const changedKeys = Object.keys(curr).filter(key => prev[key as keyof typeof prev] !== curr[key as keyof typeof curr]);
-                const excludedControls = ['documentType', 'analysisDate1', 'analysisDate2'];
-
-                if (changedKeys.every(key => excludedControls.includes(key))) {
-                    return;
-                }
-                this.onFilter({...curr} as CommitteeFilterParameters);
+        if (this.isGeneralElection) {
+            this.form.valueChanges.pipe(startWith(this.form.value), takeUntilDestroyed()).subscribe(curr => {
+                this.onFilter({...curr} as RecipientsFilterParameters);
             });
 
             combineLatest([
@@ -122,7 +113,7 @@ export class RequestsAndReportsComponent {
                 ),
             ])
                 .pipe(
-                    switchMap(() => this.committeesService.getCommitteeListForExport(this.filterValue)),
+                    switchMap(() => this.generalElectionCommitteesService.getGeneralElectionCommitteeListForRecipientExport(this.filterValue)),
                     takeUntilDestroyed()
                 )
                 .subscribe(result => {
@@ -131,18 +122,6 @@ export class RequestsAndReportsComponent {
                 });
             this.reload$.next();
         }
-        effect(() => {
-            const data = this.termDates();
-            if (data.length > 0) {
-                if (!this.isGeneralElection) {
-                    this.analysisDateDefaultValue =
-                        this.termDates().find(y => new Date(y.beginDate) <= today() && new Date(y.endDate!) >= today())?.beginDate ?? today();
-                } else {
-                    this.analysisDateDefaultValue = this.termDates().find(y => y.isGeneralElection)?.beginDate ?? today();
-                    this.form.controls.analysisDate1.setValue(this.analysisDateDefaultValue);
-                }
-            }
-        });
 
         effect(() => {
             this.form.controls.offices.disable();
@@ -157,8 +136,10 @@ export class RequestsAndReportsComponent {
             }
         });
     }
+
     generateReport(): void {
-        const fallbackFilename = `export.xlsx`;
+        // todo, the real implementation follows with another PBI!
+        const fallbackFilename = `toBeImplementedDoc.docx`;
 
         defer(() => {
             this.interceptorEvents.deactivateSpinnerOnNextAPICalls(1);
@@ -170,9 +151,8 @@ export class RequestsAndReportsComponent {
                 timeout: 10000,
             });
 
-            return this.requestsAndReportsService.generateReport({
+            return this.recipientsService.generateReport({
                 ...this.form.getRawValue(),
-                isGeneralElection: this.isGeneralElection,
                 committees: Array.from(this.selectedItems).map(y => y.id),
             });
         }).subscribe({
@@ -191,12 +171,12 @@ export class RequestsAndReportsComponent {
         });
     }
 
-    onFilter(searchQuery: RequestsAndReportsFilterParameters) {
-        this.filterValue = {...searchQuery} as RequestsAndReportsFilterParameters;
+    onFilter(searchQuery: RecipientsFilterParameters) {
+        this.filterValue = searchQuery;
         this.reload$.next();
     }
 
-    toggleRow(row: CommitteeList) {
+    toggleRow(row: GeneralElectionCommitteeList) {
         if (this.selectedItems.has(row)) {
             this.selectedItems.delete(row);
         } else {
@@ -204,7 +184,7 @@ export class RequestsAndReportsComponent {
         }
     }
 
-    isSelected(row: CommitteeList): boolean {
+    isSelected(row: GeneralElectionCommitteeList): boolean {
         return this.selectedItems.has(row);
     }
 
@@ -226,33 +206,13 @@ export class RequestsAndReportsComponent {
         }
     }
 
-    private updateAnalysisDateFields() {
-        if (!this.isGeneralElection) {
-            if ([ReportType.AppendixFederalCouncilCheck, ReportType.Vacancies].includes(this.form.controls.documentType.value!)) {
-                this.form.controls.analysisDate1.setValue(today());
-            }
-
-            if ([ReportType.DissolvedCommittees, ReportType.CompareListGE].includes(this.form.controls.documentType.value!)) {
-                this.form.controls.analysisDate1.setValue(this.analysisDateDefaultValue);
-                this.form.controls.analysisDate2.setValue(today());
-                this.form.controls.analysisDate2.enable();
-            } else {
-                this.form.controls.analysisDate2.setValue(null);
-                this.form.controls.analysisDate2.disable();
-            }
-        }
-    }
-
-    private setupRequestsAndReportsForm(): FormGroup<RequestsAndReportsFilterForm> {
-        return this.fb.group<RequestsAndReportsFilterForm>({
-            documentType: this.fb.control<ReportType | null>(null, {nonNullable: true, validators: [Validators.required]}),
-            analysisDate1: this.fb.control<Date | null>(today(), {nonNullable: true, validators: [Validators.required]}),
-            analysisDate2: this.fb.control<Date | null>(null),
+    private setupRequestsAndReportsForm(): FormGroup<RecipientsFilterForm> {
+        return this.fb.group<RecipientsFilterForm>({
             departments: this.fb.control<string[] | null>(null),
             offices: this.fb.control<string[] | null>(null),
             committeeTypes: this.fb.control<string[] | null>(null),
-            committeesWithActiveMembership: this.fb.control<boolean>(true, {nonNullable: true}),
-            releasedCommittees: this.fb.control<boolean>(true, {nonNullable: true}),
+            correspondenceLanguages: this.fb.control<string[] | null>(null),
+            electionTypes: this.fb.control<string[] | null>(null),
         });
     }
 }
