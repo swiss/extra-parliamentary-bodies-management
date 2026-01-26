@@ -19,7 +19,7 @@ public static class WorklistTaskMapper
             Office = worklistTask.Office?.GetText(),
             ParentTaskId = worklistTask.ParentTaskId,
             DueDate = worklistTask.DueDate,
-            WorklistTaskType = worklistTask.WorklistTaskType!.GetText(),
+            WorklistTaskType = worklistTask.GetTaskTypeText(),
             WorklistTaskState = worklistTask.WorklistTaskState!.GetText(),
             CreatedBy = worklistTask.CreatedBy,
             Created = worklistTask.Created,
