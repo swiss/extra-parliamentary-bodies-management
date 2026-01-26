@@ -11,17 +11,27 @@ public class ContactPointService : IContactPointService
 {
     private readonly IContactPointRepository _contactPointRepository;
     private readonly ICommitteeRepository _committeeRepository;
+    private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly IAuthorizationService _authorizationService;
     private readonly IMasterDataService _masterDataService;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly ILogger<ContactPointService> _logger;
 
     public ContactPointService(
-        IContactPointRepository contactPointRepository, ICommitteeRepository committeeRepository, IAuthorizationService authorizationService, IMasterDataService masterDataService, ILogger<ContactPointService> logger)
+        IContactPointRepository contactPointRepository,
+        ICommitteeRepository committeeRepository,
+        IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
+        IAuthorizationService authorizationService,
+        IMasterDataService masterDataService,
+        IWorklistTaskRepository worklistTaskRepository,
+        ILogger<ContactPointService> logger)
     {
         _contactPointRepository = contactPointRepository;
         _committeeRepository = committeeRepository;
+        _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _authorizationService = authorizationService;
         _masterDataService = masterDataService;
+        _worklistTaskRepository = worklistTaskRepository;
         _logger = logger;
     }
 
@@ -84,6 +94,8 @@ public class ContactPointService : IContactPointService
         await _contactPointRepository.Create(mappedContactPoint);
         _logger.LogInformation("Created contact point {ContactPointId}", mappedContactPoint.Id);
 
+        await CompleteContactPointTasksIfResolved(createDto.CommitteeId);
+
         return await GetContactPointDetail(mappedContactPoint.Id);
     }
 
@@ -139,6 +151,8 @@ public class ContactPointService : IContactPointService
             await _contactPointRepository.CommitChanges();
 
             _logger.LogInformation("Updated contact point {ContactPointId}", id);
+
+            await CompleteContactPointTasksIfResolved(updateDto.CommitteeId);
         }
     }
 
@@ -179,8 +193,54 @@ public class ContactPointService : IContactPointService
         }
 
         return contactPoints.Any(cp => (cp.EndDate is null && contactPoint.EndDate is null)
-                                       || (cp.EndDate is null && cp.BeginDate < contactPoint.EndDate)
-                                       || (cp.BeginDate >= contactPoint.BeginDate && cp.BeginDate < contactPoint.EndDate && (cp.EndDate <= contactPoint.EndDate || cp.EndDate > contactPoint.EndDate))
-                                       || (cp.BeginDate < contactPoint.BeginDate && cp.EndDate > contactPoint.BeginDate));
+            || (cp.EndDate is null && cp.BeginDate < contactPoint.EndDate)
+            || (cp.BeginDate >= contactPoint.BeginDate && cp.BeginDate < contactPoint.EndDate && (cp.EndDate <= contactPoint.EndDate || cp.EndDate > contactPoint.EndDate))
+            || (cp.BeginDate < contactPoint.BeginDate && cp.EndDate > contactPoint.BeginDate));
+    }
+
+    private async Task CompleteContactPointTasksIfResolved(Guid committeeId)
+    {
+        GeneralElectionCommittee? generalElectionCommittee;
+
+        try
+        {
+            generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
+        }
+        catch (EntityNotFoundException)
+        {
+            return;
+        }
+
+        var worklistTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).ToList();
+        var updated = false;
+
+        if (!generalElectionCommittee.Committee!.NeedsAttentionSecretariat)
+        {
+            var missingSecretariatTask = worklistTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat);
+            if (missingSecretariatTask is not null && missingSecretariatTask.WorklistTaskStateId != WorklistTaskState.Completed)
+            {
+                missingSecretariatTask.WorklistTaskStateId = WorklistTaskState.Completed;
+                missingSecretariatTask.ModifiedBy = "System";
+                missingSecretariatTask.Modified = DateTime.UtcNow;
+                updated = true;
+            }
+        }
+
+        if (!generalElectionCommittee.Committee.NeedsAttentionDataProtectionOfficer)
+        {
+            var missingDataProtectionOfficerTask = worklistTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer);
+            if (missingDataProtectionOfficerTask is not null && missingDataProtectionOfficerTask.WorklistTaskStateId != WorklistTaskState.Completed)
+            {
+                missingDataProtectionOfficerTask.WorklistTaskStateId = WorklistTaskState.Completed;
+                missingDataProtectionOfficerTask.ModifiedBy = "System";
+                missingDataProtectionOfficerTask.Modified = DateTime.UtcNow;
+                updated = true;
+            }
+        }
+
+        if (updated)
+        {
+            await _worklistTaskRepository.CommitChanges();
+        }
     }
 }
