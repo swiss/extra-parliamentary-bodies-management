@@ -262,7 +262,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 .ThenInclude(c => c.Person!.Occupations)
             .Include(x => x.Department!.GeneralGenderMeasure)
             .Include(x => x.Department!.GeneralLanguageMeasure)
-            .Include(item => item.Committee)
+            .Include(item => item.Committee!.ContactPoints)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
