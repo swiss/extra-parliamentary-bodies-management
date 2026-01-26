@@ -340,7 +340,7 @@ internal class PersonMapperTests
     public void ToDimensionItem_WithValidPerson_ShouldMapCorrectly()
     {
         var personId = Guid.NewGuid();
-        var personOgdId = 1;
+        const int personOgdId = 1;
 
         var occupations = new List<Occupation>();
 
@@ -364,21 +364,21 @@ internal class PersonMapperTests
 
         Assert.That(result, Is.Not.Null);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Key, Is.EqualTo(personOgdId));
-            Assert.That(result.Name.Text, Is.EqualTo($"surname givenname {person.BirthYear}"));
+            Assert.That(result.Name.Text, Is.EqualTo($"{person.Surname}, {person.GivenName} {person.BirthYear}"));
             Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(5));
             Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(2));
-        });
+        }
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.AdditionalUriProperties[0].Predicate, Is.EqualTo(OgdExportConstants.PersonHasOccupation));
             Assert.That(result.AdditionalUriProperties[1].Predicate, Is.EqualTo(OgdExportConstants.PersonHasOccupation));
-        });
+        }
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.AdditionalLiteralProperties[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaGivenName));
             Assert.That(result.AdditionalLiteralProperties[0].Object.Text, Is.EqualTo("givenname"));
@@ -394,6 +394,6 @@ internal class PersonMapperTests
 
             Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaWorksFor));
             Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo("employer"));
-        });
+        }
     }
 }
