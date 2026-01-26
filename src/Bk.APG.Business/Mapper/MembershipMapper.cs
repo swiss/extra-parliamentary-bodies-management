@@ -139,20 +139,8 @@ public static class MembershipMapper
         dataRow.KeyDimensionLinks.Add(
             new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasCommittee", Uri = $"committee:{membership.Committee.OgdId}" });
 
-        if (membership.Committee.CommitteeType is not null)
-        {
-            dataRow.KeyDimensionLinks.Add(
-                new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasCommitteeType", Uri = $"committee-type:{membership.Committee.CommitteeType.OgdId}" });
-        }
-
         dataRow.KeyDimensionLinks.Add(
             new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasElectionOffice", Uri = OgdExportConstants.CreateUriLinkForRegisterLdAdminCh(membership.ElectionOffice!.Uri) });
-
-        if (membership.Committee.Department is not null)
-        {
-            dataRow.KeyDimensionLinks.Add(
-                new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasDepartment", Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(membership.Committee.Department.Uri) });
-        }
 
         if (membership.Function is not null)
         {
@@ -185,28 +173,6 @@ public static class MembershipMapper
                 dataRow.Values.Add(
                     new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = $"{membership.MembershipAddition.TextRm}: {membership.MembershipAddition.DescriptionRm}", LanguageTag = OgdExportConstants.LanguageRm });
             }
-        }
-
-        //the following properties would actually belong to the person itself (they should be exported as part of the person dimension)
-        //however, we decided to add these to the membership cube, because it makes it easier to query and display the information
-        if (membership.Person.Gender is not null && !string.IsNullOrWhiteSpace(membership.Person.Gender.Uri))
-        {
-            var genderUri = membership.Person.Gender.Uri.Replace("https://register.ld.admin.ch/", "rld:");
-            dataRow.KeyDimensionLinks.Add(new KeyDimensionLink { Predicate = OgdExportConstants.SchemaGender, Uri = genderUri });
-        }
-
-        if (membership.Person.CorrespondenceAddress?.Canton is not null)
-        {
-            if (!string.IsNullOrWhiteSpace(membership.Person.CorrespondenceAddress.Canton.Uri) && membership.Person.CorrespondenceAddress.Canton.Uri.Contains("ld.admin.ch"))
-            {
-                var cantonUri = membership.Person.CorrespondenceAddress.Canton.Uri.Replace("https://ld.admin.ch/", "ld:");
-                dataRow.KeyDimensionLinks.Add(new KeyDimensionLink { Predicate = "ld:hasCanton", Uri = cantonUri });
-            }
-        }
-
-        if (membership.Person.Language is not null)
-        {
-            dataRow.Values.Add(new DimensionValue { Predicate = OgdExportConstants.SchemaLanguage, Object = membership.Person.Language.Uri });
         }
 
         return dataRow;
