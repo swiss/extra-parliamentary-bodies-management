@@ -55,6 +55,7 @@ public class InterestRepository : IInterestRepository
             .Select(c => new Interest
             {
                 Id = c.Id,
+                OgdId = c.OgdId,
                 Text = c.Text,
                 InterestText = c.Text,
                 BeginDate = c.BeginDate,
