@@ -7,6 +7,7 @@
 -   Add task for general election person interest validation #BKDO-970
 -   Add task for general election person base data validation #BKDO-966
 -   Recipient Export added #BKDO-777
+-   Introduce Countries master data #BKDO-1103
 
 ## 1.0.3
 -   Adapt handling of membership endDate and electionType #BKDO-2700
