@@ -37,6 +37,8 @@ public static class OgdExportConstants
     public const string SchemaBirthDate = "schema:birthDate";
     public const string SchemaContactPoint = "schema:contactPoint";
     public const string SchemaContributor = "schema:contributor";
+    public const string SchemaWebpage = "schema:webpage";
+    public const string SchemaInLanguage = "schema:inLanguage";
 
     public const string PersonHasOccupation = "person:hasOccupation";
     public const string PersonHasOffice = "person:hasOffice";
@@ -49,6 +51,7 @@ public static class OgdExportConstants
     public const string LdFCh = "ld:FCh";
     public const string LdCreativeWorkStatusDraft = "ld:vocabulary/CreativeWorkStatus/Draft";
     public const string LdApplicationVisualize = "ld:application/visualize";
+    public const string LdWebsiteType = "ld:fch/apg/vocabulary/website-type";
 
     public const string CommitteeHasSecretariat = "committee:hasSecretariat";
     public const string CommitteeHasDataProtectionOfficer = "committee:hasDataProtectionOfficer";
