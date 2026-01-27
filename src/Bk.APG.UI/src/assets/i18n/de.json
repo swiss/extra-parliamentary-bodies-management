@@ -821,5 +821,6 @@
   "recipients.filter.correspondenceLanguage.label": "Korrespondenzsprache",
   "recipients.filter.electionType.label": "Status",
   "recipients.table.header.description.label": "Gremienliste",
-  "recipients.download": "Herunterladen"
+  "recipients.download": "Herunterladen",
+  "worklist.task.section": "Bereich"
 }
