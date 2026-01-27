@@ -9,11 +9,13 @@ public class MasterDataController : ControllerBase
 {
     private readonly IMasterDataService _masterDataService;
     private readonly ICantonService _cantonService;
+    private readonly ICountryService _countryService;
 
-    public MasterDataController(IMasterDataService masterDataService, ICantonService cantonService)
+    public MasterDataController(IMasterDataService masterDataService, ICantonService cantonService, ICountryService countryService)
     {
         _masterDataService = masterDataService;
         _cantonService = cantonService;
+        _countryService = countryService;
     }
 
     [HttpGet]
@@ -46,7 +48,8 @@ public class MasterDataController : ControllerBase
             LegislaturePeriods = await _masterDataService.GetLegislaturePeriods(),
             Councils = await _masterDataService.GetCouncils(),
             WorklistTaskTypes = await _masterDataService.GetWorklistTaskTypes(),
-            WorklistTaskStates = await _masterDataService.GetWorklistTaskStates()
+            WorklistTaskStates = await _masterDataService.GetWorklistTaskStates(),
+            Countries = await _countryService.GetAll()
         };
         return Ok(masterData);
     }
