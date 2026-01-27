@@ -221,12 +221,12 @@ public class MembershipCandidateService : IMembershipCandidateService
 
             if (membershipCandidate.IsSelected)
             {
-                if (membershipCandidate.Person is null || membershipCandidate.Person.NeedsAttentionInterests)
+                if (membershipCandidate.Person is null || membershipCandidate.NeedsAttentionInterests)
                 {
                     await CreateOrActivatePersonTask(generalElectionCommittee, personTasks, membershipCandidate, WorklistTaskType.GeneralElectionPersonInterests, 7);
                 }
 
-                if (membershipCandidate.Person is null || membershipCandidate.Person.NeedsAttentionBasicData || membershipCandidate.Person.NeedsAttentionOccupation)
+                if (membershipCandidate.Person is null || membershipCandidate.NeedsAttentionBasicDataOrOccupation)
                 {
                     await CreateOrActivatePersonTask(generalElectionCommittee, personTasks, membershipCandidate, WorklistTaskType.GeneralElectionPersonBaseData, 14);
                 }
