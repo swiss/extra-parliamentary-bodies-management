@@ -90,11 +90,11 @@ internal class GeneralElectionMapperTests
             Assert.That(membershipCandidate.FunctionId, Is.EqualTo(membership.FunctionId));
             Assert.That(membershipCandidate.ElectionOfficeId, Is.EqualTo(membership.ElectionOfficeId));
             Assert.That(membershipCandidate.MembershipAdditionId, Is.EqualTo(membership.MembershipAdditionId));
-            Assert.That(membershipCandidate.JustificationLongerDuty, Is.EqualTo(string.Empty));
+            Assert.That(membershipCandidate.JustificationLongerDuty, Is.EqualTo(membership.JustificationLongerDuty));
             Assert.That(membershipCandidate.JustificationShorterDuty, Is.EqualTo(string.Empty));
             Assert.That(membershipCandidate.JustificationMemberInFederalDuty, Is.EqualTo(membership.JustificationMemberInFederalDuty));
             Assert.That(membershipCandidate.JustificationMemberInFederalAssembly, Is.EqualTo(membership.JustificationMemberInFederalAssembly));
-            Assert.That(membershipCandidate.RequirementsProfile, Is.EqualTo(membership.RequirementsProfile));
+            Assert.That(membershipCandidate.RequirementsProfile, Is.EqualTo(string.Empty));
             Assert.That(membershipCandidate.Remarks, Is.EqualTo(membership.Remarks));
             Assert.That(membershipCandidate.RemarksStatus, Is.EqualTo(membership.RemarksStatus));
             Assert.That(membershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(membership.InCorrelationWithFederalDuty));
