@@ -62,4 +62,15 @@ public class MembershipCandidate : EntityBase
 
     [NotMapped]
     public int Age => DateTime.UtcNow.Year - BirthYear;
+
+    [NotMapped]
+    public bool NeedsAttentionInterests => Person?.NeedsAttentionInterests == true ||
+        (ElectionTypeId == ElectionType.NewElectionGuid && Person?.NoInterest == false &&
+            (GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid || GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid || GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid) &&
+            (Person?.Interests.Count == 0 || Person?.Interests.Any(i => string.IsNullOrWhiteSpace(i.InterestText) || i.LegalFormId is null || i.InterestCommitteeId == Guid.Empty || i.InterestFunctionId == Guid.Empty) == true));
+
+    [NotMapped]
+    public bool NeedsAttentionBasicDataOrOccupation => Person?.NeedsAttentionBasicData == true || Person?.NeedsAttentionOccupation == true ||
+        (ElectionTypeId == ElectionType.NewElectionGuid && Person is { FederalDuty: false, NoEmployment: false } && (string.IsNullOrWhiteSpace(Person.Employer) || Person.Occupations.Count == 0) &&
+            (GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid || GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid || GeneralElectionCommittee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid));
 }
