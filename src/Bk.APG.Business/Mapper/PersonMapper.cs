@@ -315,10 +315,10 @@ public static class PersonMapper
         {
             Predicate = $"{OgdExportConstants.NamespacePerson}:hasPerson", Uri = $"{OgdExportConstants.NamespacePerson}:{person.OgdId}", ShapePropertyMetadata = new ShapePropertyMetadata
             {
-                NameDe = "Person",
-                NameFr = "Personne",
-                NameIt = "Persone",
-                NameEn = "Person",
+                NameDe = "Mitglied",
+                NameFr = "Membre",
+                NameIt = "Membro",
+                NameEn = "Member",
                 Type = OgdExportConstants.CubeKeyDimension,
                 NodeKind = OgdExportConstants.ShaclNodeKindIri,
                 ScaleType = OgdExportConstants.QudtNominalScale,
