@@ -29,6 +29,7 @@ internal class WorklistTaskMapperTests
             Assert.That(worklistTaskDto.DueDate, Is.EqualTo(worklistTask.DueDate));
             Assert.That(worklistTaskDto.WorklistTaskType, Is.EqualTo(worklistTask.WorklistTaskType?.GetText()));
             Assert.That(worklistTaskDto.WorklistTaskState, Is.EqualTo(worklistTask.WorklistTaskState?.GetText()));
+            Assert.That(worklistTaskDto.Section, Is.EqualTo(worklistTask.GetSection()));
             Assert.That(worklistTaskDto.Created, Is.EqualTo(worklistTask.Created));
             Assert.That(worklistTaskDto.CreatedBy, Is.EqualTo(worklistTask.CreatedBy));
             Assert.That(worklistTaskDto.NavigationUrl, Is.EqualTo(worklistTask.GetNavigationUrl()));

@@ -70,7 +70,7 @@ export class WorklistComponent {
         'assignedTo',
         'department',
         'office',
-        'committee',
+        'section',
         'worklistTaskState',
         'created',
         'dueDate',
