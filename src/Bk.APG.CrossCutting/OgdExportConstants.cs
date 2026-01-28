@@ -95,6 +95,7 @@ public static class OgdExportConstants
     public const string NamespaceAuthoritiesCommission = "authorities-commission";
     public const string NamespaceManagementCommission = "management-commission";
     public const string NamespaceFederalAgenciesCommission = "federal-agencies-commission";
+    public const string NamespaceCommitteeTypeDepartmentStatistic = "committee-type-department-statistic";
 
     public const string NamespaceLd = "ld";
     public const string NamespaceRld = "rld";
@@ -119,6 +120,7 @@ public static class OgdExportConstants
     public const string UriCommitteeCantonDetailStatistic = $"{NamespaceCommitteeCantonDetailStatistic}:1";
     public const string UriCommitteeGenderLanguageStatistic = $"{NamespaceCommitteeGenderLanguageStatistic}:1";
     public const string UriCommitteeTypeStatistic = $"{NamespaceCommitteeTypeStatistic}:1";
+    public const string UriCommitteeTypeDepartmentStatistic = $"{NamespaceCommitteeTypeDepartmentStatistic}:1";
 
     // set to the production date of APG
     public const string SchemaPublishedDate = "2026-01-14";
