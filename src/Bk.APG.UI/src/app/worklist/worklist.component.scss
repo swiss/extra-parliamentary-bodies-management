@@ -1,10 +1,13 @@
 :host {
-    [class*='mat-column']:not(.mat-column-actions) {
+    [class*='mat-column'] {
         white-space: nowrap;
-        min-width: 100px;
+        max-width: 10vw;
+        width: 1%;
     }
 
     ::ng-deep .mat-sort-header {
+        padding: 4px 4px 4px 8px;
+
         .mat-sort-header-content {
             display: block;
             overflow: hidden;
@@ -18,31 +21,20 @@
     }
 
     .mat-column-worklistTaskType {
-        max-width: 180px;
+        min-width: 15vw;
     }
 
-    .mat-column-assignedBy,
-    .mat-column-assignedTo {
-        max-width: 110px;
+    .mat-column-section {
+        min-width: 20vw;
+        width: 100%;
     }
 
-    .mat-column-department,
-    .mat-column-office {
-        max-width: 90px;
-    }
-
-    .mat-column-committee {
-        max-width: 200px;
-    }
-
-    .mat-column-worklistTaskState,
     .mat-column-created,
     .mat-column-dueDate {
-        max-width: 90px;
+        min-width: 100px;
     }
 
     .mat-column-actions {
-        width: 1%;
         padding: 0 4px 0 0;
     }
 }
