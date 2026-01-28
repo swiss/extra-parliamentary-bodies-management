@@ -13,7 +13,6 @@ import {MatRadioModule} from '@angular/material/radio';
 import {MatFormField, MatLabel, MatSelect} from '@angular/material/select';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CommitteeDetails} from '@api/CommitteeDetails';
 import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
 import {GeneralElectionCommitteeJustificationUpdate} from '@api/GeneralElectionCommitteeJustificationUpdate';
 import {TranslatePipe} from '@ngx-translate/core';
@@ -43,8 +42,8 @@ describe('GeCommitteeJustificationsComponent', () => {
         updateGeneralElectionCommitteeJustification: jest.fn(),
     };
 
-    const committeeDetailsServiceMock = {
-        committeeDetails: signal<CommitteeDetails>({
+    const generalElectionCommitteeDetailsServiceMock = {
+        committeeDetails: signal<GeneralElectionCommitteeDetails>({
             canEdit: true,
             isValidated: true,
             generalGenderMeasure: 'test',
@@ -85,7 +84,7 @@ describe('GeCommitteeJustificationsComponent', () => {
                 MockComponent(RichTextEditorComponent),
             ],
             providers: [
-                {provide: GeneralElectionCommitteeDetailsService, useValue: committeeDetailsServiceMock},
+                {provide: GeneralElectionCommitteeDetailsService, useValue: generalElectionCommitteeDetailsServiceMock},
                 {provide: GeneralElectionCommitteesService, useValue: generalElectionCommitteesServiceMock},
                 {provide: Router, useValue: routerMock},
                 {provide: ActivatedRoute, useValue: activatedRouteMock},
