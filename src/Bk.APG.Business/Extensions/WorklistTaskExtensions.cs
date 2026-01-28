@@ -11,16 +11,16 @@ public static class WorklistTaskExtensions
             && worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch;
     }
 
-    public static string GetTaskTypeText(this WorklistTask worklistTask)
+    public static string GetSection(this WorklistTask worklistTask)
     {
-        var text = worklistTask.WorklistTaskType!.GetText();
+        var section = string.Empty;
 
         if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData || worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests)
         {
-            text += $" ({worklistTask.Person!.GivenName} {worklistTask.Person!.Surname})";
+            section += $"{worklistTask.Person!.GivenName} {worklistTask.Person!.Surname}; ";
         }
 
-        return text;
+        return section + worklistTask.Committee?.GetDescription();
     }
 
     public static string? GetNavigationUrl(this WorklistTask worklistTask)
