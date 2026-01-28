@@ -10,6 +10,7 @@ public class WorklistTaskDto
     public string? Department { get; set; }
     public string? Office { get; set; }
     public string? Committee { get; set; }
+    public string? Section { get; set; }
     public required DateOnly DueDate { get; set; }
     public required string WorklistTaskType { get; set; }
     public required string WorklistTaskState { get; set; }
