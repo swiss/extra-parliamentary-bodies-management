@@ -282,42 +282,40 @@ public class OgdExportService
         foreach (var committee in committees)
         {
             var committeeUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}";
+            var homepageUri = $"{committeeUri}/homepage";
+
             if (!string.IsNullOrWhiteSpace(committee.LinkHomepageGerman))
             {
-                var homepageUri = $"{committeeUri}/homepageDe";
                 committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
-                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageGerman)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageGerman, "de")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("de")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
             }
 
             if (!string.IsNullOrWhiteSpace(committee.LinkHomepageFrench))
             {
-                var homepageUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}/homepageFr";
                 committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
-                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageFrench)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageFrench, "fr")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("fr")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
             }
 
             if (!string.IsNullOrWhiteSpace(committee.LinkHomepageItalian))
             {
-                var homepageUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}/homepageIt";
                 committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
-                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageItalian)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageItalian, "it")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("it")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
             }
 
             if (!string.IsNullOrWhiteSpace(committee.LinkHomepageRomansh))
             {
-                var homepageUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}/homepageRm";
                 committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
-                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageRomansh)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageRomansh, "rm")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("rm")));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
             }
@@ -327,7 +325,7 @@ public class OgdExportService
                 var linkUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}/authorityWebsite";
                 committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(linkUri)));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(linkUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
-                committeeTriples.Add(new Triple(graph.CreateUriNode(linkUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkAuthorityWebsite)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(linkUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkAuthorityWebsite, new Uri(OgdExportConstants.SchemaAnyUri))));
                 committeeTriples.Add(new Triple(graph.CreateUriNode(linkUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/AuthorityWebsite")));
             }
         }
@@ -361,7 +359,7 @@ public class OgdExportService
             var encodedDocumentName = Uri.EscapeDataString(documentName);
             var documentUrl = $"{_ogdS3Configuration.BaseUrl}/{_ogdS3Configuration.bucket}/{path}/{encodedDocumentName}";
             appointmentDecisionItems.Add(new DimensionItem(appointmentDecision.OgdId, new Literal(encodedDocumentName),
-                [new AdditionalLiteralProperty("schema:url", new Literal(documentUrl, new Uri("http://www.w3.org/2001/XMLSchema#anyURI")))]
+                [new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(documentUrl, new Uri(OgdExportConstants.SchemaAnyUri)))]
             ));
         }
 
