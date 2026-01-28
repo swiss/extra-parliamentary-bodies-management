@@ -2422,4 +2422,37 @@ public static class OgdMapper
 
         return dataRow;
     }
+
+    public static ObservationDataRow ToCommitteeTypeDepartmentStatisticObservation(CommitteeTypeDepartmentStatisticDto statisticDto)
+    {
+        var ogdNamespace = OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic;
+
+        var dataRow = new ObservationDataRow
+        {
+            // combined key committee and function
+            KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}"
+        };
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:committeeType",
+            Object = statisticDto.CommitteeType
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:organisation",
+            Object = statisticDto.Organisation
+        });
+
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:committeeCount",
+            Object = statisticDto.CommitteeCount.ToString()
+        });
+
+        return dataRow;
+    }
+
 }
