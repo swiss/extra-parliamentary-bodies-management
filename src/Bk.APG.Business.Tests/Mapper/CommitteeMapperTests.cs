@@ -139,6 +139,7 @@ internal class CommitteeMapperTests
             Assert.That(committeeDetailDto.NeedsAttentionNoMembers, Is.EqualTo(committee.NeedsAttentionNoMembers));
             Assert.That(committeeDetailDto.NeedsAttentionAboveMaxMembers, Is.EqualTo(committee.NeedsAttentionAboveMaxMembers));
             Assert.That(committeeDetailDto.NeedsAttentionDataProtectionOfficer, Is.EqualTo(committee.NeedsAttentionDataProtectionOfficer));
+            Assert.That(committeeDetailDto.NeedsAttentionSecretariat, Is.EqualTo(committee.NeedsAttentionSecretariat));
             Assert.That(committeeDetailDto.NeedsAttentionBasicData, Is.EqualTo(committee.NeedsAttentionBasicData));
             Assert.That(committeeDetailDto.NeedsAttentionMembershipExpired, Is.EqualTo(committee.NeedsAttentionMembershipExpired));
         });
