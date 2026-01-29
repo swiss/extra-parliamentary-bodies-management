@@ -270,7 +270,7 @@ public static class PersonMapper
         var dimensionItem =
             new DimensionItem(
                 person.OgdId,
-                new Literal($"{person.Surname}, {person.GivenName} {person.BirthYear}", OgdExportConstants.LanguageDe),
+                new Literal($"{person.Surname}, {person.GivenName} ({person.BirthYear})", OgdExportConstants.LanguageDe),
                 [
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaGivenName, new Literal(person.GivenName)),
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaFamilyName, new Literal(person.Surname)),
@@ -292,7 +292,7 @@ public static class PersonMapper
             dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaWorksFor, new Literal(person.Employer)));
         }
 
-        if (person.OfficeId != null && person.Office != null && person.FederalDuty)
+        if (person is { OfficeId: not null, Office: not null, FederalDuty: true })
         {
             dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.PersonHasOffice, OgdExportConstants.CreateUriLinkForLdAdminCh(person.Office.Uri)));
 
