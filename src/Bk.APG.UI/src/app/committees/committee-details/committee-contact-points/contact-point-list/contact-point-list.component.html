@@ -1,13 +1,14 @@
 @if (committeeDetails(); as committee) {
-    <!-- TODO REACTIVATE -->
-    <!--   @if (committee.needsAttentionDataProtectionOfficer) {
+    @if (committee.needsAttentionDataProtectionOfficer) {
         <ob-alert type="warning">{{ 'committee.details.warning.dataProtectionOfficer' | translate }}</ob-alert>
-    } @else -->
-    @if (!hasDataProtectionOfficer()) {
-        <ob-alert type="info">{{ 'committee.details.info.dataProtectionOfficer' | translate }}</ob-alert>
+    } @else {
+        @if (!hasDataProtectionOfficer()) {
+            <ob-alert type="info">{{ 'committee.details.info.dataProtectionOfficer' | translate }}</ob-alert>
+        }
     }
-    @if (!hasSecretariat()) {
-        <ob-alert type="info">{{ 'committee.details.info.secretariat' | translate }}</ob-alert>
+
+    @if (committee.needsAttentionSecretariat || !hasSecretariat()) {
+        <ob-alert [type]="committee.needsAttentionSecretariat ? 'warning' : 'info'">{{ 'committee.details.info.secretariat' | translate }}</ob-alert>
     }
 }
 <div class="committee-contactpoints-header">
