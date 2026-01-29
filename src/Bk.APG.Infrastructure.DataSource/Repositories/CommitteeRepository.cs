@@ -206,6 +206,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(x => x.Department)
             .Include(x => x.Memberships)
             .Include(x => x.ContactPoints)
+            .Include(x => x.LegalForm)
             .Include(x => x.AppointmentDecisions)
                 .ThenInclude(x => x.OriginalDocument)
             .AsSingleQuery()

@@ -57,6 +57,7 @@ public static class OgdExportConstants
 
     public const string CommitteeHasSecretariat = "committee:hasSecretariat";
     public const string CommitteeHasDataProtectionOfficer = "committee:hasDataProtectionOfficer";
+    public const string CommitteeHasLegalForm = "committee:hasLegalForm";
 
     public const string LanguageDe = "de";
     public const string LanguageFr = "fr";
