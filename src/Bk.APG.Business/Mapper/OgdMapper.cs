@@ -1,4 +1,5 @@
 using Bk.APG.Business.Dtos;
+using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.RawData.Model;
 
@@ -78,16 +79,38 @@ public static class OgdMapper
     {
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic;
 
-        var dataRow = new ObservationDataRow
-        {
-            KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeOgdId}"
-        };
+        var dataRow = new ObservationDataRow();
 
-        dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
+        // has 3 different usages, usage 1 for committee statistic
+        if (statisticDto.CommitteeOgdId != null)
         {
-            Predicate = $"{ogdNamespace}:hasCommittee",
-            Uri = $"committee:{statisticDto.CommitteeOgdId}"
-        });
+            dataRow.KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeOgdId}";
+
+            dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
+            {
+                Predicate = $"{ogdNamespace}:hasCommittee",
+                Uri = $"committee:{statisticDto.CommitteeOgdId}"
+            });
+        }
+        // usage 2, for committeeType/department statistic 
+        else if (statisticDto.CommitteeTypeOgdId != null)
+        {
+            dataRow.KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}-{statisticDto.Department}";
+        }
+        // usage 3, for calculated committeeTypes (APK/NON-APK)
+        else
+        {
+            dataRow.KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}-{statisticDto.Department}";
+        }
+
+        if (statisticDto.DepartmentUri != null)
+        {
+            dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
+            {
+                Predicate = $"{ogdNamespace}:hasDepartment",
+                Uri = $"department:{statisticDto.DepartmentUri}"
+            });
+        }
 
         dataRow.Values.Add(new DimensionValue
         {
@@ -190,28 +213,28 @@ public static class OgdMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:over40Count",
-            Object = statisticDto.Over40Count.ToString(),
+            Object = statisticDto.UpTo30Count.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:over40Percentage",
-            Object = statisticDto.Over40Percentage.ToString(),
+            Object = statisticDto.UpTo30Percentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:underOr40Count",
-            Object = statisticDto.UnderOr40Count.ToString(),
+            Object = statisticDto.From31To40Count.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:underOr40Percentage",
-            Object = statisticDto.UnderOr40Percentage.ToString(),
+            Object = statisticDto.From31To40Percentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
@@ -2429,7 +2452,6 @@ public static class OgdMapper
 
         var dataRow = new ObservationDataRow
         {
-            // combined key committee and function
             KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}"
         };
 
@@ -2438,6 +2460,15 @@ public static class OgdMapper
             Predicate = $"{ogdNamespace}:committeeType",
             Object = statisticDto.CommitteeType
         });
+
+        if (statisticDto.CommitteeTypeOgdId != null)
+        {
+            dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
+            {
+                Predicate = $"{ogdNamespace}:hasCommitteeType",
+                Uri = $"committeeType:{statisticDto.CommitteeTypeOgdId}"
+            });
+        }
 
         dataRow.Values.Add(new DimensionValue
         {
