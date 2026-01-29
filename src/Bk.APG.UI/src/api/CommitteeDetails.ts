@@ -44,6 +44,7 @@ export interface CommitteeDetails {
     needsAttentionNoMembers: boolean;
     needsAttentionAboveMaxMembers: boolean;
     needsAttentionDataProtectionOfficer: boolean;
+    needsAttentionSecretariat: boolean;
     needsAttentionBasicData: boolean;
     needsAttentionMembershipExpired: boolean;
     needsAttentionMembershipInterestOrOccupation: boolean;

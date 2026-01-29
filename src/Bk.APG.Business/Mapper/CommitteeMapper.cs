@@ -140,6 +140,7 @@ public static class CommitteeMapper
             NeedsAttentionNoMembers = committee.NeedsAttentionNoMembers,
             NeedsAttentionAboveMaxMembers = committee.NeedsAttentionAboveMaxMembers,
             NeedsAttentionDataProtectionOfficer = committee.NeedsAttentionDataProtectionOfficer,
+            NeedsAttentionSecretariat = committee.NeedsAttentionSecretariat,
             NeedsAttentionBasicData = committee.NeedsAttentionBasicData,
             NeedsAttentionMembershipExpired = committee.NeedsAttentionMembershipExpired,
             NeedsAttentionMembershipInterestOrOccupation = committee.NeedsAttentionMembershipInterestOrOccupation
@@ -238,6 +239,7 @@ public static class CommitteeMapper
                 //the uri of the secretariat has to match the one exported by OgdExportService
                 dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.CommitteeHasSecretariat, $"{OgdExportConstants.NamespaceOrganization}:{contactPoint.OgdId}"));
             }
+
             if (contactPoint.ContactPointTypeId == ContactPointType.DataProtectionOfficerGuid)
             {
                 //the uri of the DPO has to match the one exported by OgdExportService
