@@ -441,9 +441,11 @@ public class CommitteeService : ICommitteeService
 
             var statisticDto = new CommitteeTypeDepartmentStatisticDto
             {
-                CommitteeTypeOgdId = generatedOgdId,
+                OgdId = generatedOgdId,
                 Organisation = first.Department!.TextDe,
+                DepartmentUri = first.Department!.Uri,
                 CommitteeType = first.CommitteeType!.TextDe,
+                CommitteeTypeOgdId = first.CommitteeType!.OgdId,
                 CommitteeCount = group.Count()
             };
 
@@ -457,8 +459,9 @@ public class CommitteeService : ICommitteeService
 
             var statisticDto = new CommitteeTypeDepartmentStatisticDto
             {
-                CommitteeTypeOgdId = generatedOgdId,
+                OgdId = generatedOgdId,
                 Organisation = first.Department!.TextDe,
+                DepartmentUri = first.Department!.Uri,
                 CommitteeType = $"{extraParliamentaryCommissionPrefix}",
                 CommitteeCount = group.Count()
             };
@@ -473,8 +476,9 @@ public class CommitteeService : ICommitteeService
 
             var statisticDto = new CommitteeTypeDepartmentStatisticDto
             {
-                CommitteeTypeOgdId = generatedOgdId,
+                OgdId = generatedOgdId,
                 Organisation = first.Department!.TextDe,
+                DepartmentUri = first.Department!.Uri,
                 CommitteeType = $"{nonExtraParliamentaryCommissionPrefix}",
                 CommitteeCount = group.Count()
             };
@@ -485,7 +489,7 @@ public class CommitteeService : ICommitteeService
 
         var totalDto = new CommitteeTypeDepartmentStatisticDto
         {
-            CommitteeTypeOgdId = generatedOgdId,
+            OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Behördenkommissionen",
             CommitteeCount = totalAuthoritiesCommissions
@@ -496,7 +500,7 @@ public class CommitteeService : ICommitteeService
 
         totalDto = new CommitteeTypeDepartmentStatisticDto
         {
-            CommitteeTypeOgdId = generatedOgdId,
+            OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Verwaltungskommissionen",
             CommitteeCount = totalAdministrationCommissions
@@ -507,7 +511,7 @@ public class CommitteeService : ICommitteeService
 
         totalDto = new CommitteeTypeDepartmentStatisticDto
         {
-            CommitteeTypeOgdId = generatedOgdId,
+            OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-VertretungenDesBundes",
             CommitteeCount = totalFederalAgenciesCommissions
@@ -518,7 +522,7 @@ public class CommitteeService : ICommitteeService
 
         totalDto = new CommitteeTypeDepartmentStatisticDto
         {
-            CommitteeTypeOgdId = generatedOgdId,
+            OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Leitungsorgane",
             CommitteeCount = totalManagementCommissions
@@ -532,7 +536,7 @@ public class CommitteeService : ICommitteeService
 
         totalDto = new CommitteeTypeDepartmentStatisticDto
         {
-            CommitteeTypeOgdId = generatedOgdId,
+            OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-APKs",
             CommitteeCount = totalExtraParliamentaryCommissions
@@ -543,7 +547,7 @@ public class CommitteeService : ICommitteeService
 
         totalDto = new CommitteeTypeDepartmentStatisticDto
         {
-            CommitteeTypeOgdId = generatedOgdId,
+            OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-NON-APKs",
             CommitteeCount = totalNonExtraParliamentaryCommissions
