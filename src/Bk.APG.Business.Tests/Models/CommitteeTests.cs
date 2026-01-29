@@ -405,6 +405,54 @@ internal class CommitteeTests
     }
 
     [Test]
+    public void NeedsAttention_WithNeedsAttentionSecretariat_ShouldReturnTrue()
+    {
+        var membership = new MembershipBuilder()
+            .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Male).Build()).Build())
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-2)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2)))
+            .WithElectionType(new ElectionTypeBuilder()
+                .WithUri(ElectionType.NewElection).Build())
+            .Build();
+
+        var committee = new CommitteeBuilder()
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-2)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2)))
+            .WithMembership(membership)
+            .Build();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(committee.NeedsAttentionSecretariat, Is.True);
+            Assert.That(committee.NeedsAttention, Is.True);
+        }
+    }
+
+    [Test]
+    public void NeedsAttention_WithSecretariatAndNoOtherIssues_ShouldReturnFalse()
+    {
+        var membership = new MembershipBuilder()
+            .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Male).Build()).Build())
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-2)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2)))
+            .WithElectionType(new ElectionTypeBuilder()
+                .WithUri(ElectionType.NewElection).Build())
+            .Build();
+
+        var committee = new CommitteeBuilder()
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-2)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2)))
+            .WithMembership(membership)
+            .WithContactPoint(new ContactPointBuilder()
+                .WithContactPointType(new ContactPointTypeBuilder().WithId(ContactPointType.SecretariatGuid).Build())
+                .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10)))
+                .Build())
+            .Build();
+
+        Assert.That(committee.NeedsAttentionSecretariat, Is.False);
+    }
+
+    [Test]
     public void ActiveMemberCountFuture_WithData_ShouldReturnNumber()
     {
         // future
