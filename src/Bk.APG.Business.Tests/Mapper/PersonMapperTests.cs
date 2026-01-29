@@ -367,7 +367,7 @@ internal class PersonMapperTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Key, Is.EqualTo(personOgdId));
-            Assert.That(result.Name.Text, Is.EqualTo($"{person.Surname}, {person.GivenName} {person.BirthYear}"));
+            Assert.That(result.Name.Text, Is.EqualTo($"{person.Surname}, {person.GivenName} ({person.BirthYear})"));
             Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(5));
             Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(2));
         }
