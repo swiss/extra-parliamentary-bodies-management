@@ -203,7 +203,11 @@ public class OgdExportService
                 OgdExportConstants.UriCommitteeCantonStatistic,
                 cantonStatisticData.Select(OgdMapper.ToCantonStatisticObservation));
 
-        var genderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
+        var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
+
+        var departmentGenderLanguageStatisticData = _membershipService.GetMembershipsForCommitteeTypeAndDepartmentGenderLanguageStatistic(membershipData);
+
+        var genderLanguageStatisticData = committeeGenderLanguageStatisticData.Concat(departmentGenderLanguageStatisticData);
 
         var committeeGenderLanguageStatisticRawData =
             _cubeRawDataService.CreateTriples(
