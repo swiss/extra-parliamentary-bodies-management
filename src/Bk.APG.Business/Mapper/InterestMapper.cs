@@ -54,7 +54,7 @@ public static class InterestMapper
 
     public static ObservationDataRow ToObservation(Interest interest)
     {
-        ArgumentNullException.ThrowIfNull(interest, nameof(interest));
+        ArgumentNullException.ThrowIfNull(interest);
         ArgumentNullException.ThrowIfNull(interest.Person, nameof(interest.Person));
 
         const string ldUri = "https://ld.admin.ch/";
