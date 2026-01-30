@@ -822,5 +822,6 @@
   "recipients.filter.electionType.label": "Status",
   "recipients.table.header.description.label": "Gremienliste",
   "recipients.download": "Herunterladen",
-  "worklist.task.section": "Bereich"
+  "worklist.task.section": "Bereich",
+  "generalElection.committee.candidateList.noGeneralElectionStartedForCommittee": "Für dieses Gremium wurde die GEW noch nicht gestartet."
 }
