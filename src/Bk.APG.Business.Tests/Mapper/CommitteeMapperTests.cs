@@ -244,13 +244,15 @@ internal class CommitteeMapperTests
         {
             Assert.That(result.Key, Is.EqualTo(committeeOgdId));
             Assert.That(result.Name.Text, Is.EqualTo("de"));
-            Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(1));
+            Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(2));
         }
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.AdditionalUriProperties[0].Predicate, Is.EqualTo(OgdExportConstants.CommitteeHasSecretariat));
-            Assert.That(result.AdditionalUriProperties[0].Object, Is.EqualTo($"organization:{secretariat.OgdId}"));
+            Assert.That(result.AdditionalUriProperties[0].Object, Is.EqualTo($"{OgdExportConstants.NamespaceOrganization}:{secretariat.OgdId}"));
+            Assert.That(result.AdditionalUriProperties[1].Predicate, Is.EqualTo(OgdExportConstants.CommitteeHasLegalForm));
+            Assert.That(result.AdditionalUriProperties[1].Object, Is.EqualTo(OgdExportConstants.CreateUriLinkForLdAdminCh(committee.LegalForm!.Uri)));
         }
     }
 
