@@ -11,10 +11,12 @@ namespace Bk.APG.Api.Controllers;
 public class ApgGeneralSettingsController : ControllerBase
 {
     private readonly IApgGeneralSettingsService _apgGeneralSettingsService;
+    private readonly IOgdExportService _ogdExportService;
 
-    public ApgGeneralSettingsController(IApgGeneralSettingsService apgGeneralSettingsService)
+    public ApgGeneralSettingsController(IApgGeneralSettingsService apgGeneralSettingsService, IOgdExportService ogdExportService)
     {
         _apgGeneralSettingsService = apgGeneralSettingsService;
+        _ogdExportService = ogdExportService;
     }
 
     [HttpGet("")]
@@ -29,5 +31,12 @@ public class ApgGeneralSettingsController : ControllerBase
     {
         var settings = await _apgGeneralSettingsService.UpdateApgGeneralSettings(enabled);
         return Ok(settings);
+    }
+
+    [HttpPost("ogdExport")]
+    public async Task<ActionResult> TriggerPublication()
+    {
+        await _ogdExportService.Export();
+        return Ok();
     }
 }
