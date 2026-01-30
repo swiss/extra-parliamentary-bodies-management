@@ -177,7 +177,7 @@ public class OgdExportService
                 OgdExportConstants.UriMembership,
                 membershipData.Select(MembershipMapper.ToObservation));
 
-        var interestData = _interestRepository.GetAllForOgdExport();
+        var interestData = await _interestRepository.GetAllForOgdExport();
 
         var interestRawData =
             _cubeRawDataService.CreateTriples(
