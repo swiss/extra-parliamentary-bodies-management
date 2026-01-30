@@ -5,7 +5,7 @@ namespace Bk.APG.Business.Repositories;
 public interface IInterestRepository
 {
     Task<IEnumerable<Interest>> GetAllByPersonId(Guid personId);
-    IEnumerable<Interest> GetAllForOgdExport();
+    Task<IEnumerable<Interest>> GetAllForOgdExport();
     Task<IEnumerable<Interest>> GetAllByPersonIdForUpdate(Guid personId);
     Task<Interest> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null);
     Task<Interest> Create(Interest interest);
