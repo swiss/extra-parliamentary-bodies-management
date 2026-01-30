@@ -252,6 +252,11 @@ public static class CommitteeMapper
             dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.SchemaSubjectOf, $"{OgdExportConstants.NamespaceAppointmentDecision}:{committee.LatestInstitutionAppointmentDecision.OgdId}"));
         }
 
+        if (committee.LegalForm is not null)
+        {
+            dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.CommitteeHasLegalForm, OgdExportConstants.CreateUriLinkForLdAdminCh(committee.LegalForm!.Uri)));
+        }
+
         return dimensionItem;
     }
 
