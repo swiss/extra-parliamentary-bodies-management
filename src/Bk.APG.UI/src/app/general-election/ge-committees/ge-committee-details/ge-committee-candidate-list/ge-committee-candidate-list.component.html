@@ -7,19 +7,21 @@
     }
 </div>
 
-@if (validationErrors().length) {
-    <div class="validation-errors">
+<div class="validation-errors">
+    @if (generalElectionCommittee() !== undefined && !generalElectionCommittee()?.wasGeneralElectionStartedForCommittee) {
+        <ob-alert type="info">{{ 'generalElection.committee.candidateList.noGeneralElectionStartedForCommittee' | translate }}</ob-alert>
+    }
+
+    @if (validationErrors().length) {
         @for (error of validationErrors(); track error) {
             <ob-alert type="error">{{ error }}</ob-alert>
         }
-    </div>
-}
+    }
 
-@if (areJustificationsMissing()) {
-    <div class="validation-errors">
+    @if (areJustificationsMissing()) {
         <ob-alert type="warning">{{ 'generalElection.committee.candidateList.justificationsMissingTasksCreated' | translate }}</ob-alert>
-    </div>
-}
+    }
+</div>
 
 <div class="duplicates">
     @if (personDuplicates.length > 0) {
