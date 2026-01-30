@@ -1,5 +1,4 @@
 using Bk.APG.Business.Dtos;
-using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.RawData.Model;
 
@@ -78,6 +77,7 @@ public static class OgdMapper
     public static ObservationDataRow ToGenderLanguageStatisticObservation(MembershipGenderLanguageStatisticDto statisticDto)
     {
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic;
+        var committeeType = "committee-type";
 
         var dataRow = new ObservationDataRow();
 
@@ -92,12 +92,12 @@ public static class OgdMapper
                 Uri = $"committee:{statisticDto.CommitteeOgdId}"
             });
         }
-        // usage 2, for committeeType/department statistic 
-        else if (statisticDto.CommitteeTypeOgdId != null)
+        // usage 2, for committeeType statistic 
+        else if (statisticDto.CommitteeTypeOgdId != null && statisticDto.Department == null)
         {
-            dataRow.KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}-{statisticDto.Department}";
+            dataRow.KeyUri = $"{ogdNamespace}:{committeeType}-{statisticDto.CommitteeTypeOgdId}";
         }
-        // usage 3, for calculated committeeTypes (APK/NON-APK)
+        // usage 3, for calculated committeeTypes (APK/NON-APK) by department using self generated committeeOgdId
         else
         {
             dataRow.KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}-{statisticDto.Department}";
@@ -108,7 +108,16 @@ public static class OgdMapper
             dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
             {
                 Predicate = $"{ogdNamespace}:hasDepartment",
-                Uri = $"department:{statisticDto.DepartmentUri}"
+                Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.DepartmentUri)
+            });
+        }
+
+        if (statisticDto.CommitteeTypeOgdId != null)
+        {
+            dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
+            {
+                Predicate = $"{ogdNamespace}:hasCommitteeType",
+                Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}"
             });
         }
 
@@ -212,29 +221,85 @@ public static class OgdMapper
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:over40Count",
+            Predicate = $"{ogdNamespace}:upTo30Count",
             Object = statisticDto.UpTo30Count.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:over40Percentage",
+            Predicate = $"{ogdNamespace}:upTo30Percentage",
             Object = statisticDto.UpTo30Percentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:underOr40Count",
+            Predicate = $"{ogdNamespace}:from31to40Count",
             Object = statisticDto.From31To40Count.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:underOr40Percentage",
+            Predicate = $"{ogdNamespace}:from31To40Percentage",
             Object = statisticDto.From31To40Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from41to50Count",
+            Object = statisticDto.From41To50Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from41To50Percentage",
+            Object = statisticDto.From41To50Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from51to60Count",
+            Object = statisticDto.From51To60Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from51To60Percentage",
+            Object = statisticDto.From51To60Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from61to70Count",
+            Object = statisticDto.From61To70Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from61To70Percentage",
+            Object = statisticDto.From61To70Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:over70Count",
+            Object = statisticDto.Over70Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:over70Percentage",
+            Object = statisticDto.Over70Percentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
@@ -369,29 +434,85 @@ public static class OgdMapper
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:over40Count",
-            Object = statisticDto.Over40Count.ToString(),
+            Predicate = $"{ogdNamespace}:upTo30Count",
+            Object = statisticDto.UpTo30Count.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:over40Percentage",
-            Object = statisticDto.Over40Percentage.ToString(),
+            Predicate = $"{ogdNamespace}:upTo30Percentage",
+            Object = statisticDto.UpTo30Percentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:underOr40Count",
-            Object = statisticDto.UnderOr40Count.ToString(),
+            Predicate = $"{ogdNamespace}:from31to40Count",
+            Object = statisticDto.From31To40Count.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
         });
 
         dataRow.Values.Add(new DimensionValue
         {
-            Predicate = $"{ogdNamespace}:underOr40Percentage",
-            Object = statisticDto.UnderOr40Percentage.ToString(),
+            Predicate = $"{ogdNamespace}:from31To40Percentage",
+            Object = statisticDto.From31To40Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from41to50Count",
+            Object = statisticDto.From41To50Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from41To50Percentage",
+            Object = statisticDto.From41To50Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from51to60Count",
+            Object = statisticDto.From51To60Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from51To60Percentage",
+            Object = statisticDto.From51To60Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from61to70Count",
+            Object = statisticDto.From61To70Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:from61To70Percentage",
+            Object = statisticDto.From61To70Percentage.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:over70Count",
+            Object = statisticDto.Over70Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:over70Percentage",
+            Object = statisticDto.Over70Percentage.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#decimal"
         });
 
@@ -2466,7 +2587,7 @@ public static class OgdMapper
             dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
             {
                 Predicate = $"{ogdNamespace}:hasCommitteeType",
-                Uri = $"committeeType:{statisticDto.CommitteeTypeOgdId}"
+                Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}"
             });
         }
 
