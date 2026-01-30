@@ -39,41 +39,20 @@ public class InterestRepository : IInterestRepository
         return interests;
     }
 
-    public IEnumerable<Interest> GetAllForOgdExport()
+    public async Task<IEnumerable<Interest>> GetAllForOgdExport()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
 
-        var interests = _dataContext.Interests
+        var interests = await _dataContext.Interests
             .Where(i => (i.BeginDate <= today && (i.EndDate > today || i.EndDate == null)) || (i.BeginDate == null && i.EndDate == null))
             .Include(item => item.Person!)
-            .ThenInclude(item => item.Memberships)
+                .ThenInclude(item => item.Memberships)
             .Include(item => item.InterestCommittee)
             .Include(item => item.InterestFunction)
             .Include(item => item.LegalForm)
             .Where(c => c.Person!.Memberships.Any(m => m.BeginDate <= today && m.EndDate > today))
             .AsSplitQuery()
-            .Select(c => new Interest
-            {
-                Id = c.Id,
-                OgdId = c.OgdId,
-                Text = c.Text,
-                InterestText = c.Text,
-                BeginDate = c.BeginDate,
-                EndDate = c.EndDate,
-                InterestCommittee = c.InterestCommittee,
-                InterestCommitteeId = c.InterestCommitteeId,
-                InterestFunctionId = c.InterestFunctionId,
-                InterestFunction = c.InterestFunction,
-                LegalForm = c.LegalForm,
-                LegalFormId = c.LegalFormId,
-                Person = c.Person,
-                PersonId = c.PersonId,
-                Created = c.Created,
-                CreatedBy = c.CreatedBy,
-                Modified = c.Modified,
-                ModifiedBy = c.ModifiedBy
-            })
-        .ToList();
+            .ToListAsync();
 
         return interests;
     }
