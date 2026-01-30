@@ -9,7 +9,6 @@ using Bk.APG.CrossCutting.Tests.Builders;
 using Bk.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using NSubstitute.ReceivedExtensions;
 
 namespace Bk.APG.Business.Tests.Services;
 
@@ -127,6 +126,73 @@ public class GeneralElectionCommitteeServiceTests
             Arg.Is<GeneralElectionCommitteeFilterParameters>(x => x.CommitteeIds != null && x.CommitteeIds.Contains(_committeeId)),
             null,
             null);
+    }
+
+    [Test]
+    public async Task GetGeneralElectionCommittee_WithCandidateListTasks_ShouldEnableCandidateListActions()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var assignmentId = Guid.NewGuid();
+        var currentAssignment = new EiamAssignmentBuilder()
+            .WithId(assignmentId)
+            .WithRole(Role.Department)
+            .Build();
+        var activeCandidateListTask = new WorklistTaskBuilder()
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignment)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([activeCandidateListTask]);
+
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.WasGeneralElectionStartedForCommittee, Is.True);
+            Assert.That(result.CanSaveCandidateList, Is.True);
+            Assert.That(result.CanValidateCandidateList, Is.True);
+            Assert.That(result.CanForwardCandidateList, Is.True);
+        }
+    }
+
+    [Test]
+    public async Task GetGeneralElectionCommittee_WithoutCandidateListTasks_ShouldDisableCandidateListActions()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var currentAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Admin)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns(new List<WorklistTask>());
+
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.WasGeneralElectionStartedForCommittee, Is.False);
+            Assert.That(result.CanSaveCandidateList, Is.False);
+            Assert.That(result.CanValidateCandidateList, Is.False);
+            Assert.That(result.CanForwardCandidateList, Is.False);
+        }
     }
 
     [Test]
@@ -274,28 +340,34 @@ public class GeneralElectionCommitteeServiceTests
             .WithGermanDescription("Gremium DE")
             .WithOffice(new OfficeBuilder().WithGermanDescription("Office DE").Build())
             .WithMembershipCandidates(
-            [new MembershipCandidateBuilder()
-                .WithId(membershipCandidateId)
-                .WithBeginDate(new DateOnly(2025, 1, 1))
-                .WithEndDate(new DateOnly(2025, 12, 31))
-                .WithFunction(new FunctionBuilder().Build())
-                .WithPerson(
-                    new PersonBuilder()
-                        .WithGender(new GenderBuilder().Build())
-                        .WithLanguage(new LanguageBuilder().Build())
-                        .WithBirthYear(2000)
-                        .WithCorrespondenceAddress(new AddressBuilder()
-                            .WithCity("Zurich")
-                            .WithEmail("test@test.ch")
-                            .WithPhone("+4111223344")
-                            .Build())
-                        .WithOccupations([new OccupationBuilder()
-                            .WithGermanDescription("JobDE").Build()])
-                        .WithInterests([new InterestBuilder()
-                        .Build()]).Build())
-                .WithRemarks("remarks")
-                .WithRemarksStatus("remarksStatus")
-                .Build()])
+            [
+                new MembershipCandidateBuilder()
+                    .WithId(membershipCandidateId)
+                    .WithBeginDate(new DateOnly(2025, 1, 1))
+                    .WithEndDate(new DateOnly(2025, 12, 31))
+                    .WithFunction(new FunctionBuilder().Build())
+                    .WithPerson(
+                        new PersonBuilder()
+                            .WithGender(new GenderBuilder().Build())
+                            .WithLanguage(new LanguageBuilder().Build())
+                            .WithBirthYear(2000)
+                            .WithCorrespondenceAddress(new AddressBuilder()
+                                .WithCity("Zurich")
+                                .WithEmail("test@test.ch")
+                                .WithPhone("+4111223344")
+                                .Build())
+                            .WithOccupations([
+                                new OccupationBuilder()
+                                    .WithGermanDescription("JobDE").Build()
+                            ])
+                            .WithInterests([
+                                new InterestBuilder()
+                                    .Build()
+                            ]).Build())
+                    .WithRemarks("remarks")
+                    .WithRemarksStatus("remarksStatus")
+                    .Build()
+            ])
             .Build();
 
         _generalElectionCommitteeRepository
@@ -334,9 +406,10 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[16].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.City));
             Assert.That(dataRow[17].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Phone));
             Assert.That(dataRow[18].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Email));
-            Assert.That(dataRow[19].Text, Is.EqualTo(string.Join(";", geCommittee.MembershipCandidates.First().Person!.Interests!.Select(y => y.InterestText))));
+            Assert.That(dataRow[19].Text, Is.EqualTo(string.Join(";", geCommittee.MembershipCandidates.First().Person!.Interests.Select(y => y.InterestText))));
         });
     }
+
     [Test]
     public async Task GenerateCandidateListExport_WithoutPersonEntity_ShouldExportCorrectly()
     {
@@ -347,19 +420,21 @@ public class GeneralElectionCommitteeServiceTests
             .WithGermanDescription("Gremium DE")
             .WithOffice(new OfficeBuilder().WithGermanDescription("Office DE").Build())
             .WithMembershipCandidates(
-            [new MembershipCandidateBuilder()
-                .WithId(membershipCandidateId)
-                .WithBeginDate(new DateOnly(2025, 1, 1))
-                .WithEndDate(new DateOnly(2025, 12, 31))
-                .WithFunction(new FunctionBuilder().Build())
-                .WithSurname("clark")
-                .WithGivenName("jim")
-                .WithGender(new GenderBuilder().Build())
-                .WithLanguage(new LanguageBuilder().Build())
-                .WithBirthYear(2000)
-                .WithRemarks("remarks")
-                .WithRemarksStatus("remarksStatus")
-                .Build()])
+            [
+                new MembershipCandidateBuilder()
+                    .WithId(membershipCandidateId)
+                    .WithBeginDate(new DateOnly(2025, 1, 1))
+                    .WithEndDate(new DateOnly(2025, 12, 31))
+                    .WithFunction(new FunctionBuilder().Build())
+                    .WithSurname("clark")
+                    .WithGivenName("jim")
+                    .WithGender(new GenderBuilder().Build())
+                    .WithLanguage(new LanguageBuilder().Build())
+                    .WithBirthYear(2000)
+                    .WithRemarks("remarks")
+                    .WithRemarksStatus("remarksStatus")
+                    .Build()
+            ])
             .Build();
 
         _generalElectionCommitteeRepository
