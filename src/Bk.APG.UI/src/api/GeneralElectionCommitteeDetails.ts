@@ -70,6 +70,7 @@ export interface GeneralElectionCommitteeDetails {
     selectionProcedure?: string;
     candidateListState?: string;
     assignedTo?: string;
+    wasGeneralElectionStartedForCommittee: boolean;
     canValidateCandidateList: boolean;
     canSaveCandidateList: boolean;
     canForwardCandidateList: boolean;
