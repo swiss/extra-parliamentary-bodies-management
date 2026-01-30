@@ -74,7 +74,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IOgdDocumentService, OgdDocumentService>();
 
         services.AddScoped<IConnectionFactory, ConnectionFactory>();
-        services.AddScoped<OgdExportService>();
+        services.AddScoped<IOgdExportService, OgdExportService>();
 
         services.AddScoped<IPostService, PostService>();
 
