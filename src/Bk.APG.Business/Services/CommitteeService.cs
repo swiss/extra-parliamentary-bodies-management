@@ -417,14 +417,17 @@ public class CommitteeService : ICommitteeService
         var nonExtraParliamentaryCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
             c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
 
-        var groupedCommittees = activeCommittees.GroupBy(c => new {
+        var groupedCommittees = activeCommittees.GroupBy(c => new
+        {
             DepartmentId = c.Department!.Id,
             CommitteeTypeId = c.CommitteeType!.Id
         });
-        var groupedExtraParliamentaryCommissions = extraParliamentaryCommissions.GroupBy(c => new {
+        var groupedExtraParliamentaryCommissions = extraParliamentaryCommissions.GroupBy(c => new
+        {
             DepartmentId = c.Department!.Id
         });
-        var groupedNonExtraParliamentaryCommissions = nonExtraParliamentaryCommissions.GroupBy(c => new {
+        var groupedNonExtraParliamentaryCommissions = nonExtraParliamentaryCommissions.GroupBy(c => new
+        {
             DepartmentId = c.Department!.Id
         });
 

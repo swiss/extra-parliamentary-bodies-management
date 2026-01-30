@@ -143,13 +143,25 @@ public class MembershipService : IMembershipService
 
         foreach (var committeeGroup in groupedMemberships)
         {
+            var first = committeeGroup.First();
+
             var committeeId = committeeGroup.Key.CommitteeId;
             var committeeOgdId = committeeGroup.Key.OgdId;
+
+            // this type can be basically excluded in the base selection already, then we wouldn't need this here. Check with Mike: TODO PP
+            if (first.Committee!.CommitteeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
+            {
+                continue;
+            }
 
             var dto = new MembershipGenderLanguageStatisticDto
             {
                 CommitteeId = committeeId,
                 CommitteeOgdId = committeeOgdId,
+                CommitteeTypeId = first.Committee!.CommitteeType!.Id,
+                CommitteeTypeOgdId = first.Committee!.CommitteeType!.OgdId,
+                Department = first.Committee!.Department!.TextDe,
+                DepartmentUri = first.Committee!.Department!.Uri,
                 MembershipCount = committeeGroup.Count(),
                 FemaleCount = committeeGroup.Count(m => m.Person!.GenderId == Gender.FemaleGuid),
                 MaleCount = committeeGroup.Count(m => m.Person!.GenderId == Gender.MaleGuid),
@@ -192,19 +204,109 @@ public class MembershipService : IMembershipService
         var dtos = new List<MembershipGenderLanguageStatisticDto>();
         var currentYear = DateTime.Today.Year;
 
-        var groupedMemberships = memberships.GroupBy(m => new { m.Committee!.DepartmentId, m.Committee!.CommitteeTypeId });
+        var groupedMemberships = memberships.GroupBy(m => m.Committee!.CommitteeTypeId);
 
         foreach (var group in groupedMemberships)
         {
             var first = group.First();
 
-            var departmentId = group.Key.DepartmentId;
-            var committeeTypeId = group.Key.CommitteeTypeId;
+            var committeeTypeId = group.Key;
+
+            // this type can be basically excluded in the base selection already, then we wouldn't need this here. Check with Mike: TODO PP
+            if (committeeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
+            {
+                continue;
+            }
 
             var dto = new MembershipGenderLanguageStatisticDto
             {
+                CommitteeId = null,
+                CommitteeOgdId = null,
                 CommitteeTypeId = committeeTypeId,
                 CommitteeTypeOgdId = first.Committee!.CommitteeType!.OgdId,
+                Department = null,
+                DepartmentUri = null,
+                MembershipCount = group.Count(),
+                FemaleCount = group.Count(m => m.Person!.GenderId == Gender.FemaleGuid),
+                MaleCount = group.Count(m => m.Person!.GenderId == Gender.MaleGuid),
+                GermanCount = group.Count(m => m.Person!.LanguageId == Language.GermanGuid),
+                FrenchCount = group.Count(m => m.Person!.LanguageId == Language.FrenchGuid),
+                ItalianCount = group.Count(m => m.Person!.LanguageId == Language.ItalianGuid),
+                RomanshCount = group.Count(m => m.Person!.LanguageId == Language.RomanshGuid),
+                FederalDutyCount = group.Count(m => m.Person!.FederalDuty),
+                FederalAssemblyCount = group.Count(m => m.Person!.FederalAssembly),
+                UpTo30Count = group.Count(m => currentYear - m.Person!.BirthYear < 31),
+                From31To40Count = group.Count(m => currentYear - m.Person!.BirthYear is >= 31 and <= 40),
+                From41To50Count = group.Count(m => currentYear - m.Person!.BirthYear is >= 41 and <= 50),
+                From51To60Count = group.Count(m => currentYear - m.Person!.BirthYear is >= 51 and <= 60),
+                From61To70Count = group.Count(m => currentYear - m.Person!.BirthYear is >= 61 and <= 70),
+                Over70Count = group.Count(m => currentYear - m.Person!.BirthYear > 70),
+            };
+
+            if (dto.MembershipCount > 0)
+            {
+                dto.FemalePercentage = Math.Round((decimal)dto.FemaleCount / dto.MembershipCount * 100, 2);
+                dto.MalePercentage = Math.Round((decimal)dto.MaleCount / dto.MembershipCount * 100, 2);
+                dto.GermanPercentage = Math.Round((decimal)dto.GermanCount / dto.MembershipCount * 100, 2);
+                dto.FrenchPercentage = Math.Round((decimal)dto.FrenchCount / dto.MembershipCount * 100, 2);
+                dto.ItalianPercentage = Math.Round((decimal)dto.ItalianCount / dto.MembershipCount * 100, 2);
+                dto.RomanshPercentage = Math.Round((decimal)dto.RomanshCount / dto.MembershipCount * 100, 2);
+                dto.UpTo30Percentage = Math.Round((decimal)dto.UpTo30Count / dto.MembershipCount * 100, 2);
+                dto.From31To40Percentage = Math.Round((decimal)dto.From31To40Count / dto.MembershipCount * 100, 2);
+                dto.From41To50Percentage = Math.Round((decimal)dto.From41To50Count / dto.MembershipCount * 100, 2);
+                dto.From51To60Percentage = Math.Round((decimal)dto.From51To60Count / dto.MembershipCount * 100, 2);
+                dto.From61To70Percentage = Math.Round((decimal)dto.From61To70Count / dto.MembershipCount * 100, 2);
+                dto.Over70Percentage = Math.Round((decimal)dto.Over70Count / dto.MembershipCount * 100, 2);
+            }
+            dtos.Add(dto);
+        }
+
+        return dtos;
+    }
+
+    public IEnumerable<MembershipGenderLanguageStatisticDto> GetExtraAndNonExtraParliamentaryCommitteesStatistic(IEnumerable<Membership> memberships)
+    {
+        var dtos = new List<MembershipGenderLanguageStatisticDto>();
+        var currentYear = DateTime.Today.Year;
+
+        // As these are no official committeeTypes, we have to use self created values
+        var extraParliamentaryCommissionID = CommitteeType.ExtraParliamentaryCommitteeGuid;
+        var nonExtraParliamentaryCommissionID = CommitteeType.NonExtraParliamentaryCommitteeGuid;
+        var extraParliamentaryCommissionOgdId = 888;
+        var nonExtraParliamentaryCommissionOgdId = 999;
+
+        var groupedByCommitteeTypes = memberships.GroupBy(m => new
+        {
+            m.Committee!.DepartmentId,
+            CommitteeTypeGroup =
+                m.Committee.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
+                m.Committee.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid
+                ? extraParliamentaryCommissionID   // combined group id
+                : m.Committee.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
+                m.Committee.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ?
+                nonExtraParliamentaryCommissionID :
+                m.Committee.CommitteeTypeId
+        });
+
+        foreach (var group in groupedByCommitteeTypes)
+        {
+            var first = group.First();
+
+            var departmentId = group.Key.DepartmentId;
+            var committeeTypeId = group.Key.CommitteeTypeGroup;
+
+            // this type can be basically excluded in the base selection already, then we wouldn't need this here. Check with Mike: TODO PP
+            if (committeeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
+            {
+                continue;
+            }
+
+            var dto = new MembershipGenderLanguageStatisticDto
+            {
+                CommitteeId = null,
+                CommitteeOgdId = null,
+                CommitteeTypeId = committeeTypeId,
+                CommitteeTypeOgdId = committeeTypeId == extraParliamentaryCommissionID ? extraParliamentaryCommissionOgdId : nonExtraParliamentaryCommissionOgdId,
                 Department = first.Committee!.Department!.TextDe,
                 DepartmentUri = first.Committee!.Department!.Uri,
                 MembershipCount = group.Count(),
@@ -245,7 +347,6 @@ public class MembershipService : IMembershipService
         return dtos;
     }
 
-
     public async Task<IEnumerable<MembershipStatisticByCantonDto>> GetMembershipsForDetailedCantonStatistic(IEnumerable<Membership> memberships)
     {
         var cantons = await _masterDataRepository.GetCantons();
@@ -278,8 +379,12 @@ public class MembershipService : IMembershipService
                     RomanshCount = committeeGroup.Count(m => m.Person!.LanguageId == Language.RomanshGuid),
                     FederalDutyCount = committeeGroup.Count(m => m.Person!.FederalDuty),
                     FederalAssemblyCount = committeeGroup.Count(m => m.Person!.FederalAssembly),
-                    Over40Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear > 40),
-                    UnderOr40Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear <= 40),
+                    UpTo30Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear < 31),
+                    From31To40Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 31 and <= 40),
+                    From41To50Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 41 and <= 50),
+                    From51To60Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 51 and <= 60),
+                    From61To70Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 61 and <= 70),
+                    Over70Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear > 70),
                 };
 
                 if (dto.CantonCount > 0)
@@ -290,8 +395,12 @@ public class MembershipService : IMembershipService
                     dto.FrenchPercentage = Math.Round((decimal)dto.FrenchCount / dto.CantonCount * 100, 2);
                     dto.ItalianPercentage = Math.Round((decimal)dto.ItalianCount / dto.CantonCount * 100, 2);
                     dto.RomanshPercentage = Math.Round((decimal)dto.RomanshCount / dto.CantonCount * 100, 2);
-                    dto.Over40Percentage = Math.Round((decimal)dto.Over40Count / dto.CantonCount * 100, 2);
-                    dto.UnderOr40Percentage = Math.Round((decimal)dto.UnderOr40Count / dto.CantonCount * 100, 2);
+                    dto.UpTo30Percentage = Math.Round((decimal)dto.UpTo30Count / dto.CantonCount * 100, 2);
+                    dto.From31To40Percentage = Math.Round((decimal)dto.From31To40Count / dto.CantonCount * 100, 2);
+                    dto.From41To50Percentage = Math.Round((decimal)dto.From41To50Count / dto.CantonCount * 100, 2);
+                    dto.From51To60Percentage = Math.Round((decimal)dto.From51To60Count / dto.CantonCount * 100, 2);
+                    dto.From61To70Percentage = Math.Round((decimal)dto.From61To70Count / dto.CantonCount * 100, 2);
+                    dto.Over70Percentage = Math.Round((decimal)dto.Over70Count / dto.CantonCount * 100, 2);
                 }
                 dtos.Add(dto);
             }
