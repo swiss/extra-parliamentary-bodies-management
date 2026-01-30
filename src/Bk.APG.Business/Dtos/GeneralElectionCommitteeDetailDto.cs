@@ -57,6 +57,7 @@ public class GeneralElectionCommitteeDetailDto
 
     public required string CandidateListState { get; set; }
     public string? AssignedTo { get; set; }
+    public bool WasGeneralElectionStartedForCommittee { get; set; }
     public bool CanSaveCandidateList { get; set; }
     public bool CanValidateCandidateList { get; set; }
     public bool CanForwardCandidateList { get; set; }

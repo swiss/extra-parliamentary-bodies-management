@@ -42,6 +42,12 @@
                         white 2px 0 0;
                 }
             }
+
+            .ob-alert-info {
+                .ob-alert-content {
+                    border: 1px solid $ob-blue-800;
+                }
+            }
         }
 
         .ob-service-navigation-languages .mat-mdc-form-field-icon-suffix {
