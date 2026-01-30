@@ -123,6 +123,13 @@ public static class OgdMapper
 
         dataRow.Values.Add(new DimensionValue
         {
+            Predicate = $"{ogdNamespace}:totalCount",
+            Object = statisticDto.Count.ToString(),
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
             Predicate = $"{ogdNamespace}:femaleCount",
             Object = statisticDto.FemaleCount.ToString(),
             DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"

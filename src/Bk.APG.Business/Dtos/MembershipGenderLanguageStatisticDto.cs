@@ -2,7 +2,7 @@ namespace Bk.APG.Business.Dtos;
 
 public class MembershipGenderLanguageStatisticDto
 {
-    public required int MembershipCount { get; set; }
+    public int Count { get; set; }
     public Guid? CommitteeId { get; set; }
     public int? CommitteeOgdId { get; set; }
     public string? CommitteeType { get; set; }
