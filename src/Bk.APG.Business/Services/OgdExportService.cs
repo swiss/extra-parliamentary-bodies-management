@@ -207,7 +207,9 @@ public class OgdExportService
 
         var departmentGenderLanguageStatisticData = _membershipService.GetMembershipsForCommitteeTypeAndDepartmentGenderLanguageStatistic(membershipData);
 
-        var genderLanguageStatisticData = committeeGenderLanguageStatisticData.Concat(departmentGenderLanguageStatisticData);
+        var extraAndNonExtraParliamentaryCommissions = _membershipService.GetExtraAndNonExtraParliamentaryCommitteesStatistic(membershipData);
+
+        var genderLanguageStatisticData = committeeGenderLanguageStatisticData.Concat(departmentGenderLanguageStatisticData).Concat(extraAndNonExtraParliamentaryCommissions);
 
         var committeeGenderLanguageStatisticRawData =
             _cubeRawDataService.CreateTriples(
