@@ -55,17 +55,19 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         dto.GeneralLanguageMeasure = generalLanguageMeasure?.Description;
 
         var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
-        var activeCandidateListTask = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
-            .FirstOrDefault(x => x.WorklistTaskStateId == WorklistTaskState.Active);
+        var candidateListTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).ToList();
+        var activeCandidateListTask = candidateListTasks.FirstOrDefault(x => x.WorklistTaskStateId == WorklistTaskState.Active);
+        var wasGeneralElectionStartedForCommittee = candidateListTasks.Count != 0;
 
         var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id;
         var isCompleted = generalElectionCommittee.CandidateListStateId == CandidateListState.Completed;
         var canValidate = currentEiamAssignment.Role is Role.Department or Role.Admin;
 
         dto.AssignedTo = activeCandidateListTask?.AssignedTo!.GetText();
-        dto.CanSaveCandidateList = (canValidate || canForward) && !isCompleted;
-        dto.CanValidateCandidateList = canValidate;
-        dto.CanForwardCandidateList = canForward;
+        dto.WasGeneralElectionStartedForCommittee = wasGeneralElectionStartedForCommittee;
+        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && !isCompleted;
+        dto.CanValidateCandidateList = wasGeneralElectionStartedForCommittee && canValidate;
+        dto.CanForwardCandidateList = wasGeneralElectionStartedForCommittee && canForward;
         dto.IsCandidateListCompleted = isCompleted;
 
         return dto;
@@ -133,6 +135,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             Items = committees.Items.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()))
         };
     }
+
     public async Task<GeneralElectionCommitteeUpdateDto> GetGeneralElectionCommitteeForUpdate(Guid committeeId)
     {
         var generalElectionCommitteeUpdate = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
@@ -140,7 +143,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         dto.CanEditAll =
             _authorizationService.IsAdmin ||
             (generalElectionCommitteeUpdate.Committee!.IsActive && _authorizationService.IsDepartment
-                                                                && generalElectionCommitteeUpdate.Committee!.DepartmentId == (await _authorizationService.GetDepartment())?.Id);
+                && generalElectionCommitteeUpdate.Committee!.DepartmentId == (await _authorizationService.GetDepartment())?.Id);
         dto.CanEditDepartment = _authorizationService.IsAdmin;
         dto.CanEditLegalbase = await _authorizationService.HasAccessToCommittee(generalElectionCommitteeUpdate.Committee!);
 
@@ -254,7 +257,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeUpdateDto(existingCommittee);
     }
 
-
     public async Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
         _logger.LogInformation("Generate candidate list export for general election committee {CommitteeId}", id);
@@ -288,7 +290,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         {
             HeaderCells = headers.Select(header => new Cell { Text = header, Format = CellFormat.Bold }).ToList(),
             BodyCells = bodyCells,
-
         };
 
         var exportStream = await _documentService.CreateExcel(spreadsheet);
@@ -308,24 +309,24 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             {
                 new() { Text = committee.GetDescription() }, // Gremium
                 new() { Text = committee.Office?.GetDescription() }, // Verwaltungsstelle
-                new() { Text = candidate.Person is not null ?  candidate.Person!.Title : string.Empty }, // Title
-                new() { Text = candidate.Person is not null ?  candidate.Person!.Surname : candidate.Surname }, // Name
-                new() { Text = candidate.Person is not null ?  candidate.Person!.GivenName : candidate.GivenName }, // Vorname
+                new() { Text = candidate.Person is not null ? candidate.Person!.Title : string.Empty }, // Title
+                new() { Text = candidate.Person is not null ? candidate.Person!.Surname : candidate.Surname }, // Name
+                new() { Text = candidate.Person is not null ? candidate.Person!.GivenName : candidate.GivenName }, // Vorname
                 NumberCell(candidate.Person?.BirthYear ?? candidate.BirthYear), // Jahrgang
                 new() { Text = candidate.Person?.Gender?.GetText() ?? candidate.Gender?.GetText() ?? string.Empty }, // Geschlecht
                 new() { Text = candidate.Person?.Language?.GetText() ?? candidate.Language?.GetText() ?? string.Empty }, // Sprache
                 new() { Text = candidate.RemarksStatus }, // Vertretung
-                new() { Text = candidate.Function?.GetText() },// Funktion
+                new() { Text = candidate.Function?.GetText() }, // Funktion
                 DateCell(candidate.BeginDate), // Startdatum
                 DateCell(candidate.EndDate), // Enddatum
                 new() { Text = candidate.ElectionType?.GetText() }, // Status
                 new() { Text = candidate.MembershipAddition?.GetText() }, // Mitgliedzusatz
                 new() { Text = candidate.Remarks }, // Bemerkungen
-                new() { Text = string.Join(";",  candidate.Person?.Occupations?.Select(y => y.GetText()) ?? Enumerable.Empty<string>()) }, // Beruf
+                new() { Text = string.Join(";", candidate.Person?.Occupations?.Select(y => y.GetText()) ?? Enumerable.Empty<string>()) }, // Beruf
                 new() { Text = candidate.Person?.CorrespondenceAddress?.City ?? string.Empty }, // Ort
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Phone ?? string.Empty }, // Telefon
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Email ?? string.Empty }, // E-Mail
-                new() { Text = string.Join(";",  candidate.Person?.Interests?.Where(y => !string.IsNullOrWhiteSpace(y.InterestText)).Select(y => y.InterestText) ?? Enumerable.Empty<string>()) } // Interessenbindungen
+                new() { Text = string.Join(";", candidate.Person?.Interests?.Where(y => !string.IsNullOrWhiteSpace(y.InterestText)).Select(y => y.InterestText) ?? Enumerable.Empty<string>()) } // Interessenbindungen
             }).ToList();
 
         return bodyCells;
@@ -354,7 +355,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private async Task CheckAuthorizationForUpdate(Committee committee)
     {
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
-              ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
+                ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
         {
             _logger.LogError("User is not allowed to edit general election committee {CommitteeId}", committee.Id);
 
