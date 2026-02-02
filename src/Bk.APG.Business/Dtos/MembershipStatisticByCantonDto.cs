@@ -21,8 +21,16 @@ public class MembershipStatisticByCantonDto
     public decimal RomanshPercentage { get; set; }
     public int FederalDutyCount { get; set; }
     public int FederalAssemblyCount { get; set; }
-    public int Over40Count { get; set; }
-    public decimal Over40Percentage { get; set; }
-    public int UnderOr40Count { get; set; }
-    public decimal UnderOr40Percentage { get; set; }
+    public int UpTo30Count { get; set; }
+    public decimal UpTo30Percentage { get; set; }
+    public int From31To40Count { get; set; }
+    public decimal From31To40Percentage { get; set; }
+    public int From41To50Count { get; set; }
+    public decimal From41To50Percentage { get; set; }
+    public int From51To60Count { get; set; }
+    public decimal From51To60Percentage { get; set; }
+    public int From61To70Count { get; set; }
+    public decimal From61To70Percentage { get; set; }
+    public int Over70Count { get; set; }
+    public decimal Over70Percentage { get; set; }
 }

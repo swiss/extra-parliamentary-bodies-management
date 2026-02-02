@@ -106,6 +106,7 @@ public class OgdExportService
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeCantonDetailStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeCantonDetailStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeTypeStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeTypeStatistic}/"));
+        graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceLd, new Uri("https://ld.admin.ch/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceRld, new Uri("https://register.ld.admin.ch/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceSchema, new Uri("http://schema.org"));
@@ -148,6 +149,7 @@ public class OgdExportService
         var committeeCantonDetailStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeCantonDetailStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken detaillierte Sicht Kantone und Mitglieder", "Export der Gremium detaillierten Kantons-Statistiken von APG");
         var committeeGenderLanguageStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeGenderLanguageStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken im Bereich Geschlechter und Sprachen", "Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG");
         var committeeTypeStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik", "Export der Statistiken zu Sprachen, Geschlechtern und Mengen pro Gremiumtyp");
+        var committeeTypeDepartmentStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeDepartmentStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik Version 2", "Export der Gremienstatistik pro Gremiumtyp und Departement");
 
         var committeeTypeTriples = await CreateCommitteeTypeDimension(graph);
         var functionTriples = await CreateFunctionDimension(graph);
@@ -201,7 +203,13 @@ public class OgdExportService
                 OgdExportConstants.UriCommitteeCantonStatistic,
                 cantonStatisticData.Select(OgdMapper.ToCantonStatisticObservation));
 
-        var genderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
+        var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
+
+        var departmentGenderLanguageStatisticData = _membershipService.GetMembershipsForCommitteeTypeAndDepartmentGenderLanguageStatistic(membershipData);
+
+        var extraAndNonExtraParliamentaryCommissions = _membershipService.GetExtraAndNonExtraParliamentaryCommitteesStatistic(membershipData);
+
+        var genderLanguageStatisticData = committeeGenderLanguageStatisticData.Concat(departmentGenderLanguageStatisticData).Concat(extraAndNonExtraParliamentaryCommissions);
 
         var committeeGenderLanguageStatisticRawData =
             _cubeRawDataService.CreateTriples(
@@ -216,6 +224,14 @@ public class OgdExportService
                 graph,
                 OgdExportConstants.UriCommitteeTypeStatistic,
                 committeeTypeStatisticData.Select(OgdMapper.ToCommitteeTypeStatisticObservation));
+
+        var committeeTypeDepartmentStatisticData = await _committeeService.GetCommitteeTypeDepartmentStatistic();
+
+        var committeeTypeDepartmentStatisticRawData =
+            _cubeRawDataService.CreateTriples(
+                graph,
+                OgdExportConstants.UriCommitteeTypeDepartmentStatistic,
+                committeeTypeDepartmentStatisticData.Select(OgdMapper.ToCommitteeTypeDepartmentStatisticObservation));
 
         var allTriples = committeeTypeTriples
             .Concat(functionTriples)
@@ -238,11 +254,13 @@ public class OgdExportService
             .Concat(committeeCantonStatisticMetadataTriples)
             .Concat(committeeGenderLanguageStatisticMetadataTriples)
             .Concat(committeeTypeStatisticMetadataTriples)
+            .Concat(committeeTypeDepartmentStatisticMetadataTriples)
             .Concat(interestRawData)
             .Concat(committeeFunctionStatisticRawData)
             .Concat(committeeCantonStatisticRawData)
             .Concat(committeeGenderLanguageStatisticRawData)
             .Concat(committeeTypeStatisticDataRawData)
+            .Concat(committeeTypeDepartmentStatisticRawData)
             .Concat(appointmentDecisionTriples);
 
         _logger.LogInformation("OGD export: deleting graph");
