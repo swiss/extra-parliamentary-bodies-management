@@ -392,6 +392,176 @@ public class CommitteeService : ICommitteeService
         return statisticDtos;
     }
 
+    public async Task<IEnumerable<CommitteeTypeDepartmentStatisticDto>> GetCommitteeTypeDepartmentStatistic()
+    {
+        // we need to have "Leitungsorgane" and "Vertretungen des Bundes" summed together, as well as "Behördenkommissionen" and "Verwaltungskommissionen" -> APK
+        var statisticDtos = new List<CommitteeTypeDepartmentStatisticDto>();
+
+        var extraParliamentaryCommissionPrefix = "APK";
+        var nonExtraParliamentaryCommissionPrefix = "NON_APK";
+
+        var totalPrefix = "TOTAL";
+        var totalAuthoritiesCommissions = 0;
+        var totalAdministrationCommissions = 0;
+        var totalFederalAgenciesCommissions = 0;
+        var totalManagementCommissions = 0;
+        var totalExtraParliamentaryCommissions = 0;
+        var totalNonExtraParliamentaryCommissions = 0;
+
+        var generatedOgdId = 1;
+
+        var activeCommittees = await _committeeRepository.GetCommitteeDataForStatistics();
+
+        var extraParliamentaryCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
+            c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToList();
+        var nonExtraParliamentaryCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
+            c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
+
+        var groupedCommittees = activeCommittees.GroupBy(c => new
+        {
+            DepartmentId = c.Department!.Id,
+            CommitteeTypeId = c.CommitteeType!.Id
+        });
+        var groupedExtraParliamentaryCommissions = extraParliamentaryCommissions.GroupBy(c => new
+        {
+            DepartmentId = c.Department!.Id
+        });
+        var groupedNonExtraParliamentaryCommissions = nonExtraParliamentaryCommissions.GroupBy(c => new
+        {
+            DepartmentId = c.Department!.Id
+        });
+
+        totalAuthoritiesCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).Count();
+        totalAdministrationCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).Count();
+        totalFederalAgenciesCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid).Count();
+        totalManagementCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).Count();
+        totalExtraParliamentaryCommissions = extraParliamentaryCommissions.Count;
+        totalNonExtraParliamentaryCommissions = nonExtraParliamentaryCommissions.Count;
+
+        foreach (var group in groupedCommittees)
+        {
+            var first = group.First();
+
+            var statisticDto = new CommitteeTypeDepartmentStatisticDto
+            {
+                OgdId = generatedOgdId,
+                Organisation = first.Department!.TextDe,
+                DepartmentUri = first.Department!.Uri,
+                CommitteeType = first.CommitteeType!.TextDe,
+                CommitteeTypeOgdId = first.CommitteeType!.OgdId,
+                CommitteeCount = group.Count()
+            };
+
+            statisticDtos.Add(statisticDto);
+            generatedOgdId++;
+        }
+
+        foreach (var group in groupedExtraParliamentaryCommissions)
+        {
+            var first = group.First();
+
+            var statisticDto = new CommitteeTypeDepartmentStatisticDto
+            {
+                OgdId = generatedOgdId,
+                Organisation = first.Department!.TextDe,
+                DepartmentUri = first.Department!.Uri,
+                CommitteeType = $"{extraParliamentaryCommissionPrefix}",
+                CommitteeCount = group.Count()
+            };
+
+            statisticDtos.Add(statisticDto);
+            generatedOgdId++;
+        }
+
+        foreach (var group in groupedNonExtraParliamentaryCommissions)
+        {
+            var first = group.First();
+
+            var statisticDto = new CommitteeTypeDepartmentStatisticDto
+            {
+                OgdId = generatedOgdId,
+                Organisation = first.Department!.TextDe,
+                DepartmentUri = first.Department!.Uri,
+                CommitteeType = $"{nonExtraParliamentaryCommissionPrefix}",
+                CommitteeCount = group.Count()
+            };
+
+            statisticDtos.Add(statisticDto);
+            generatedOgdId++;
+        }
+
+        var totalDto = new CommitteeTypeDepartmentStatisticDto
+        {
+            OgdId = generatedOgdId,
+            Organisation = "Bund",
+            CommitteeType = $"{totalPrefix}-Behördenkommissionen",
+            CommitteeCount = totalAuthoritiesCommissions
+        };
+
+        statisticDtos.Add(totalDto);
+        generatedOgdId++;
+
+        totalDto = new CommitteeTypeDepartmentStatisticDto
+        {
+            OgdId = generatedOgdId,
+            Organisation = "Bund",
+            CommitteeType = $"{totalPrefix}-Verwaltungskommissionen",
+            CommitteeCount = totalAdministrationCommissions
+        };
+
+        statisticDtos.Add(totalDto);
+        generatedOgdId++;
+
+        totalDto = new CommitteeTypeDepartmentStatisticDto
+        {
+            OgdId = generatedOgdId,
+            Organisation = "Bund",
+            CommitteeType = $"{totalPrefix}-VertretungenDesBundes",
+            CommitteeCount = totalFederalAgenciesCommissions
+        };
+
+        statisticDtos.Add(totalDto);
+        generatedOgdId++;
+
+        totalDto = new CommitteeTypeDepartmentStatisticDto
+        {
+            OgdId = generatedOgdId,
+            Organisation = "Bund",
+            CommitteeType = $"{totalPrefix}-Leitungsorgane",
+            CommitteeCount = totalManagementCommissions
+        };
+
+        statisticDtos.Add(totalDto);
+        generatedOgdId++;
+
+        statisticDtos.Add(totalDto);
+        generatedOgdId++;
+
+        totalDto = new CommitteeTypeDepartmentStatisticDto
+        {
+            OgdId = generatedOgdId,
+            Organisation = "Bund",
+            CommitteeType = $"{totalPrefix}-APKs",
+            CommitteeCount = totalExtraParliamentaryCommissions
+        };
+
+        statisticDtos.Add(totalDto);
+        generatedOgdId++;
+
+        totalDto = new CommitteeTypeDepartmentStatisticDto
+        {
+            OgdId = generatedOgdId,
+            Organisation = "Bund",
+            CommitteeType = $"{totalPrefix}-NON-APKs",
+            CommitteeCount = totalNonExtraParliamentaryCommissions
+        };
+
+        statisticDtos.Add(totalDto);
+        generatedOgdId++;
+
+        return statisticDtos;
+    }
+
     private async Task CheckAuthorizationForUpdate(Committee committee)
     {
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
