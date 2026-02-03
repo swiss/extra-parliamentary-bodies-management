@@ -38,7 +38,7 @@ export const adminRoutes: Routes = [
         component: OnlinePublicationComponent,
         canActivate: [RoleGuard],
         data: {
-            allowedRoles: [Role.Admin, Role.Department],
+            allowedRoles: [Role.Admin],
         },
     },
 ];
