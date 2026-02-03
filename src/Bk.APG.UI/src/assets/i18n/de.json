@@ -753,7 +753,7 @@
   "committee.error.minimalMembers.pattern": "Das Minimum muss eine ganze Zahl sein",
   "committee.error.maximalMembers.pattern": "Das Maximum muss eine ganze Zahl sein",
   "committee.error.vacanciesInGeneralElection.pattern": "Die Anzahl Vakanzen muss eine ganze Zahl sein",
-  "onlinePublication.hint": "Die automatisierte Publikation wird täglich um 01:00 Uhr ausgeführt. Beim Pausieren wird die Publikation solange aufgeschoben, bis die Automatisierung wieder aktiv ist.",
+  "onlinePublication.hint": "Die automatisierte Publikation wird täglich um 01:00 Uhr ausgeführt. Bei deaktivierter Automatisierung wird die Publikation bis zur erneuten Aktivierung ausgesetzt. Die Funktion \"Publikation sofort auslösen\" hat keinen Einfluss auf die automatisierte Publikation.",
   "onlinePublication.deactivated": "Automatisierte Publikation wurde pausiert.",
   "onlinePublication.activated": "Automatisierte Publikation wurde gestartet.",
   "onlinePublication.activation.error": "Fehler beim Speichern der automatischen Publikation",
@@ -823,5 +823,11 @@
   "recipients.table.header.description.label": "Gremienliste",
   "recipients.download": "Herunterladen",
   "worklist.task.section": "Bereich",
-  "generalElection.committee.candidateList.noGeneralElectionStartedForCommittee": "Für dieses Gremium wurde die GEW noch nicht gestartet."
+  "generalElection.committee.candidateList.noGeneralElectionStartedForCommittee": "Für dieses Gremium wurde die GEW noch nicht gestartet.",
+  "onlinePublication.trigger.button": "Publikation sofort auslösen",
+  "onlinePublication.trigger.confirmation.title": "Publikation",
+  "onlinePublication.trigger.confirmation.message": "Durch die sofortige Publikation, wird der aktuelle APG Datenstand sofort im Internet sichtbar gemacht. Wollen Sie weiterfahren?",
+  "onlinePublication.trigger.message": "Die Publikation wurde ausgelöst. Bitte warten...",
+  "onlinePublication.trigger.success": "Die Publikation wurde erfolgreich abgeschlossen.",
+  "onlinePublication.trigger.error": "Fehler beim Auslösen der Publikation."
 }
