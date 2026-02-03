@@ -1,6 +1,6 @@
 import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObGlobalEventsService} from '@oblique/oblique';
@@ -21,6 +21,9 @@ describe('GeneralElectionCommitteeMembershipsComponent', () => {
         currentLang: 'en',
         onLangChange: of({lang: 'en'}),
         instant: jest.fn().mockReturnValue('Bis 10%'),
+    };
+    const routerMock = {
+        navigate: jest.fn(),
     };
     const generalElectionCommitteesServiceMock = {
         getGeneralElectionCommitteeMembers: jest.fn().mockReturnValue(
@@ -46,6 +49,7 @@ describe('GeneralElectionCommitteeMembershipsComponent', () => {
             imports: [MockPipe(TranslatePipe), GeneralElectionCommitteeMembershipsComponent, MembersQuotasComponent],
             providers: [
                 {provide: ActivatedRoute, useValue: activatedRouteMock},
+                {provide: Router, useValue: routerMock},
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: GeneralElectionCommitteesService, useValue: generalElectionCommitteesServiceMock},
                 {provide: GeneralElectionCommitteeDetailsService, useValue: geCommitteeDetailsServiceMock},
@@ -65,5 +69,11 @@ describe('GeneralElectionCommitteeMembershipsComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should navigate to membership candidate edit when opening membership candidate', () => {
+        component.openMembershipCandidate('candidate-1');
+
+        expect(routerMock.navigate).toHaveBeenCalledWith(['general-election', 'committees', '123', 'membership-candidate', 'candidate-1']);
     });
 });
