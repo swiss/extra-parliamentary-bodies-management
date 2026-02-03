@@ -37,8 +37,8 @@ public class CommitteeBuilder
     private bool _supervisionDuty;
     private TermOfOffice? _termOfOffice;
     private Guid _termOfOfficeId;
-    private readonly TermOfOfficeDate? _termOfOfficeDate;
-    private readonly Guid _termOfOfficeDateId;
+    private TermOfOfficeDate? _termOfOfficeDate;
+    private Guid _termOfOfficeDateId;
     private readonly int _minimalMembers;
     private int _maximalMembers;
     private readonly int _vacanciesGeneralElection;
@@ -205,6 +205,13 @@ public class CommitteeBuilder
     {
         _termOfOffice = termOfOffice;
         _termOfOfficeId = termOfOffice.Id;
+        return this;
+    }
+
+    public CommitteeBuilder WithTermOfOfficeDate(TermOfOfficeDate termOfOfficeDate)
+    {
+        _termOfOfficeDate = termOfOfficeDate;
+        _termOfOfficeDateId = termOfOfficeDate.Id;
         return this;
     }
 
