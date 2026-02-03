@@ -764,7 +764,7 @@
   "committee.error.minimalMembers.pattern": "Il numero minimo deve essere un numero intero",
   "committee.error.maximalMembers.pattern": "Il numero massimo deve essere un numero intero",
   "committee.error.vacanciesInGeneralElection.pattern": "Il numero di vacanze deve essere un numero intero",
-  "onlinePublication.hint": "La pubblicazione automatizzata è effettuata ogni giorno all'01.00. Se messa in pausa, la pubblicazione viene posticipata fino a quando l'automazione non viene riattivata.",
+  "onlinePublication.hint": "IT_Die automatisierte Publikation wird täglich um 01:00 Uhr ausgeführt. Bei deaktivierter Automatisierung wird die Publikation bis zur erneuten Aktivierung ausgesetzt. Die Funktion \"Publikation sofort auslösen\" hat keinen Einfluss auf die automatisierte Publikation.",
   "onlinePublication.deactivated": "La pubblicazione automatizzata è stata messa in pausa.",
   "onlinePublication.activated": "La pubblicazione automatizzata è stata avviata.",
   "onlinePublication.activation.error": "Errore nel salvataggio della pubblicazione automatizzata",
@@ -823,5 +823,11 @@
   "recipients.table.header.description.label": "IT_Gremienliste",
   "recipients.download": "IT_Herunterladen",
   "worklist.task.section": "IT_Bereich",
-  "generalElection.committee.candidateList.noGeneralElectionStartedForCommittee": "IT_Für dieses Gremium wurde die GEW noch nicht gestartet."
+  "generalElection.committee.candidateList.noGeneralElectionStartedForCommittee": "IT_Für dieses Gremium wurde die GEW noch nicht gestartet.",
+  "onlinePublication.trigger.button": "IT_Publikation sofort auslösen",
+  "onlinePublication.trigger.confirmation.title": "IT_Publikation",
+  "onlinePublication.trigger.confirmation.message": "IT_Durch die sofortige Publikation, wird der aktuelle APG Datenstand sofort im Internet sichtbar gemacht. Wollen Sie weiterfahren?",
+  "onlinePublication.trigger.message": "IT_Die Publikation wurde ausgelöst. Bitte warten...",
+  "onlinePublication.trigger.success": "IT_Die Publikation wurde erfolgreich abgeschlossen.",
+  "onlinePublication.trigger.error": "IT_Fehler beim Auslösen der Publikation."
 }
