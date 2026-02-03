@@ -15,7 +15,7 @@ using VDS.RDF.Storage;
 
 namespace Bk.APG.Business.Services;
 
-public class OgdExportService
+public class OgdExportService : IOgdExportService
 {
     private readonly IAsyncStorageProvider _storageProvider;
     private readonly IDimensionService _dimensionService;

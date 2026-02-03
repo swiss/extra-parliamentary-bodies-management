@@ -769,7 +769,7 @@
   "committee.error.minimalMembers.pattern": "Le minimum doit être un nombre entier.",
   "committee.error.maximalMembers.pattern": "Le maximum doit être un nombre entier.",
   "committee.error.vacanciesInGeneralElection.pattern": "Le nombre de vacances doit être un nombre entier.",
-  "onlinePublication.hint": "La publication automatisée est effectuée tous les jours à 01:00. En cas de mise en pause, la publication est reportée jusqu'à ce que le processus automatisé soit à nouveau actif.",
+  "onlinePublication.hint": "FR_Die automatisierte Publikation wird täglich um 01:00 Uhr ausgeführt. Bei deaktivierter Automatisierung wird die Publikation bis zur erneuten Aktivierung ausgesetzt. Die Funktion \"Publikation sofort auslösen\" hat keinen Einfluss auf die automatisierte Publikation.",
   "onlinePublication.deactivated": "La publication automatisée a été mise en pause.",
   "onlinePublication.activated": "La publication automatisée a été lancée.",
   "onlinePublication.activation.error": "Erreur lors de l'enregistrement de la publication automatisée",
@@ -823,5 +823,11 @@
   "recipients.table.header.description.label": "FR_Gremienliste",
   "recipients.download": "FR_Herunterladen",
   "worklist.task.section": "FR_Bereich",
-  "generalElection.committee.candidateList.noGeneralElectionStartedForCommittee": "FR_Für dieses Gremium wurde die GEW noch nicht gestartet."
+  "generalElection.committee.candidateList.noGeneralElectionStartedForCommittee": "FR_Für dieses Gremium wurde die GEW noch nicht gestartet.",
+  "onlinePublication.trigger.button": "FR_Publikation sofort auslösen",
+  "onlinePublication.trigger.confirmation.title": "FR_Publikation",
+  "onlinePublication.trigger.confirmation.message": "FR_Durch die sofortige Publikation, wird der aktuelle APG Datenstand sofort im Internet sichtbar gemacht. Wollen Sie weiterfahren?",
+  "onlinePublication.trigger.message": "FR_Die Publikation wurde ausgelöst. Bitte warten...",
+  "onlinePublication.trigger.success": "FR_Die Publikation wurde erfolgreich abgeschlossen.",
+  "onlinePublication.trigger.error": "FR_Fehler beim Auslösen der Publikation."
 }
