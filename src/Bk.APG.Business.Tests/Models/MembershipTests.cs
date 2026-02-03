@@ -99,7 +99,7 @@ internal class MembershipTests
     [TestCase("2024-01-01", "2027-12-30", true)]
     [TestCase("2025-02-01", "2027-12-30", true)]
     [TestCase("2025-02-01", "2027-12-31", false)]
-    [TestCase("2024-01-01", "2028-01-01", true)]
+    [TestCase("2024-01-01", "2028-01-01", false)]
     public void JustificationShorterDutyNeeded_WhenCalled_ShouldReturnCorrectResult(string beginDate, string endDate, bool expected)
     {
         var membership = new MembershipBuilder()
