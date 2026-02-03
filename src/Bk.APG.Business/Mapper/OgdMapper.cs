@@ -25,19 +25,47 @@ public static class OgdMapper
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCommittee",
-            Uri = $"committee:{statisticDto.CommitteeOgdId}"
+            Uri = $"committee:{statisticDto.CommitteeOgdId}",
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Gremiumname",
+                NameFr = "Nom de l'organe",
+                NameIt = "Nome dell'organo",
+                NameEn = "Committee name",
+                Type = OgdExportConstants.CubeKeyDimension,
+                NodeKind = OgdExportConstants.ShaclNodeKindIri
+            }
         });
 
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasFunction",
-            Uri = $"function:{ogdId}"
+            Uri = $"function:{ogdId}",
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Funktion",
+                NameFr = "Fonction",
+                NameIt = "Funzione",
+                NameEn = "Function",
+                Type = OgdExportConstants.CubeKeyDimension,
+                NodeKind = OgdExportConstants.ShaclNodeKindIri
+            }
         });
 
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:functionCount",
-            Object = statisticDto.FunctionCount.ToString()
+            Object = statisticDto.FunctionCount.ToString(),
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Anzahl Funktionen",
+                NameFr = "FR_Anzahl Funktionen",
+                NameIt = "IT_Anzahl Funktionen",
+                NameEn = "EN_Anzahl Funktionen",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
         });
 
         return dataRow;
@@ -56,20 +84,48 @@ public static class OgdMapper
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCommittee",
-            Uri = $"committee:{statisticDto.CommitteeOgdId}"
+            Uri = $"committee:{statisticDto.CommitteeOgdId}",
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Gremiumname",
+                NameFr = "Nom de l'organe",
+                NameIt = "Nome dell'organo",
+                NameEn = "Committee name",
+                Type = OgdExportConstants.CubeKeyDimension,
+                NodeKind = OgdExportConstants.ShaclNodeKindIri
+            }
         });
 
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCanton",
-            Uri = $"canton:{statisticDto.CantonOgdId}"
+            Uri = $"canton:{statisticDto.CantonOgdId}",
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Kanton",
+                NameFr = "Canton",
+                NameIt = "Cantone",
+                NameEn = "Canton",
+                Type = OgdExportConstants.CubeKeyDimension,
+                NodeKind = OgdExportConstants.ShaclNodeKindIri
+            }
         });
 
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:cantonCount",
             Object = statisticDto.CantonCount.ToString(),
-            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int"
+            DataTypeUri = "http://www.w3.org/2001/XMLSchema#int",
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Anzahl Kantone",
+                NameFr = "FR_Anzahl Kantone",
+                NameIt = "IT_Anzahl Kantone",
+                NameEn = "EN_Anzahl Kantone",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
         });
         return dataRow;
     }
@@ -89,10 +145,19 @@ public static class OgdMapper
             dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
             {
                 Predicate = $"{ogdNamespace}:hasCommittee",
-                Uri = $"committee:{statisticDto.CommitteeOgdId}"
+                Uri = $"committee:{statisticDto.CommitteeOgdId}",
+                ShapePropertyMetadata = new ShapePropertyMetadata
+                {
+                    NameDe = "Gremiumname",
+                    NameFr = "Nom de l'organe",
+                    NameIt = "Nome dell'organo",
+                    NameEn = "Committee name",
+                    Type = OgdExportConstants.CubeKeyDimension,
+                    NodeKind = OgdExportConstants.ShaclNodeKindIri
+                }
             });
         }
-        // usage 2, for committeeType statistic 
+        // usage 2, for committeeType statistic
         else if (statisticDto.CommitteeTypeOgdId != null && statisticDto.Department == null)
         {
             dataRow.KeyUri = $"{ogdNamespace}:{committeeType}-{statisticDto.CommitteeTypeOgdId}";
@@ -108,7 +173,16 @@ public static class OgdMapper
             dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
             {
                 Predicate = $"{ogdNamespace}:hasDepartment",
-                Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.DepartmentUri)
+                Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.DepartmentUri),
+                ShapePropertyMetadata = new ShapePropertyMetadata
+                {
+                    NameDe = "Departement",
+                    NameFr = "Département",
+                    NameIt = "Dipartimento",
+                    NameEn = "Department",
+                    Type = OgdExportConstants.CubeKeyDimension,
+                    NodeKind = OgdExportConstants.ShaclNodeKindIri
+                }
             });
         }
 
@@ -117,7 +191,16 @@ public static class OgdMapper
             dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
             {
                 Predicate = $"{ogdNamespace}:hasCommitteeType",
-                Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}"
+                Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}",
+                ShapePropertyMetadata = new ShapePropertyMetadata
+                {
+                    NameDe = "Gremienart",
+                    NameFr = "Type d'organe",
+                    NameIt = "Tipo di organo",
+                    NameEn = "Committee type",
+                    Type = OgdExportConstants.CubeKeyDimension,
+                    NodeKind = OgdExportConstants.ShaclNodeKindIri
+                }
             });
         }
 
@@ -326,7 +409,16 @@ public static class OgdMapper
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCommittee",
-            Uri = $"committee:{statisticDto.CommitteeOgdId}"
+            Uri = $"committee:{statisticDto.CommitteeOgdId}",
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Gremiumname",
+                NameFr = "Nom de l'organe",
+                NameIt = "Nome dell'organo",
+                NameEn = "Committee name",
+                Type = OgdExportConstants.CubeKeyDimension,
+                NodeKind = OgdExportConstants.ShaclNodeKindIri
+            }
         });
 
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
@@ -2586,7 +2678,16 @@ public static class OgdMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:committeeType",
-            Object = statisticDto.CommitteeType
+            Object = statisticDto.CommitteeType,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "Gremienart",
+                NameFr = "Type d'organe",
+                NameIt = "Tipo di organo",
+                NameEn = "Committee type",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
         });
 
         if (statisticDto.CommitteeTypeOgdId != null)
@@ -2594,7 +2695,16 @@ public static class OgdMapper
             dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
             {
                 Predicate = $"{ogdNamespace}:hasCommitteeType",
-                Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}"
+                Uri = $"{OgdExportConstants.NamespaceCommitteeType}:{statisticDto.CommitteeTypeOgdId}",
+                ShapePropertyMetadata = new ShapePropertyMetadata
+                {
+                    NameDe = "Gremienart",
+                    NameFr = "Type d'organe",
+                    NameIt = "Tipo di organo",
+                    NameEn = "Committee type",
+                    Type = OgdExportConstants.CubeKeyDimension,
+                    NodeKind = OgdExportConstants.ShaclNodeKindIri
+                }
             });
         }
 

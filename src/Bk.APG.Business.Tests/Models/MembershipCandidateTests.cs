@@ -16,7 +16,7 @@ internal class MembershipCandidateTests
             .WithNoInterest(false)
             .WithMemberships([
                 new MembershipBuilder()
-                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])
