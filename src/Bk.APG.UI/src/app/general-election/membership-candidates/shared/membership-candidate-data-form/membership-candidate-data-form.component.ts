@@ -1,4 +1,4 @@
-import {AfterViewChecked, Component, computed, effect, model, OnInit, signal, ViewChild} from '@angular/core';
+import {AfterViewChecked, Component, effect, model, signal, ViewChild} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatCheckbox} from '@angular/material/checkbox';
@@ -49,21 +49,13 @@ import {PersonSearchComponent} from '../../../../persons/shared/person-search/pe
         RichTextEditorComponent,
     ],
 })
-export class MembershipCandidateDataFormComponent implements OnInit, AfterViewChecked {
+export class MembershipCandidateDataFormComponent implements AfterViewChecked {
     @ViewChild(PersonSearchComponent) formComponentPersonSearch: PersonSearchComponent | null = null;
 
     selectedPerson = signal<PersonDetails | undefined>(undefined);
     membershipCandidateModification = model<MembershipCandidateUpdate>();
     generalElectionCommittee = model<GeneralElectionCommitteeDetails | undefined>();
     searchTextBoxUpdated = false;
-
-    hasDeletedElectionOffice = computed(() => {
-        return this.masterDataService.electionOffices().find(x => x.id === this.membershipCandidateModification()?.electionOfficeId) === undefined;
-    });
-
-    hasDeletedFunction = computed(() => {
-        return this.masterDataService.functions().find(x => x.id === this.membershipCandidateModification()?.functionId) === undefined;
-    });
 
     membershipCandidateForm = this.createForm();
 
@@ -80,6 +72,8 @@ export class MembershipCandidateDataFormComponent implements OnInit, AfterViewCh
             };
             this.membershipCandidateModification.update(value => ({...value, ...formValues}) as MembershipCandidateUpdate);
         });
+
+        this.toggleFormFields();
 
         effect(() => {
             if (this.membershipCandidateModification()) {
@@ -114,10 +108,6 @@ export class MembershipCandidateDataFormComponent implements OnInit, AfterViewCh
                 this.searchTextBoxUpdated = true;
             }
         }
-    }
-
-    ngOnInit() {
-        this.toggleFormFields();
     }
 
     resetForm(modification: MembershipCandidateUpdate) {
@@ -203,12 +193,25 @@ export class MembershipCandidateDataFormComponent implements OnInit, AfterViewCh
     }
 
     private toggleFormFields() {
-        const isExtraParliamentaryCommmission = !!this.generalElectionCommittee()?.extraParliamentaryCommission;
-        if (isExtraParliamentaryCommmission) {
-            this.membershipCandidateForm.controls.electionOfficeId.setValue(this.configsService.frontendConfig.entityIds.electionOffice.federalGovernmentId);
-            this.membershipCandidateForm.controls.electionOfficeId.disable();
-        } else {
-            this.membershipCandidateForm.controls.electionOfficeId.enable();
-        }
+        effect(() => {
+            const isCandidateListCompleted = !!this.generalElectionCommittee()?.isCandidateListCompleted;
+            if (isCandidateListCompleted) {
+                this.membershipCandidateForm.controls.endDate.disable({emitEvent: false});
+                this.membershipCandidateForm.controls.functionId.disable({emitEvent: false});
+            } else {
+                this.membershipCandidateForm.controls.endDate.enable({emitEvent: false});
+                this.membershipCandidateForm.controls.functionId.enable({emitEvent: false});
+            }
+
+            const isExtraParliamentaryCommmission = !!this.generalElectionCommittee()?.extraParliamentaryCommission;
+            if (isExtraParliamentaryCommmission) {
+                this.membershipCandidateForm.controls.electionOfficeId.setValue(
+                    this.configsService.frontendConfig.entityIds.electionOffice.federalGovernmentId
+                );
+                this.membershipCandidateForm.controls.electionOfficeId.disable({emitEvent: false});
+            } else {
+                this.membershipCandidateForm.controls.electionOfficeId.enable({emitEvent: false});
+            }
+        });
     }
 }
