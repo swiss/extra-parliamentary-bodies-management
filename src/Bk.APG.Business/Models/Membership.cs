@@ -56,7 +56,7 @@ public class Membership : EntityBase
     public bool JustificationLongerDutyNeeded => Committee?.ExtraParliamentaryCommission == true && MembershipTermCalculator.CalculateEstimatedTermInYears(BeginDate, EndDate) > 12;
 
     [NotMapped]
-    public bool JustificationShorterDutyNeeded => Committee?.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && EndDate != Committee?.TermOfOfficeDate?.EndDate && EndDate > BeginDate;
+    public bool JustificationShorterDutyNeeded => Committee?.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && EndDate < Committee?.TermOfOfficeDate?.EndDate && EndDate > BeginDate;
 
     [NotMapped]
     public bool JustificationMemberInFederalDutyNeeded => Committee?.ExtraParliamentaryCommission == true && Person?.FederalDuty == true;
