@@ -108,10 +108,13 @@ public static class OgdExportConstants
     public const string NamespaceCube = "cube";
 
     public const string ShaclNodeKindIri = "w3:ns/shacl#IRI";
+    public const string ShaclNodeKindLiteral = "w3:ns/shacl#Literal";
 
     public const string CubeKeyDimension = "cube:KeyDimension";
+    public const string CubeMeasureDimension = "cube:MeasureDimension";
 
     public const string QudtNominalScale = "qudt:NominalScale";
+    public const string QudtRatioScale = "qudt:RatioScale";
 
     public const string UriMembership = "membership:1";
     public const string UriCommittee = "committee:1";
