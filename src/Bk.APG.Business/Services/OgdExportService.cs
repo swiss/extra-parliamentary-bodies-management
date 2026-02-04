@@ -17,7 +17,7 @@ namespace Bk.APG.Business.Services;
 
 public class OgdExportService : IOgdExportService
 {
-    private readonly IAsyncStorageProvider _storageProvider;
+    private readonly IReadOnlyDictionary<string, IAsyncStorageProvider> _storageProviders;
     private readonly IDimensionService _dimensionService;
     private readonly ICubeRawDataService _cubeRawDataService;
     private readonly IMembershipService _membershipService;
@@ -33,6 +33,7 @@ public class OgdExportService : IOgdExportService
     private readonly IOgdDocumentService _ogdDocumentService;
     private readonly ILogger<OgdExportService> _logger;
     private readonly SparqlOptions _sparqlOptions;
+    private readonly SparqlTargetsOptions _targetsOptions;
     private readonly OgdS3Configuration _ogdS3Configuration;
 
     public OgdExportService(
@@ -43,18 +44,19 @@ public class OgdExportService : IOgdExportService
         ICommitteeService committeeService,
         ICommitteeRepository committeeRepository,
         ICommitteeTypeRepository committeeTypeRepository,
-        IConnectionFactory connectionFactory,
+        ISparqlClientFactory sparqlClientFactory,
         IMembershipRepository membershipRepository,
         IInterestRepository interestRepository,
         ILogger<OgdExportService> logger,
         IOptions<SparqlOptions> sparqlOptions,
+        IOptions<SparqlTargetsOptions> targetsOptions,
         IMasterDataRepository masterDataRepository,
         IContactPointRepository contactPointRepository,
         IDocumentService documentService,
         IOgdDocumentService ogdDocumentService,
         IOptions<OgdS3Configuration> ogdS3Options)
     {
-        _storageProvider = connectionFactory.Create();
+        _storageProviders = sparqlClientFactory.GetStorageProviders();
         _dimensionService = dimensionService;
         _membershipService = membershipService;
         _committeeService = committeeService;
@@ -70,6 +72,7 @@ public class OgdExportService : IOgdExportService
         _documentService = documentService;
         _ogdDocumentService = ogdDocumentService;
         _sparqlOptions = sparqlOptions.Value;
+        _targetsOptions = targetsOptions.Value;
         _ogdS3Configuration = ogdS3Options.Value;
     }
 
@@ -233,7 +236,7 @@ public class OgdExportService : IOgdExportService
                 OgdExportConstants.UriCommitteeTypeDepartmentStatistic,
                 committeeTypeDepartmentStatisticData.Select(OgdMapper.ToCommitteeTypeDepartmentStatisticObservation));
 
-        var allTriples = committeeTypeTriples
+        var chunks = committeeTypeTriples
             .Concat(functionTriples)
             .Concat(interestFunctionTriples)
             .Concat(interestCommitteeTriples)
@@ -261,27 +264,65 @@ public class OgdExportService : IOgdExportService
             .Concat(committeeGenderLanguageStatisticRawData)
             .Concat(committeeTypeStatisticDataRawData)
             .Concat(committeeTypeDepartmentStatisticRawData)
-            .Concat(appointmentDecisionTriples);
+            .Concat(appointmentDecisionTriples)
+            .Chunk(10000);
 
-        _logger.LogInformation("OGD export: deleting graph");
-        await _storageProvider.DeleteGraphAsync(_sparqlOptions.ExportGraphName, ct);
+        // Delete graph on all targets before updating with new data
+        foreach (var target in _storageProviders.Keys.OrderBy(k => k))
+        {
+            try
+            {
+                var storageProvider = _storageProviders[target];
+                var graphUri = _targetsOptions.Targets[target].GraphName;
 
-        _logger.LogInformation("OGD export: creating new graph");
-        await _storageProvider.UpdateGraphAsync(_sparqlOptions.ExportGraphName, allTriples, [], ct);
+                _logger.LogInformation("OGD export: Deleting graph on target {TargetName}", target);
+                await storageProvider.DeleteGraphAsync(graphUri, ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "OGD export: Error while deleting graph on target {TargetName}", target);
+            }
+        }
 
-        var cantonDetailStatisticData = await _membershipService.GetMembershipsForDetailedCantonStatistic(membershipData);
+        // Update graph on all targets in chunks
+        var current = 0;
+        foreach (var chunk in chunks)
+        {
+            current++;
+            foreach (var target in _storageProviders.Keys.OrderBy(k => k))
+            {
+                try
+                {
+                    var storageProvider = _storageProviders[target];
+                    var graphUri = _targetsOptions.Targets[target].GraphName;
 
-        var committeeCantonDetailStatisticRawData =
-            _cubeRawDataService.CreateTriples(
-                graph,
-                OgdExportConstants.UriCommitteeCantonDetailStatistic,
-                cantonDetailStatisticData.Select(OgdMapper.ToCantonDetailStatisticObservation));
+                    _logger.LogInformation("OGD export: Updating data on target {TargetName}. Chunk: {Current}", target, current);
+                    await storageProvider.UpdateGraphAsync(graphUri, chunk, [], ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "OGD export: Error while updating data on target {TargetName}. Chunk: {Current}", target, current);
+                }
+            }
+        }
 
-        var additionalTriples = committeeCantonDetailStatisticRawData
-            .Concat(committeeCantonDetailStatisticMetadataTriples);
+        // Note:
+        // According to MiLu (meeting from 03.02.2026 with Pascal) the detailed canton statistic is not needed in the current version of the OGD export.
+        // Code stays here commented out for the time being, in case it is needed again in the future.
 
-        _logger.LogInformation("OGD export: updating detailed statistic");
-        await _storageProvider.UpdateGraphAsync(_sparqlOptions.ExportGraphName, additionalTriples, [], ct);
+        //  var cantonDetailStatisticData = await _membershipService.GetMembershipsForDetailedCantonStatistic(membershipData);
+        //
+        //  var committeeCantonDetailStatisticRawData =
+        //      _cubeRawDataService.CreateTriples(
+        //          graph,
+        //          OgdExportConstants.UriCommitteeCantonDetailStatistic,
+        //          cantonDetailStatisticData.Select(OgdMapper.ToCantonDetailStatisticObservation));
+        //
+        //  var additionalTriples = committeeCantonDetailStatisticRawData
+        //      .Concat(committeeCantonDetailStatisticMetadataTriples);
+        //
+        // _logger.LogInformation("OGD export: updating detailed statistic");
+        // await _storageProvider.UpdateGraphAsync(_sparqlOptions.ExportGraphName, additionalTriples, [], ct);
 
         _logger.LogInformation("OGD export: completed successfully");
     }
