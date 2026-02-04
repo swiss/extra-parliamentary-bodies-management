@@ -8,6 +8,9 @@
 -   Add task for general election person base data validation #BKDO-966
 -   Recipient Export added #BKDO-777
 
+## 1.0.4
+-   Fix logic determining when shorter duty justification is needed #BKDO-2730
+
 ## 1.0.3
 -   Adapt handling of membership endDate and electionType #BKDO-2700
 
