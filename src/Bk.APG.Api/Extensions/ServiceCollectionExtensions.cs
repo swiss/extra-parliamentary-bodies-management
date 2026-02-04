@@ -73,7 +73,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISalutationGeneratorService, SalutationGeneratorService>();
         services.AddScoped<IOgdDocumentService, OgdDocumentService>();
 
-        services.AddScoped<IConnectionFactory, ConnectionFactory>();
+        services.AddScoped<ISparqlClientFactory, SparqlClientFactory>();
         services.AddScoped<IOgdExportService, OgdExportService>();
 
         services.AddScoped<IPostService, PostService>();
