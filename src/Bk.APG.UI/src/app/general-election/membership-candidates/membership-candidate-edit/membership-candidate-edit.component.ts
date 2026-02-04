@@ -21,7 +21,6 @@ export class MembershipCandidateEditComponent {
     generalElectionCommittee = signal<GeneralElectionCommitteeDetails | undefined>(undefined);
     formComponent = viewChild.required(MembershipCandidateDataFormComponent);
     form = computed(() => this.formComponent()?.membershipCandidateForm);
-    selectedPerson = computed(() => this.formComponent()?.selectedPerson());
 
     private unmodifiedMembershipCandidate!: MembershipCandidateUpdate;
 
@@ -75,7 +74,7 @@ export class MembershipCandidateEditComponent {
     back() {
         void this.router.navigate(['general-election', 'committees', this.generalElectionCommittee()!.committeeId], {
             replaceUrl: true,
-            queryParams: {tab: 'members'},
+            queryParams: {tab: this.generalElectionCommittee()?.isCandidateListCompleted ? 'members' : 'candidateList'},
         });
     }
 }
