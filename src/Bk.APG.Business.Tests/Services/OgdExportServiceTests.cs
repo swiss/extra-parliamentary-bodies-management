@@ -32,7 +32,8 @@ internal class OgdExportServiceTests
     private IMembershipRepository _membershipRepository;
     private ILogger<OgdExportService> _logger;
     private IOptions<SparqlOptions> _sparqlOptions;
-    private IConnectionFactory _connectionFactory;
+    private IOptions<SparqlTargetsOptions> _sparqlTargetsOptions;
+    private ISparqlClientFactory _sparqlClientFactory;
     private IMasterDataRepository _masterDataRepository;
     private IContactPointRepository _contactPointRepository;
     private IInterestRepository _interestRepository;
@@ -124,21 +125,21 @@ internal class OgdExportServiceTests
         _committeeRepository = Substitute.For<ICommitteeRepository>();
         _committeeTypeRepository = Substitute.For<ICommitteeTypeRepository>();
         _membershipRepository = Substitute.For<IMembershipRepository>();
-        _connectionFactory = Substitute.For<IConnectionFactory>();
+        _sparqlClientFactory = Substitute.For<ISparqlClientFactory>();
         _masterDataRepository = Substitute.For<IMasterDataRepository>();
         _contactPointRepository = Substitute.For<IContactPointRepository>();
         _interestRepository = Substitute.For<IInterestRepository>();
         _logger = new NullLogger<OgdExportService>();
 
-        _connectionFactory.Create().Returns(_storageProvider);
+        var storageProviders = new Dictionary<string, IAsyncStorageProvider>
+        {
+            { "target1", _storageProvider }
+        };
+        _sparqlClientFactory.GetStorageProviders().Returns(storageProviders);
 
         var sparqlOptions = new SparqlOptions
         {
-            RequestTimeoutMs = 0,
-            Endpoint = "",
             MasterDataProxy = new ProxyOptions { UseProxy = false },
-            ExportProxy = new ProxyOptions { UseProxy = false },
-            ExportGraphName = "ExportGraphName",
             ExportGraphBaseUri = "http://example.base.uri.org",
             ExportGraphVersion = "1",
             ExportEnabled = true
@@ -146,6 +147,31 @@ internal class OgdExportServiceTests
 
         _sparqlOptions = Substitute.For<IOptions<SparqlOptions>>();
         _sparqlOptions.Value.Returns(sparqlOptions);
+
+        var sparqlTargetsOptions = new SparqlTargetsOptions
+        {
+            Targets = new Dictionary<string, SparqlTargetConfiguration>
+            {
+                {
+                    "target1", new SparqlTargetConfiguration
+                    {
+                        GraphName = "ExportGraphName",
+                        GraphStoreProtocolEndPoint = "http://example.endpoint.org",
+                        RequestTimeoutMs = 30000,
+                        Username = "testuser",
+                        Password = "testpassword",
+                        Proxy = new SparqlProxyOptions
+                        {
+                            Address = "http://proxy.example.org",
+                            UseProxy = false
+                        }
+                    }
+                }
+            }
+        };
+
+        _sparqlTargetsOptions = Substitute.For<IOptions<SparqlTargetsOptions>>();
+        _sparqlTargetsOptions.Value.Returns(sparqlTargetsOptions);
 
         var ogdS3Configuration = new OgdS3Configuration
         {
@@ -165,11 +191,12 @@ internal class OgdExportServiceTests
                 _committeeService,
                 _committeeRepository,
                 _committeeTypeRepository,
-                _connectionFactory,
+                _sparqlClientFactory,
                 _membershipRepository,
                 _interestRepository,
                 _logger,
                 _sparqlOptions,
+                _sparqlTargetsOptions,
                 _masterDataRepository,
                 _contactPointRepository,
                 Substitute.For<IDocumentService>(),
