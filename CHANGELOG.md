@@ -1,8 +1,8 @@
 # Changelog
 
-
 ## 1.1.0
 
+-   RDF Export with multiple Targets (Lindas and LindasNext) [BKDO-2501](https://bkdev.atlassian.net/browse/BKDO-2501)
 -   Candidate List Export added #BKDO-924
 -   Add task for general election person interest validation #BKDO-970
 -   Add task for general election person base data validation #BKDO-966
