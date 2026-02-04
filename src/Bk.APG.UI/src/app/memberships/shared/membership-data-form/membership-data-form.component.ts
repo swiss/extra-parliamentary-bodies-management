@@ -156,8 +156,13 @@ export class MembershipDataFormComponent implements OnInit, AfterViewChecked {
     private readonly justificationShorterDutyNeeded = computed(() => {
         const period4YearsInGeneralElection = this.committee()?.period4YearsInGeneralElection ?? false;
         const endDate = this.formEndDate();
+        const termOfOfficeEndDate = this.committee()?.termOfOfficeEndDate;
 
-        return period4YearsInGeneralElection && endDate !== undefined && endDate < this.getEndDateInGeneralElection(this.formBeginDate(), 4);
+        if (endDate == null || termOfOfficeEndDate == null) {
+            return false;
+        }
+
+        return period4YearsInGeneralElection && endDate.getTime() < termOfOfficeEndDate.getTime();
     });
 
     private readonly justificationMemberInFederalDutyNeeded = computed(() => {
@@ -665,13 +670,6 @@ export class MembershipDataFormComponent implements OnInit, AfterViewChecked {
             this.membershipForm.controls.electionOfficeId.updateValueAndValidity();
             this.membershipForm.controls.electionOfficeId.markAllAsTouched();
         }
-    }
-
-    private getEndDateInGeneralElection(date: Date, years: number): Date {
-        const newDate = new Date(date);
-        newDate.setFullYear(date.getFullYear() + years);
-        newDate.setDate(date.getDate() - 1);
-        return newDate;
     }
 
     private toggleJustificationFields(disable: boolean) {
