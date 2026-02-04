@@ -15,7 +15,7 @@ import {
     MatRowDef,
     MatTable,
 } from '@angular/material/table';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {CommitteeMember} from '@api/CommitteeMember';
 import {CommitteeQuotas} from '@api/CommitteeQuotas';
 import {MembershipList} from '@api/MembershipList';
@@ -66,6 +66,7 @@ export class GeneralElectionCommitteeMembershipsComponent {
 
     constructor(
         private readonly route: ActivatedRoute,
+        private readonly router: Router,
         private readonly translateService: TranslateService,
         private readonly generalElectionCommitteesService: GeneralElectionCommitteesService,
         protected readonly generalElectionCommitteeDetailsService: GeneralElectionCommitteeDetailsService
@@ -83,6 +84,10 @@ export class GeneralElectionCommitteeMembershipsComponent {
 
     sortData(sort: Sort, currentSort: WritableSignal<Sort>) {
         currentSort.set(sort);
+    }
+
+    openMembershipCandidate(membershipCandidateId: string) {
+        void this.router.navigate(['general-election', 'committees', this.route.snapshot.params.id, 'membership-candidate', membershipCandidateId]);
     }
 
     private prepareData(members: CommitteeMember[], sort: Sort) {
