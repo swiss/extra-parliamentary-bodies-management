@@ -534,9 +534,6 @@ public class CommitteeService : ICommitteeService
         statisticDtos.Add(totalDto);
         generatedOgdId++;
 
-        statisticDtos.Add(totalDto);
-        generatedOgdId++;
-
         totalDto = new CommitteeTypeDepartmentStatisticDto
         {
             OgdId = generatedOgdId,
@@ -557,7 +554,6 @@ public class CommitteeService : ICommitteeService
         };
 
         statisticDtos.Add(totalDto);
-        generatedOgdId++;
 
         return statisticDtos;
     }
