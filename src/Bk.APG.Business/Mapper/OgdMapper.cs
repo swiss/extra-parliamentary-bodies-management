@@ -96,6 +96,7 @@ public static class OgdMapper
             }
         });
 
+        // nicht APG Stammdaten nehmen..externer LINDAS Link statt OGD ID -> nehmen TODO PP -> Ausland soll so belassen werden.
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCanton",
@@ -130,10 +131,12 @@ public static class OgdMapper
         return dataRow;
     }
 
+    // Detaillierte Kantons-Statistic weg TODO PP -> deaktivieren, aber belassen
+
     public static ObservationDataRow ToGenderLanguageStatisticObservation(MembershipGenderLanguageStatisticDto statisticDto)
     {
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic;
-        var committeeType = "committee-type";
+        var committeeType = OgdExportConstants.NamespaceCommitteeType;
 
         var dataRow = new ObservationDataRow();
 
@@ -2708,12 +2711,12 @@ public static class OgdMapper
             });
         }
 
+        // TODO PP: Totale als Bund/Federal exportieren? Check!
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:organisation",
             Object = statisticDto.Organisation
         });
-
 
         dataRow.Values.Add(new DimensionValue
         {
