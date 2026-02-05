@@ -141,6 +141,7 @@
                         }
                     </mat-chip-grid>
 
+                    <!-- TODO PP -->
                     <input
                         [formControl]="personForm.controls.occupations"
                         placeholder="{{ 'person.details.occupations.typeahead' | translate }}"
@@ -148,6 +149,7 @@
                         [matChipInputFor]="chipGrid"
                         [matAutocomplete]="auto"
                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        (blur)="emptyInputOnBlur()"
                     />
                     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event); occupationInput.value = ''">
                         @for (occupation of filteredOccupationDb(); track occupation) {
