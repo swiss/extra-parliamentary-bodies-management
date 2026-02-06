@@ -4,14 +4,14 @@ namespace Bk.APG.Business.Services;
 
 public static class MembershipTermCalculator
 {
-    public static int CalculateCurrentTermInYears(IEnumerable<Membership> memberships)
+    public static int CalculateCurrentTermInYears(IEnumerable<Membership> memberships, bool forGeneralElection = false)
     {
         var todayDate = DateOnly.FromDateTime(DateTime.Today);
 
         return memberships
             .Sum(x =>
             {
-                var endDate = x.EndDate > todayDate
+                var endDate = x.EndDate > todayDate && !forGeneralElection
                     ? todayDate
                     : AdjustEndDate(x.EndDate);
                 return CalculateTermsInYears(x.BeginDate, endDate);

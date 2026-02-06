@@ -15,7 +15,7 @@ public interface IPersonService
     Task<IEnumerable<PersonDetailDto>?> GetSimilarPersons(string surname, string givenName, int birthYear, int birthYearRange);
     Task<IEnumerable<PersonDetailDto>?> GetByName(string name);
     Task<CandidateListDuplicateCheckResultDto> GetDuplicatePersonForGeneralElection(MembershipCandidate membershipCandidate);
-    Task<PersonDetailDto> CreatePersonInGeneralElection(MembershipCandidate membershipCandidate);
+    Task<Person> CreatePersonInGeneralElection(MembershipCandidate membershipCandidate);
     bool ShouldMaskAddress(Person person);
     Task DeletePerson(Guid id);
 }
