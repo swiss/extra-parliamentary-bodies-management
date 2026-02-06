@@ -96,11 +96,11 @@ public static class OgdMapper
             }
         });
 
-        // TODO PP -> Handling für das Ausland noch anschauen
+        // According to Michael Luggen, the "Ausland" records should be treated like this, as there is no official record in LINDAS. Might change in the future.
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCanton",
-            Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.CantonUri),
+            Uri = statisticDto.CantonUri == "www.todo.uri.Ausland" ? $"canton:{statisticDto.CantonOgdId}" : OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.CantonUri),
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
                 NameDe = "Kanton",
