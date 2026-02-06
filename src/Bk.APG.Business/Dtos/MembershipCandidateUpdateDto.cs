@@ -23,4 +23,13 @@ public class MembershipCandidateUpdateDto
     public string? JustificationMemberInFederalAssembly { get; set; }
     public string? RequirementsProfile { get; set; }
     public required uint RowVersion { get; init; }
+    public int EstimatedTermOfOffice { get; set; }
+    public int CurrentTermOfOffice { get; set; }
+    public bool NeedsLongerDutyJustification { get; set; }
+    public bool NeedsShorterDutyJustification { get; set; }
+    public bool NeedsFederalDutyJustification { get; set; }
+    public bool NeedsFederalAssemblyJustification { get; set; }
+    public bool NeedsRequirementsProfile { get; set; }
+    public bool MaximumDurationExceeded { get; set; }
+    public bool HasFederalAssemblyAuthoritiesCommissionConflict { get; set; }
 }
