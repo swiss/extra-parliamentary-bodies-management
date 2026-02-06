@@ -8,6 +8,7 @@ $gap: 16px;
     flex-direction: column;
     max-width: 150ch;
     margin: auto;
+
     form {
         display: flex;
         flex-direction: column;
@@ -25,9 +26,23 @@ $gap: 16px;
                 max-width: calc(50%);
             }
         }
+
+        mat-checkbox {
+            margin-top: $ob-spacing-sm;
+        }
     }
+}
+
+.validation-text {
+    color: $ob-red-700 !important;
+    font-weight: bold;
+    margin-bottom: $ob-spacing-xs;
 }
 
 mat-card-content {
     display: flex;
+}
+
+.term-of-office-text {
+    margin: -$ob-spacing-md 0 $ob-spacing-md;
 }

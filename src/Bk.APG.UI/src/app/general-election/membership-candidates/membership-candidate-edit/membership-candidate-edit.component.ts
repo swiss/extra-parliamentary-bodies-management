@@ -1,5 +1,4 @@
 import {Component, computed, signal, viewChild} from '@angular/core';
-import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatButton} from '@angular/material/button';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
@@ -37,11 +36,9 @@ export class MembershipCandidateEditComponent {
             this.unmodifiedMembershipCandidate = membershipCandidate;
         });
 
-        this.route.parent?.parent?.url.pipe(takeUntilDestroyed()).subscribe(() => {
-            this.generalElectionCommitteeDetailsService
-                .generalElectionCommitteeDetails(this.route.parent?.snapshot.params.id)
-                .subscribe(generalElectionCommitteeDetails => this.generalElectionCommittee.set(generalElectionCommitteeDetails));
-        });
+        this.generalElectionCommitteeDetailsService
+            .generalElectionCommitteeDetails(this.route.parent?.snapshot.params.id)
+            .subscribe(generalElectionCommitteeDetails => this.generalElectionCommittee.set(generalElectionCommitteeDetails));
     }
 
     save() {
@@ -58,7 +55,7 @@ export class MembershipCandidateEditComponent {
                 this.form()?.reset();
                 await this.router.navigate(['general-election', 'committees', this.generalElectionCommittee()!.committeeId], {
                     replaceUrl: true,
-                    queryParams: {tab: 'members'},
+                    queryParams: {tab: this.generalElectionCommittee()?.isCandidateListCompleted ? 'members' : 'candidateList'},
                 });
                 return this.notificationService.success('generalElection.membershipCandidate.saveChanges.success');
             },

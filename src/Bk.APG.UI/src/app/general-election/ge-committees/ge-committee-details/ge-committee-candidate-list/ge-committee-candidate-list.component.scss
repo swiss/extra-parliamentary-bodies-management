@@ -262,9 +262,8 @@
         position: relative;
     }
 
-    .close-btn {
-        position: absolute;
-        top: 4px;
-        right: 4px;
+    .alert-header {
+        display: flex;
+        justify-content: space-between;
     }
 }
