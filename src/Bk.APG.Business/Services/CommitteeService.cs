@@ -497,7 +497,6 @@ public class CommitteeService : ICommitteeService
             generatedOgdId++;
         }
 
-        // TODO hier die richtigen CommitteeTypes OGD IDs verwenden
         var totalDto = new CommitteeTypeDepartmentStatisticDto
         {
             OgdId = generatedOgdId,
