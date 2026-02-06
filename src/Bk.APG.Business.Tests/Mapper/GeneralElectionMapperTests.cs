@@ -132,7 +132,7 @@ internal class GeneralElectionMapperTests
             Assert.That(result.HasMembershipAddition, Is.EqualTo(membershipCandidate.MembershipAddition is not null));
             Assert.That(result.IsActive, Is.True);
             Assert.That(result.IsFuture, Is.False);
-            Assert.That(result.NeedsAttention, Is.EqualTo(membershipCandidate.NeedsAttention));
+            Assert.That(result.NeedsAttention, Is.EqualTo(membershipCandidate.HasMembershipValidationIssues));
         });
     }
 }
