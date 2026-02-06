@@ -829,5 +829,13 @@
   "onlinePublication.trigger.confirmation.message": "Durch die sofortige Publikation, wird der aktuelle APG Datenstand sofort im Internet sichtbar gemacht. Wollen Sie weiterfahren?",
   "onlinePublication.trigger.message": "Die Publikation wurde ausgelöst. Bitte warten...",
   "onlinePublication.trigger.success": "Die Publikation wurde erfolgreich abgeschlossen.",
-  "onlinePublication.trigger.error": "Fehler beim Auslösen der Publikation."
+  "onlinePublication.trigger.error": "Fehler beim Auslösen der Publikation.",
+  "generalElection.committee.candidateList.additionalMembershipValidationRequiredTasksCreated": "Die Mitgliedschaften wurden noch nicht validiert. Zuerst müssen die offenen Personenaufgaben erledigt werden.",
+  "generalElection.committee.candidateList.contactPointsMissingTasksCreated": "Es fehlen Kontaktstellen. Im Arbeitsvorrat wurden Aufgaben zur Erfassung der Kontaktstellen erstellt.",
+  "generalElection.committee.candidateList.missingInterests": "Bei mindestens einer Person sind die Interessenbindungen unvollständig.",
+  "generalElection.committee.candidateList.missingInterests.taskCreated": "Im Arbeitsvorrat wurde eine Aufgabe zur Ergänzung der Interessenbindungen erstellt.",
+  "generalElection.committee.candidateList.missingBaseData": "Bei mindestens einer Person sind die Personendaten unvollständig.",
+  "generalElection.committee.candidateList.missingBaseData.taskCreated": "Im Arbeitsvorrat wurde eine Aufgabe zur Ergänzung der Personendaten erstellt.",
+  "generalElection.committee.candidateList.membershipValidationIssues": "Bei mindestens einer Person bestehen Validierungsprobleme bei der Mitgliedschaft.",
+  "generalElection.committee.candidateList.membershipValidationIssues.taskCreated": "Im Arbeitsvorrat wurde eine Aufgabe zur Validierung der Mitgliedschaft erstellt."
 }
