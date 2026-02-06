@@ -87,6 +87,25 @@ internal class MembershipTermCalculatorTests
     }
 
     [Test]
+    public void CalculateCurrentTermInYears_ForGeneralElection_MembershipEndingInFuture_UsesActualEndDate()
+    {
+        var beginDate = DateOnly.FromDateTime(DateTime.Today.AddYears(-2));
+        var futureEndDate = DateOnly.FromDateTime(DateTime.Today.AddYears(2));
+
+        var memberships = new List<Membership>
+        {
+            new MembershipBuilder()
+                .WithBeginDate(beginDate)
+                .WithEndDate(futureEndDate)
+                .Build()
+        };
+
+        var result = MembershipTermCalculator.CalculateCurrentTermInYears(memberships, forGeneralElection: true);
+
+        Assert.That(result, Is.EqualTo(4));
+    }
+
+    [Test]
     public void CalculateCurrentTermInYears_EndDateOn31December_AdjustsToNextYear()
     {
         var memberships = new List<Membership>
