@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {Inject, Injectable} from '@angular/core';
-import {SESSION_STORAGE} from '@shared/injection.tokens';
+import {LOCAL_STORAGE} from '@shared/injection.tokens';
 import {dateReviver} from './date-reviver';
 
 @Injectable({
@@ -9,7 +9,7 @@ import {dateReviver} from './date-reviver';
 export class SearchStorageService {
     private readonly keyPrefix = 'search-params';
 
-    constructor(@Inject(SESSION_STORAGE) private readonly storage: Storage) {}
+    constructor(@Inject(LOCAL_STORAGE) private readonly storage: Storage) {}
 
     getParams(name: string): any {
         return JSON.parse(this.storage.getItem(this.key(name))!, dateReviver);

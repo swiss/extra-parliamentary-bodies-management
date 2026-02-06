@@ -15,7 +15,9 @@ public static class WorklistTaskExtensions
     {
         var section = string.Empty;
 
-        if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData || worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests)
+        if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData ||
+            worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+            worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation)
         {
             section += $"{worklistTask.Person!.GivenName} {worklistTask.Person!.Surname}; ";
         }
