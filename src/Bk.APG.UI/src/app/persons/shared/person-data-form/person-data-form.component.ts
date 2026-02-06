@@ -642,14 +642,6 @@ export class PersonDataFormComponent implements OnInit {
         this.filteredOccupationDb.set([]);
     }
 
-    emptyInputOnBlur() {
-        const value = this.personForm.controls.occupations.value;
-
-        if (typeof value === 'string') {
-            this.personForm.controls.occupations.setValue('');
-        }
-    }
-
     private checkIfAddressIsEmpty(controlId: AddressControlId): boolean {
         return (
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.city.value) &&
