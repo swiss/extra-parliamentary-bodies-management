@@ -21,4 +21,13 @@ export interface MembershipCandidateUpdate {
     justificationMemberInFederalAssembly?: string;
     requirementsProfile?: string;
     rowVersion: number;
+    estimatedTermOfOffice: number;
+    currentTermOfOffice: number;
+    needsLongerDutyJustification: boolean;
+    needsShorterDutyJustification: boolean;
+    needsFederalDutyJustification: boolean;
+    needsFederalAssemblyJustification: boolean;
+    needsRequirementsProfile: boolean;
+    maximumDurationExceeded: boolean;
+    hasFederalAssemblyAuthoritiesCommissionConflict: boolean;
 }
