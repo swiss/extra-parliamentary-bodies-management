@@ -408,6 +408,13 @@ public class CommitteeService : ICommitteeService
         var totalExtraParliamentaryCommissions = 0;
         var totalNonExtraParliamentaryCommissions = 0;
 
+        var committeeTypes = await _masterDataRepository.GetCommitteeTypes();
+
+        var ogdIDAuthoritiesCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.AuthoritiesCommissionGuid)!.OgdId;
+        var ogdIDAdministrationCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.AdministrationCommissionGuid)!.OgdId;
+        var ogdIDFederalAgenciesCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.FederalAgenciesCommitteeGuid)!.OgdId;
+        var ogdIDManagementCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.ManagementCommitteeGuid)!.OgdId;
+
         var generatedOgdId = 1;
 
         var activeCommittees = await _committeeRepository.GetCommitteeDataForStatistics();
@@ -490,11 +497,13 @@ public class CommitteeService : ICommitteeService
             generatedOgdId++;
         }
 
+        // TODO hier die richtigen CommitteeTypes OGD IDs verwenden
         var totalDto = new CommitteeTypeDepartmentStatisticDto
         {
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Behördenkommissionen",
+            CommitteeTypeOgdId = ogdIDAuthoritiesCommissions,
             CommitteeCount = totalAuthoritiesCommissions
         };
 
@@ -506,6 +515,7 @@ public class CommitteeService : ICommitteeService
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Verwaltungskommissionen",
+            CommitteeTypeOgdId = ogdIDAdministrationCommissions,
             CommitteeCount = totalAdministrationCommissions
         };
 
@@ -517,6 +527,7 @@ public class CommitteeService : ICommitteeService
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-VertretungenDesBundes",
+            CommitteeTypeOgdId = ogdIDFederalAgenciesCommissions,
             CommitteeCount = totalFederalAgenciesCommissions
         };
 
@@ -528,6 +539,7 @@ public class CommitteeService : ICommitteeService
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Leitungsorgane",
+            CommitteeTypeOgdId = ogdIDManagementCommissions,
             CommitteeCount = totalManagementCommissions
         };
 
