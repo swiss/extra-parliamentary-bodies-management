@@ -96,11 +96,11 @@ public static class OgdMapper
             }
         });
 
-        // nicht APG Stammdaten nehmen..externer LINDAS Link statt OGD ID -> nehmen TODO PP -> Ausland soll so belassen werden.
+        // TODO PP -> Handling für das Ausland noch anschauen
         dataRow.KeyDimensionLinks.Add(new KeyDimensionLink
         {
             Predicate = $"{ogdNamespace}:hasCanton",
-            Uri = $"canton:{statisticDto.CantonOgdId}",
+            Uri = OgdExportConstants.CreateUriLinkForLdAdminCh(statisticDto.CantonUri),
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
                 NameDe = "Kanton",
@@ -130,8 +130,6 @@ public static class OgdMapper
         });
         return dataRow;
     }
-
-    // Detaillierte Kantons-Statistic weg TODO PP -> deaktivieren, aber belassen
 
     public static ObservationDataRow ToGenderLanguageStatisticObservation(MembershipGenderLanguageStatisticDto statisticDto)
     {
@@ -641,8 +639,6 @@ public static class OgdMapper
 
         var dataRow = new ObservationDataRow
         {
-            // combined key committee and department
-            // KeyUri = $"{ogdNamespace}:{statisticDto.CommitteeTypeOgdId}-{statisticDto.DepartmentOgdId}"
             KeyUri = $"{ogdNamespace}:{1}"
         };
 
@@ -2677,21 +2673,6 @@ public static class OgdMapper
         {
             KeyUri = $"{ogdNamespace}:{statisticDto.OgdId}"
         };
-
-        //dataRow.Values.Add(new DimensionValue
-        //{
-        //    Predicate = $"{ogdNamespace}:committeeType",
-        //    Object = statisticDto.CommitteeType,
-        //    ShapePropertyMetadata = new ShapePropertyMetadata
-        //    {
-        //        NameDe = "Gremienart",
-        //        NameFr = "Type d'organe",
-        //        NameIt = "Tipo di organo",
-        //        NameEn = "Committee type",
-        //        Type = OgdExportConstants.CubeMeasureDimension,
-        //        NodeKind = OgdExportConstants.ShaclNodeKindLiteral
-        //    }
-        //});
 
         if (statisticDto.CommitteeTypeOgdId != null)
         {
