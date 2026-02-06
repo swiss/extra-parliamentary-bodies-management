@@ -243,7 +243,7 @@ public class OgdExportService : IOgdExportService
             .Concat(occupationTriples)
             .Concat(cantonTriples)
             .Concat(contactPointTypeTriples)
-            //.Concat(contactPointTriples)
+            .Concat(contactPointTriples)
             .Concat(committeeTriples)
             .Concat(committeeCube)
             .Concat(committeeCubeMetadata)
