@@ -145,7 +145,7 @@ internal class MasterDataMapperTests
             Assert.That(result.Key, Is.EqualTo(committeeTypeOgdId));
             Assert.That(result.Name.Text, Is.EqualTo("de"));
             Assert.That(result.Name.LanguageTag, Is.EqualTo("de"));
-            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(7));
+            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(8));
             Assert.That(result.AdditionalUriProperties, Is.Empty);
         }
 
