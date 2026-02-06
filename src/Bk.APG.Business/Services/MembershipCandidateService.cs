@@ -78,10 +78,12 @@ public class MembershipCandidateService : IMembershipCandidateService
                 }
 
                 validationResult.AreJustificationsMissing = await CheckJustificationsMissingAndCreateTasks(generalElectionCommittee);
-                await CheckCandidatePersonsAndCreateTasks(generalElectionCommittee);
+                await CheckCandidatePersonsAndCreateTasks(generalElectionCommittee, validationResult);
+
+                await CheckCandidateMembershipsAndCreateTasks(generalElectionCommittee, validationResult);
             }
 
-            await CheckContactPointsAndCreateTasks(generalElectionCommittee);
+            validationResult.AreContactPointsMissing = await CheckContactPointsAndCreateTasks(generalElectionCommittee);
 
             await _generalElectionCommitteeRepository.CommitChanges();
 
@@ -95,13 +97,94 @@ public class MembershipCandidateService : IMembershipCandidateService
         return validationResult;
     }
 
-    private async Task CheckContactPointsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee)
+    private async Task CheckCandidateMembershipsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
     {
+        if (validationResult.PersonsWithMissingInterests.Count != 0 || validationResult.PersonsWithMissingBaseData.Count != 0)
+        {
+            return;
+        }
+
+        var worklistTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
+            .Where(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation).ToList();
+
+        foreach (var membershipCandidate in generalElectionCommittee.MembershipCandidates)
+        {
+            var membershipTask = worklistTasks.FirstOrDefault(x => x.MembershipCandidateId == membershipCandidate.Id && x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation);
+
+            if (!membershipCandidate.IsSelected)
+            {
+                if (membershipTask is not null && membershipTask.WorklistTaskStateId != WorklistTaskState.Completed)
+                {
+                    membershipTask.WorklistTaskStateId = WorklistTaskState.Completed;
+                    membershipTask.Modified = DateTime.UtcNow;
+                    membershipTask.ModifiedBy = "System";
+                }
+
+                continue;
+            }
+
+            if (membershipCandidate.HasMembershipValidationIssues)
+            {
+                if (membershipCandidate.Person is not null)
+                {
+                    validationResult.PersonsWithMembershipValidationIssues.Add(PersonMapper.ToPersonMinimalDto(membershipCandidate.Person));
+                }
+
+                if (membershipTask is null)
+                {
+                    _logger.LogInformation("Creating membership validation task for committee {CommitteeId} and membership candidate {MembershipCandidateId}", generalElectionCommittee.CommitteeId, membershipCandidate.Id);
+
+                    await _worklistTaskRepository.Create(new WorklistTask
+                    {
+                        AssignedToId = generalElectionCommittee.Committee!.EiamAssignmentId!.Value,
+                        AssignedById = EiamAssignment.ApgId,
+                        DueDate = generalElectionCommittee.SecretariatReadyForProposalDueDate!.Value.AddDays(-14),
+                        Description = generalElectionCommittee.GetDescription(),
+                        WorklistTaskTypeId = WorklistTaskType.GeneralElectionMembershipValidation,
+                        WorklistTaskStateId = WorklistTaskState.Active,
+                        GeneralElectionCommitteeId = generalElectionCommittee.Id,
+                        DepartmentId = generalElectionCommittee.DepartmentId,
+                        OfficeId = generalElectionCommittee.OfficeId,
+                        CommitteeId = generalElectionCommittee.CommitteeId,
+                        MembershipCandidateId = membershipCandidate.Id,
+                        PersonId = membershipCandidate.PersonId,
+                        Created = DateTime.UtcNow,
+                        CreatedBy = "System",
+                        Modified = DateTime.UtcNow,
+                        ModifiedBy = "System"
+                    });
+                }
+                else if (membershipTask.WorklistTaskStateId != WorklistTaskState.Active)
+                {
+                    membershipTask.WorklistTaskStateId = WorklistTaskState.Active;
+                    membershipTask.Modified = DateTime.UtcNow;
+                    membershipTask.ModifiedBy = "System";
+                }
+            }
+            else
+            {
+                if (membershipTask is null || membershipTask.WorklistTaskStateId == WorklistTaskState.Completed)
+                {
+                    return;
+                }
+
+                membershipTask.WorklistTaskStateId = WorklistTaskState.Completed;
+                membershipTask.Modified = DateTime.UtcNow;
+                membershipTask.ModifiedBy = "System";
+            }
+        }
+    }
+
+    private async Task<bool> CheckContactPointsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee)
+    {
+        var needsSecretariat = generalElectionCommittee.Committee!.NeedsAttentionSecretariat;
+        var needsDataProtectionOfficer = generalElectionCommittee.Committee.NeedsAttentionDataProtectionOfficer;
+        var areContactPointsMissing = needsSecretariat || needsDataProtectionOfficer;
         var worklistTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).ToList();
         var missingSecretariatTask = worklistTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat);
         var missingDataProtectionOfficerTask = worklistTasks.FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer);
 
-        if (generalElectionCommittee.Committee!.NeedsAttentionSecretariat)
+        if (needsSecretariat)
         {
             if (missingSecretariatTask is null)
             {
@@ -142,7 +225,7 @@ public class MembershipCandidateService : IMembershipCandidateService
             }
         }
 
-        if (generalElectionCommittee.Committee.NeedsAttentionDataProtectionOfficer)
+        if (needsDataProtectionOfficer)
         {
             if (missingDataProtectionOfficerTask is null)
             {
@@ -182,6 +265,8 @@ public class MembershipCandidateService : IMembershipCandidateService
                 missingDataProtectionOfficerTask.ModifiedBy = "System";
             }
         }
+
+        return areContactPointsMissing;
     }
 
     public static void ValidateCandidateCount(int candidateCount, GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
@@ -213,21 +298,30 @@ public class MembershipCandidateService : IMembershipCandidateService
         generalElectionCommittee.IsValidated = true;
     }
 
-    private async Task CheckCandidatePersonsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee)
+    private async Task CheckCandidatePersonsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
     {
         foreach (var membershipCandidate in generalElectionCommittee.MembershipCandidates)
         {
-            var personTasks = (await _worklistTaskRepository.GetAllByPersonId(membershipCandidate.PersonId!.Value)).ToList();
+            if (membershipCandidate.Person is null)
+            {
+                return;
+            }
+
+            var personTasks = (await _worklistTaskRepository.GetAllByPersonId(membershipCandidate.Person.Id)).ToList();
 
             if (membershipCandidate.IsSelected)
             {
-                if (membershipCandidate.Person is null || membershipCandidate.NeedsAttentionInterests)
+                if (membershipCandidate.NeedsAttentionInterests)
                 {
+                    validationResult.PersonsWithMissingInterests.Add(PersonMapper.ToPersonMinimalDto(membershipCandidate.Person));
+
                     await CreateOrActivatePersonTask(generalElectionCommittee, personTasks, membershipCandidate, WorklistTaskType.GeneralElectionPersonInterests, 7);
                 }
 
-                if (membershipCandidate.Person is null || membershipCandidate.NeedsAttentionBasicDataOrOccupation)
+                if (membershipCandidate.NeedsAttentionBasicDataOrOccupation)
                 {
+                    validationResult.PersonsWithMissingBaseData.Add(PersonMapper.ToPersonMinimalDto(membershipCandidate.Person));
+
                     await CreateOrActivatePersonTask(generalElectionCommittee, personTasks, membershipCandidate, WorklistTaskType.GeneralElectionPersonBaseData, 14);
                 }
             }
@@ -391,8 +485,9 @@ public class MembershipCandidateService : IMembershipCandidateService
             foreach (var candidate in generalElectionCommittee.MembershipCandidates.Where(p => p.IsSelected && p.Person is null))
             {
                 var newPerson = await _personService.CreatePersonInGeneralElection(candidate);
+                candidate.Person = newPerson;
                 candidate.PersonId = newPerson.Id;
-                validationResult.CreatedPersons.Add(newPerson);
+                validationResult.CreatedPersons.Add(PersonMapper.ToPersonDetailDto(newPerson, false));
             }
 
             result = true;
@@ -553,6 +648,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         membershipCandidate.JustificationMemberInFederalAssembly = membershipCandidateUpdate.JustificationMemberInFederalAssembly;
         membershipCandidate.JustificationMemberInFederalDuty = membershipCandidateUpdate.JustificationMemberInFederalDuty;
         membershipCandidate.RequirementsProfile = membershipCandidateUpdate.RequirementsProfile;
+        membershipCandidate.InCorrelationWithFederalDuty = membershipCandidateUpdate.InCorrelationWithFederalDuty;
 
         membershipCandidate.Modified = DateTime.UtcNow;
         membershipCandidate.ModifiedBy = _authorizationService.GetCurrentUserName();

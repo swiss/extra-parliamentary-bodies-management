@@ -27,7 +27,7 @@ import {WorklistTask} from '@api/WorklistTask';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObButtonDirective} from '@oblique/oblique';
 import {MasterDataService} from '@shared/master-data.service';
-import {distinctUntilChanged, merge, startWith, Subject, switchMap} from 'rxjs';
+import {distinctUntilChanged, merge, Subject, switchMap} from 'rxjs';
 import {WorklistFilterComponent} from './worklist-filter/worklist-filter.component';
 import {WorklistService} from './worklist.service';
 
@@ -100,13 +100,7 @@ export class WorklistComponent {
         private readonly router: Router,
         readonly masterDataService: MasterDataService
     ) {
-        merge(
-            this.reload$,
-            this.translateService.onLangChange.pipe(
-                startWith({lang: this.translateService.currentLang}),
-                distinctUntilChanged((prev, curr) => prev.lang === curr.lang)
-            )
-        )
+        merge(this.reload$, this.translateService.onLangChange.pipe(distinctUntilChanged((prev, curr) => prev.lang === curr.lang)))
             .pipe(
                 switchMap(() =>
                     this.worklistService.getWorklistTasks(

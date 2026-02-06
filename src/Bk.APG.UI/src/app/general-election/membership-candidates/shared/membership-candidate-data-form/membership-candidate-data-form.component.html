@@ -1,6 +1,12 @@
 @if (selectedPerson()) {
     <apg-person-search [(personSelected)]="selectedPerson" />
 }
+@if (membershipCandidateModification()?.maximumDurationExceeded) {
+    <div class="validation-text">{{ 'membership.validation.error.maximumDurationExceeded' | translate }}</div>
+}
+@if (membershipCandidateModification()?.hasFederalAssemblyAuthoritiesCommissionConflict) {
+    <div class="validation-text">{{ 'membership.validation.error.isFederalAssemblyAndAuthoritiesCommission' | translate }}</div>
+}
 
 <form [formGroup]="membershipCandidateForm" id="membershipCandidateDataForm" obUnsavedChanges>
     <fieldset>
@@ -120,6 +126,16 @@
                 </mat-error>
             </mat-form-field>
 
+            <div class="term-of-office-text">
+                <b>{{ 'membership.details.currentTermDuration' | translate }}:</b> {{ membershipCandidateModification()?.currentTermOfOffice }}
+                {{ 'membership.details.years' | translate }}
+            </div>
+
+            <div class="term-of-office-text">
+                <b>{{ 'membership.details.estimatedTermDuration' | translate }}:</b> {{ membershipCandidateModification()?.estimatedTermOfOffice }}
+                {{ 'membership.details.years' | translate }}
+            </div>
+
             <mat-form-field obErrorMessages>
                 <mat-label>{{ 'membership.details.electionType' | translate }}</mat-label>
                 <mat-select [formControl]="membershipCandidateForm.controls.electionTypeId">
@@ -208,8 +224,9 @@
             <mat-checkbox
                 [formControl]="membershipCandidateForm.controls.inCorrelationWithFederalDuty"
                 matTooltip="{{ 'membership.details.inCorrelationWithFederalDuty' | translate }}"
-                >{{ 'membership.details.inCorrelationWithFederalDuty' | translate }}</mat-checkbox
             >
+                {{ 'membership.details.inCorrelationWithFederalDuty' | translate }}
+            </mat-checkbox>
 
             <div obErrorMessage>
                 <apg-rich-text-editor
