@@ -39,6 +39,7 @@ public static class OgdExportConstants
     public const string SchemaContributor = "schema:contributor";
     public const string SchemaWebpage = "schema:webpage";
     public const string SchemaInLanguage = "schema:inLanguage";
+    public const string SchemaPosition = "schema:position";
 
     public const string SchemaAnyUri = "http://www.w3.org/2001/XMLSchema#anyURI";
 
@@ -58,6 +59,9 @@ public static class OgdExportConstants
     public const string CommitteeHasSecretariat = "committee:hasSecretariat";
     public const string CommitteeHasDataProtectionOfficer = "committee:hasDataProtectionOfficer";
     public const string CommitteeHasLegalForm = "committee:hasLegalForm";
+
+    public const string DataTypeInt = "http://www.w3.org/2001/XMLSchema#int";
+    public const string DataTypeDecimal = "http://www.w3.org/2001/XMLSchema#decimal";
 
     public const string LanguageDe = "de";
     public const string LanguageFr = "fr";
