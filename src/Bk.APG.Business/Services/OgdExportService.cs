@@ -260,7 +260,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeFunctionStatistic,
-                functionStatisticData.Select(OgdMapper.ToFunctionStatisticObservation));
+                functionStatisticData.Select(OgdFunctionStatisticMapper.ToFunctionStatisticObservation));
 
         var cantonStatisticData = await _membershipService.GetMembershipsForCantonStatistic(membershipData);
 
@@ -268,7 +268,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeCantonStatistic,
-                cantonStatisticData.Select(OgdMapper.ToCantonStatisticObservation));
+                cantonStatisticData.Select(OgdCantonStatisticMapper.ToCantonStatisticObservation));
 
         var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
 
@@ -282,7 +282,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeGenderLanguageStatistic,
-                genderLanguageStatisticData.Select(OgdMapper.ToGenderLanguageStatisticObservation));
+                genderLanguageStatisticData.Select(OgdGenderLanguageStatisticMapper.ToGenderLanguageStatisticObservation));
 
         var committeeTypeStatisticData = await _committeeService.GetCommitteeTypeStatistic();
 
@@ -290,7 +290,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeTypeStatistic,
-                committeeTypeStatisticData.Select(OgdMapper.ToCommitteeTypeStatisticObservation));
+                committeeTypeStatisticData.Select(OgdCommitteeTypeStatisticMapper.ToCommitteeTypeStatisticObservation));
 
         var committeeTypeDepartmentStatisticData = await _committeeService.GetCommitteeTypeDepartmentStatistic();
 
@@ -298,7 +298,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeTypeDepartmentStatistic,
-                committeeTypeDepartmentStatisticData.Select(OgdMapper.ToCommitteeTypeDepartmentStatisticObservation));
+                committeeTypeDepartmentStatisticData.Select(OgdCommitteeTypeDepartmentStatisticMapper.ToCommitteeTypeDepartmentStatisticObservation));
 
         var chunks = committeeTypeTriples
             .Concat(functionTriples)
