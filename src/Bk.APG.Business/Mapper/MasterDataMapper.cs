@@ -123,6 +123,8 @@ public static class MasterDataMapper
             textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(masterDataItem.TextRm, OgdExportConstants.LanguageRm)));
         }
 
+        textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaPosition, new Literal(masterDataItem.Sort.ToString(), new Uri(OgdExportConstants.DataTypeInt))));
+
         var dimensionItem =
             new DimensionItem(
                 masterDataItem.OgdId,
