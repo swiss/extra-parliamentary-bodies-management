@@ -1,0 +1,4935 @@
+using System.Globalization;
+using Bk.APG.Business.Dtos;
+using Bk.APG.CrossCutting;
+using Swiss.FCh.Cube.RawData.Model;
+
+namespace Bk.APG.Business.Mapper;
+
+public static class OgdCommitteeTypeStatisticMapper
+{
+    public static ObservationDataRow ToCommitteeTypeStatisticObservation(CommitteeTypeStatisticDto statisticDto)
+    {
+        var ogdNamespace = OgdExportConstants.NamespaceCommitteeTypeStatistic;
+        var apkNamespace = OgdExportConstants.NamespaceExtraparliamentaryCommission;
+        var nonApkNamespace = OgdExportConstants.NamespaceNonExtraparliamentaryCommission;
+        var authoritiesCommissionNamespace = OgdExportConstants.NamespaceAuthoritiesCommission;
+        var administrationCommissionNamespace = OgdExportConstants.NamespaceAdministrationCommission;
+        var federalAgenciesCommissionNamespace = OgdExportConstants.NamespaceFederalAgenciesCommission;
+        var managementCommissionNamespace = OgdExportConstants.NamespaceManagementCommission;
+
+        var departmentEda = OgdExportConstants.DepartmentEda;
+        var departmentEdi = OgdExportConstants.DepartmentEdi;
+        var departmentEjpd = OgdExportConstants.DepartmentEjpd;
+        var departmentVbs = OgdExportConstants.DepartmentVbs;
+        var departmentEfd = OgdExportConstants.DepartmentEfd;
+        var departmentWbf = OgdExportConstants.DepartmentWbf;
+        var departmentUvek = OgdExportConstants.DepartmentUvek;
+
+        var dataRow = new ObservationDataRow
+        {
+            KeyUri = $"{ogdNamespace}:{1}"
+        };
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Ausserp Kommissionen",
+                NameFr = "# Commissions extraparlementaires",
+                NameIt = "# Commissioni extraparlamentari",
+                NameEn = "# Extraparliamentary Commissions",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEda}",
+                NameFr = $"# {departmentEda}",
+                NameIt = $"# {departmentEda}",
+                NameEn = $"# {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEdi}",
+                NameFr = $"# {departmentEdi}",
+                NameIt = $"# {departmentEdi}",
+                NameEn = $"# {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEjpd}",
+                NameFr = $"# {departmentEjpd}",
+                NameIt = $"# {departmentEjpd}",
+                NameEn = $"# {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentVbs}",
+                NameFr = $"# {departmentVbs}",
+                NameIt = $"# {departmentVbs}",
+                NameEn = $"# {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEfd}",
+                NameFr = $"# {departmentEfd}",
+                NameIt = $"# {departmentEfd}",
+                NameEn = $"# {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentWbf}",
+                NameFr = $"# {departmentWbf}",
+                NameIt = $"# {departmentWbf}",
+                NameEn = $"# {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-count",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentUvek}",
+                NameFr = $"# {departmentUvek}",
+                NameIt = $"# {departmentUvek}",
+                NameEn = $"# {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-count",
+            Object = statisticDto.AuthoritiesCommissionsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Behördenkommissionen",
+                NameFr = "# Commissions des autorités",
+                NameIt = "# Commissioni delle autorità",
+                NameEn = "# Authorities Commissions",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-count",
+            Object = statisticDto.AdministrationCommissionsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Verwaltungskommissionen",
+                NameFr = "# Commissions d'administration",
+                NameIt = "# Commissioni di amministrazione",
+                NameEn = "# Administration Commissions",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEda}-count",
+            Object = statisticDto.AuthoritiesCommissionsEdaCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEda}",
+                NameFr = $"# {departmentEda}",
+                NameIt = $"# {departmentEda}",
+                NameEn = $"# {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEdi}-count",
+            Object = statisticDto.AuthoritiesCommissionsEdiCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEdi}",
+                NameFr = $"# {departmentEdi}",
+                NameIt = $"# {departmentEdi}",
+                NameEn = $"# {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEjpd}-count",
+            Object = statisticDto.AuthoritiesCommissionsEjpdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEjpd}",
+                NameFr = $"# {departmentEjpd}",
+                NameIt = $"# {departmentEjpd}",
+                NameEn = $"# {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentVbs}-count",
+            Object = statisticDto.AuthoritiesCommissionsVbsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentVbs}",
+                NameFr = $"# {departmentVbs}",
+                NameIt = $"# {departmentVbs}",
+                NameEn = $"# {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEfd}-count",
+            Object = statisticDto.AuthoritiesCommissionsEfdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEfd}",
+                NameFr = $"# {departmentEfd}",
+                NameIt = $"# {departmentEfd}",
+                NameEn = $"# {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentWbf}-count",
+            Object = statisticDto.AuthoritiesCommissionsWbfCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentWbf}",
+                NameFr = $"# {departmentWbf}",
+                NameIt = $"# {departmentWbf}",
+                NameEn = $"# {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentUvek}-count",
+            Object = statisticDto.AuthoritiesCommissionsUvekCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentUvek}",
+                NameFr = $"# {departmentUvek}",
+                NameIt = $"# {departmentUvek}",
+                NameEn = $"# {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEda}-count",
+            Object = statisticDto.AdministrationCommissionsEdaCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEda}",
+                NameFr = $"# {departmentEda}",
+                NameIt = $"# {departmentEda}",
+                NameEn = $"# {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEdi}-count",
+            Object = statisticDto.AdministrationCommissionsEdiCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEdi}",
+                NameFr = $"# {departmentEdi}",
+                NameIt = $"# {departmentEdi}",
+                NameEn = $"# {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEjpd}-count",
+            Object = statisticDto.AdministrationCommissionsEjpdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEjpd}",
+                NameFr = $"# {departmentEjpd}",
+                NameIt = $"# {departmentEjpd}",
+                NameEn = $"# {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentVbs}-count",
+            Object = statisticDto.AdministrationCommissionsVbsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentVbs}",
+                NameFr = $"# {departmentVbs}",
+                NameIt = $"# {departmentVbs}",
+                NameEn = $"# {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEfd}-count",
+            Object = statisticDto.AdministrationCommissionsEfdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEfd}",
+                NameFr = $"# {departmentEfd}",
+                NameIt = $"# {departmentEfd}",
+                NameEn = $"# {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentWbf}-count",
+            Object = statisticDto.AdministrationCommissionsWbfCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentWbf}",
+                NameFr = $"# {departmentWbf}",
+                NameIt = $"# {departmentWbf}",
+                NameEn = $"# {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentUvek}-count",
+            Object = statisticDto.AdministrationCommissionsUvekCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentUvek}",
+                NameFr = $"# {departmentUvek}",
+                NameIt = $"# {departmentUvek}",
+                NameEn = $"# {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEda}",
+                NameFr = $"# Femmes {departmentEda}",
+                NameIt = $"# Donne {departmentEda}",
+                NameEn = $"# Women {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEdi}",
+                NameFr = $"# Femmes {departmentEdi}",
+                NameIt = $"# Donne {departmentEdi}",
+                NameEn = $"# Women {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEjpd}",
+                NameFr = $"# Femmes {departmentEjpd}",
+                NameIt = $"# Donne {departmentEjpd}",
+                NameEn = $"# Women {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentVbs}",
+                NameFr = $"# Femmes {departmentVbs}",
+                NameIt = $"# Donne {departmentVbs}",
+                NameEn = $"# Women {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEfd}",
+                NameFr = $"# Femmes {departmentEfd}",
+                NameIt = $"# Donne {departmentEfd}",
+                NameEn = $"# Women {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentWbf}",
+                NameFr = $"# Femmes {departmentWbf}",
+                NameIt = $"# Donne {departmentWbf}",
+                NameEn = $"# Women {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentUvek}",
+                NameFr = $"# Femmes {departmentUvek}",
+                NameIt = $"# Donne {departmentUvek}",
+                NameEn = $"# Women {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEda}",
+                NameFr = $"# Hommes {departmentEda}",
+                NameIt = $"# Uomini {departmentEda}",
+                NameEn = $"# Men {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEdi}",
+                NameFr = $"# Hommes {departmentEdi}",
+                NameIt = $"# Uomini {departmentEdi}",
+                NameEn = $"# Men {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEjpd}",
+                NameFr = $"# Hommes {departmentEjpd}",
+                NameIt = $"# Uomini {departmentEjpd}",
+                NameEn = $"# Men {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentVbs}",
+                NameFr = $"# Hommes {departmentVbs}",
+                NameIt = $"# Uomini {departmentVbs}",
+                NameEn = $"# Men {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEfd}",
+                NameFr = $"# Hommes {departmentEfd}",
+                NameIt = $"# Uomini {departmentEfd}",
+                NameEn = $"# Men {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentWbf}",
+                NameFr = $"# Hommes {departmentWbf}",
+                NameIt = $"# Uomini {departmentWbf}",
+                NameEn = $"# Men {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentUvek}",
+                NameFr = $"# Hommes {departmentUvek}",
+                NameIt = $"# Uomini {departmentUvek}",
+                NameEn = $"# Men {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEda}",
+                NameFr = $"% Femmes {departmentEda}",
+                NameIt = $"% Donne {departmentEda}",
+                NameEn = $"% Women {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEdi}",
+                NameFr = $"% Femmes {departmentEdi}",
+                NameIt = $"% Donne {departmentEdi}",
+                NameEn = $"% Women {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEjpd}",
+                NameFr = $"% Femmes {departmentEjpd}",
+                NameIt = $"% Donne {departmentEjpd}",
+                NameEn = $"% Women {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentVbs}",
+                NameFr = $"% Femmes {departmentVbs}",
+                NameIt = $"% Donne {departmentVbs}",
+                NameEn = $"% Women {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEfd}",
+                NameFr = $"% Femmes {departmentEfd}",
+                NameIt = $"% Donne {departmentEfd}",
+                NameEn = $"% Women {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentWbf}",
+                NameFr = $"% Femmes {departmentWbf}",
+                NameIt = $"% Donne {departmentWbf}",
+                NameEn = $"% Women {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentUvek}",
+                NameFr = $"% Femmes {departmentUvek}",
+                NameIt = $"% Donne {departmentUvek}",
+                NameEn = $"% Women {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEda}",
+                NameFr = $"% Hommes {departmentEda}",
+                NameIt = $"% Uomini {departmentEda}",
+                NameEn = $"% Men {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEdi}",
+                NameFr = $"% Hommes {departmentEdi}",
+                NameIt = $"% Uomini {departmentEdi}",
+                NameEn = $"% Men {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEjpd}",
+                NameFr = $"% Hommes {departmentEjpd}",
+                NameIt = $"% Uomini {departmentEjpd}",
+                NameEn = $"% Men {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentVbs}",
+                NameFr = $"% Hommes {departmentVbs}",
+                NameIt = $"% Uomini {departmentVbs}",
+                NameEn = $"% Men {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEfd}",
+                NameFr = $"% Hommes {departmentEfd}",
+                NameIt = $"% Uomini {departmentEfd}",
+                NameEn = $"% Men {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentWbf}",
+                NameFr = $"% Hommes {departmentWbf}",
+                NameIt = $"% Uomini {departmentWbf}",
+                NameEn = $"% Men {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentUvek}",
+                NameFr = $"% Hommes {departmentUvek}",
+                NameIt = $"% Uomini {departmentUvek}",
+                NameEn = $"% Men {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-femaleCount",
+            Object = statisticDto.AuthoritiesCommissionsFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Frauen",
+                NameFr = "# Femmes",
+                NameIt = "# Donne",
+                NameEn = "# Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-maleCount",
+            Object = statisticDto.AuthoritiesCommissionsMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Männer",
+                NameFr = "# Hommes",
+                NameIt = "# Uomini",
+                NameEn = "# Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-femalePercentage",
+            Object = statisticDto.AuthoritiesCommissionsFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Frauen",
+                NameFr = "% Femmes",
+                NameIt = "% Donne",
+                NameEn = "% Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-malePercentage",
+            Object = statisticDto.AuthoritiesCommissionsMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Männer",
+                NameFr = "% Hommes",
+                NameIt = "% Uomini",
+                NameEn = "% Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-femaleCount",
+            Object = statisticDto.AdministrationCommissionsFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Frauen",
+                NameFr = "# Femmes",
+                NameIt = "# Donne",
+                NameEn = "# Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-maleCount",
+            Object = statisticDto.AdministrationCommissionsMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Männer",
+                NameFr = "# Hommes",
+                NameIt = "# Uomini",
+                NameEn = "# Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-femalePercentage",
+            Object = statisticDto.AdministrationCommissionsFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Frauen",
+                NameFr = "% Femmes",
+                NameIt = "% Donne",
+                NameEn = "% Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-malePercentage",
+            Object = statisticDto.AdministrationCommissionsMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Männer",
+                NameFr = "% Hommes",
+                NameIt = "% Uomini",
+                NameEn = "% Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEda}",
+                NameFr = $"# Allemand {departmentEda}",
+                NameIt = $"# Tedesco {departmentEda}",
+                NameEn = $"# German {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEdi}",
+                NameFr = $"# Allemand {departmentEdi}",
+                NameIt = $"# Tedesco {departmentEdi}",
+                NameEn = $"# German {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEjpd}",
+                NameFr = $"# Allemand {departmentEjpd}",
+                NameIt = $"# Tedesco {departmentEjpd}",
+                NameEn = $"# German {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentVbs}",
+                NameFr = $"# Allemand {departmentVbs}",
+                NameIt = $"# Tedesco {departmentVbs}",
+                NameEn = $"# German {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEfd}",
+                NameFr = $"# Allemand {departmentEfd}",
+                NameIt = $"# Tedesco {departmentEfd}",
+                NameEn = $"# German {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentWbf}",
+                NameFr = $"# Allemand {departmentWbf}",
+                NameIt = $"# Tedesco {departmentWbf}",
+                NameEn = $"# German {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentUvek}",
+                NameFr = $"# Allemand {departmentUvek}",
+                NameIt = $"# Tedesco {departmentUvek}",
+                NameEn = $"# German {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEda}",
+                NameFr = $"% Allemand {departmentEda}",
+                NameIt = $"% Tedesco {departmentEda}",
+                NameEn = $"% German {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEdi}",
+                NameFr = $"% Allemand {departmentEdi}",
+                NameIt = $"% Tedesco {departmentEdi}",
+                NameEn = $"% German {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEjpd}",
+                NameFr = $"% Allemand {departmentEjpd}",
+                NameIt = $"% Tedesco {departmentEjpd}",
+                NameEn = $"% German {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentVbs}",
+                NameFr = $"% Allemand {departmentVbs}",
+                NameIt = $"% Tedesco {departmentVbs}",
+                NameEn = $"% German {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEfd}",
+                NameFr = $"% Allemand {departmentEfd}",
+                NameIt = $"% Tedesco {departmentEfd}",
+                NameEn = $"% German {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentWbf}",
+                NameFr = $"% Allemand {departmentWbf}",
+                NameIt = $"% Tedesco {departmentWbf}",
+                NameEn = $"% German {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentUvek}",
+                NameFr = $"% Allemand {departmentUvek}",
+                NameIt = $"% Tedesco {departmentUvek}",
+                NameEn = $"% German {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEda}",
+                NameFr = $"# Français {departmentEda}",
+                NameIt = $"# Francese {departmentEda}",
+                NameEn = $"# French {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEdi}",
+                NameFr = $"# Français {departmentEdi}",
+                NameIt = $"# Francese {departmentEdi}",
+                NameEn = $"# French {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEjpd}",
+                NameFr = $"# Français {departmentEjpd}",
+                NameIt = $"# Francese {departmentEjpd}",
+                NameEn = $"# French {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentVbs}",
+                NameFr = $"# Français {departmentVbs}",
+                NameIt = $"# Francese {departmentVbs}",
+                NameEn = $"# French {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEfd}",
+                NameFr = $"# Français {departmentEfd}",
+                NameIt = $"# Francese {departmentEfd}",
+                NameEn = $"# French {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentWbf}",
+                NameFr = $"# Français {departmentWbf}",
+                NameIt = $"# Francese {departmentWbf}",
+                NameEn = $"# French {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentUvek}",
+                NameFr = $"# Français {departmentUvek}",
+                NameIt = $"# Francese {departmentUvek}",
+                NameEn = $"# French {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEda}",
+                NameFr = $"% Français {departmentEda}",
+                NameIt = $"% Francese {departmentEda}",
+                NameEn = $"% French {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEdi}",
+                NameFr = $"% Français {departmentEdi}",
+                NameIt = $"% Francese {departmentEdi}",
+                NameEn = $"% French {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEjpd}",
+                NameFr = $"% Français {departmentEjpd}",
+                NameIt = $"% Francese {departmentEjpd}",
+                NameEn = $"% French {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentVbs}",
+                NameFr = $"% Français {departmentVbs}",
+                NameIt = $"% Francese {departmentVbs}",
+                NameEn = $"% French {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEfd}",
+                NameFr = $"% Français {departmentEfd}",
+                NameIt = $"% Francese {departmentEfd}",
+                NameEn = $"% French {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentWbf}",
+                NameFr = $"% Français {departmentWbf}",
+                NameIt = $"% Francese {departmentWbf}",
+                NameEn = $"% French {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentUvek}",
+                NameFr = $"% Français {departmentUvek}",
+                NameIt = $"% Francese {departmentUvek}",
+                NameEn = $"% French {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEda}",
+                NameFr = $"# Italien {departmentEda}",
+                NameIt = $"# Italiano {departmentEda}",
+                NameEn = $"# Italian {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEdi}",
+                NameFr = $"# Italien {departmentEdi}",
+                NameIt = $"# Italiano {departmentEdi}",
+                NameEn = $"# Italian {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEjpd}",
+                NameFr = $"# Italien {departmentEjpd}",
+                NameIt = $"# Italiano {departmentEjpd}",
+                NameEn = $"# Italian {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentVbs}",
+                NameFr = $"# Italien {departmentVbs}",
+                NameIt = $"# Italiano {departmentVbs}",
+                NameEn = $"# Italian {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEfd}",
+                NameFr = $"# Italien {departmentEfd}",
+                NameIt = $"# Italiano {departmentEfd}",
+                NameEn = $"# Italian {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentWbf}",
+                NameFr = $"# Italien {departmentWbf}",
+                NameIt = $"# Italiano {departmentWbf}",
+                NameEn = $"# Italian {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentUvek}",
+                NameFr = $"# Italien {departmentUvek}",
+                NameIt = $"# Italiano {departmentUvek}",
+                NameEn = $"# Italian {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEda}",
+                NameFr = $"% Italien {departmentEda}",
+                NameIt = $"% Italiano {departmentEda}",
+                NameEn = $"% Italian {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEdi}",
+                NameFr = $"% Italien {departmentEdi}",
+                NameIt = $"% Italiano {departmentEdi}",
+                NameEn = $"% Italian {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEjpd}",
+                NameFr = $"% Italien {departmentEjpd}",
+                NameIt = $"% Italiano {departmentEjpd}",
+                NameEn = $"% Italian {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentVbs}",
+                NameFr = $"% Italien {departmentVbs}",
+                NameIt = $"% Italiano {departmentVbs}",
+                NameEn = $"% Italian {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEfd}",
+                NameFr = $"% Italien {departmentEfd}",
+                NameIt = $"% Italiano {departmentEfd}",
+                NameEn = $"% Italian {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentWbf}",
+                NameFr = $"% Italien {departmentWbf}",
+                NameIt = $"% Italiano {departmentWbf}",
+                NameEn = $"% Italian {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentUvek}",
+                NameFr = $"% Italien {departmentUvek}",
+                NameIt = $"% Italiano {departmentUvek}",
+                NameEn = $"% Italian {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEda}",
+                NameFr = $"# Romanche {departmentEda}",
+                NameIt = $"# Romancio {departmentEda}",
+                NameEn = $"# Romansh {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEdi}",
+                NameFr = $"# Romanche {departmentEdi}",
+                NameIt = $"# Romancio {departmentEdi}",
+                NameEn = $"# Romansh {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEjpd}",
+                NameFr = $"# Romanche {departmentEjpd}",
+                NameIt = $"# Romancio {departmentEjpd}",
+                NameEn = $"# Romansh {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentVbs}",
+                NameFr = $"# Romanche {departmentVbs}",
+                NameIt = $"# Romancio {departmentVbs}",
+                NameEn = $"# Romansh {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEfd}",
+                NameFr = $"# Romanche {departmentEfd}",
+                NameIt = $"# Romancio {departmentEfd}",
+                NameEn = $"# Romansh {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentWbf}",
+                NameFr = $"# Romanche {departmentWbf}",
+                NameIt = $"# Romancio {departmentWbf}",
+                NameEn = $"# Romansh {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentUvek}",
+                NameFr = $"# Romanche {departmentUvek}",
+                NameIt = $"# Romancio {departmentUvek}",
+                NameEn = $"# Romansh {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEda}",
+                NameFr = $"% Romanche {departmentEda}",
+                NameIt = $"% Romancio {departmentEda}",
+                NameEn = $"% Romansh {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEdi}",
+                NameFr = $"% Romanche {departmentEdi}",
+                NameIt = $"% Romancio {departmentEdi}",
+                NameEn = $"% Romansh {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEjpd}",
+                NameFr = $"% Romanche {departmentEjpd}",
+                NameIt = $"% Romancio {departmentEjpd}",
+                NameEn = $"% Romansh {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentVbs}",
+                NameFr = $"% Romanche {departmentVbs}",
+                NameIt = $"% Romancio {departmentVbs}",
+                NameEn = $"% Romansh {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEfd}",
+                NameFr = $"% Romanche {departmentEfd}",
+                NameIt = $"% Romancio {departmentEfd}",
+                NameEn = $"% Romansh {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentWbf}",
+                NameFr = $"% Romanche {departmentWbf}",
+                NameIt = $"% Romancio {departmentWbf}",
+                NameEn = $"% Romansh {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentUvek}",
+                NameFr = $"% Romanche {departmentUvek}",
+                NameIt = $"% Romancio {departmentUvek}",
+                NameEn = $"% Romansh {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-germanCount",
+            Object = statisticDto.AuthoritiesCommissionsGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Deutsch",
+                NameFr = "# Allemand",
+                NameIt = "# Tedesco",
+                NameEn = "# German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-frenchCount",
+            Object = statisticDto.AuthoritiesCommissionsFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Französisch",
+                NameFr = "# Français",
+                NameIt = "# Francese",
+                NameEn = "# French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-italianCount",
+            Object = statisticDto.AuthoritiesCommissionsItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Italienisch",
+                NameFr = "# Italien",
+                NameIt = "# Italiano",
+                NameEn = "# Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-romanshCount",
+            Object = statisticDto.AuthoritiesCommissionsRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Rätoromanisch",
+                NameFr = "# Romanche",
+                NameIt = "# Romancio",
+                NameEn = "# Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-germanPercentage",
+            Object = statisticDto.AuthoritiesCommissionsGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Deutsch",
+                NameFr = "% Allemand",
+                NameIt = "% Tedesco",
+                NameEn = "% German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-frenchPercentage",
+            Object = statisticDto.AuthoritiesCommissionsFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Französisch",
+                NameFr = "% Français",
+                NameIt = "% Francese",
+                NameEn = "% French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-italianPercentage",
+            Object = statisticDto.AuthoritiesCommissionsItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Italienisch",
+                NameFr = "% Italien",
+                NameIt = "% Italiano",
+                NameEn = "% Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-romanshPercentage",
+            Object = statisticDto.AuthoritiesCommissionsRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Rätoromanisch",
+                NameFr = "% Romanche",
+                NameIt = "% Romancio",
+                NameEn = "% Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-germanCount",
+            Object = statisticDto.AdministrationCommissionsGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Deutsch",
+                NameFr = "# Allemand",
+                NameIt = "# Tedesco",
+                NameEn = "# German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-frenchCount",
+            Object = statisticDto.AdministrationCommissionsFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Französisch",
+                NameFr = "# Français",
+                NameIt = "# Francese",
+                NameEn = "# French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-italianCount",
+            Object = statisticDto.AdministrationCommissionsItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Italienisch",
+                NameFr = "# Italien",
+                NameIt = "# Italiano",
+                NameEn = "# Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-romanshCount",
+            Object = statisticDto.AdministrationCommissionsRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Rätoromanisch",
+                NameFr = "# Romanche",
+                NameIt = "# Romancio",
+                NameEn = "# Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-germanPercentage",
+            Object = statisticDto.AdministrationCommissionsGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Deutsch",
+                NameFr = "% Allemand",
+                NameIt = "% Tedesco",
+                NameEn = "% German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-frenchPercentage",
+            Object = statisticDto.AdministrationCommissionsFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Französisch",
+                NameFr = "% Français",
+                NameIt = "% Francese",
+                NameEn = "% French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-italianPercentage",
+            Object = statisticDto.AdministrationCommissionsItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Italienisch",
+                NameFr = "% Italien",
+                NameIt = "% Italiano",
+                NameEn = "% Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-romanshPercentage",
+            Object = statisticDto.AdministrationCommissionsRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Rätoromanisch",
+                NameFr = "% Romanche",
+                NameIt = "% Romancio",
+                NameEn = "% Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-femaleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Frauen",
+                NameFr = "# Femmes",
+                NameIt = "# Donne",
+                NameEn = "# Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-maleCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Männer",
+                NameFr = "# Hommes",
+                NameIt = "# Uomini",
+                NameEn = "# Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-femalePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Frauen",
+                NameFr = "% Femmes",
+                NameIt = "% Donne",
+                NameEn = "% Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-malePercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Männer",
+                NameFr = "% Hommes",
+                NameIt = "% Uomini",
+                NameEn = "% Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-germanCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Deutsch",
+                NameFr = "# Allemand",
+                NameIt = "# Tedesco",
+                NameEn = "# German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-frenchCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Französisch",
+                NameFr = "# Français",
+                NameIt = "# Francese",
+                NameEn = "# French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-italianCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Italienisch",
+                NameFr = "# Italien",
+                NameIt = "# Italiano",
+                NameEn = "# Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-romanshCount",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Rätoromanisch",
+                NameFr = "# Romanche",
+                NameIt = "# Romancio",
+                NameEn = "# Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-germanPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Deutsch",
+                NameFr = "% Allemand",
+                NameIt = "% Tedesco",
+                NameEn = "% German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-frenchPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Französisch",
+                NameFr = "% Français",
+                NameIt = "% Francese",
+                NameEn = "% French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-italianPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Italienisch",
+                NameFr = "% Italien",
+                NameIt = "% Italiano",
+                NameEn = "% Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{apkNamespace}-total-romanshPercentage",
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Rätoromanisch",
+                NameFr = "% Romanche",
+                NameIt = "% Romancio",
+                NameEn = "% Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        // 2nd Group of committees (non extra parliamentary commissions)
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Nicht ausserp Kommissionen",
+                NameFr = "# Commissions non extraparlementaires",
+                NameIt = "# Commissioni non extraparlamentari",
+                NameEn = "# Non Extraparliamentary Commissions",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEda}",
+                NameFr = $"# {departmentEda}",
+                NameIt = $"# {departmentEda}",
+                NameEn = $"# {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEdi}",
+                NameFr = $"# {departmentEdi}",
+                NameIt = $"# {departmentEdi}",
+                NameEn = $"# {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEjpd}",
+                NameFr = $"# {departmentEjpd}",
+                NameIt = $"# {departmentEjpd}",
+                NameEn = $"# {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentVbs}",
+                NameFr = $"# {departmentVbs}",
+                NameIt = $"# {departmentVbs}",
+                NameEn = $"# {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEfd}",
+                NameFr = $"# {departmentEfd}",
+                NameIt = $"# {departmentEfd}",
+                NameEn = $"# {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentWbf}",
+                NameFr = $"# {departmentWbf}",
+                NameIt = $"# {departmentWbf}",
+                NameEn = $"# {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-count",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentUvek}",
+                NameFr = $"# {departmentUvek}",
+                NameIt = $"# {departmentUvek}",
+                NameEn = $"# {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-count",
+            Object = statisticDto.ManagementCommitteesCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Geschäftskommissionen",
+                NameFr = "# Commissions de gestion",
+                NameIt = "# Commissioni di gestione",
+                NameEn = "# Management Commissions",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-count",
+            Object = statisticDto.FederalAgenciesCommitteesCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Eidg. Anstalten Kommissionen",
+                NameFr = "# Commissions des établissements fédéraux",
+                NameIt = "# Commissioni degli stabilimenti federali",
+                NameEn = "# Federal Agencies Commissions",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEda}-count",
+            Object = statisticDto.ManagementCommitteesEdaCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEda}",
+                NameFr = $"# {departmentEda}",
+                NameIt = $"# {departmentEda}",
+                NameEn = $"# {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEdi}-count",
+            Object = statisticDto.ManagementCommitteesEdiCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEdi}",
+                NameFr = $"# {departmentEdi}",
+                NameIt = $"# {departmentEdi}",
+                NameEn = $"# {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEjpd}-count",
+            Object = statisticDto.ManagementCommitteesEjpdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEjpd}",
+                NameFr = $"# {departmentEjpd}",
+                NameIt = $"# {departmentEjpd}",
+                NameEn = $"# {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentVbs}-count",
+            Object = statisticDto.ManagementCommitteesVbsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentVbs}",
+                NameFr = $"# {departmentVbs}",
+                NameIt = $"# {departmentVbs}",
+                NameEn = $"# {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEfd}-count",
+            Object = statisticDto.ManagementCommitteesEfdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEfd}",
+                NameFr = $"# {departmentEfd}",
+                NameIt = $"# {departmentEfd}",
+                NameEn = $"# {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentWbf}-count",
+            Object = statisticDto.ManagementCommitteesWbfCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentWbf}",
+                NameFr = $"# {departmentWbf}",
+                NameIt = $"# {departmentWbf}",
+                NameEn = $"# {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentUvek}-count",
+            Object = statisticDto.ManagementCommitteesUvekCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentUvek}",
+                NameFr = $"# {departmentUvek}",
+                NameIt = $"# {departmentUvek}",
+                NameEn = $"# {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEda}-count",
+            Object = statisticDto.FederalAgenciesCommitteesEdaCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEda}",
+                NameFr = $"# {departmentEda}",
+                NameIt = $"# {departmentEda}",
+                NameEn = $"# {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEdi}-count",
+            Object = statisticDto.FederalAgenciesCommitteesEdiCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEdi}",
+                NameFr = $"# {departmentEdi}",
+                NameIt = $"# {departmentEdi}",
+                NameEn = $"# {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEjpd}-count",
+            Object = statisticDto.FederalAgenciesCommitteesEjpdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEjpd}",
+                NameFr = $"# {departmentEjpd}",
+                NameIt = $"# {departmentEjpd}",
+                NameEn = $"# {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentVbs}-count",
+            Object = statisticDto.FederalAgenciesCommitteesVbsCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentVbs}",
+                NameFr = $"# {departmentVbs}",
+                NameIt = $"# {departmentVbs}",
+                NameEn = $"# {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEfd}-count",
+            Object = statisticDto.FederalAgenciesCommitteesEfdCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentEfd}",
+                NameFr = $"# {departmentEfd}",
+                NameIt = $"# {departmentEfd}",
+                NameEn = $"# {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentWbf}-count",
+            Object = statisticDto.FederalAgenciesCommitteesWbfCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentWbf}",
+                NameFr = $"# {departmentWbf}",
+                NameIt = $"# {departmentWbf}",
+                NameEn = $"# {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentUvek}-count",
+            Object = statisticDto.FederalAgenciesCommitteesUvekCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# {departmentUvek}",
+                NameFr = $"# {departmentUvek}",
+                NameIt = $"# {departmentUvek}",
+                NameEn = $"# {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEda}",
+                NameFr = $"# Femmes {departmentEda}",
+                NameIt = $"# Donne {departmentEda}",
+                NameEn = $"# Women {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEdi}",
+                NameFr = $"# Femmes {departmentEdi}",
+                NameIt = $"# Donne {departmentEdi}",
+                NameEn = $"# Women {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEjpd}",
+                NameFr = $"# Femmes {departmentEjpd}",
+                NameIt = $"# Donne {departmentEjpd}",
+                NameEn = $"# Women {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentVbs}",
+                NameFr = $"# Femmes {departmentVbs}",
+                NameIt = $"# Donne {departmentVbs}",
+                NameEn = $"# Women {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentEfd}",
+                NameFr = $"# Femmes {departmentEfd}",
+                NameIt = $"# Donne {departmentEfd}",
+                NameEn = $"# Women {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentWbf}",
+                NameFr = $"# Femmes {departmentWbf}",
+                NameIt = $"# Donne {departmentWbf}",
+                NameEn = $"# Women {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Frauen {departmentUvek}",
+                NameFr = $"# Femmes {departmentUvek}",
+                NameIt = $"# Donne {departmentUvek}",
+                NameEn = $"# Women {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEda}",
+                NameFr = $"# Hommes {departmentEda}",
+                NameIt = $"# Uomini {departmentEda}",
+                NameEn = $"# Men {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEdi}",
+                NameFr = $"# Hommes {departmentEdi}",
+                NameIt = $"# Uomini {departmentEdi}",
+                NameEn = $"# Men {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEjpd}",
+                NameFr = $"# Hommes {departmentEjpd}",
+                NameIt = $"# Uomini {departmentEjpd}",
+                NameEn = $"# Men {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentVbs}",
+                NameFr = $"# Hommes {departmentVbs}",
+                NameIt = $"# Uomini {departmentVbs}",
+                NameEn = $"# Men {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentEfd}",
+                NameFr = $"# Hommes {departmentEfd}",
+                NameIt = $"# Uomini {departmentEfd}",
+                NameEn = $"# Men {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentWbf}",
+                NameFr = $"# Hommes {departmentWbf}",
+                NameIt = $"# Uomini {departmentWbf}",
+                NameEn = $"# Men {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Männer {departmentUvek}",
+                NameFr = $"# Hommes {departmentUvek}",
+                NameIt = $"# Uomini {departmentUvek}",
+                NameEn = $"# Men {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEda}",
+                NameFr = $"% Femmes {departmentEda}",
+                NameIt = $"% Donne {departmentEda}",
+                NameEn = $"% Women {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEdi}",
+                NameFr = $"% Femmes {departmentEdi}",
+                NameIt = $"% Donne {departmentEdi}",
+                NameEn = $"% Women {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEjpd}",
+                NameFr = $"% Femmes {departmentEjpd}",
+                NameIt = $"% Donne {departmentEjpd}",
+                NameEn = $"% Women {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentVbs}",
+                NameFr = $"% Femmes {departmentVbs}",
+                NameIt = $"% Donne {departmentVbs}",
+                NameEn = $"% Women {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentEfd}",
+                NameFr = $"% Femmes {departmentEfd}",
+                NameIt = $"% Donne {departmentEfd}",
+                NameEn = $"% Women {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentWbf}",
+                NameFr = $"% Femmes {departmentWbf}",
+                NameIt = $"% Donne {departmentWbf}",
+                NameEn = $"% Women {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Frauen {departmentUvek}",
+                NameFr = $"% Femmes {departmentUvek}",
+                NameIt = $"% Donne {departmentUvek}",
+                NameEn = $"% Women {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEda}",
+                NameFr = $"% Hommes {departmentEda}",
+                NameIt = $"% Uomini {departmentEda}",
+                NameEn = $"% Men {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEdi}",
+                NameFr = $"% Hommes {departmentEdi}",
+                NameIt = $"% Uomini {departmentEdi}",
+                NameEn = $"% Men {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEjpd}",
+                NameFr = $"% Hommes {departmentEjpd}",
+                NameIt = $"% Uomini {departmentEjpd}",
+                NameEn = $"% Men {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentVbs}",
+                NameFr = $"% Hommes {departmentVbs}",
+                NameIt = $"% Uomini {departmentVbs}",
+                NameEn = $"% Men {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentEfd}",
+                NameFr = $"% Hommes {departmentEfd}",
+                NameIt = $"% Uomini {departmentEfd}",
+                NameEn = $"% Men {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentWbf}",
+                NameFr = $"% Hommes {departmentWbf}",
+                NameIt = $"% Uomini {departmentWbf}",
+                NameEn = $"% Men {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Männer {departmentUvek}",
+                NameFr = $"% Hommes {departmentUvek}",
+                NameIt = $"% Uomini {departmentUvek}",
+                NameEn = $"% Men {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-femaleCount",
+            Object = statisticDto.ManagementCommitteesFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Frauen",
+                NameFr = "# Femmes",
+                NameIt = "# Donne",
+                NameEn = "# Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-maleCount",
+            Object = statisticDto.ManagementCommitteesMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Männer",
+                NameFr = "# Hommes",
+                NameIt = "# Uomini",
+                NameEn = "# Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-femalePercentage",
+            Object = statisticDto.ManagementCommitteesFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Frauen",
+                NameFr = "% Femmes",
+                NameIt = "% Donne",
+                NameEn = "% Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-malePercentage",
+            Object = statisticDto.ManagementCommitteesMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Männer",
+                NameFr = "% Hommes",
+                NameIt = "% Uomini",
+                NameEn = "% Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-femaleCount",
+            Object = statisticDto.FederalAgenciesCommitteesFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Frauen",
+                NameFr = "# Femmes",
+                NameIt = "# Donne",
+                NameEn = "# Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-maleCount",
+            Object = statisticDto.FederalAgenciesCommitteesMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Männer",
+                NameFr = "# Hommes",
+                NameIt = "# Uomini",
+                NameEn = "# Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-femalePercentage",
+            Object = statisticDto.FederalAgenciesCommitteesFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Frauen",
+                NameFr = "% Femmes",
+                NameIt = "% Donne",
+                NameEn = "% Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-malePercentage",
+            Object = statisticDto.FederalAgenciesCommitteesMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Männer",
+                NameFr = "% Hommes",
+                NameIt = "% Uomini",
+                NameEn = "% Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEda}",
+                NameFr = $"# Allemand {departmentEda}",
+                NameIt = $"# Tedesco {departmentEda}",
+                NameEn = $"# German {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEdi}",
+                NameFr = $"# Allemand {departmentEdi}",
+                NameIt = $"# Tedesco {departmentEdi}",
+                NameEn = $"# German {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEjpd}",
+                NameFr = $"# Allemand {departmentEjpd}",
+                NameIt = $"# Tedesco {departmentEjpd}",
+                NameEn = $"# German {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentVbs}",
+                NameFr = $"# Allemand {departmentVbs}",
+                NameIt = $"# Tedesco {departmentVbs}",
+                NameEn = $"# German {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentEfd}",
+                NameFr = $"# Allemand {departmentEfd}",
+                NameIt = $"# Tedesco {departmentEfd}",
+                NameEn = $"# German {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentWbf}",
+                NameFr = $"# Allemand {departmentWbf}",
+                NameIt = $"# Tedesco {departmentWbf}",
+                NameEn = $"# German {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Deutsch {departmentUvek}",
+                NameFr = $"# Allemand {departmentUvek}",
+                NameIt = $"# Tedesco {departmentUvek}",
+                NameEn = $"# German {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEda}",
+                NameFr = $"% Allemand {departmentEda}",
+                NameIt = $"% Tedesco {departmentEda}",
+                NameEn = $"% German {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEdi}",
+                NameFr = $"% Allemand {departmentEdi}",
+                NameIt = $"% Tedesco {departmentEdi}",
+                NameEn = $"% German {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEjpd}",
+                NameFr = $"% Allemand {departmentEjpd}",
+                NameIt = $"% Tedesco {departmentEjpd}",
+                NameEn = $"% German {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentVbs}",
+                NameFr = $"% Allemand {departmentVbs}",
+                NameIt = $"% Tedesco {departmentVbs}",
+                NameEn = $"% German {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentEfd}",
+                NameFr = $"% Allemand {departmentEfd}",
+                NameIt = $"% Tedesco {departmentEfd}",
+                NameEn = $"% German {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentWbf}",
+                NameFr = $"% Allemand {departmentWbf}",
+                NameIt = $"% Tedesco {departmentWbf}",
+                NameEn = $"% German {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Deutsch {departmentUvek}",
+                NameFr = $"% Allemand {departmentUvek}",
+                NameIt = $"% Tedesco {departmentUvek}",
+                NameEn = $"% German {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEda}",
+                NameFr = $"# Français {departmentEda}",
+                NameIt = $"# Francese {departmentEda}",
+                NameEn = $"# French {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEdi}",
+                NameFr = $"# Français {departmentEdi}",
+                NameIt = $"# Francese {departmentEdi}",
+                NameEn = $"# French {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEjpd}",
+                NameFr = $"# Français {departmentEjpd}",
+                NameIt = $"# Francese {departmentEjpd}",
+                NameEn = $"# French {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentVbs}",
+                NameFr = $"# Français {departmentVbs}",
+                NameIt = $"# Francese {departmentVbs}",
+                NameEn = $"# French {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentEfd}",
+                NameFr = $"# Français {departmentEfd}",
+                NameIt = $"# Francese {departmentEfd}",
+                NameEn = $"# French {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentWbf}",
+                NameFr = $"# Français {departmentWbf}",
+                NameIt = $"# Francese {departmentWbf}",
+                NameEn = $"# French {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Französisch {departmentUvek}",
+                NameFr = $"# Français {departmentUvek}",
+                NameIt = $"# Francese {departmentUvek}",
+                NameEn = $"# French {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEda}",
+                NameFr = $"% Français {departmentEda}",
+                NameIt = $"% Francese {departmentEda}",
+                NameEn = $"% French {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEdi}",
+                NameFr = $"% Français {departmentEdi}",
+                NameIt = $"% Francese {departmentEdi}",
+                NameEn = $"% French {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEjpd}",
+                NameFr = $"% Français {departmentEjpd}",
+                NameIt = $"% Francese {departmentEjpd}",
+                NameEn = $"% French {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentVbs}",
+                NameFr = $"% Français {departmentVbs}",
+                NameIt = $"% Francese {departmentVbs}",
+                NameEn = $"% French {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentEfd}",
+                NameFr = $"% Français {departmentEfd}",
+                NameIt = $"% Francese {departmentEfd}",
+                NameEn = $"% French {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentWbf}",
+                NameFr = $"% Français {departmentWbf}",
+                NameIt = $"% Francese {departmentWbf}",
+                NameEn = $"% French {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Französisch {departmentUvek}",
+                NameFr = $"% Français {departmentUvek}",
+                NameIt = $"% Francese {departmentUvek}",
+                NameEn = $"% French {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEda}",
+                NameFr = $"# Italien {departmentEda}",
+                NameIt = $"# Italiano {departmentEda}",
+                NameEn = $"# Italian {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEdi}",
+                NameFr = $"# Italien {departmentEdi}",
+                NameIt = $"# Italiano {departmentEdi}",
+                NameEn = $"# Italian {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEjpd}",
+                NameFr = $"# Italien {departmentEjpd}",
+                NameIt = $"# Italiano {departmentEjpd}",
+                NameEn = $"# Italian {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentVbs}",
+                NameFr = $"# Italien {departmentVbs}",
+                NameIt = $"# Italiano {departmentVbs}",
+                NameEn = $"# Italian {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentEfd}",
+                NameFr = $"# Italien {departmentEfd}",
+                NameIt = $"# Italiano {departmentEfd}",
+                NameEn = $"# Italian {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentWbf}",
+                NameFr = $"# Italien {departmentWbf}",
+                NameIt = $"# Italiano {departmentWbf}",
+                NameEn = $"# Italian {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Italienisch {departmentUvek}",
+                NameFr = $"# Italien {departmentUvek}",
+                NameIt = $"# Italiano {departmentUvek}",
+                NameEn = $"# Italian {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEda}",
+                NameFr = $"% Italien {departmentEda}",
+                NameIt = $"% Italiano {departmentEda}",
+                NameEn = $"% Italian {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEdi}",
+                NameFr = $"% Italien {departmentEdi}",
+                NameIt = $"% Italiano {departmentEdi}",
+                NameEn = $"% Italian {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEjpd}",
+                NameFr = $"% Italien {departmentEjpd}",
+                NameIt = $"% Italiano {departmentEjpd}",
+                NameEn = $"% Italian {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentVbs}",
+                NameFr = $"% Italien {departmentVbs}",
+                NameIt = $"% Italiano {departmentVbs}",
+                NameEn = $"% Italian {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentEfd}",
+                NameFr = $"% Italien {departmentEfd}",
+                NameIt = $"% Italiano {departmentEfd}",
+                NameEn = $"% Italian {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentWbf}",
+                NameFr = $"% Italien {departmentWbf}",
+                NameIt = $"% Italiano {departmentWbf}",
+                NameEn = $"% Italian {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Italienisch {departmentUvek}",
+                NameFr = $"% Italien {departmentUvek}",
+                NameIt = $"% Italiano {departmentUvek}",
+                NameEn = $"% Italian {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEda}",
+                NameFr = $"# Romanche {departmentEda}",
+                NameIt = $"# Romancio {departmentEda}",
+                NameEn = $"# Romansh {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEdi}",
+                NameFr = $"# Romanche {departmentEdi}",
+                NameIt = $"# Romancio {departmentEdi}",
+                NameEn = $"# Romansh {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEjpd}",
+                NameFr = $"# Romanche {departmentEjpd}",
+                NameIt = $"# Romancio {departmentEjpd}",
+                NameEn = $"# Romansh {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentVbs}",
+                NameFr = $"# Romanche {departmentVbs}",
+                NameIt = $"# Romancio {departmentVbs}",
+                NameEn = $"# Romansh {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentEfd}",
+                NameFr = $"# Romanche {departmentEfd}",
+                NameIt = $"# Romancio {departmentEfd}",
+                NameEn = $"# Romansh {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentWbf}",
+                NameFr = $"# Romanche {departmentWbf}",
+                NameIt = $"# Romancio {departmentWbf}",
+                NameEn = $"# Romansh {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"# Rätoromanisch {departmentUvek}",
+                NameFr = $"# Romanche {departmentUvek}",
+                NameIt = $"# Romancio {departmentUvek}",
+                NameEn = $"# Romansh {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEda}",
+                NameFr = $"% Romanche {departmentEda}",
+                NameIt = $"% Romancio {departmentEda}",
+                NameEn = $"% Romansh {departmentEda}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEdi}",
+                NameFr = $"% Romanche {departmentEdi}",
+                NameIt = $"% Romancio {departmentEdi}",
+                NameEn = $"% Romansh {departmentEdi}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEjpd}",
+                NameFr = $"% Romanche {departmentEjpd}",
+                NameIt = $"% Romancio {departmentEjpd}",
+                NameEn = $"% Romansh {departmentEjpd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentVbs}",
+                NameFr = $"% Romanche {departmentVbs}",
+                NameIt = $"% Romancio {departmentVbs}",
+                NameEn = $"% Romansh {departmentVbs}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentEfd}",
+                NameFr = $"% Romanche {departmentEfd}",
+                NameIt = $"% Romancio {departmentEfd}",
+                NameEn = $"% Romansh {departmentEfd}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentWbf}",
+                NameFr = $"% Romanche {departmentWbf}",
+                NameIt = $"% Romancio {departmentWbf}",
+                NameEn = $"% Romansh {departmentWbf}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = $"% Rätoromanisch {departmentUvek}",
+                NameFr = $"% Romanche {departmentUvek}",
+                NameIt = $"% Romancio {departmentUvek}",
+                NameEn = $"% Romansh {departmentUvek}",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-germanCount",
+            Object = statisticDto.ManagementCommitteesGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Deutsch",
+                NameFr = "# Allemand",
+                NameIt = "# Tedesco",
+                NameEn = "# German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-frenchCount",
+            Object = statisticDto.ManagementCommitteesFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Französisch",
+                NameFr = "# Français",
+                NameIt = "# Francese",
+                NameEn = "# French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-italianCount",
+            Object = statisticDto.ManagementCommitteesItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Italienisch",
+                NameFr = "# Italien",
+                NameIt = "# Italiano",
+                NameEn = "# Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-romanshCount",
+            Object = statisticDto.ManagementCommitteesRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Rätoromanisch",
+                NameFr = "# Romanche",
+                NameIt = "# Romancio",
+                NameEn = "# Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-germanPercentage",
+            Object = statisticDto.ManagementCommitteesGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Deutsch",
+                NameFr = "% Allemand",
+                NameIt = "% Tedesco",
+                NameEn = "% German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-frenchPercentage",
+            Object = statisticDto.ManagementCommitteesFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Französisch",
+                NameFr = "% Français",
+                NameIt = "% Francese",
+                NameEn = "% French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-italianPercentage",
+            Object = statisticDto.ManagementCommitteesItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Italienisch",
+                NameFr = "% Italien",
+                NameIt = "% Italiano",
+                NameEn = "% Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-romanshPercentage",
+            Object = statisticDto.ManagementCommitteesRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Rätoromanisch",
+                NameFr = "% Romanche",
+                NameIt = "% Romancio",
+                NameEn = "% Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-germanCount",
+            Object = statisticDto.FederalAgenciesCommitteesGermanCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Deutsch",
+                NameFr = "# Allemand",
+                NameIt = "# Tedesco",
+                NameEn = "# German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-frenchCount",
+            Object = statisticDto.FederalAgenciesCommitteesFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Französisch",
+                NameFr = "# Français",
+                NameIt = "# Francese",
+                NameEn = "# French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-italianCount",
+            Object = statisticDto.FederalAgenciesCommitteesItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Italienisch",
+                NameFr = "# Italien",
+                NameIt = "# Italiano",
+                NameEn = "# Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-romanshCount",
+            Object = statisticDto.FederalAgenciesCommitteesRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Rätoromanisch",
+                NameFr = "# Romanche",
+                NameIt = "# Romancio",
+                NameEn = "# Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-germanPercentage",
+            Object = statisticDto.FederalAgenciesCommitteesGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Deutsch",
+                NameFr = "% Allemand",
+                NameIt = "% Tedesco",
+                NameEn = "% German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-frenchPercentage",
+            Object = statisticDto.FederalAgenciesCommitteesFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Französisch",
+                NameFr = "% Français",
+                NameIt = "% Francese",
+                NameEn = "% French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-italianPercentage",
+            Object = statisticDto.FederalAgenciesCommitteesItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Italienisch",
+                NameFr = "% Italien",
+                NameIt = "% Italiano",
+                NameEn = "% Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-romanshPercentage",
+            Object = statisticDto.FederalAgenciesCommitteesRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Rätoromanisch",
+                NameFr = "% Romanche",
+                NameIt = "% Romancio",
+                NameEn = "% Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-femaleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFemaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Frauen",
+                NameFr = "% Femmes",
+                NameIt = "% Donne",
+                NameEn = "% Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-maleCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalMaleCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Männer",
+                NameFr = "# Hommes",
+                NameIt = "# Uomini",
+                NameEn = "# Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-femalePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFemalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Frauen",
+                NameFr = "% Femmes",
+                NameIt = "% Donne",
+                NameEn = "% Women",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-malePercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalMalePercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Männer",
+                NameFr = "% Hommes",
+                NameIt = "% Uomini",
+                NameEn = "% Men",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-germanCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Deutsch",
+                NameFr = "# Allemand",
+                NameIt = "# Tedesco",
+                NameEn = "# German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-frenchCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Französisch",
+                NameFr = "# Français",
+                NameIt = "# Francese",
+                NameEn = "# French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-italianCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalItalianCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Italienisch",
+                NameFr = "# Italien",
+                NameIt = "# Italiano",
+                NameEn = "# Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-romanshCount",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalRomanshCount.ToString(),
+            DataTypeUri = OgdExportConstants.DataTypeInt,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "# Rätoromanisch",
+                NameFr = "# Romanche",
+                NameIt = "# Romancio",
+                NameEn = "# Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-germanPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalGermanPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Deutsch",
+                NameFr = "% Allemand",
+                NameIt = "% Tedesco",
+                NameEn = "% German",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-frenchPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Französisch",
+                NameFr = "% Français",
+                NameIt = "% Francese",
+                NameEn = "% French",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-italianPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalItalianPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Italienisch",
+                NameFr = "% Italien",
+                NameIt = "% Italiano",
+                NameEn = "% Italian",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        dataRow.Values.Add(new DimensionValue
+        {
+            Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-romanshPercentage",
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalRomanshPercentage.ToString(CultureInfo.InvariantCulture),
+            DataTypeUri = OgdExportConstants.DataTypeDecimal,
+            ShapePropertyMetadata = new ShapePropertyMetadata
+            {
+                NameDe = "% Rätoromanisch",
+                NameFr = "% Romanche",
+                NameIt = "% Romancio",
+                NameEn = "% Romansh",
+                Type = OgdExportConstants.CubeMeasureDimension,
+                ScaleType = OgdExportConstants.QudtRatioScale,
+                NodeKind = OgdExportConstants.ShaclNodeKindLiteral
+            }
+        });
+
+        return dataRow;
+    }
+}
