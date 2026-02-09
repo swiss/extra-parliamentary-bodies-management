@@ -116,7 +116,6 @@ public class MembershipService : IMembershipService
 
             foreach (var committeeGroup in groupedMemberships)
             {
-                // This is the key you grouped on
                 var committeeId = committeeGroup.Key.CommitteeId;
                 var committeeOgdId = committeeGroup.Key.OgdId;
 
@@ -126,6 +125,7 @@ public class MembershipService : IMembershipService
                     CommitteeOgdId = committeeOgdId,
                     CantonCount = committeeGroup.Count(),
                     CantonId = canton.Id,
+                    CantonUri = canton.Uri,
                     CantonOgdId = canton.OgdId,
                 };
                 dtos.Add(dto);
@@ -148,7 +148,7 @@ public class MembershipService : IMembershipService
             var committeeId = committeeGroup.Key.CommitteeId;
             var committeeOgdId = committeeGroup.Key.OgdId;
 
-            // this type can be basically excluded in the base selection already, then we wouldn't need this here. Check with Mike: TODO PP
+            // TODO PP: this type can be basically excluded in the base selection already, then we wouldn't need this here. Comes as PBI and must be removed here then.
             if (first.Committee!.CommitteeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
             {
                 continue;
@@ -212,7 +212,7 @@ public class MembershipService : IMembershipService
 
             var committeeTypeId = group.Key;
 
-            // this type can be basically excluded in the base selection already, then we wouldn't need this here. Check with Mike: TODO PP
+            // TODO PP: this type can be basically excluded in the base selection already, then we wouldn't need this here. Comes as PBI and must be removed here then.
             if (committeeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
             {
                 continue;
@@ -308,7 +308,7 @@ public class MembershipService : IMembershipService
             var departmentId = group.Key.DepartmentId;
             var committeeTypeId = group.Key.CommitteeTypeGroup;
 
-            // this type can be basically excluded in the base selection already, then we wouldn't need this here. Check with Mike: TODO PP
+            // TODO PP: this type can be basically excluded in the base selection already, then we wouldn't need this here. Comes as PBI and must be removed here then.
             if (committeeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
             {
                 continue;
