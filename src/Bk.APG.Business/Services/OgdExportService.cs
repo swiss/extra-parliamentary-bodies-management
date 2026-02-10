@@ -78,12 +78,6 @@ public class OgdExportService : IOgdExportService
 
     public async Task Export(CancellationToken ct = default)
     {
-        if (!_sparqlOptions.ExportEnabled)
-        {
-            _logger.LogInformation("OGD export is disabled, exiting");
-            return;
-        }
-
         _logger.LogInformation("OGD export starting");
 
         using var graph = new Graph();
