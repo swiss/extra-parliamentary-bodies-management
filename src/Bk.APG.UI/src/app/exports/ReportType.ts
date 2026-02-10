@@ -5,7 +5,7 @@ export enum ReportType {
     Vacancies = 'Vacancies',
     CompareListGE = 'CompareListGE',
     AppendixFederalCouncilCheck = 'AppendixFederalCouncilCheck',
-    FCD = 'FCD',
+    DecisionFederalCouncil = 'DecisionFederalCouncil',
     IN_GE = 'IN_GE',
     ElectoralListFC = 'ElectoralListFC',
     ElectoralListOnline = 'ElectoralListOnline',

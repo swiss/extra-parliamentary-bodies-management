@@ -651,7 +651,7 @@
   "requestsAndReports.filter.documentType.vacancies": "Liste Vakanzen",
   "requestsAndReports.filter.documentType.compareListGE": "Vergleichsliste GEW - Überprüfung",
   "requestsAndReports.filter.documentType.appendixFederalCouncilCheck": "Anhang BRA Überprüfung",
-  "requestsAndReports.filter.documentType.FCD": "BRB GEW",
+  "requestsAndReports.filter.documentType.decisionFederalCouncil": "BRB GEW",
   "requestsAndReports.filter.documentType.IN_GE": "IN GEW",
   "requestsAndReports.filter.documentType.electoralListFC": "Wahlliste Bundesrat",
   "requestsAndReports.filter.documentType.electoralListOnline": "Wahlliste online",

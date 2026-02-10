@@ -615,7 +615,7 @@
   "requestsAndReports.filter.documentType.vacancies": "Lista delle vacanze",
   "requestsAndReports.filter.documentType.compareListGE": "Revisione della lista di confronto nell'ambito delle ERI",
   "requestsAndReports.filter.documentType.appendixFederalCouncilCheck": "Allegato revisione proposta al Consiglio federale",
-  "requestsAndReports.filter.documentType.FCD": "Decisione del Consiglio federale nell'ambito delle ERI",
+  "requestsAndReports.filter.documentType.decisionFederalCouncil": "Decisione del Consiglio federale nell'ambito delle ERI",
   "requestsAndReports.filter.documentType.IN_GE": "Nota informativa ERI",
   "requestsAndReports.filter.documentType.electoralListFC": "Elenco dei candidati per il Consiglio federale",
   "requestsAndReports.filter.documentType.electoralListOnline": "Elenco dei candidati online",
