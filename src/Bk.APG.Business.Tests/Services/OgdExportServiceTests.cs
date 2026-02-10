@@ -142,7 +142,6 @@ internal class OgdExportServiceTests
             MasterDataProxy = new ProxyOptions { UseProxy = false },
             ExportGraphBaseUri = "http://example.base.uri.org",
             ExportGraphVersion = "1",
-            ExportEnabled = true
         };
 
         _sparqlOptions = Substitute.For<IOptions<SparqlOptions>>();
