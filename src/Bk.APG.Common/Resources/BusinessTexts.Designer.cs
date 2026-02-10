@@ -1078,6 +1078,15 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to APG_Bundesratsbeschluss.
+        /// </summary>
+        public static string DecisionFederalCouncil_Filename {
+            get {
+                return ResourceManager.GetString("DecisionFederalCouncil_Filename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start.
         /// </summary>
         public static string ElectoralList_BeginDate {
