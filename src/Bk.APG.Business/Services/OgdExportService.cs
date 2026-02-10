@@ -147,12 +147,76 @@ public class OgdExportService : IOgdExportService
 
         var membershipMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriMembership, "2026-01-14", "2026-01-14", "BK-APG Mitgliedschaften", "Export der Mitgliedschaften von APG");
         var interestMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriVestedInterests, "2026-01-14", "2026-01-14", "BK-APG Interessenbindungen", "Export der Interessenbindungen von APG");
-        var committeeFunctionStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeFunctionStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken auf Funktionsebene", "Export der Gremium Funktions-Statistiken von APG");
-        var committeeCantonStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeCantonStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken Sicht Kantone und Mitglieder", "Export der Gremium Kantons-Statistiken von APG");
-        var committeeCantonDetailStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeCantonDetailStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken detaillierte Sicht Kantone und Mitglieder", "Export der Gremium detaillierten Kantons-Statistiken von APG");
-        var committeeGenderLanguageStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeGenderLanguageStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken im Bereich Geschlechter, Sprachen und Alter", "Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG");
-        var committeeTypeStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik", "Export der Statistiken zu Sprachen, Geschlechtern und Mengen pro Gremiumtyp");
-        var committeeTypeDepartmentStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeDepartmentStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik Version 2", "Export der Gremienstatistik pro Gremiumtyp und Departement");
+
+        var committeeFunctionStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeFunctionStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken auf Funktionsebene", "Export der Gremium Funktions-Statistiken von APG");
+        committeeFunctionStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeCantonStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeCantonStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken Sicht Kantone und Mitglieder", "Export der Gremium Kantons-Statistiken von APG");
+        committeeCantonStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeGenderLanguageStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeGenderLanguageStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken im Bereich Geschlechter, Sprachen und Alter", "Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG");
+        committeeGenderLanguageStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeTypeStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik", "Export der Statistiken zu Sprachen, Geschlechtern und Mengen pro Gremiumtyp");
+        committeeTypeStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeTypeDepartmentStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeDepartmentStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik Version 2", "Export der Gremienstatistik pro Gremiumtyp und Departement");
+        committeeTypeDepartmentStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeDepartmentStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeDepartmentStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
 
         var committeeTypeTriples = await CreateCommitteeTypeDimension(graph);
         var functionTriples = await CreateFunctionDimension(graph);
@@ -196,7 +260,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeFunctionStatistic,
-                functionStatisticData.Select(OgdMapper.ToFunctionStatisticObservation));
+                functionStatisticData.Select(OgdFunctionStatisticMapper.ToFunctionStatisticObservation));
 
         var cantonStatisticData = await _membershipService.GetMembershipsForCantonStatistic(membershipData);
 
@@ -204,7 +268,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeCantonStatistic,
-                cantonStatisticData.Select(OgdMapper.ToCantonStatisticObservation));
+                cantonStatisticData.Select(OgdCantonStatisticMapper.ToCantonStatisticObservation));
 
         var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
 
@@ -218,7 +282,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeGenderLanguageStatistic,
-                genderLanguageStatisticData.Select(OgdMapper.ToGenderLanguageStatisticObservation));
+                genderLanguageStatisticData.Select(OgdGenderLanguageStatisticMapper.ToGenderLanguageStatisticObservation));
 
         var committeeTypeStatisticData = await _committeeService.GetCommitteeTypeStatistic();
 
@@ -226,7 +290,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeTypeStatistic,
-                committeeTypeStatisticData.Select(OgdMapper.ToCommitteeTypeStatisticObservation));
+                committeeTypeStatisticData.Select(OgdCommitteeTypeStatisticMapper.ToCommitteeTypeStatisticObservation));
 
         var committeeTypeDepartmentStatisticData = await _committeeService.GetCommitteeTypeDepartmentStatistic();
 
@@ -234,7 +298,7 @@ public class OgdExportService : IOgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeTypeDepartmentStatistic,
-                committeeTypeDepartmentStatisticData.Select(OgdMapper.ToCommitteeTypeDepartmentStatisticObservation));
+                committeeTypeDepartmentStatisticData.Select(OgdCommitteeTypeDepartmentStatisticMapper.ToCommitteeTypeDepartmentStatisticObservation));
 
         var chunks = committeeTypeTriples
             .Concat(functionTriples)
@@ -253,11 +317,11 @@ public class OgdExportService : IOgdExportService
             .Concat(membershipRawData)
             .Concat(membershipMetadataTriples)
             .Concat(interestMetadataTriples)
-            .Concat(committeeFunctionStatisticMetadataTriples)
-            .Concat(committeeCantonStatisticMetadataTriples)
-            .Concat(committeeGenderLanguageStatisticMetadataTriples)
-            .Concat(committeeTypeStatisticMetadataTriples)
-            .Concat(committeeTypeDepartmentStatisticMetadataTriples)
+            .Concat(committeeFunctionStatisticCubeMetadata)
+            .Concat(committeeCantonStatisticCubeMetadata)
+            .Concat(committeeGenderLanguageStatisticCubeMetadata)
+            .Concat(committeeTypeStatisticCubeMetadata)
+            .Concat(committeeTypeDepartmentStatisticCubeMetadata)
             .Concat(interestRawData)
             .Concat(committeeFunctionStatisticRawData)
             .Concat(committeeCantonStatisticRawData)
