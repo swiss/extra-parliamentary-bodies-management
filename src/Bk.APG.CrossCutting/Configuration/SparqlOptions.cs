@@ -6,18 +6,20 @@ public class SparqlOptions
 {
     public const string SectionKey = "Sparql";
 
-    [Required] public required ProxyOptions MasterDataProxy { get; init; }
+    [Required]
+    public required ProxyOptions MasterDataProxy { get; init; }
 
-    [Required] public required string ExportGraphBaseUri { get; init; }
+    [Required]
+    public required string ExportGraphBaseUri { get; init; }
 
-    [Required] public required string ExportGraphVersion { get; set; }
-
-    [Required] public required bool ExportEnabled { get; set; }
+    [Required]
+    public required string ExportGraphVersion { get; set; }
 }
 
 public class ProxyOptions
 {
-    [Required] public required bool UseProxy { get; init; }
+    [Required]
+    public required bool UseProxy { get; init; }
 
     public string? Address { get; init; }
 }
