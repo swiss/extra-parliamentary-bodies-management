@@ -75,11 +75,6 @@ public class ReportService : IReportService
         var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
         var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
 
-        var crossBorderFederalAgenciesCommittees = _committeeRepository.GetAll().Where(c => c.CommitteeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid
-            && c.BeginDate <= filterDto.AnalysisDate1 && (c.EndDate is null || c.EndDate > filterDto.AnalysisDate1));
-
-        var crossBorderFederalAgenciesCommitteesWithMembers = crossBorderFederalAgenciesCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
-
         var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToList();
 
         var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
@@ -101,7 +96,6 @@ public class ReportService : IReportService
         var missingGenderMembersCommitteesDto = GetCommitteesWithGenders(extraParliamentaryCommissions);
         var missingItalianAndFrenchMembersCommitteesDto = GetCommitteesWithLanguages(extraParliamentaryCommissions);
         var committeesWithMembersInFederalDutyDto = GetFederalDutyMembershipsWithOffice(committeesWithMembersInFederalDuty);
-        var crossBorderFederalAgenciesCommitteesDto = GetCommitteesByDepartment(crossBorderFederalAgenciesCommitteesWithMembers, departments, ReportCommitteeType.StandardBehaviour);
 
         var decisionFederalCouncilReportDto = new DecisionFederalCouncilReportDto
         {
@@ -112,8 +106,7 @@ public class ReportService : IReportService
             MissingGenderMembersCommittees = missingGenderMembersCommitteesDto,
             MissingLanguageMembersCommittees = missingItalianAndFrenchMembersCommitteesDto,
             LongerDutyMembersCommittees = membersWith12OrMoreYearsDto,
-            FederalDutyMembersCommittees = committeesWithMembersInFederalDutyDto,
-            CrossBorderFederalAgenciesCommittees = crossBorderFederalAgenciesCommitteesDto
+            FederalDutyMembersCommittees = committeesWithMembersInFederalDutyDto
         };
 
         var documentStream = await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", decisionFederalCouncilReportDto, "decisionFederalCouncil");
