@@ -144,6 +144,10 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 CommitteeId = c.CommitteeId,
                 DepartmentId = c.DepartmentId,
                 Department = c.Department,
+                OfficeId = c.OfficeId,
+                Office = c.Office,
+                CommitteeLevelId = c.CommitteeLevelId,
+                CommitteeLevel = c.CommitteeLevel,
                 CommitteeTypeId = c.CommitteeTypeId,
                 CommitteeType = c.CommitteeType,
                 IsDeleted = c.IsDeleted,
@@ -154,6 +158,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 JustificationMembers = c.JustificationMembers,
                 JustificationGenders = c.JustificationGenders,
                 JustificationLanguages = c.JustificationLanguages,
+                MarketOrientated = c.MarketOrientated,
                 MeasuresGenders = c.MeasuresGenders,
                 MeasuresLanguages = c.MeasuresLanguages,
                 RemarksBaseData = c.RemarksBaseData,
@@ -165,6 +170,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 AssignedToRole = c.AssignedToRole,
                 MembershipCandidates = c.MembershipCandidates.ToList()
             })
+            .OrderBy(c => c.DescriptionGerman)
             .ToListAsync();
 
         return committees;

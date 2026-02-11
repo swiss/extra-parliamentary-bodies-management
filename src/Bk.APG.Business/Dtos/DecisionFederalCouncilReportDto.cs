@@ -9,8 +9,5 @@ public class DecisionFederalCouncilReportDto
     public IEnumerable<ReportCommitteeGenderMissingDto>? MissingGenderMembersCommittees { get; set; }
     public IEnumerable<ReportCommitteeLanguageMissingDto>? MissingLanguageMembersCommittees { get; set; }
     public IEnumerable<ReportCommitteeWithFreeTextDto>? LongerDutyMembersCommittees { get; set; }
-    public IEnumerable<ReportCommitteeWithMemberDetailDto>? ShorterDutyLaterStartMembersCommittees { get; set; }
-    public IEnumerable<ReportCommitteeWithMemberDetailDto>? ShorterDutyEarlierEndMembersCommittees { get; set; }
-    public IEnumerable<ReportCommitteeWithFreeTextDto>? FederalAssemblyMembersCommittees { get; set; }
-    public IEnumerable<ReportDepartmentWithCommitteesDto>? CrossBorderFederalAgenciesCommittees { get; set; }
+    public IEnumerable<ReportCommitteeWithFreeTextDto>? FederalDutyMembersCommittees { get; set; }
 }
