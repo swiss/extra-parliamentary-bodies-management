@@ -73,7 +73,7 @@ public class ReportCommitteeLanguageMissingDto
 
 public class ReportCommitteeWithMemberDetailDto
 {
-    public required string CommitteeName { get; set; }
+    public required string Name { get; set; }
     public IEnumerable<ReportMembershipDto>? Members { get; set; }
     public int MemberCount { get; set; }
 }
@@ -93,7 +93,7 @@ public class ReportMembershipDto
 
 public class ReportCommitteeWithFreeTextDto
 {
-    public required string CommitteeName { get; set; }
+    public required string Name { get; set; }
     public string? FreeText { get; set; }
 }
 
