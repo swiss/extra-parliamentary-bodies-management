@@ -155,14 +155,4 @@ public class GeneralElectionCommittee : EntityBase
     [NotMapped]
     public bool JustificationsNeedAttention => (IsJustificationGendersRequired && (string.IsNullOrWhiteSpace(JustificationGenders) || (string.IsNullOrWhiteSpace(MeasuresGenders) && string.IsNullOrWhiteSpace(Department!.GeneralGenderMeasure?.Description))))
                                                || (IsJustificationLanguagesRequired && (string.IsNullOrWhiteSpace(JustificationLanguages) || (string.IsNullOrWhiteSpace(MeasuresLanguages) && string.IsNullOrWhiteSpace(Department!.GeneralLanguageMeasure?.Description))));
-
-    // TODO PP Do we still need this for GeneralElection?
-    //    [NotMapped]
-    //    public bool NeedsAttention => CandidateLists.Any(y => (!y.IsActive && y.ElectionType!.Uri is ElectionType.Neuwahl or ElectionType.Wiederwahl or ElectionType.Permanent) ||
-    //        (y.JustificationLongerDutyNeeded && string.IsNullOrWhiteSpace(y.JustificationLongerDuty)) ||
-    //        (y.JustificationShorterDutyNeeded && string.IsNullOrWhiteSpace(y.JustificationShorterDuty)) ||
-    //        (y.JustificationMemberInFederalDutyNeeded && string.IsNullOrWhiteSpace(y.JustificationMemberInFederalDuty)) ||
-    //        (y.JustificationMemberInFederalAssemblyNeeded && string.IsNullOrWhiteSpace(y.JustificationMemberInFederalAssembly))) ||
-    //        ((CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid || CommitteeTypeId == CommitteeType.AdministrationCommissionGuid) && Memberships.Any(m => m.Person?.Interests?.Count == 0 && m.Person?.NoInterest == false)) ||
-    //        Memberships.Count(y => y.IsActive) > MaximalMembers;
 }
