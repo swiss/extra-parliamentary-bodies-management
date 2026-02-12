@@ -4,6 +4,7 @@ public class DecisionFederalCouncilReportDto
 {
     public required string TermOfOfficeDateRange { get; set; }
 
+    public IEnumerable<ReportCommitteeWithFreeTextDto>? NonReleasedCommissions { get; set; }
     public IEnumerable<ReportCommitteeWithFreeTextDto>? MarketOrientatedCommissions { get; set; }
     public IEnumerable<ReportCommitteeWithMemberDetailDto>? MoreThan15MembersCommittees { get; set; }
     public IEnumerable<ReportCommitteeGenderMissingDto>? MissingGenderMembersCommittees { get; set; }
