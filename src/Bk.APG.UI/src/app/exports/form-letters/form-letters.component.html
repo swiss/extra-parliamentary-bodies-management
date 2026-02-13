@@ -1,6 +1,9 @@
 <mat-tab-group mat-stretch-tabs>
-    <mat-tab label="{{ 'committee.details.overview' | translate }}">
-        <ng-template mat-tab-label />
+    <mat-tab label="{{ 'formLetter.sender' | translate }}">
+        <ng-template mat-tab-label>
+            {{ 'formLetter.sender' | translate }}
+        </ng-template>
+        <apg-form-letters-sender />
     </mat-tab>
 
     <mat-tab label="{{ 'formLetter.recipients' | translate }}">
