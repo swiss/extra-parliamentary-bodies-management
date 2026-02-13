@@ -2,6 +2,8 @@ name: Update THIRD_PARTY_LICENSES
 
 on:
   push:
+    branches:
+      - main #only run on main branch (avoids pipeline being triggered, when tags are pushed)
 
 permissions:
   contents: write  # needed to push the updated file
@@ -15,7 +17,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # required for pushing changes
-          ref: ${{ github.ref }} #we want to check out a branch and not a specific commit
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -41,4 +42,4 @@ jobs:
           git add THIRD_PARTY_LICENSES.md
           git commit -m "chore: update THIRD_PARTY_LICENSES.md"
           
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin HEAD
