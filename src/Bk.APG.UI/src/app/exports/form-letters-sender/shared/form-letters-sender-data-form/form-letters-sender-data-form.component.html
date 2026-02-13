@@ -1,0 +1,255 @@
+<form [formGroup]="senderForm" id="formLettersSenderDataForm" obUnsavedChanges>
+    <fieldset>
+        <div class="data-panel">
+            <p class="panel-title input-field-left input-field-top">
+                {{ 'formLetter.sender.detail.personalData' | translate }}
+            </p>
+
+            <div class="input-grid-2-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.description' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.description" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.description.errors,
+                            'formLetter.sender.detail.description' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.senderFunction' | translate }}</mat-label>
+                    <mat-select [formControl]="senderForm.controls.senderFunctionId">
+                        @for (senderFunction of senderFunctions(); track senderFunction.id) {
+                            <mat-option [value]="senderFunction.id">{{ senderFunction.text }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="input-grid-2-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.surname' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.surname" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.surname.errors,
+                            'formLetter.sender.detail.surname' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.givenName' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.givenName" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.givenName.errors,
+                            'formLetter.sender.detail.givenName' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="input-grid-2-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.department' | translate }}</mat-label>
+                    <mat-select [formControl]="senderForm.controls.departmentId">
+                        @for (department of departments(); track department.id) {
+                            <mat-option [value]="department.id">{{ department.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.departmentId.errors,
+                            'formLetter.sender.detail.department' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.office' | translate }}</mat-label>
+                    <mat-select [formControl]="senderForm.controls.officeId">
+                        @for (office of departmentOffices(); track office.id) {
+                            <mat-option [value]="office.id">{{ office.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.officeId.errors,
+                            'formLetter.sender.detail.office' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="input-grid-2-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.phone' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.phone" type="tel" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.phone.errors,
+                            'formLetter.sender.detail.phone' | translate,
+                            'formLetter.sender.error.phone'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.email' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.email" type="email" />
+                    <mat-error>{{
+                        errorService.getControlError(senderForm.controls.email.errors, 'formLetter.sender.detail.email' | translate, 'formLetter.sender.error')
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <mat-form-field obErrorMessages class="input-field-top full-width">
+                <mat-label>{{ 'formLetter.sender.detail.website' | translate }}</mat-label>
+                <input matInput [formControl]="senderForm.controls.website" type="url" />
+                <mat-error>{{
+                    errorService.getControlError(senderForm.controls.website.errors, 'formLetter.sender.detail.website' | translate, 'formLetter.sender.error')
+                }}</mat-error>
+            </mat-form-field>
+        </div>
+
+        <div class="data-panel">
+            <p class="panel-title input-field-left input-field-top">
+                {{ 'formLetter.sender.detail.address' | translate }}
+            </p>
+
+            <div class="input-grid-4-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.streetGerman' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.streetGerman" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.streetGerman.errors,
+                            'formLetter.sender.detail.streetGerman' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.streetFrench' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.streetFrench" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.streetFrench.errors,
+                            'formLetter.sender.detail.streetFrench' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.streetItalian' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.streetItalian" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.streetItalian.errors,
+                            'formLetter.sender.detail.streetItalian' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.streetRomansh' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.streetRomansh" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.streetRomansh.errors,
+                            'formLetter.sender.detail.streetRomansh' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <mat-form-field obErrorMessages class="input-field-top full-width">
+                <mat-label>{{ 'formLetter.sender.detail.zip' | translate }}</mat-label>
+                <input matInput [formControl]="senderForm.controls.zip" type="text" />
+                <mat-error>{{
+                    errorService.getControlError(senderForm.controls.zip.errors, 'formLetter.sender.detail.zip' | translate, 'formLetter.sender.error')
+                }}</mat-error>
+            </mat-form-field>
+
+            <div class="input-grid-4-columns">
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.cityGerman' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.cityGerman" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.cityGerman.errors,
+                            'formLetter.sender.detail.cityGerman' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.cityFrench' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.cityFrench" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.cityFrench.errors,
+                            'formLetter.sender.detail.cityFrench' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.cityItalian' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.cityItalian" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.cityItalian.errors,
+                            'formLetter.sender.detail.cityItalian' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+
+                <mat-form-field obErrorMessages class="input-field-top">
+                    <mat-label>{{ 'formLetter.sender.detail.cityRomansh' | translate }}</mat-label>
+                    <input matInput [formControl]="senderForm.controls.cityRomansh" type="text" />
+                    <mat-error>{{
+                        errorService.getControlError(
+                            senderForm.controls.cityRomansh.errors,
+                            'formLetter.sender.detail.cityRomansh' | translate,
+                            'formLetter.sender.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="data-panel">
+            <p class="panel-title input-field-left input-field-top">
+                {{ 'formLetter.sender.detail.signature' | translate }}
+            </p>
+
+            <div class="signature-upload">
+                <ob-drop-zone (uploadEvent)="uploadEvent($event)" [accept]="acceptedSignatureFormats" [maxFileSize]="maxSignatureFileSizeInMB" />
+
+                @if (signatureFileName) {
+                    <div class="signature-info">
+                        <span>{{ signatureFileName }}</span>
+                        <button mat-icon-button type="button" (click)="clearSignature()" [matTooltip]="'common.delete' | translate">
+                            <mat-icon svgIcon="delete" />
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+    </fieldset>
+</form>
