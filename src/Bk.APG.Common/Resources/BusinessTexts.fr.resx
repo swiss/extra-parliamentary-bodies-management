@@ -321,6 +321,9 @@
     <data name="ParliamentaryReport_Filename" xml:space="preserve">
         <value>Organes extraparlementaires_rapport_Parlement</value>
     </data>
+    <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
+        <value>FR_APG_Bundesratsbeschluss</value>
+    </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Conseillère nationale</value>
     </data>
