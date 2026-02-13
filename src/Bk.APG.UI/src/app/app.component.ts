@@ -117,7 +117,7 @@ export class AppComponent implements OnInit {
         config.locale.locales = ['de', 'fr', 'it'];
         httpApiInterceptorConfig.api.spinner = true;
         httpApiInterceptorConfig.api.url = '/api/';
-        httpApiInterceptorConfig.timeout = 60000;
+        httpApiInterceptorConfig.timeout = 180000;
         config.header.isSmall = true;
         config.header.isSticky = true;
         config.footer.isSticky = true;
