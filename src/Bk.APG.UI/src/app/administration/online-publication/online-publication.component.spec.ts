@@ -3,7 +3,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatButtonToggleGroup, MatButtonToggle, MatButtonToggleChange} from '@angular/material/button-toggle';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
+import {ObHttpApiInterceptorEvents, ObNotificationService, ObSpinnerComponent, ObSpinnerService} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {MockComponents, MockDirective, MockPipe} from 'ng-mocks';
 import {of, Subject, throwError} from 'rxjs';
@@ -33,6 +33,11 @@ describe('OnlinePublicationComponent', () => {
         deactivateNotificationOnNextAPICalls: jest.fn(),
         deactivateSpinnerOnNextAPICalls: jest.fn(),
     };
+    const mockSpinnerService = {
+        forceDeactivate: jest.fn(),
+        deactivate: jest.fn(),
+        activate: jest.fn(),
+    };
     const dialogAfterClosedSubject = new Subject<boolean>();
     const mockDialog = {
         open: jest.fn().mockReturnValue({
@@ -42,12 +47,19 @@ describe('OnlinePublicationComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [OnlinePublicationComponent, MockComponents(MatButtonToggle), MockPipe(TranslatePipe), MockDirective(MatButtonToggleGroup)],
+            imports: [
+                OnlinePublicationComponent,
+                MockComponents(MatButtonToggle),
+                MockPipe(TranslatePipe),
+                MockDirective(MatButtonToggleGroup),
+                MockComponents(ObSpinnerComponent),
+            ],
             providers: [
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: OnlinePublicationService, useValue: mockOnlinePublicationService},
                 {provide: ObNotificationService, useValue: mockNotificationService},
                 {provide: ObHttpApiInterceptorEvents, useValue: mockHttpApiInterceptorEvents},
+                {provide: ObSpinnerService, useValue: mockSpinnerService},
                 {provide: MatDialog, useValue: mockDialog},
                 provideHttpClient(),
             ],
@@ -95,7 +107,9 @@ describe('OnlinePublicationComponent', () => {
 
             await fixture.whenStable();
 
-            expect(mockHttpApiInterceptorEvents.deactivateNotificationOnNextAPICalls).toHaveBeenCalled();
+            expect(mockHttpApiInterceptorEvents.deactivateNotificationOnNextAPICalls).toHaveBeenCalledWith(1);
+            expect(mockHttpApiInterceptorEvents.deactivateSpinnerOnNextAPICalls).toHaveBeenCalledWith(1);
+            expect(mockSpinnerService.activate).toHaveBeenCalled();
             expect(mockNotificationService.info).toHaveBeenCalledWith({
                 message: 'onlinePublication.trigger.message',
                 timeout: 10000,
@@ -119,6 +133,7 @@ describe('OnlinePublicationComponent', () => {
 
             await fixture.whenStable();
 
+            expect(mockSpinnerService.deactivate).toHaveBeenCalled();
             expect(mockNotificationService.success).toHaveBeenCalledWith({
                 message: 'onlinePublication.trigger.success',
             });
@@ -133,6 +148,7 @@ describe('OnlinePublicationComponent', () => {
 
             await fixture.whenStable();
 
+            expect(mockSpinnerService.deactivate).toHaveBeenCalled();
             expect(mockNotificationService.error).toHaveBeenCalledWith({
                 message: 'onlinePublication.trigger.error',
             });
