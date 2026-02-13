@@ -23,7 +23,7 @@ public enum ReportType
     Vacancies,
     CompareListGE,
     AttachmentFCR_GE,
-    FCD,
+    DecisionFederalCouncil,
     IN_GE,
     ElectoralListFC,
     ElectoralListOnline

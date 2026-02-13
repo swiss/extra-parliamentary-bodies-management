@@ -327,6 +327,9 @@
     <data name="ParliamentaryReport_Filename" xml:space="preserve">
         <value>APG_Bericht_Parlament</value>
     </data>
+    <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
+        <value>APG_Bundesratsbeschluss</value>
+    </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Nationalrätin</value>
     </data>
