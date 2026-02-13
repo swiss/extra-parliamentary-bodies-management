@@ -223,11 +223,11 @@ public class OgdExportService : IOgdExportService
 
         var people = (await _personRepository.GetForOgdExport()).ToArray();
         var personTriples = CreatePersonDimension(graph, people);
-        var personCube = _cubeRawDataService.CreateTriples(graph, OgdExportConstants.UriPerson, people.Select(PersonMapper.ToObservation)).ToArray();
+        var personCube = _cubeRawDataService.CreateTriples(graph, OgdExportConstants.UriPerson, people.Select(PersonMapper.ToObservation));
 
         var committees = (await _committeeRepository.GetForOgdExport()).ToArray();
         var committeeTriples = CreateCommitteeDimension(graph, committees);
-        var committeeCube = _cubeRawDataService.CreateTriples(graph, OgdExportConstants.UriCommittee, committees.Select(CommitteeMapper.ToObservation)).ToArray();
+        var committeeCube = _cubeRawDataService.CreateTriples(graph, OgdExportConstants.UriCommittee, committees.Select(CommitteeMapper.ToObservation));
 
         await _ogdDocumentService.SetupBucket();
         var appointmentDecisionTriples = await CreateAppointmentDecisionDimension(graph, committees);
@@ -236,37 +236,33 @@ public class OgdExportService : IOgdExportService
 
         var membershipRawData =
             _cubeRawDataService.CreateTriples(
-                    graph,
-                    OgdExportConstants.UriMembership,
-                    membershipData.Select(MembershipMapper.ToObservation))
-                .ToArray();
+                graph,
+                OgdExportConstants.UriMembership,
+                membershipData.Select(MembershipMapper.ToObservation));
 
         var interestData = await _interestRepository.GetAllForOgdExport();
 
         var interestRawData =
             _cubeRawDataService.CreateTriples(
-                    graph,
-                    OgdExportConstants.UriVestedInterests,
-                    interestData.Select(InterestMapper.ToObservation))
-                .ToArray();
+                graph,
+                OgdExportConstants.UriVestedInterests,
+                interestData.Select(InterestMapper.ToObservation));
 
         var functionStatisticData = _membershipRepository.GetMembershipFunctionsForStatistics();
 
         var committeeFunctionStatisticRawData =
             _cubeRawDataService.CreateTriples(
-                    graph,
-                    OgdExportConstants.UriCommitteeFunctionStatistic,
-                    functionStatisticData.Select(OgdFunctionStatisticMapper.ToFunctionStatisticObservation))
-                .ToArray();
+                graph,
+                OgdExportConstants.UriCommitteeFunctionStatistic,
+                functionStatisticData.Select(OgdFunctionStatisticMapper.ToFunctionStatisticObservation));
 
         var cantonStatisticData = await _membershipService.GetMembershipsForCantonStatistic(membershipData);
 
         var committeeCantonStatisticRawData =
             _cubeRawDataService.CreateTriples(
-                    graph,
-                    OgdExportConstants.UriCommitteeCantonStatistic,
-                    cantonStatisticData.Select(OgdCantonStatisticMapper.ToCantonStatisticObservation))
-                .ToArray();
+                graph,
+                OgdExportConstants.UriCommitteeCantonStatistic,
+                cantonStatisticData.Select(OgdCantonStatisticMapper.ToCantonStatisticObservation));
 
         var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
 
@@ -278,28 +274,25 @@ public class OgdExportService : IOgdExportService
 
         var committeeGenderLanguageStatisticRawData =
             _cubeRawDataService.CreateTriples(
-                    graph,
-                    OgdExportConstants.UriCommitteeGenderLanguageStatistic,
-                    genderLanguageStatisticData.Select(OgdGenderLanguageStatisticMapper.ToGenderLanguageStatisticObservation))
-                .ToArray();
+                graph,
+                OgdExportConstants.UriCommitteeGenderLanguageStatistic,
+                genderLanguageStatisticData.Select(OgdGenderLanguageStatisticMapper.ToGenderLanguageStatisticObservation));
 
         var committeeTypeStatisticData = await _committeeService.GetCommitteeTypeStatistic();
 
         var committeeTypeStatisticDataRawData =
             _cubeRawDataService.CreateTriples(
-                    graph,
-                    OgdExportConstants.UriCommitteeTypeStatistic,
-                    committeeTypeStatisticData.Select(OgdCommitteeTypeStatisticMapper.ToCommitteeTypeStatisticObservation))
-                .ToArray();
+                graph,
+                OgdExportConstants.UriCommitteeTypeStatistic,
+                committeeTypeStatisticData.Select(OgdCommitteeTypeStatisticMapper.ToCommitteeTypeStatisticObservation));
 
         var committeeTypeDepartmentStatisticData = await _committeeService.GetCommitteeTypeDepartmentStatistic();
 
         var committeeTypeDepartmentStatisticRawData =
             _cubeRawDataService.CreateTriples(
-                    graph,
-                    OgdExportConstants.UriCommitteeTypeDepartmentStatistic,
-                    committeeTypeDepartmentStatisticData.Select(OgdCommitteeTypeDepartmentStatisticMapper.ToCommitteeTypeDepartmentStatisticObservation))
-                .ToArray();
+                graph,
+                OgdExportConstants.UriCommitteeTypeDepartmentStatistic,
+                committeeTypeDepartmentStatisticData.Select(OgdCommitteeTypeDepartmentStatisticMapper.ToCommitteeTypeDepartmentStatisticObservation));
 
         var chunks = committeeTypeTriples
             .Concat(functionTriples)
@@ -457,7 +450,7 @@ public class OgdExportService : IOgdExportService
         return committeeTriples;
     }
 
-    private async Task<Triple[]> CreateAppointmentDecisionDimension(Graph graph, IEnumerable<Committee> committees)
+    private async Task<IEnumerable<Triple>> CreateAppointmentDecisionDimension(Graph graph, IEnumerable<Committee> committees)
     {
         var appointmentDecisionItems = new List<DimensionItem>();
 
@@ -495,10 +488,10 @@ public class OgdExportService : IOgdExportService
                 [new Literal("Einsetzungsverfügungen", "de")],
                 rdfTypes: ["http://schema.org/DigitalDocument"]);
 
-        return appointmentDecisionTriples.ToArray();
+        return appointmentDecisionTriples;
     }
 
-    private Triple[] CreatePersonDimension(Graph graph, IEnumerable<Person> people)
+    private IEnumerable<Triple> CreatePersonDimension(Graph graph, IEnumerable<Person> people)
     {
         var personTriples =
             _dimensionService.CreateTriples(
@@ -508,10 +501,10 @@ public class OgdExportService : IOgdExportService
                 [new Literal("Personen in einer Ausserparlamentarischen Kommission", "de")],
                 rdfTypes: ["http://schema.org/Person"]);
 
-        return personTriples.ToArray();
+        return personTriples;
     }
 
-    private async Task<Triple[]> CreateInterestFunctionDimension(Graph graph)
+    private async Task<IEnumerable<Triple>> CreateInterestFunctionDimension(Graph graph)
     {
         var interestFunctions = await _masterDataRepository.GetInterestFunctions();
         var interestFunctionItems = interestFunctions.Select(MasterDataMapper.ToDimensionItem);
@@ -523,10 +516,10 @@ public class OgdExportService : IOgdExportService
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceInterestFunction}",
                 [new Literal("Funktion bei Interessenbindungen", "de")]);
 
-        return interestFunctionTriples.ToArray();
+        return interestFunctionTriples;
     }
 
-    private async Task<Triple[]> CreateInterestCommitteeDimension(Graph graph)
+    private async Task<IEnumerable<Triple>> CreateInterestCommitteeDimension(Graph graph)
     {
         var interestCommittees = await _masterDataRepository.GetInterestCommittees();
         var interestCommitteeItems = interestCommittees.Select(MasterDataMapper.ToDimensionItem);
@@ -538,10 +531,10 @@ public class OgdExportService : IOgdExportService
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceInterestCommittee}",
                 [new Literal("Gremium bei Interessenbindungen", "de")]);
 
-        return interestCommitteTriples.ToArray();
+        return interestCommitteTriples;
     }
 
-    private async Task<Triple[]> CreateCommitteeTypeDimension(Graph graph)
+    private async Task<IEnumerable<Triple>> CreateCommitteeTypeDimension(Graph graph)
     {
         var committeeTypes = await _committeeTypeRepository.GetList();
 
@@ -552,10 +545,10 @@ public class OgdExportService : IOgdExportService
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceCommitteeType}",
                 [new Literal("Behördenkommissionen", "de")]);
 
-        return committeeTypeTriples.ToArray();
+        return committeeTypeTriples;
     }
 
-    private async Task<Triple[]> CreateFunctionDimension(Graph graph)
+    private async Task<IEnumerable<Triple>> CreateFunctionDimension(Graph graph)
     {
         var functions = await _masterDataRepository.GetFunctions();
         var functionDimensionItems = functions.Select(MasterDataMapper.ToDimensionItem);
@@ -567,10 +560,10 @@ public class OgdExportService : IOgdExportService
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceFunction}",
                 [new Literal("Funktionen", "de")]);
 
-        return functionTriples.ToArray();
+        return functionTriples;
     }
 
-    private async Task<Triple[]> CreateOccupationDimension(Graph graph)
+    private async Task<IEnumerable<Triple>> CreateOccupationDimension(Graph graph)
     {
         var occupations = await _masterDataRepository.GetOccupations();
         var occupationDimensionItems = occupations.Select(MasterDataMapper.ToDimensionItem);
@@ -582,10 +575,10 @@ public class OgdExportService : IOgdExportService
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceOccupation}",
                 [new Literal("Berufe", "de")]);
 
-        return occupationTriples.ToArray();
+        return occupationTriples;
     }
 
-    private async Task<Triple[]> CreateCantonDimension(Graph graph)
+    private async Task<IEnumerable<Triple>> CreateCantonDimension(Graph graph)
     {
         var cantons = await _masterDataRepository.GetCantons();
         var cantonDimensionItems = cantons.Select(MasterDataMapper.ToDimensionItem);
@@ -597,10 +590,10 @@ public class OgdExportService : IOgdExportService
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceCanton}",
                 [new Literal("Kantone", "de")]);
 
-        return occupationTriples.ToArray();
+        return occupationTriples;
     }
 
-    private async Task<Triple[]> CreateContactPointTypeDimension(Graph graph)
+    private async Task<IEnumerable<Triple>> CreateContactPointTypeDimension(Graph graph)
     {
         var contactPointTypes = await _masterDataRepository.GetContactPointTypes();
 
@@ -613,16 +606,15 @@ public class OgdExportService : IOgdExportService
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceContactPointType}",
                 [new Literal("Kontaktstelle Typ", "de")]);
 
-        return contactPointTypeTriples.ToArray();
+        return contactPointTypeTriples;
     }
 
-    private Triple[] CreateContactPointTriples(Graph graph)
+    private IEnumerable<Triple> CreateContactPointTriples(Graph graph)
     {
         //exports all the contact points as triples that can be referenced by the committee.
         //background: this should actually be exported by AdminDir (but that functionality is not available there yet).
         //            since the contact points are not a 'dimension', these triples are created manually and not via FCh.Dimension.
 
-        var contactPointTriples = new List<Triple>();
         foreach (var cp in _contactPointRepository.GetAllActiveContactPoints())
         {
             //this has to match the uri pointing from the committee to the contact point (see CommitteeMapper.ToDimensionItem)
@@ -720,10 +712,11 @@ public class OgdExportService : IOgdExportService
                 ));
             }
 
-            contactPointTriples.AddRange(triples);
+            foreach (var t in triples)
+            {
+                yield return t;
+            }
         }
-
-        return contactPointTriples.ToArray();
     }
 
     private static List<Triple> CreateMetaDataTriples(Graph graph, string uri, string createDate, string publishDate, string schemaName, string schemaDescription)
