@@ -91,11 +91,10 @@ public class ReportMembershipDto
     public ReportMembershipType Type { get; set; }
 }
 
-public class ReportMembershipDurationDto
+public class ReportCommitteeWithFreeTextDto
 {
-    public Guid CommitteeId { get; set; }
-    public Guid PersonId { get; set; }
-    public int TotalDurationYears { get; set; }
+    public required string Name { get; set; }
+    public string? FreeText { get; set; }
 }
 
 public enum ReportMembershipType
@@ -104,7 +103,8 @@ public enum ReportMembershipType
     FederalAssembly,
     FederalDuty,
     MarketOrientated,
-    CompetenceProfile
+    CompetenceProfile,
+    MoreThan15Members
 }
 
 public enum ReportCommitteeType
