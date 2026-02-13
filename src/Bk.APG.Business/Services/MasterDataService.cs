@@ -200,18 +200,6 @@ public class MasterDataService : IMasterDataService
         return mappedOccuptations;
     }
 
-    public async Task<IEnumerable<OfficeDto>> GetGeneralSecretariatOffices()
-    {
-        var offices = await _masterDataRepository.GetOffices();
-
-        var myOffices = offices
-            .Where(o => o.IsGeneralSecretariat)
-            .Select(x => MasterDataMapper.MapToOfficeDto(x, _cultureService.GetCurrentUiCulture()))
-            .OrderBy(x => x.Description);
-
-        return myOffices;
-    }
-
     public async Task<IEnumerable<CommitteeTypeDto>> GetCommitteeTypes()
     {
         var committeeTypes = await _masterDataRepository.GetCommitteeTypes();
@@ -219,13 +207,6 @@ public class MasterDataService : IMasterDataService
         return committeeTypes
             .Select(x => MasterDataMapper.MapToMasterDataDto<CommitteeTypeDto>(x, _cultureService.GetCurrentUiCulture()))
             .OrderBy(x => x.Text);
-    }
-
-    public async Task<CommitteeTypeDto> GetCommitteeTypeById(Guid id)
-    {
-        var committeeType = await _masterDataRepository.GetById<CommitteeType>(id);
-
-        return MasterDataMapper.MapToMasterDataDto<CommitteeTypeDto>(committeeType!, _cultureService.GetCurrentUiCulture());
     }
 
     public async Task<IEnumerable<TermDto>> GetTerms()
@@ -337,5 +318,12 @@ public class MasterDataService : IMasterDataService
         var worklistTaskStates = await _masterDataRepository.GetWorklistTaskStates();
 
         return worklistTaskStates.Select(x => MasterDataMapper.MapToMasterDataDto<WorklistTaskStateDto>(x, CultureInfo.CurrentUICulture)).OrderBy(x => x.Text);
+    }
+
+    public async Task<IEnumerable<FormLetterSenderFunctionDto>> GetFormLetterSenderFunctions()
+    {
+        var formLetterSenderFunctions = await _masterDataRepository.GetFormLetterSenderFunctions();
+
+        return formLetterSenderFunctions.Select(x => MasterDataMapper.MapToMasterDataDto<FormLetterSenderFunctionDto>(x, CultureInfo.CurrentUICulture)).OrderBy(x => x.Text);
     }
 }
