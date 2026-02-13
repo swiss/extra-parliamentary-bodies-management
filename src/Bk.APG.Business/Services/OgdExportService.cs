@@ -622,28 +622,57 @@ public class OgdExportService : IOgdExportService
             var addressUri = $"{contactPointUri}/address";
             var memberUri = $"{contactPointUri}/member/1";
 
-            // mandatory triples
             var triples = new List<Triple>
             {
                 new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaGovernmentOrganization)),
-                new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaName), graph.CreateLiteralNode(cp.CompanyName)),
                 new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaAddress), graph.CreateUriNode(addressUri)),
-
                 new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaPostalAddress)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaStreetAddress), graph.CreateLiteralNode(cp.Street)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostOfficeBoxNumber), graph.CreateLiteralNode(cp.PoBox)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostalCode), graph.CreateLiteralNode(cp.Zip)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaAddressLocality), graph.CreateLiteralNode(cp.City)),
             };
+
+            if (!string.IsNullOrWhiteSpace(cp.CompanyName))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaName), graph.CreateLiteralNode(cp.CompanyName)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.Street))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaStreetAddress), graph.CreateLiteralNode(cp.Street)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.PoBox))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostOfficeBoxNumber), graph.CreateLiteralNode(cp.PoBox)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.Zip))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostalCode), graph.CreateLiteralNode(cp.Zip)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.City))
+            {
+                triples.Add(new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaAddressLocality), graph.CreateLiteralNode(cp.City)));
+            }
 
             if (cp.ReleasePersonData)
             {
-                triples.Add(new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaMember), graph.CreateUriNode(memberUri)));
-                triples.Add(new(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaFamilyName), graph.CreateLiteralNode(cp.Surname)));
-                triples.Add(new(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaGivenName), graph.CreateLiteralNode(cp.GivenName)));
-                triples.Add(new(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaTitle), graph.CreateLiteralNode(cp.Title)));
+                triples.Add(new Triple(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaMember), graph.CreateUriNode(memberUri)));
 
-                // optional: personal email
+                if (!string.IsNullOrWhiteSpace(cp.Surname))
+                {
+                    triples.Add(new Triple(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaFamilyName), graph.CreateLiteralNode(cp.Surname)));
+                }
+
+                if (!string.IsNullOrWhiteSpace(cp.GivenName))
+                {
+                    triples.Add(new Triple(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaGivenName), graph.CreateLiteralNode(cp.GivenName)));
+                }
+
+                if (!string.IsNullOrWhiteSpace(cp.Title))
+                {
+                    triples.Add(new Triple(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaTitle), graph.CreateLiteralNode(cp.Title)));
+                }
+
                 if (!string.IsNullOrWhiteSpace(cp.PersonalEmail))
                 {
                     triples.Add(new Triple(
@@ -653,7 +682,6 @@ public class OgdExportService : IOgdExportService
                     ));
                 }
 
-                // optional: personal phone or mobile
                 if (!string.IsNullOrWhiteSpace(cp.PersonalPhone))
                 {
                     triples.Add(new Triple(
@@ -682,7 +710,6 @@ public class OgdExportService : IOgdExportService
                 ));
             }
 
-            // optional: email
             if (!string.IsNullOrWhiteSpace(cp.Email))
             {
                 triples.Add(new Triple(
@@ -692,7 +719,6 @@ public class OgdExportService : IOgdExportService
                 ));
             }
 
-            // optional: phone
             if (!string.IsNullOrWhiteSpace(cp.Phone))
             {
                 triples.Add(new Triple(
@@ -702,7 +728,6 @@ public class OgdExportService : IOgdExportService
                 ));
             }
 
-            // optional: section
             if (!string.IsNullOrWhiteSpace(cp.Section))
             {
                 triples.Add(new Triple(
