@@ -20,9 +20,7 @@ public interface IMasterDataService
     Task<IEnumerable<OfficeDto>> GetPermittedOffices();
     Task<IEnumerable<OfficeDto>> GetOfficesByName(string officeName);
     Task<IEnumerable<OccupationDto>> GetOccupationsByName(string occupation);
-    Task<IEnumerable<OfficeDto>> GetGeneralSecretariatOffices();
     Task<IEnumerable<CommitteeTypeDto>> GetCommitteeTypes();
-    Task<CommitteeTypeDto> GetCommitteeTypeById(Guid id);
     Task<IEnumerable<TermDto>> GetTerms();
     Task<IEnumerable<TermDateDto>> GetTermDates();
     Task<IEnumerable<ElectionTypeDto>> GetElectionTypes();
@@ -36,4 +34,5 @@ public interface IMasterDataService
     Task<IEnumerable<CouncilDto>> GetCouncils();
     Task<IEnumerable<WorklistTaskTypeDto>> GetWorklistTaskTypes();
     Task<IEnumerable<WorklistTaskStateDto>> GetWorklistTaskStates();
+    Task<IEnumerable<FormLetterSenderFunctionDto>> GetFormLetterSenderFunctions();
 }

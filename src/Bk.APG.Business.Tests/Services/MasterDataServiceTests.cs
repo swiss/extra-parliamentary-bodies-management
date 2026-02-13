@@ -341,21 +341,6 @@ internal class MasterDataServiceTests
     }
 
     [Test]
-    public async Task GetGeneralSecretariatOffices_WhenCalled_ShouldCallRepository()
-    {
-        _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
-        _masterDataRepository.GetOffices().Returns([
-            new OfficeBuilder().WithGermanText("Foo1").WithGermanDescription("Bar1").WithIsGeneralSecretariat(true).Build(),
-            new OfficeBuilder().WithGermanText("Foo2").WithGermanDescription("Bar2").WithIsGeneralSecretariat(false).Build()
-        ]);
-
-        var offices = (await _service.GetGeneralSecretariatOffices()).ToList();
-
-        await _masterDataRepository.Received(1).GetOffices();
-        Assert.That(offices, Has.Count.EqualTo(1));
-    }
-
-    [Test]
     public async Task GetCommitteeTypes_WhenCalled_ShouldCallRepository()
     {
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
