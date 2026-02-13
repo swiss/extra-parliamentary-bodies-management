@@ -56,8 +56,66 @@ public class ReportService : IReportService
             ReportType.AppendixFederalCouncil => await GenerateAppendixFederalCouncil(filterDto),
             ReportType.ElectoralListOnline => await _electoralListService.GenerateDocument(filterDto, "ElectoralList_Internet"),
             ReportType.ElectoralListFC => await _electoralListService.GenerateDocument(filterDto, "ElectoralList_FederalCouncil"),
+            ReportType.DecisionFederalCouncil => await GenerateDecisionFederalCouncilReport(filterDto),
             _ => await GenerateParliamentaryReport(filterDto)
         };
+    }
+
+    private async Task<(string fileName, Stream content)> GenerateDecisionFederalCouncilReport(ReportFilterParametersDto filterDto)
+    {
+        var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
+
+        var departments = await _masterDataRepository.GetDepartments();
+        departments = departments.Where(d => d.Uri != Department.BkUri).ToArray();
+
+        var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == "fr" ? "APG_Decision_Federal_Council_French" : "APG_Decision_Federal_Council_German";
+
+        var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
+
+        var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
+        var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
+
+        var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToList();
+
+        var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
+        var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
+
+        var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToList();
+
+        var nonReleasedCommissions = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == false).ToList();
+
+        var marketOrientatedCommissions = extraParliamentaryCommissions.Where(c => c.MarketOrientated == true).ToList();
+
+        var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFuture(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions);
+        var membersWith12OrMoreYearsDto = GetLongerMembershipData(membersWith12OrMoreYears);
+
+        var committeesWithMembersInFederalDuty = generalElectionCommitteesWithMembers.Where(c => c.Memberships.Any(m => m.Person!.FederalDuty)).ToList();
+
+        var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15).ToList();
+
+        var nonReleasedCommissionsDto = GetNonReleasedCommissions(nonReleasedCommissions);
+        var marketOrientatedCommissionsDto = GetMarketOrientatedMembershipData(marketOrientatedCommissions);
+        var moreThan15MembersCommitteesDto = GetCommitteesAndMembers(moreThan15MembersCommittees, ReportMembershipType.MoreThan15Members);
+        var missingGenderMembersCommitteesDto = GetCommitteesWithGenders(extraParliamentaryCommissions);
+        var missingItalianAndFrenchMembersCommitteesDto = GetCommitteesWithLanguages(extraParliamentaryCommissions);
+        var committeesWithMembersInFederalDutyDto = GetFederalDutyMembershipsWithOffice(committeesWithMembersInFederalDuty);
+
+        var decisionFederalCouncilReportDto = new DecisionFederalCouncilReportDto
+        {
+            TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + " - " + nextTermOfOfficeDate.EndDate?.Year,
+
+            NonReleasedCommissions = nonReleasedCommissionsDto,
+            MarketOrientatedCommissions = marketOrientatedCommissionsDto,
+            MoreThan15MembersCommittees = moreThan15MembersCommitteesDto,
+            MissingGenderMembersCommittees = missingGenderMembersCommitteesDto,
+            MissingLanguageMembersCommittees = missingItalianAndFrenchMembersCommitteesDto,
+            LongerDutyMembersCommittees = membersWith12OrMoreYearsDto,
+            FederalDutyMembersCommittees = committeesWithMembersInFederalDutyDto
+        };
+
+        var documentStream = await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", decisionFederalCouncilReportDto, "decisionFederalCouncil");
+
+        return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.DecisionFederalCouncil_Filename}.docx", documentStream);
     }
 
     private async Task<(string fileName, Stream content)> GenerateParliamentaryReport(ReportFilterParametersDto filterDto)
@@ -91,7 +149,7 @@ public class ReportService : IReportService
                                                                            ((c.BeginDate > nextTermOfOfficeDate.BeginDate && c.BeginDate < nextTermOfOfficeDate.EndDate) || (c.EndDate < nextTermOfOfficeDate.EndDate && c.EndDate > nextTermOfOfficeDate.BeginDate))).ToList();
         var disbandedReportCommittees = disbandedCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
 
-        var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFuture(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions, departments);
+        var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFutureByDepartment(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions, departments);
 
         var memberCountWith12OrMoreYears = membersWith12OrMoreYears
             .SelectMany(d => d.Committees!)
@@ -257,7 +315,7 @@ public class ReportService : IReportService
         var missingGenderMembersCommitteesCount = missingGenderMembersCommitteesDto.SelectMany(c => c.Committees!).Count();
         var missingItalianAndFrenchMembersCommitteesCount = missingItalianAndFrenchMembersCommitteesDto.SelectMany(c => c.Committees!).Count();
 
-        var committeesWithMembersWithLongerDutyDto = SummarizeMembershipsFromPresentAndFuture(reportCommittees, extraParliamentaryCommissions, departments);
+        var committeesWithMembersWithLongerDutyDto = SummarizeMembershipsFromPresentAndFutureByDepartment(reportCommittees, extraParliamentaryCommissions, departments);
 
         var committeesWithMembersWithShorterDutyDto = GetCommitteesAndMembersByDepartment(extraParliamentaryCommissions, departments, ReportMembershipType.ShorterDuty, geTermOfOfficeDate);
 
@@ -369,7 +427,6 @@ public class ReportService : IReportService
 
             dtoDict[department.GetText()].CommitteeTypes = committeeTypeList.OrderBy(ct => ct.CommitteeType);
         }
-
         return departmentList;
     }
 
@@ -425,7 +482,6 @@ public class ReportService : IReportService
 
             dtoDict[department.GetText()].Committees = committeeList;
         }
-
         return departmentList;
     }
 
@@ -475,11 +531,41 @@ public class ReportService : IReportService
                     }
                 }
             }
-
             dtoDict[department.GetText()].Committees = committeeList;
         }
-
         return departmentList;
+    }
+
+    private static List<ReportCommitteeGenderMissingDto> GetCommitteesWithGenders(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    {
+        var committeeList = new List<ReportCommitteeGenderMissingDto>();
+
+        foreach (var committee in committees)
+        {
+            if (committee.ActiveMemberCount > 0)
+            {
+                var femalePercentage = Math.Round((decimal)committee.FemaleCount / committee.ActiveMemberCount * 100, 2);
+                var malePercentage = Math.Round((decimal)committee.MaleCount / committee.ActiveMemberCount * 100, 2);
+
+                if (femalePercentage < (decimal)committee.CommitteeType?.FemaleThreshold! || malePercentage < (decimal)committee.CommitteeType?.MaleThreshold!)
+                {
+                    var committeeDto = new ReportCommitteeGenderMissingDto
+                    {
+                        Name = committee.GetDescription(),
+                        MemberCount = committee.Memberships.Count,
+                        Measure = committee.MeasuresGenders,
+                        Justification = committee.JustificationGenders,
+                        FemaleMissingPercentage = femalePercentage,
+                        MaleMissingPercentage = malePercentage,
+                    };
+                    committeeList.Add(committeeDto);
+                }
+            }
+        }
+
+        committeeList = committeeList.OrderBy(c => c.Name).ToList();
+
+        return committeeList;
     }
 
     private async Task<List<ReportDepartmentWithCommitteesAndLanguagesDto>> GetCommitteesWithLanguagesByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees, IEnumerable<Department> departments)
@@ -555,8 +641,62 @@ public class ReportService : IReportService
 
             dtoDict[department.GetText()].Committees = committeeList;
         }
-
         return departmentList;
+    }
+
+    private static List<ReportCommitteeLanguageMissingDto> GetCommitteesWithLanguages(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    {
+        var committeeList = new List<ReportCommitteeLanguageMissingDto>();
+
+        foreach (var committee in committees)
+        {
+            if (committee.ActiveMemberCount > 0)
+            {
+                var italianMissing = false;
+                var frenchMissing = false;
+
+                if (committee.CommitteeType!.GermanMinimalThreshold > 0)
+                {
+                    // minimal members per language
+                    italianMissing = committee.ItalianCount < committee.CommitteeType!.ItalianMinimalThreshold;
+                    frenchMissing = committee.FrenchCount < committee.CommitteeType!.FrenchMinimalThreshold;
+                }
+                else
+                {
+                    // minimal member percentage per language
+                    var italian = Math.Round((decimal)committee.ItalianCount / committee.ActiveMemberCount * 100, 2);
+                    var french = Math.Round((decimal)committee.FrenchCount / committee.ActiveMemberCount * 100, 2);
+
+                    if (italian < (decimal)committee.CommitteeType!.ItalianThresholdPercentage!)
+                    {
+                        italianMissing = true;
+                    }
+
+                    if (french < (decimal)committee.CommitteeType!.FrenchThresholdPercentage!)
+                    {
+                        frenchMissing = true;
+                    }
+                }
+
+                if (italianMissing || frenchMissing)
+                {
+                    var committeeDto = new ReportCommitteeLanguageMissingDto
+                    {
+                        Name = committee.GetDescription(),
+                        MemberCount = committee.Memberships.Count,
+                        Measure = committee.MeasuresLanguages,
+                        Justification = committee.JustificationLanguages,
+                        ItalianMissing = italianMissing,
+                        FrenchMissing = frenchMissing,
+                    };
+
+                    committeeList.Add(committeeDto);
+                }
+            }
+        }
+        committeeList = committeeList.OrderBy(c => c.Name).ToList();
+
+        return committeeList;
     }
 
     private async Task<List<ReportDepartmentWithCommitteesAndLanguagesDto>> GetCommitteesWithLanguagePercentagesByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees, IEnumerable<Department> departments)
@@ -664,6 +804,82 @@ public class ReportService : IReportService
         return departmentList;
     }
 
+    private static List<ReportCommitteeWithFreeTextDto> GetNonReleasedCommissions(IEnumerable<ReportGeneralElectionCommitteeDto> nonReleasedCommissions)
+    {
+        var committees = nonReleasedCommissions
+            .Select(c => new ReportCommitteeWithFreeTextDto
+            {
+                Name = c.GetDescription(),
+            })
+            .OrderBy(c => c.Name)
+            .ToList();
+
+        return committees;
+    }
+
+    private static List<ReportCommitteeWithFreeTextDto> GetFederalDutyMembershipsWithOffice(IEnumerable<ReportGeneralElectionCommitteeDto> generalElectionCommitteesWithMembers)
+    {
+        var committees = generalElectionCommitteesWithMembers
+            .Select(c => new ReportCommitteeWithFreeTextDto
+            {
+                Name = c.GetDescription(),
+                FreeText = string.Join(", ",
+                    c.Memberships
+                     .Where(m => m.Person != null && m.Person.FederalDuty)
+                     .Select(m => $"{m.Person!.Surname}, {m.Person!.GivenName} ({m.Person?.Office?.GetDescription()} {m.Person?.Office?.Department?.GetDescription()})"))
+            })
+            .OrderBy(c => c.Name)
+            .ToList();
+
+        committees = committees.OrderBy(c => c.Name).ToList();
+
+        return committees;
+    }
+
+    private static List<ReportCommitteeWithFreeTextDto> GetMarketOrientatedMembershipData(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    {
+        return committees
+            .Select(c => new ReportCommitteeWithFreeTextDto
+            {
+                Name = c.GetDescription(),
+                FreeText = string.Join(", ",
+                    c.Memberships
+                    .OrderBy(m => m.Function!.Sort)
+                    .Select(m => $"{m.Surname} {m.GivenName}, {m.Function!.GetText()}, {m.MaximumEmploymentLevel}%")
+                )
+            })
+            .OrderBy(c => c.Name)
+            .ToList();
+    }
+
+    private static List<ReportCommitteeWithFreeTextDto> GetLongerMembershipData(IEnumerable<ReportCommitteeWithMemberDetailDto> committees)
+    {
+        return committees
+            .Select(c => new ReportCommitteeWithFreeTextDto
+            {
+                Name = c.Name,
+                FreeText = string.Join(", ",
+                    c.Members!
+                    .OrderBy(m => m.Surname)
+                    .Select(m => $"{m.Surname} {m.GivenName}")
+                )
+            })
+            .OrderBy(c => c.Name)
+            .ToList();
+    }
+
+    private static List<ReportCommitteeWithMemberDetailDto> GetCommitteesAndMembers(IEnumerable<ReportGeneralElectionCommitteeDto> committees, ReportMembershipType type, TermOfOfficeDate? termOfOffice = null)
+    {
+        return committees
+            .Select(c => new ReportCommitteeWithMemberDetailDto
+            {
+                Name = c.GetDescription(),
+                MemberCount = c.ActiveMemberCount
+            })
+            .OrderBy(c => c.Name)
+            .ToList();
+    }
+
     private static IEnumerable<ReportMembershipDto> GetMembershipsByType(ReportGeneralElectionCommitteeDto committee, ReportMembershipType type, TermOfOfficeDate? termOfOffice = null)
     {
         if (type == ReportMembershipType.ShorterDuty)
@@ -753,7 +969,7 @@ public class ReportService : IReportService
         return dtoList;
     }
 
-    private static List<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFuture(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
+    private static List<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFutureByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
         IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers, IEnumerable<Department> departments)
     {
         // which members we have in the future?
@@ -830,13 +1046,13 @@ public class ReportService : IReportService
         var result = departments.Select(dept =>
         {
             // Get all committees in this department (even if empty)
-            var committeesInDept = groupedByDepartment
+            var committeesInDepartment = groupedByDepartment
                 .Where(g => g.Key!.Id == dept.Id)
                 .SelectMany(g => g)
                 .ToList();
 
             // Map committees with filtered members
-            var committeesDto = committeesInDept.Select(cwm => new ReportCommitteeWithMemberDetailDto
+            var committeesDto = committeesInDepartment.Select(cwm => new ReportCommitteeWithMemberDetailDto
             {
                 Name = cwm.Committee.GetDescription(),
                 MemberCount = cwm.QualifiedMembers.Count,
@@ -857,5 +1073,93 @@ public class ReportService : IReportService
         }).ToList();
 
         return result;
+    }
+
+    private static List<ReportCommitteeWithMemberDetailDto> SummarizeMembershipsFromPresentAndFuture(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
+        IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers)
+    {
+        // which members we have in the future?
+        var reportGeneralElectionCommitteeDtos = geCommitteesWithMembers.ToList();
+        var futureLookup =
+            reportGeneralElectionCommitteeDtos
+                .SelectMany(fc => fc.Memberships.Select(m => new
+                {
+                    fc.CommitteeId,
+                    m.PersonId
+                }))
+                .ToHashSet();
+
+        // select only the members in the past, which are also in the future...
+        var filteredPresentCommittees =
+            committees
+                .Select(c => new ReportGeneralElectionCommitteeDto
+                {
+                    CommitteeId = c.CommitteeId,
+                    Memberships = c.Memberships
+                        .Where(m => futureLookup.Contains(
+                            new { c.CommitteeId, m.PersonId }))
+                        .ToList(),
+                    TermOfOfficeDateId = c.TermOfOfficeDateId,
+                    TermOfOfficeDate = c.TermOfOfficeDate,
+                    IsValidated = c.IsValidated,
+                    IsDeleted = c.IsDeleted,
+                    DescriptionGerman = c.DescriptionGerman,
+                    DescriptionFrench = c.DescriptionFrench,
+                    DescriptionItalian = c.DescriptionItalian,
+                    DescriptionRomansh = c.DescriptionRomansh,
+                    DepartmentId = c.DepartmentId,
+                    Department = c.Department,
+                    OfficeId = c.OfficeId,
+                    Office = c.Office,
+                })
+                // If a committee has no relevant members → remove it
+                .Where(c => c.Memberships.Count != 0)
+                .ToList();
+
+        // Combine past/present with the future..
+        var allCommittees = filteredPresentCommittees.Concat(reportGeneralElectionCommitteeDtos);
+
+        var committeesWithQualifiedMembers = allCommittees.Select(c =>
+        {
+            var membersWithDuration = c.Memberships
+                .GroupBy(m => m.PersonId)
+                .Select(g =>
+                {
+                    var person = g.First().Person!; // get the Person object from first membership in the group
+
+                    var totalDurationYears = g.Sum(m => MembershipTermCalculator.CalculateEstimatedTermInYears(m.BeginDate, m.EndDate));
+
+                    return new
+                    {
+                        Person = person,
+                        TotalDurationYears = totalDurationYears
+                    };
+                })
+                .Where(m => m.TotalDurationYears >= 12)
+                .ToList();
+
+            return new
+            {
+                Committee = c,
+                QualifiedMembers = membersWithDuration
+            };
+        });
+
+        // Map committees with filtered members
+        var committeesDto = committeesWithQualifiedMembers.Select(cwm => new ReportCommitteeWithMemberDetailDto
+        {
+            Name = cwm.Committee.GetDescription(),
+            MemberCount = cwm.QualifiedMembers.Count,
+            Members = cwm.QualifiedMembers.Select(m => new ReportMembershipDto
+            {
+                Surname = m.Person.Surname,
+                GivenName = m.Person.GivenName,
+                FreeText = $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
+            }).ToList()
+        })
+        .Where(cwm => cwm.MemberCount > 0)
+        .ToList();
+
+        return committeesDto;
     }
 }
