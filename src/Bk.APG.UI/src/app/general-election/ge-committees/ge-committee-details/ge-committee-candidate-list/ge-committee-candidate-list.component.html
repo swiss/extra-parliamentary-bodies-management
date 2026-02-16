@@ -12,24 +12,100 @@
         <ob-alert type="info">{{ 'generalElection.committee.candidateList.noGeneralElectionStartedForCommittee' | translate }}</ob-alert>
     }
 
-    @if (validationErrors().length) {
-        @for (error of validationErrors(); track error) {
+    @let validationErrors = validationResult()?.errors ?? [];
+    @if (validationErrors.length) {
+        @for (error of validationErrors; track error) {
             <ob-alert type="error">{{ error }}</ob-alert>
         }
     }
 
-    @if (areJustificationsMissing()) {
+    @if (validationResult()?.areJustificationsMissing) {
         <ob-alert type="warning">{{ 'generalElection.committee.candidateList.justificationsMissingTasksCreated' | translate }}</ob-alert>
+    }
+    @if (validationResult()?.areContactPointsMissing) {
+        <ob-alert type="warning">{{ 'generalElection.committee.candidateList.contactPointsMissingTasksCreated' | translate }}</ob-alert>
+    }
+    @if (validationResult()?.isAdditionalMembershipValidationRequired) {
+        <ob-alert type="info">{{ 'generalElection.committee.candidateList.additionalMembershipValidationRequiredTasksCreated' | translate }}</ob-alert>
+    }
+
+    @let personsWithMissingInterests = validationResult()?.personsWithMissingInterests ?? [];
+    @if (personsWithMissingInterests.length) {
+        <ob-alert type="warning">
+            <div class="alert-header">
+                <strong>{{ 'generalElection.committee.candidateList.missingInterests' | translate }}</strong>
+                <button
+                    mat-icon-button
+                    (click)="clearValidationList('personsWithMissingInterests')"
+                    [matTooltip]="'common.hide' | translate"
+                    [matTooltipPosition]="'below'"
+                >
+                    <mat-icon svgIcon="xmark" class="ob-icon" />
+                </button>
+            </div>
+            <ul>
+                @for (person of personsWithMissingInterests; track person.id) {
+                    <li>{{ person.surname }} {{ person.givenName }}</li>
+                }
+            </ul>
+            <div>{{ 'generalElection.committee.candidateList.missingInterests.taskCreated' | translate }}</div>
+        </ob-alert>
+    }
+
+    @let personsWithMissingBaseData = validationResult()?.personsWithMissingBaseData ?? [];
+    @if (personsWithMissingBaseData.length) {
+        <ob-alert type="warning">
+            <div class="alert-header">
+                <strong>{{ 'generalElection.committee.candidateList.missingBaseData' | translate }}</strong>
+                <button
+                    mat-icon-button
+                    (click)="clearValidationList('personsWithMissingBaseData')"
+                    [matTooltip]="'common.hide' | translate"
+                    [matTooltipPosition]="'below'"
+                >
+                    <mat-icon svgIcon="xmark" class="ob-icon" />
+                </button>
+            </div>
+            <ul>
+                @for (person of personsWithMissingBaseData; track person.id) {
+                    <li>{{ person.surname }} {{ person.givenName }}</li>
+                }
+            </ul>
+            <div>{{ 'generalElection.committee.candidateList.missingBaseData.taskCreated' | translate }}</div>
+        </ob-alert>
+    }
+
+    @let personsWithMembershipValidationIssues = validationResult()?.personsWithMembershipValidationIssues ?? [];
+    @if (personsWithMembershipValidationIssues.length) {
+        <ob-alert type="warning">
+            <div class="alert-header">
+                <strong>{{ 'generalElection.committee.candidateList.membershipValidationIssues' | translate }}</strong>
+                <button
+                    mat-icon-button
+                    (click)="clearValidationList('personsWithMembershipValidationIssues')"
+                    [matTooltip]="'common.hide' | translate"
+                    [matTooltipPosition]="'below'"
+                >
+                    <mat-icon svgIcon="xmark" class="ob-icon" />
+                </button>
+            </div>
+            <ul>
+                @for (person of personsWithMembershipValidationIssues; track person.id) {
+                    <li>{{ person.surname }} {{ person.givenName }}</li>
+                }
+            </ul>
+            <div>{{ 'generalElection.committee.candidateList.membershipValidationIssues.taskCreated' | translate }}</div>
+        </ob-alert>
     }
 </div>
 
 <div class="duplicates">
-    @if (personDuplicates.length > 0) {
+    @if (personDuplicates().length > 0) {
         <mat-card appearance="outlined" class="mat-card-warning">
-            <mat-card-content
-                >{{ 'person.create.validate.warning' | translate }}
+            <mat-card-content>
+                <strong>{{ 'person.create.validate.warning' | translate }}</strong>
                 <ul>
-                    @for (duplicate of personDuplicates; track duplicate) {
+                    @for (duplicate of personDuplicates(); track duplicate) {
                         <li>
                             {{ 'generalElection.committee.candidateList.duplicate.recorded' | translate }} {{ duplicate.membershipCandidateToCheck.surname }}
                             {{ duplicate.membershipCandidateToCheck.givenName }} ({{ duplicate.membershipCandidateToCheck.birthYear }},
@@ -61,48 +137,56 @@
                 <div>{{ 'generalElection.committee.candidateList.duplicate.hint' | translate }}</div>
                 <mat-checkbox [(ngModel)]="duplicateCheckConfirmed">
                     {{ 'generalElection.committee.candidateList.duplicate.confirm' | translate }}
-                </mat-checkbox></mat-card-content
-            >
+                </mat-checkbox>
+            </mat-card-content>
         </mat-card>
     }
 
+    @let existingPersons = validationResult()?.existingPersons ?? [];
     @if (existingPersons.length > 0) {
-        <mat-card appearance="outlined" [ngClass]="personDuplicates.length > 0 ? 'mat-card-warning' : 'mat-card-success'">
-            <mat-card-content
-                >{{ 'generalElection.committee.candidateList.existingPersons.hint' | translate }}
-                <button
-                    mat-icon-button
-                    (click)="clearExistingPersonList()"
-                    [matTooltip]="'common.hide' | translate"
-                    class="close-btn"
-                    [matTooltipPosition]="'below'"
-                >
-                    <mat-icon svgIcon="xmark" class="ob-icon" />
-                </button>
+        <mat-card appearance="outlined" [ngClass]="personDuplicates().length > 0 ? 'mat-card-warning' : 'mat-card-success'">
+            <mat-card-content>
+                <div class="alert-header">
+                    <strong>{{ 'generalElection.committee.candidateList.existingPersons.hint' | translate }}</strong>
+                    <button
+                        mat-icon-button
+                        (click)="clearValidationList('existingPersons')"
+                        [matTooltip]="'common.hide' | translate"
+                        class="close-btn"
+                        [matTooltipPosition]="'below'"
+                    >
+                        <mat-icon svgIcon="xmark" class="ob-icon" />
+                    </button>
+                </div>
 
                 <ul>
-                    @for (person of existingPersons; track person) {
+                    @for (person of existingPersons; track person.id) {
                         <li>{{ person.surname }} {{ person.givenName }} ({{ person.birthYear }}, {{ person.language }}, {{ person.gender }})<br /></li>
                     }
                 </ul>
             </mat-card-content>
         </mat-card>
     }
+
+    @let createdPersons = validationResult()?.createdPersons ?? [];
     @if (createdPersons.length > 0) {
-        <mat-card appearance="outlined" [ngClass]="personDuplicates.length > 0 ? 'mat-card-warning' : 'mat-card-success'">
-            <mat-card-content
-                >{{ 'generalElection.committee.candidateList.createdPersons.hint' | translate }}
-                <button
-                    mat-icon-button
-                    (click)="clearCreatedPersonList()"
-                    [matTooltip]="'common.hide' | translate"
-                    class="close-btn"
-                    [matTooltipPosition]="'below'"
-                >
-                    <mat-icon svgIcon="xmark" class="ob-icon" />
-                </button>
+        <mat-card appearance="outlined" [ngClass]="personDuplicates().length > 0 ? 'mat-card-warning' : 'mat-card-success'">
+            <mat-card-content>
+                <div class="alert-header">
+                    <strong>{{ 'generalElection.committee.candidateList.createdPersons.hint' | translate }}</strong>
+                    <button
+                        mat-icon-button
+                        (click)="clearValidationList('createdPersons')"
+                        [matTooltip]="'common.hide' | translate"
+                        class="close-btn"
+                        [matTooltipPosition]="'below'"
+                    >
+                        <mat-icon svgIcon="xmark" class="ob-icon" />
+                    </button>
+                </div>
+
                 <ul>
-                    @for (person of createdPersons; track person) {
+                    @for (person of createdPersons; track person.id) {
                         <li>
                             {{ person.surname }} {{ person.givenName }} ({{ person.birthYear }}, {{ person.language }}, {{ person.gender }})
                             <mat-icon svgIcon="checkmark" class="ob-icon" /> <br />

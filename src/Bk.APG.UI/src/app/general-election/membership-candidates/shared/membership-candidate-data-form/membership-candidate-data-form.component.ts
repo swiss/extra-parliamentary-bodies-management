@@ -138,6 +138,8 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
         this.membershipCandidateForm.controls.requirementsProfile.patchValue(modification.requirementsProfile, {
             emitEvent: false,
         });
+
+        this.membershipCandidateForm.markAllAsTouched({emitEvent: false});
     }
 
     getFunctionText(f: FunctionDto): string {
@@ -180,6 +182,21 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
             Validators.min(1),
             Validators.max(100),
             conditionalValidator(() => this.generalElectionCommittee()?.marketOrientated === true, Validators.required),
+        ]);
+        form.controls.justificationLongerDuty.setValidators([
+            conditionalValidator(() => this.membershipCandidateModification()?.needsLongerDutyJustification === true, Validators.required),
+        ]);
+        form.controls.justificationShorterDuty.setValidators([
+            conditionalValidator(() => this.membershipCandidateModification()?.needsShorterDutyJustification === true, Validators.required),
+        ]);
+        form.controls.justificationMemberInFederalDuty.setValidators([
+            conditionalValidator(() => this.membershipCandidateModification()?.needsFederalDutyJustification === true, Validators.required),
+        ]);
+        form.controls.justificationMemberInFederalAssembly.setValidators([
+            conditionalValidator(() => this.membershipCandidateModification()?.needsFederalAssemblyJustification === true, Validators.required),
+        ]);
+        form.controls.requirementsProfile.setValidators([
+            conditionalValidator(() => this.membershipCandidateModification()?.needsRequirementsProfile === true, Validators.required),
         ]);
 
         if (!this.selectedPerson()) {
