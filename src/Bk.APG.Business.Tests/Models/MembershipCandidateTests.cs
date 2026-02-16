@@ -14,9 +14,11 @@ internal class MembershipCandidateTests
     {
         var person = new PersonBuilder()
             .WithNoInterest(false)
+            .WithInterests([])
             .WithMemberships([
                 new MembershipBuilder()
                     .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)))
+                    .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(+1)))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])
