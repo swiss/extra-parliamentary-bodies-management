@@ -642,6 +642,18 @@ export class PersonDataFormComponent implements OnInit {
         this.filteredOccupationDb.set([]);
     }
 
+    onOccupationInputBlur(input: HTMLInputElement): void {
+        // Clear the input if user left without selecting an option
+        // the timeout is important as it shouldn't be cleared before the selected event is processed
+        setTimeout(() => {
+            if (input.value) {
+                input.value = '';
+                this.personForm.controls.occupations.setValue('');
+                this.filteredOccupationDb.set([]);
+            }
+        }, 500);
+    }
+
     private checkIfAddressIsEmpty(controlId: AddressControlId): boolean {
         return (
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.city.value) &&
