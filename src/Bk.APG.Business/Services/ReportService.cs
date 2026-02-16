@@ -845,6 +845,8 @@ public class ReportService : IReportService
                 FreeText = string.Join(", ",
                     c.Memberships
                     .OrderBy(m => m.Function!.Sort)
+                    .ThenBy(m => m.Surname)
+                    .ThenBy(m => m.GivenName)
                     .Select(m => $"{m.Surname} {m.GivenName}, {m.Function!.GetText()}, {m.MaximumEmploymentLevel}%")
                 )
             })
