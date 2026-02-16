@@ -74,6 +74,8 @@ public static class CommitteeMapper
             .Where(x => x is { IsActive: true, IsDeleted: false })
             .ToArray();
         var activeMembersCount = activeMembers.Length;
+        var committeeType = committee.CommitteeType!;
+        var isPercentageBased = committeeType.GermanThresholdPercentage is not null;
 
         var committeeDetailDto = new CommitteeDetailDto
         {
@@ -120,14 +122,15 @@ public static class CommitteeMapper
             MaleQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Gender!.Uri == Gender.Male) / activeMembersCount * 100 : 0,
             JustificationGenders = committee.JustificationGenders,
             MeasuresGenders = committee.MeasuresGenders,
-            GermanThreshold = committee.CommitteeType!.GermanThresholdPercentage is not null ? committee.CommitteeType!.GermanThresholdPercentage : committee.CommitteeType!.GermanMinimalThreshold,
-            GermanQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.GermanUri) / activeMembersCount * 100 : 0,
-            FrenchThreshold = committee.CommitteeType!.FrenchThresholdPercentage is not null ? committee.CommitteeType!.FrenchThresholdPercentage : committee.CommitteeType!.FrenchMinimalThreshold,
-            FrenchQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.FrenchUri) / activeMembersCount * 100 : 0,
-            ItalianThreshold = committee.CommitteeType!.ItalianThresholdPercentage is not null ? committee.CommitteeType!.ItalianThresholdPercentage : committee.CommitteeType!.ItalianMinimalThreshold,
-            ItalianQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.ItalianUri) / activeMembersCount * 100 : 0,
-            RomanshThreshold = committee.CommitteeType!.RomanshThresholdPercentage is not null ? committee.CommitteeType!.RomanshThresholdPercentage : committee.CommitteeType!.RomanshMinimalThreshold,
-            RomanshQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.RomanshUri) / activeMembersCount * 100 : 0,
+            IsPercentageBased = isPercentageBased,
+            GermanThreshold = (isPercentageBased ? committeeType.GermanThresholdPercentage : committeeType.GermanMinimalThreshold) ?? 0,
+            GermanQuota = isPercentageBased ? committee.GermanQuota : committee.GermanCount,
+            FrenchThreshold = (isPercentageBased ? committeeType.FrenchThresholdPercentage : committeeType.FrenchMinimalThreshold) ?? 0,
+            FrenchQuota = isPercentageBased ? committee.FrenchQuota : committee.FrenchCount,
+            ItalianThreshold = (isPercentageBased ? committeeType.ItalianThresholdPercentage : committeeType.ItalianMinimalThreshold) ?? 0,
+            ItalianQuota = isPercentageBased ? committee.ItalianQuota : committee.ItalianCount,
+            RomanshThreshold = (isPercentageBased ? committeeType.RomanshThresholdPercentage : committeeType.RomanshMinimalThreshold) ?? 0,
+            RomanshQuota = isPercentageBased ? committee.RomanshQuota : committee.RomanshCount,
             JustificationLanguages = committee.JustificationLanguages,
             MeasuresLanguages = committee.MeasuresLanguages,
             FederalInstitution = committee.FederalInstitution,
