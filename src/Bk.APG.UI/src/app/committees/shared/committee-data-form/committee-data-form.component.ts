@@ -316,6 +316,17 @@ export class CommitteeDataFormComponent implements OnInit {
         this.committeeForm.controls.vacanciesInGeneralElection.updateValueAndValidity();
     }
 
+    onMembershipAdditionInGeneralElectionInputBlur(input: HTMLInputElement): void {
+        // Clear the input if user left without selecting an option
+        // the timeout is important as it shouldn't be cleared before the selected event is processed
+        setTimeout(() => {
+            if (input.value) {
+                input.value = '';
+                this.membershipAdditionsInGeneralElectionInput.setValue('');
+            }
+        }, 500);
+    }
+
     protected getMembershipAdditionInGeneralElection(id: string) {
         return this.allMembershipAdditions().find(a => a.id === id);
     }

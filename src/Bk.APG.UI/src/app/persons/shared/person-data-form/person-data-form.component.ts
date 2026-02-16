@@ -649,10 +649,9 @@ export class PersonDataFormComponent implements OnInit {
             if (input.value) {
                 input.value = '';
                 this.personForm.controls.occupations.setValue('');
-
                 this.filteredOccupationDb.set([]);
             }
-        }, 100);
+        }, 500);
     }
 
     private checkIfAddressIsEmpty(controlId: AddressControlId): boolean {

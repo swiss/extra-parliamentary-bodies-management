@@ -222,9 +222,11 @@
                             </mat-chip-row>
                         }
                         <input
+                            #membershipAdditionsInGeneralElectionInputElement
                             [matAutocomplete]="membershipAdditionsInGeneralElectionAuto"
                             [formControl]="membershipAdditionsInGeneralElectionInput"
                             [matChipInputFor]="chipGrid"
+                            (blur)="onMembershipAdditionInGeneralElectionInputBlur(membershipAdditionsInGeneralElectionInputElement)"
                         />
                     </mat-chip-grid>
                     <mat-autocomplete
