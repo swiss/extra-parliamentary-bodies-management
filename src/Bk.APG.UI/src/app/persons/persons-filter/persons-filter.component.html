@@ -3,7 +3,10 @@
     <div class="ob-span-3">
         <mat-form-field>
             <mat-label>{{ 'persons.filter.search' | translate }}</mat-label>
-            <input title="{{ 'persons.filter.search' | translate }}" type="text" matInput [formControl]="form.controls.freeText" />
+            <input title="{{ 'persons.filter.search' | translate }}" #freeText type="text" matInput [formControl]="form.controls.freeText" />
+            <button type="button" role="button" [obInputClear]="freeText" (onClear)="clearFreeText()">
+                <mat-icon svgIcon="xmark_circle" class="ob-icon" />
+            </button>
         </mat-form-field>
     </div>
     <!-- Aktive Mitgliedschaft -->
