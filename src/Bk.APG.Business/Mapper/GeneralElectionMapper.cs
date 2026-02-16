@@ -192,6 +192,11 @@ public static class GeneralElectionMapper
             Modified = membership.Modified,
             ModifiedBy = membership.ModifiedBy,
             InCorrelationWithFederalDuty = membership.InCorrelationWithFederalDuty,
+            JustificationLongerDuty = membership.JustificationLongerDuty,
+            JustificationShorterDuty = membership.JustificationShorterDuty,
+            JustificationMemberInFederalAssembly = membership.JustificationMemberInFederalAssembly,
+            JustificationMemberInFederalDuty = membership.JustificationMemberInFederalDuty,
+            RequirementsProfile = membership.RequirementsProfile,
         };
     }
 
