@@ -3,14 +3,14 @@ import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
-import {MatFormField, MatLabel, MatInput} from '@angular/material/input';
-import {MatSelect, MatOption} from '@angular/material/select';
+import {MatFormField, MatInput, MatLabel} from '@angular/material/input';
+import {MatOption, MatSelect} from '@angular/material/select';
 import {MatTooltip} from '@angular/material/tooltip';
 import {Router} from '@angular/router';
 import {PersonFilterForm} from '@api/PersonFilterForm';
 import {PersonFilterParameters} from '@api/PersonFilterParameters';
 import {TranslatePipe} from '@ngx-translate/core';
-import {ObButtonDirective} from '@oblique/oblique';
+import {ObButtonDirective, ObInputClearDirective} from '@oblique/oblique';
 import {MasterDataService} from '@shared/master-data.service';
 import {SearchStorageService} from '@shared/services/search-storage.service';
 import {personSearchStorageKey} from '@shared/storage-keys';
@@ -23,7 +23,20 @@ import {Role} from '../../auth/Role';
     changeDetection: ChangeDetectionStrategy.OnPush,
     templateUrl: './persons-filter.component.html',
     styleUrl: './persons-filter.component.scss',
-    imports: [ReactiveFormsModule, MatFormField, MatLabel, MatInput, MatSelect, MatOption, MatButton, ObButtonDirective, MatIcon, TranslatePipe, MatTooltip],
+    imports: [
+        ReactiveFormsModule,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatSelect,
+        MatOption,
+        MatButton,
+        ObButtonDirective,
+        MatIcon,
+        TranslatePipe,
+        MatTooltip,
+        ObInputClearDirective,
+    ],
 })
 export class PersonsFilterComponent {
     @Output() readonly filter = new EventEmitter<PersonFilterParameters>();
@@ -77,6 +90,10 @@ export class PersonsFilterComponent {
 
     create(): void {
         void this.router.navigate(['persons/create']);
+    }
+
+    clearFreeText(): void {
+        this.form.controls.freeText.patchValue(null);
     }
 
     setupPersonFilterForm(): FormGroup<PersonFilterForm> {
