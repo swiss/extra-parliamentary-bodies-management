@@ -15,7 +15,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {ObButtonDirective, ObErrorMessagesDirective} from '@oblique/oblique';
 import {ErrorService} from '@shared/error-service.service';
 import {MasterDataService} from '@shared/master-data.service';
-import {debounceTime, filter, finalize, of, switchMap} from 'rxjs';
+import {debounceTime, finalize, of, switchMap} from 'rxjs';
 import {PersonInterestsService} from '../person-interests.service';
 
 @Component({
