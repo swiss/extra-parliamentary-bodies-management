@@ -1,9 +1,4 @@
-using Lucene.Net.QueryParsers.Flexible.Core.Nodes;
-using Lucene.Net.Search;
-using Microsoft.AspNetCore.Http.HttpResults;
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 #nullable disable
 
