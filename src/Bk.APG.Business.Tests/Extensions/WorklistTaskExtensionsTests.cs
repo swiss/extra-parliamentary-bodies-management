@@ -95,17 +95,27 @@ internal class WorklistTaskExtensionsTests
                 .WithItalianDescription("Committee A")
                 .WithRomanschDescription("Committee A")
                 .Build();
-            _worklistTask = new WorklistTaskBuilder()
-                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonBaseData)
-                .Build();
-            _worklistTask.Person = person;
-            _worklistTask.PersonId = person.Id;
-            _worklistTask.Committee = committee;
-            _worklistTask.CommitteeId = committee.Id;
+            var personRelatedTaskTypes = new[]
+            {
+                WorklistTaskType.GeneralElectionPersonBaseData,
+                WorklistTaskType.GeneralElectionPersonInterests,
+                WorklistTaskType.GeneralElectionMembershipValidation,
+            };
 
-            var result = _worklistTask.GetSection();
+            foreach (var worklistTaskTypeId in personRelatedTaskTypes)
+            {
+                _worklistTask = new WorklistTaskBuilder()
+                    .WithWorklistTaskTypeId(worklistTaskTypeId)
+                    .Build();
+                _worklistTask.Person = person;
+                _worklistTask.PersonId = person.Id;
+                _worklistTask.Committee = committee;
+                _worklistTask.CommitteeId = committee.Id;
 
-            Assert.That(result, Is.EqualTo("Jane Doe; Committee A"));
+                var result = _worklistTask.GetSection();
+
+                Assert.That(result, Is.EqualTo("Jane Doe; Committee A"), $"Failed for task type: {worklistTaskTypeId}");
+            }
         }
 
         [Test]
