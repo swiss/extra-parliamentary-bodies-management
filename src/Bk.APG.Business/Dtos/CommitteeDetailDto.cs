@@ -50,6 +50,7 @@ public class CommitteeDetailDto
     public string? JustificationGenders { get; set; }
     public string? MeasuresGenders { get; set; }
     public string? GeneralGenderMeasure { get; set; }
+    public bool IsPercentageBased { get; set; }
     public double? GermanThreshold { get; set; }
     public double? GermanQuota { get; set; }
     public double? FrenchThreshold { get; set; }
