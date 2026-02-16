@@ -14,6 +14,12 @@ public class InformationController : ControllerBase
     {
         var version = Environment.GetEnvironmentVariable(ApplicationVersionEnvVariableName);
 
+        var parts = version?.Split('_') ?? [];
+        if (parts.Length == 2)
+        {
+            version = $"{parts[0]} ({parts[1]})";
+        }
+
         return Ok(new VersionDto { ApplicationVersion = version });
     }
 }

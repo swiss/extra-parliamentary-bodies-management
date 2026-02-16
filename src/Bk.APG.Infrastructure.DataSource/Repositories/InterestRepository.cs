@@ -99,6 +99,7 @@ public class InterestRepository : IInterestRepository
         existing.InterestLegalFormId = update.InterestLegalFormId;
         existing.InterestCommitteeId = update.InterestCommitteeId;
         existing.InterestFunctionId = update.InterestFunctionId;
+        existing.UidOrganisationId = update.UidOrganisationId;
         existing.LegalFormId = update.LegalFormId;
         existing.BeginDate = update.BeginDate;
         existing.EndDate = update.EndDate;
