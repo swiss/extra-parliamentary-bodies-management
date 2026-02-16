@@ -14,6 +14,8 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 export class CommitteeJustificationsOverviewComponent {
     committeeDetails = input.required<CommitteeDetails | undefined>();
 
+    percentageSymbol = computed(() => (this.committeeDetails()?.isPercentageBased ? ' %' : ''));
+
     showMembersJustifications = computed(() => !!this.committeeDetails()?.justificationMembers);
     showGendersJustifications = computed(
         () => this.committeeDetails()?.justificationGenders || this.committeeDetails()?.measuresGenders || this.committeeDetails()?.generalGenderMeasure
