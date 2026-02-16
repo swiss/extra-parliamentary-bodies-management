@@ -29,6 +29,16 @@ public static class PersonMapper
         };
     }
 
+    public static PersonMinimalDto ToPersonMinimalDto(Person person)
+    {
+        return new PersonMinimalDto
+        {
+            Id = person.Id,
+            GivenName = person.GivenName,
+            Surname = person.Surname
+        };
+    }
+
     public static PersonFilterParameters? ToPersonFilterParameters(PersonFilterParametersDto? dto)
     {
         if (dto is null)

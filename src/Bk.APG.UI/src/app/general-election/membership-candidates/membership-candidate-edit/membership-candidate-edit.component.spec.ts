@@ -1,6 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
+import {MembershipCandidateUpdate} from '@api/MembershipCandidateUpdate';
 import {ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
 import {of} from 'rxjs';
 import {GeneralElectionCommitteeDetailsService} from '../../ge-committees/ge-committee-details/ge-committee-details.service';
@@ -17,10 +18,12 @@ describe('MembershipCandidateEditComponent', () => {
 
     const activatedRouteMock = {
         snapshot: {params: {membershipCandidateId: 'candidate-1'}},
+        parent: {snapshot: {params: {id: 'ge-committee-1'}}},
     };
 
     const membershipCandidateServiceMock = {
-        getMembershipCandidateForUpdate: jest.fn().mockReturnValue(of({})),
+        getMembershipCandidateForUpdate: jest.fn(),
+        updateMembershipCandidate: jest.fn(),
     };
 
     const generalElectionCommitteeDetailsServiceMock = {
@@ -37,6 +40,11 @@ describe('MembershipCandidateEditComponent', () => {
     };
 
     beforeEach(async () => {
+        membershipCandidateServiceMock.getMembershipCandidateForUpdate.mockReturnValue(of({} as MembershipCandidateUpdate));
+        generalElectionCommitteeDetailsServiceMock.generalElectionCommitteeDetails.mockReturnValue(
+            of({committeeId: 'committee-1', isCandidateListCompleted: false} as GeneralElectionCommitteeDetails)
+        );
+
         await TestBed.configureTestingModule({
             imports: [MembershipCandidateEditComponent],
             providers: [
@@ -48,7 +56,7 @@ describe('MembershipCandidateEditComponent', () => {
                 {provide: ObHttpApiInterceptorEvents, useValue: httpApiInterceptorEventsMock},
             ],
         })
-            .overrideTemplateUsingTestingModule(MembershipCandidateEditComponent, '')
+            .overrideTemplate(MembershipCandidateEditComponent, '')
             .compileComponents();
 
         fixture = TestBed.createComponent(MembershipCandidateEditComponent);

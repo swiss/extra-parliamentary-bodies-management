@@ -605,9 +605,20 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
 
     describe('validateCandidateList', () => {
         it('should validate candidate list successfully', () => {
-            const validateCandidateListMock = jest
-                .fn()
-                .mockReturnValue(of({isValid: true, errors: [], duplicateCheckResults: [], createdPersons: [], existingPersons: []}));
+            const validateCandidateListMock = jest.fn().mockReturnValue(
+                of({
+                    isValid: true,
+                    errors: [],
+                    duplicateCheckResults: [],
+                    createdPersons: [],
+                    existingPersons: [],
+                    areJustificationsMissing: false,
+                    areContactPointsMissing: false,
+                    personsWithMissingInterests: [],
+                    personsWithMissingBaseData: [],
+                    personsWithMembershipValidationIssues: [],
+                })
+            );
             const reloadSubject = new Subject<void>();
             const routerMock = {navigate: jest.fn().mockResolvedValue(true)};
             membershipCandidateListServiceMock.validateCandidateList = validateCandidateListMock;
@@ -633,6 +644,10 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     createdPersons: [],
                     existingPersons: [],
                     areJustificationsMissing: true,
+                    areContactPointsMissing: false,
+                    personsWithMissingInterests: [],
+                    personsWithMissingBaseData: [],
+                    personsWithMembershipValidationIssues: [],
                 })
             );
             const routerMock = {navigate: jest.fn().mockResolvedValue(true)};
@@ -643,8 +658,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
             component.validateCandidateList();
 
             expect(validateCandidateListMock).toHaveBeenCalledWith('committee-123', ['candidate-1'], false);
-            expect(component.validationErrors()).toEqual(['Error 1', 'Error 2']);
-            expect(component.areJustificationsMissing()).toEqual(true);
+            expect(component.validationResult()?.errors).toEqual(['Error 1', 'Error 2']);
+            expect(component.validationResult()?.areJustificationsMissing).toEqual(true);
             expect(routerMock.navigate).not.toHaveBeenCalled();
             expect(notificationServiceMock.error).toHaveBeenCalledWith('generalElection.candidateList.validate.error');
             expect(notificationServiceMock.success).not.toHaveBeenCalled();
@@ -661,6 +676,11 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     ],
                     createdPersons: [],
                     existingPersons: [],
+                    areJustificationsMissing: false,
+                    areContactPointsMissing: false,
+                    personsWithMissingInterests: [],
+                    personsWithMissingBaseData: [],
+                    personsWithMembershipValidationIssues: [],
                 })
             );
             const routerMock = {navigate: jest.fn().mockResolvedValue(true)};
@@ -671,7 +691,7 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
             component.validateCandidateList();
 
             expect(validateCandidateListMock).toHaveBeenCalledWith('committee-123', ['candidate-1'], false);
-            expect(component.personDuplicates.length).toBe(1);
+            expect(component.personDuplicates().length).toBe(1);
             expect(routerMock.navigate).not.toHaveBeenCalled();
             expect(notificationServiceMock.success).not.toHaveBeenCalled();
         });
@@ -684,6 +704,11 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     duplicateCheckResults: [],
                     createdPersons: [{id: '1', surname: 'Clark', givenName: 'Jim', birthYear: 1936} as PersonDetails],
                     existingPersons: [{id: '2', surname: 'Regazzoni', givenName: 'Clay', birthYear: 1939} as PersonDetails],
+                    areJustificationsMissing: false,
+                    areContactPointsMissing: false,
+                    personsWithMissingInterests: [],
+                    personsWithMissingBaseData: [],
+                    personsWithMembershipValidationIssues: [],
                 })
             );
             const reloadSubject = new Subject<void>();
@@ -698,9 +723,9 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
             component.validateCandidateList();
 
             expect(validateCandidateListMock).toHaveBeenCalledWith('committee-123', ['candidate-1'], false);
-            expect(component.personDuplicates.length).toBe(0);
-            expect(component.createdPersons.length).toBe(1);
-            expect(component.existingPersons.length).toBe(1);
+            expect(component.personDuplicates().length).toBe(0);
+            expect(component.validationResult()?.createdPersons.length).toBe(1);
+            expect(component.validationResult()?.existingPersons.length).toBe(1);
             expect(routerMock.navigate).not.toHaveBeenCalled();
             expect(nextSpy).toHaveBeenCalled();
             expect(notificationServiceMock.success).toHaveBeenCalledWith({message: 'generalElection.candidateList.validate.success', timeout: 10000});
@@ -718,9 +743,20 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
         });
 
         it('should validate empty candidate list', () => {
-            const validateCandidateListMock = jest
-                .fn()
-                .mockReturnValue(of({isValid: true, errors: [], duplicateCheckResults: [], createdPersons: [], existingPersons: []}));
+            const validateCandidateListMock = jest.fn().mockReturnValue(
+                of({
+                    isValid: true,
+                    errors: [],
+                    duplicateCheckResults: [],
+                    createdPersons: [],
+                    existingPersons: [],
+                    areJustificationsMissing: false,
+                    areContactPointsMissing: false,
+                    personsWithMissingInterests: [],
+                    personsWithMissingBaseData: [],
+                    personsWithMembershipValidationIssues: [],
+                })
+            );
             const reloadSubject = new Subject<void>();
             const routerMock = {navigate: jest.fn().mockResolvedValue(true)};
             membershipCandidateListServiceMock.validateCandidateList = validateCandidateListMock;
@@ -731,6 +767,36 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
             component.validateCandidateList();
 
             expect(validateCandidateListMock).toHaveBeenCalledWith('committee-123', [], false);
+        });
+    });
+
+    describe('clearValidationList', () => {
+        it('clears the targeted list when validation result exists', () => {
+            component.validationResult.set({
+                isValid: false,
+                errors: ['Error 1'],
+                duplicateCheckResults: [{membershipCandidateToCheck: mockMembershipCandidates[0], duplicateReason: DuplicateReason.FullMatch}],
+                createdPersons: [],
+                existingPersons: [],
+                areJustificationsMissing: false,
+                areContactPointsMissing: false,
+                personsWithMissingInterests: [],
+                personsWithMissingBaseData: [],
+                personsWithMembershipValidationIssues: [],
+            } as any);
+
+            component.clearValidationList('errors');
+
+            expect(component.validationResult()?.errors).toEqual([]);
+            expect(component.validationResult()?.duplicateCheckResults.length).toBe(1);
+        });
+
+        it('leaves validation result undefined when not set', () => {
+            component.validationResult.set(undefined);
+
+            component.clearValidationList('errors');
+
+            expect(component.validationResult()).toBeUndefined();
         });
     });
 
