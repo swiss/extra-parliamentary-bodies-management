@@ -60,17 +60,25 @@
                     </tr>
                     <tr>
                         <td class="heading-text">{{ 'committee.quota' | translate }}</td>
-                        <td>{{ committee.germanThreshold | number: '1.0-2' }} %</td>
-                        <td>{{ committee.frenchThreshold | number: '1.0-2' }} %</td>
-                        <td>{{ committee.italianThreshold | number: '1.0-2' }} %</td>
-                        <td>{{ committee.romanshThreshold | number: '1.0-2' }} %</td>
+                        <td>{{ committee.germanThreshold | number: '1.0-2' }}{{ percentageSymbol() }}</td>
+                        <td>{{ committee.frenchThreshold | number: '1.0-2' }}{{ percentageSymbol() }}</td>
+                        <td>{{ committee.italianThreshold | number: '1.0-2' }}{{ percentageSymbol() }}</td>
+                        <td>{{ committee.romanshThreshold | number: '1.0-2' }}{{ percentageSymbol() }}</td>
                     </tr>
                     <tr>
                         <td class="heading-text">{{ 'committee.currentQuota' | translate }}</td>
-                        <td [ngClass]="committee.germanQuota! < committee.germanThreshold! ? 'red' : ''">{{ committee.germanQuota | number: '1.0-2' }} %</td>
-                        <td [ngClass]="committee.frenchQuota! < committee.frenchThreshold! ? 'red' : ''">{{ committee.frenchQuota | number: '1.0-2' }} %</td>
-                        <td [ngClass]="committee.italianQuota! < committee.italianThreshold! ? 'red' : ''">{{ committee.italianQuota | number: '1.0-2' }} %</td>
-                        <td [ngClass]="committee.romanshQuota! < committee.romanshThreshold! ? 'red' : ''">{{ committee.romanshQuota | number: '1.0-2' }} %</td>
+                        <td [ngClass]="committee.germanQuota! < committee.germanThreshold! ? 'red' : ''">
+                            {{ committee.germanQuota | number: '1.0-2' }}{{ percentageSymbol() }}
+                        </td>
+                        <td [ngClass]="committee.frenchQuota! < committee.frenchThreshold! ? 'red' : ''">
+                            {{ committee.frenchQuota | number: '1.0-2' }}{{ percentageSymbol() }}
+                        </td>
+                        <td [ngClass]="committee.italianQuota! < committee.italianThreshold! ? 'red' : ''">
+                            {{ committee.italianQuota | number: '1.0-2' }}{{ percentageSymbol() }}
+                        </td>
+                        <td [ngClass]="committee.romanshQuota! < committee.romanshThreshold! ? 'red' : ''">
+                            {{ committee.romanshQuota | number: '1.0-2' }}{{ percentageSymbol() }}
+                        </td>
                     </tr>
                 </table>
                 <table>
