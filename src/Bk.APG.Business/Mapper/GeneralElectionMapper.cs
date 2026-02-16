@@ -213,7 +213,7 @@ public static class GeneralElectionMapper
             HasMembershipAddition = membershipCandidate.MembershipAddition is not null,
             IsActive = true,
             IsFuture = false,
-            NeedsAttention = membershipCandidate.NeedsAttention
+            NeedsAttention = membershipCandidate.HasMembershipValidationIssues
         };
 
         string GetFunction()
