@@ -63,6 +63,7 @@ export interface CommitteeDetails {
     measuresGenders?: string;
     generalGenderMeasure?: string;
 
+    isPercentageBased?: boolean;
     germanThreshold?: number;
     germanQuota?: number;
     frenchThreshold?: number;
