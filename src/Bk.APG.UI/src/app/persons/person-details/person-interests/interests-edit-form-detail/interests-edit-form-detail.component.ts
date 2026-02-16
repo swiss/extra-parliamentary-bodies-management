@@ -15,7 +15,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {ObButtonDirective, ObErrorMessagesDirective} from '@oblique/oblique';
 import {ErrorService} from '@shared/error-service.service';
 import {MasterDataService} from '@shared/master-data.service';
-import {debounceTime, finalize, of, switchMap} from 'rxjs';
+import {debounceTime, filter, finalize, of, switchMap} from 'rxjs';
 import {PersonInterestsService} from '../person-interests.service';
 
 @Component({
@@ -57,6 +57,8 @@ export class InterestsEditFormDetailComponent implements AfterViewInit {
 
     private static readonly RECOMMENDATION_ORGANIZATION_MIN_LENGTH = 3;
 
+    private prohibitResetUidId: boolean = false;
+
     constructor(
         protected readonly personInterestsService: PersonInterestsService,
         protected readonly masterDataService: MasterDataService,
@@ -81,6 +83,9 @@ export class InterestsEditFormDetailComponent implements AfterViewInit {
                         return of([]);
                     }
 
+                    if (!this.prohibitResetUidId) {
+                        this.formGroup.controls.uidOrganisationId.setValue(null);
+                    }
                     this.isLoadingSuggestions.set(true);
                     return this.personInterestsService.getUidOrganizations(value).pipe(finalize(() => this.isLoadingSuggestions.set(false)));
                 }),
@@ -109,10 +114,15 @@ export class InterestsEditFormDetailComponent implements AfterViewInit {
     }
 
     setOrganization(event: MatAutocompleteSelectedEvent) {
+        this.prohibitResetUidId = true;
         const key = event.option.value;
         const splitted = key.split(';');
         this.formGroup.controls.uidOrganisationId.setValue(splitted[0]);
         this.formGroup.controls.interestText.setValue(splitted[1]);
         this.formGroup.controls.legalFormId.setValue(splitted[2]);
+
+        setTimeout(() => {
+            this.prohibitResetUidId = false;
+        }, 1000);
     }
 }
