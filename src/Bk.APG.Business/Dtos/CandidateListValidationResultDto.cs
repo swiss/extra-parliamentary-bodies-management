@@ -8,4 +8,9 @@ public class CandidateListValidationResultDto
     public List<PersonDetailDto> CreatedPersons { get; } = [];
     public List<PersonDetailDto> ExistingPersons { get; } = [];
     public bool AreJustificationsMissing { get; set; }
+    public bool AreContactPointsMissing { get; set; }
+    public bool IsAdditionalMembershipValidationRequired => PersonsWithMissingInterests.Count > 0 || PersonsWithMissingBaseData.Count > 0;
+    public List<PersonMinimalDto> PersonsWithMissingInterests { get; } = [];
+    public List<PersonMinimalDto> PersonsWithMissingBaseData { get; } = [];
+    public List<PersonMinimalDto> PersonsWithMembershipValidationIssues { get; } = [];
 }
