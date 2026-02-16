@@ -121,14 +121,17 @@ internal class CommitteeMapperTests
             Assert.That(committeeDetailDto.JustificationGenders, Is.EqualTo(committee.JustificationGenders));
             Assert.That(committeeDetailDto.MeasuresGenders, Is.EqualTo(committee.MeasuresGenders));
 
-            Assert.That(committeeDetailDto.GermanThreshold, Is.EqualTo(committee.CommitteeType!.GermanThresholdPercentage is not null ? committee.CommitteeType!.GermanThresholdPercentage : committee.CommitteeType!.GermanMinimalThreshold));
-            Assert.That(committeeDetailDto.GermanQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.GermanUri) / activeMembersCount * 100 : 0));
-            Assert.That(committeeDetailDto.FrenchThreshold, Is.EqualTo(committee.CommitteeType!.FrenchThresholdPercentage is not null ? committee.CommitteeType!.FrenchThresholdPercentage : committee.CommitteeType!.FrenchMinimalThreshold));
-            Assert.That(committeeDetailDto.FrenchQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.FrenchUri) / activeMembersCount * 100 : 0));
-            Assert.That(committeeDetailDto.ItalianThreshold, Is.EqualTo(committee.CommitteeType!.ItalianThresholdPercentage is not null ? committee.CommitteeType!.ItalianThresholdPercentage : committee.CommitteeType!.ItalianMinimalThreshold));
-            Assert.That(committeeDetailDto.ItalianQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.ItalianUri) / activeMembersCount * 100 : 0));
-            Assert.That(committeeDetailDto.RomanshThreshold, Is.EqualTo(committee.CommitteeType!.RomanshThresholdPercentage is not null ? committee.CommitteeType!.RomanshThresholdPercentage : committee.CommitteeType!.RomanshMinimalThreshold));
-            Assert.That(committeeDetailDto.RomanshQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.RomanshUri) / activeMembersCount * 100 : 0));
+            var committeeType = committee.CommitteeType!;
+            var isPercentageBased = committeeType.GermanThresholdPercentage is not null;
+            Assert.That(committeeDetailDto.IsPercentageBased, Is.EqualTo(isPercentageBased));
+            Assert.That(committeeDetailDto.GermanThreshold, Is.EqualTo((isPercentageBased ? committeeType.GermanThresholdPercentage : committeeType.GermanMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.GermanQuota, Is.EqualTo(isPercentageBased ? committee.GermanQuota : committee.GermanCount));
+            Assert.That(committeeDetailDto.FrenchThreshold, Is.EqualTo((isPercentageBased ? committeeType.FrenchThresholdPercentage : committeeType.FrenchMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.FrenchQuota, Is.EqualTo(isPercentageBased ? committee.FrenchQuota : committee.FrenchCount));
+            Assert.That(committeeDetailDto.ItalianThreshold, Is.EqualTo((isPercentageBased ? committeeType.ItalianThresholdPercentage : committeeType.ItalianMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.ItalianQuota, Is.EqualTo(isPercentageBased ? committee.ItalianQuota : committee.ItalianCount));
+            Assert.That(committeeDetailDto.RomanshThreshold, Is.EqualTo((isPercentageBased ? committeeType.RomanshThresholdPercentage : committeeType.RomanshMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.RomanshQuota, Is.EqualTo(isPercentageBased ? committee.RomanshQuota : committee.RomanshCount));
             Assert.That(committeeDetailDto.JustificationLanguages, Is.EqualTo(committee.JustificationLanguages));
             Assert.That(committeeDetailDto.MeasuresLanguages, Is.EqualTo(committee.MeasuresLanguages));
 
