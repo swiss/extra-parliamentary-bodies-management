@@ -305,17 +305,6 @@ export class CommitteeDataFormComponent implements OnInit {
         this.membershipAdditionsInGeneralElectionInput.setValue('');
     }
 
-    removeMembershipAdditionInGeneralElection(id: string) {
-        const control = this.committeeForm.controls.membershipAdditionsInGeneralElection;
-        if (!control?.value) {
-            return;
-        }
-        control.setValue(control.value.filter((x: string) => x !== id));
-        control.markAsDirty();
-
-        this.committeeForm.controls.vacanciesInGeneralElection.updateValueAndValidity();
-    }
-
     onMembershipAdditionInGeneralElectionInputBlur(input: HTMLInputElement): void {
         // Clear the input if user left without selecting an option
         // the timeout is important as it shouldn't be cleared before the selected event is processed
@@ -325,6 +314,17 @@ export class CommitteeDataFormComponent implements OnInit {
                 this.membershipAdditionsInGeneralElectionInput.setValue('');
             }
         }, 500);
+    }
+
+    removeMembershipAdditionInGeneralElection(id: string) {
+        const control = this.committeeForm.controls.membershipAdditionsInGeneralElection;
+        if (!control?.value) {
+            return;
+        }
+        control.setValue(control.value.filter((x: string) => x !== id));
+        control.markAsDirty();
+
+        this.committeeForm.controls.vacanciesInGeneralElection.updateValueAndValidity();
     }
 
     protected getMembershipAdditionInGeneralElection(id: string) {
