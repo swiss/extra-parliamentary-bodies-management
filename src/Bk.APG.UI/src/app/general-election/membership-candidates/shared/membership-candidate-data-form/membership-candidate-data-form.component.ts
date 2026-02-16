@@ -138,7 +138,13 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
         this.membershipCandidateForm.controls.requirementsProfile.patchValue(modification.requirementsProfile, {
             emitEvent: false,
         });
-
+        if (!this.generalElectionCommittee()?.isValidated) {
+            this.membershipCandidateForm.controls.justificationShorterDuty.disable();
+            this.membershipCandidateForm.controls.justificationLongerDuty.disable();
+            this.membershipCandidateForm.controls.justificationMemberInFederalDuty.disable();
+            this.membershipCandidateForm.controls.justificationMemberInFederalAssembly.disable();
+            this.membershipCandidateForm.controls.requirementsProfile.disable();
+        }
         this.membershipCandidateForm.markAllAsTouched({emitEvent: false});
     }
 
