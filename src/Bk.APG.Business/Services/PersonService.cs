@@ -136,7 +136,7 @@ public class PersonService : IPersonService
         return ToPersonDetailDto(savedPerson);
     }
 
-    public async Task<PersonDetailDto> CreatePersonInGeneralElection(MembershipCandidate membershipCandidate)
+    public async Task<Person> CreatePersonInGeneralElection(MembershipCandidate membershipCandidate)
     {
         _logger.LogInformation("Create person for membership candidate {MembershipCandidateId}", membershipCandidate.Id);
 
@@ -153,7 +153,7 @@ public class PersonService : IPersonService
         var newEntry = await _personRepository.Create(mappedPerson);
         _logger.LogInformation("Created person {PersonId} from membership candidate {MembershipCandidateId}", newEntry.Id, membershipCandidate.Id);
 
-        return PersonMapper.ToPersonDetailDto(await _personRepository.GetById(newEntry.Id), false);
+        return await _personRepository.GetById(newEntry.Id);
     }
 
     public async Task<PersonUpdateDto> UpdatePerson(Guid id, PersonUpdateDto updateDto)

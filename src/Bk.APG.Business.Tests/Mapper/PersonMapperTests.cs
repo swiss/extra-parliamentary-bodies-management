@@ -98,6 +98,27 @@ internal class PersonMapperTests
     }
 
     [Test]
+    public void ToPersonMinimalDto_ShouldMapCorrectly()
+    {
+        var personId = Guid.NewGuid();
+        var person = new PersonBuilder()
+            .WithId(personId)
+            .WithGivenName("Jane")
+            .WithSurname("Doe")
+            .Build();
+
+        var dto = PersonMapper.ToPersonMinimalDto(person);
+
+        Assert.That(dto, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dto.Id, Is.EqualTo(personId));
+            Assert.That(dto.GivenName, Is.EqualTo(person.GivenName));
+            Assert.That(dto.Surname, Is.EqualTo(person.Surname));
+        });
+    }
+
+    [Test]
     public void MapToPersonFilterParameters_WithoutDto_ShouldReturnNull()
     {
         var result = PersonMapper.ToPersonFilterParameters(null);

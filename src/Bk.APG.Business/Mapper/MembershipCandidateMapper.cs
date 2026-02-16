@@ -54,7 +54,16 @@ public static class MembershipCandidateMapper
             JustificationMemberInFederalDuty = membershipCandidate.JustificationMemberInFederalDuty,
             JustificationMemberInFederalAssembly = membershipCandidate.JustificationMemberInFederalAssembly,
             RequirementsProfile = membershipCandidate.RequirementsProfile,
-            RowVersion = membershipCandidate.RowVersion
+            RowVersion = membershipCandidate.RowVersion,
+            EstimatedTermOfOffice = membershipCandidate.EstimatedTermOfOffice,
+            CurrentTermOfOffice = membershipCandidate.CurrentTermOfOffice,
+            NeedsLongerDutyJustification = membershipCandidate.NeedsLongerDutyJustification,
+            NeedsShorterDutyJustification = membershipCandidate.NeedsShorterDutyJustification,
+            NeedsFederalDutyJustification = membershipCandidate.NeedsFederalDutyJustification,
+            NeedsFederalAssemblyJustification = membershipCandidate.NeedsFederalAssemblyJustification,
+            NeedsRequirementsProfile = membershipCandidate.NeedsRequirementsProfile,
+            MaximumDurationExceeded = membershipCandidate.MaximumDurationExceeded,
+            HasFederalAssemblyAuthoritiesCommissionConflict = membershipCandidate.HasFederalAssemblyAuthoritiesCommissionConflict
         };
     }
 }
