@@ -147,6 +147,8 @@ public class CommitteeRepository : ICommitteeRepository
             .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
             .Include(item => item.Memberships)
             .ThenInclude(item => item.Person)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.MembershipAddition)
             .Include(item => item.CommitteeType)
             .Include(item => item.Department)
             .FilterCommitteeByPermission(departmentId, officeId, committeeId)
