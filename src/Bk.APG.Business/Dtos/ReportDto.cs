@@ -97,6 +97,13 @@ public class ReportCommitteeWithFreeTextDto
     public string? FreeText { get; set; }
 }
 
+public class ReportVacanciesDetailDto
+{
+    public required string Name { get; set; }
+    public int Vacancies { get; set; }
+    public string? MembershipAdditionsString { get; set; }
+}
+
 public enum ReportMembershipType
 {
     ShorterDuty,
