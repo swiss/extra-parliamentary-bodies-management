@@ -65,7 +65,7 @@ public class ReportGeneralElectionCommitteeDto
 
     public ICollection<ContactPoint> ContactPoints { get; set; } = new List<ContactPoint>();
 
-    public ICollection<MembershipAddition> MembershipAdditions { get; set; } = new List<MembershipAddition>();
+    public ICollection<MembershipAddition> MembershipAdditionsInGeneralElection { get; set; } = new List<MembershipAddition>();
 
     public string GetDescription()
     {
