@@ -89,7 +89,7 @@ public class ReportService : IReportService
         var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFuture(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions);
         var membersWith12OrMoreYearsDto = GetLongerMembershipData(membersWith12OrMoreYears);
 
-        var committeesWithMembersInFederalDuty = generalElectionCommitteesWithMembers.Where(c => c.Memberships.Any(m => m.Person!.FederalDuty)).ToList();
+        var committeesWithMembersInFederalDuty = generalElectionCommitteesWithMembers.Where(c => c.Memberships.Any(m => m.Person?.FederalDuty == true)).ToList();
 
         var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15).ToList();
 
