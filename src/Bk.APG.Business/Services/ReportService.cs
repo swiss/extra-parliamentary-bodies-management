@@ -500,7 +500,7 @@ public class ReportService : IReportService
                 else if (type == ReportCommitteeType.Vacancies)
                 {
                     // TODO PP 
-                    //freeText = string.Join(committee.MembershipAddition),
+                    freeText = string.Join(", ", committee.MembershipAdditionsInGeneralElection.Select(m => m.GetText()));
                     membershipCount = committee.VacanciesGeneralElection != null ? (int)committee.VacanciesGeneralElection : 0;
                 }
                 else
