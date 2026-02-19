@@ -399,6 +399,8 @@ public class ReportService : IReportService
         {
             TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + " - " + nextTermOfOfficeDate.EndDate?.Year,
 
+            VacanciesCommittees = reportDepartments,
+
             //NonReleasedCommissions = nonReleasedCommissionsDto,
             //MarketOrientatedCommissions = marketOrientatedCommissionsDto,
             //MoreThan15MembersCommittees = moreThan15MembersCommitteesDto,
