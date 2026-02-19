@@ -43,4 +43,4 @@ jobs:
           git add THIRD_PARTY_LICENSES.md
           git commit -m "chore: update THIRD_PARTY_LICENSES.md"
           
-          git push origin HEAD:${GITHUB_REF_NAME}
+          git push origin HEAD:refs/heads/main
