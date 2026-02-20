@@ -19,6 +19,7 @@ import {MasterDataService} from '@shared/master-data.service';
 import {combineLatest, defer, distinctUntilChanged, startWith, Subject, switchMap} from 'rxjs';
 import {AuthService} from '../../auth/auth.service';
 import {GeneralElectionCommitteesService} from '../../general-election/ge-committees/ge-committees.service';
+import {FormLettersSenderService} from '../form-letters-sender/form-letters-sender.service';
 import {RecipientsService} from './recipients.service';
 
 @Component({
@@ -61,6 +62,7 @@ export class RecipientsComponent {
     dataSource = new MatTableDataSource<GeneralElectionCommitteeList>();
     selectedItems = new Set<GeneralElectionCommitteeList>();
     readonly totalCount = signal(0);
+    readonly formLetterSenders = signal<{id: string; description: string}[]>([]);
 
     readonly reload$ = new Subject<void>();
 
@@ -91,6 +93,7 @@ export class RecipientsComponent {
         private readonly generalElectionCommitteesService: GeneralElectionCommitteesService,
         private readonly translateService: TranslateService,
         private readonly authService: AuthService,
+        private readonly formLettersSenderService: FormLettersSenderService,
 
         @Inject(WINDOW) private readonly window: Window,
         @Inject(DOCUMENT) private readonly document: Document
@@ -99,6 +102,11 @@ export class RecipientsComponent {
         if (routeData.isGeneralElection) {
             this.isGeneralElection = true;
         }
+
+        // Load form letter senders
+        this.formLettersSenderService.getFormLettersSenderList().subscribe(senders => {
+            this.formLetterSenders.set(senders);
+        });
 
         if (this.isGeneralElection) {
             this.form.valueChanges.pipe(startWith(this.form.value), takeUntilDestroyed()).subscribe(curr => {
@@ -206,6 +214,10 @@ export class RecipientsComponent {
         }
     }
 
+    reset() {
+        this.form.reset();
+    }
+
     private setupRequestsAndReportsForm(): FormGroup<RecipientsFilterForm> {
         return this.fb.group<RecipientsFilterForm>({
             departments: this.fb.control<string[] | null>(null),
@@ -213,6 +225,7 @@ export class RecipientsComponent {
             committeeTypes: this.fb.control<string[] | null>(null),
             correspondenceLanguages: this.fb.control<string[] | null>(null),
             electionTypes: this.fb.control<string[] | null>(null),
+            formLetterSender: this.fb.control<string | null>(null),
         });
     }
 }

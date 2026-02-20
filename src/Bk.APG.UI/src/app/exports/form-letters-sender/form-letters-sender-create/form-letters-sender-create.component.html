@@ -1,0 +1,10 @@
+<apg-form-letters-sender-data-form [isUpdateMode]="false" [(senderModification)]="emptyFormLettersSender" />
+
+<div class="form-actions">
+    <button mat-button obButton="secondary" (click)="close()">
+        {{ 'common.cancel' | translate }}
+    </button>
+    <button mat-button obButton="primary" (click)="save()" [disabled]="!form().valid">
+        {{ 'common.save' | translate }}
+    </button>
+</div>
