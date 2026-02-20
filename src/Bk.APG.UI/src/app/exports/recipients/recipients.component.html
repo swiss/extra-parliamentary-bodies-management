@@ -54,7 +54,18 @@
             </mat-select>
         </mat-form-field>
 
+        <!-- Form Letter Sender -->
+        <mat-form-field>
+            <mat-label>{{ 'recipients.filter.formLetterSender.label' | translate }}</mat-label>
+            <mat-select [formControl]="form.controls.formLetterSender">
+                @for (sender of formLetterSenders(); track sender.id) {
+                    <mat-option [value]="sender.id">{{ sender.description }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
         <div class="buttons">
+            <button (click)="reset()" [disabled]="!form.dirty" mat-button obButton="secondary" type="button">{{ 'common.reset' | translate }}</button>
             <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="generateReport()">
                 {{ 'recipients.download' | translate }}
             </button>
