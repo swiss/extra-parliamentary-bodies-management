@@ -202,6 +202,7 @@ public class CommitteeRepository : ICommitteeRepository
     {
         return await _dataContext.Committees
             .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
+            .Where(x => x.CommitteeTypeId != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
             .Include(x => x.CommitteeType)
             .Include(x => x.Department)
             .Include(x => x.Memberships)
