@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -6,6 +6,12 @@
         <Nullable>enable</Nullable>
         <RootNamespace>Bk.APG.Infrastructure.DataSource</RootNamespace>
     </PropertyGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Include="Migrations\Scripts\MissingOccupations.sql">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Audit.EntityFramework.Core" Version="31.0.2" />
@@ -20,10 +26,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Bk.APG.Business\Bk.APG.Business.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>

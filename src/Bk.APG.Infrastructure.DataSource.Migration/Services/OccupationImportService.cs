@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Infrastructure.DataSource.Migration.Models;
+using Bk.APG.Infrastructure.DataSource.Repositories;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 
@@ -82,6 +83,8 @@ public class OccupationImportService : IOccupationImportService
 
     public void MigrateOccupationsFromJsonSource()
     {
+        const string occupationUri = "https://register.ld.admin.ch/i14y/ch-isco-19/";
+
         // this function reads the json file and creates insert scripts, which then have to be copied to a EF migration.
         _logger.LogInformation("Start migration occupations from json file");
 
@@ -102,32 +105,44 @@ public class OccupationImportService : IOccupationImportService
             {
                 var code = job.code;
 
-                var maleAnnotation = job.annotations.Find(a => a.type == "GENDER_M");
-                var femaleAnnotation = job.annotations.Find(a => a.type == "GENDER_F");
-
-                if (maleAnnotation != null && femaleAnnotation != null)
+                // Only import records of this level 33105224
+                if (code.Length != 8)
                 {
-                    var maleDe = maleAnnotation.text != null && maleAnnotation.text.de != null ? maleAnnotation.text.de : code;
-                    var maleFr = maleAnnotation.text != null && maleAnnotation.text.fr != null ? maleAnnotation.text.fr : code;
-                    var maleIt = maleAnnotation.text != null && maleAnnotation.text.it != null ? maleAnnotation.text.it : code;
-                    var femaleDe = femaleAnnotation.text != null && femaleAnnotation.text.de != null ? femaleAnnotation.text.de : code;
-                    var femaleFr = femaleAnnotation.text != null && femaleAnnotation.text.fr != null ? femaleAnnotation.text.fr : code;
-                    var femaleIt = femaleAnnotation.text != null && femaleAnnotation.text.it != null ? femaleAnnotation.text.it : code;
+                    continue;
+                }
 
-                    sb.AppendLine(
-                        "('" + Guid.NewGuid() + "', " +
-                        "'" + maleDe.Replace("'", "’") + "', " +
-                        "'" + maleFr.Replace("'", "’") + "', " +
-                        "'" + maleIt.Replace("'", "’") + "', " +
-                        "'', " +
-                        "'" + femaleDe.Replace("'", "’") + "', " +
-                        "'" + femaleFr.Replace("'", "’") + "', " +
-                        "'" + femaleIt.Replace("'", "’") + "', " +
-                        "'', " +
-                        "now(), 'migration', now(), 'migration', '', '', '', '', 0, " +
-                        "'https://register.ld.admin.ch/i14y/ch-isco-19/" + code + "', 0),"
-                    );
+                var uri = occupationUri + code;
 
+                var existing = _occupationRepository.GetByUri(uri);
+
+                if (existing == null)
+                {
+                    var maleAnnotation = job.annotations.Find(a => a.type == "GENDER_M");
+                    var femaleAnnotation = job.annotations.Find(a => a.type == "GENDER_F");
+
+                    if (maleAnnotation != null && femaleAnnotation != null)
+                    {
+                        var maleDe = maleAnnotation.text != null && maleAnnotation.text.de != null ? maleAnnotation.text.de : code;
+                        var maleFr = maleAnnotation.text != null && maleAnnotation.text.fr != null ? maleAnnotation.text.fr : code;
+                        var maleIt = maleAnnotation.text != null && maleAnnotation.text.it != null ? maleAnnotation.text.it : code;
+                        var femaleDe = femaleAnnotation.text != null && femaleAnnotation.text.de != null ? femaleAnnotation.text.de : code;
+                        var femaleFr = femaleAnnotation.text != null && femaleAnnotation.text.fr != null ? femaleAnnotation.text.fr : code;
+                        var femaleIt = femaleAnnotation.text != null && femaleAnnotation.text.it != null ? femaleAnnotation.text.it : code;
+
+                        sb.AppendLine(
+                            "('" + Guid.NewGuid() + "', " +
+                            "'" + maleDe.Replace("'", "’") + "', " +
+                            "'" + maleFr.Replace("'", "’") + "', " +
+                            "'" + maleIt.Replace("'", "’") + "', " +
+                            "'', " +
+                            "'" + femaleDe.Replace("'", "’") + "', " +
+                            "'" + femaleFr.Replace("'", "’") + "', " +
+                            "'" + femaleIt.Replace("'", "’") + "', " +
+                            "'', " +
+                            "now(), 'migration', now(), 'migration', '', '', '', '', 0, " +
+                            "'https://register.ld.admin.ch/i14y/ch-isco-19/" + code + "', 0),"
+                        );
+                    }
                     // You could also use direct inserts to the table, but then the GUIDs are different in all systems!
                     // var occupation = MigrationMapping.ToOccupation(maleAnnotation, femaleAnnotation, code);
                     // await _occupationRepository.Create(occupation);
@@ -136,7 +151,7 @@ public class OccupationImportService : IOccupationImportService
             }
 
             var completeScript = sb.ToString();
-            File.WriteAllText("e:\\temp\\insert_script_occupations.txt", completeScript);
+            File.WriteAllText("e:\\temp\\delta_insert_script_occupations.txt", completeScript);
         }
 
         _logger.LogInformation("Occupations migrated completely.");
