@@ -46,7 +46,8 @@ public class MasterDataController : ControllerBase
             LegislaturePeriods = await _masterDataService.GetLegislaturePeriods(),
             Councils = await _masterDataService.GetCouncils(),
             WorklistTaskTypes = await _masterDataService.GetWorklistTaskTypes(),
-            WorklistTaskStates = await _masterDataService.GetWorklistTaskStates()
+            WorklistTaskStates = await _masterDataService.GetWorklistTaskStates(),
+            FormLetterSenderFunctions = await _masterDataService.GetFormLetterSenderFunctions()
         };
         return Ok(masterData);
     }
