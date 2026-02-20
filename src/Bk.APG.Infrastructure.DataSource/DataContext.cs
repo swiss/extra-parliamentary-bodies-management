@@ -54,6 +54,8 @@ public class DataContext : AuditDbContext
     public DbSet<EntityAuditLog> EntityAuditLog { get; set; }
     public DbSet<PersonOccupation> PersonOccupations { get; set; }
     public DbSet<ApgGeneralSettings> ApgGeneralSettings { get; set; }
+    public DbSet<FormLetterSenderFunction> FormLetterSenderFunctions { get; set; }
+    public DbSet<FormLetterSender> FormLetterSenders { get; set; }
 
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 
