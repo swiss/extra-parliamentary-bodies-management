@@ -267,6 +267,15 @@ public class MasterDataRepository : IMasterDataRepository
             : [];
     }
 
+    public async Task<IEnumerable<FormLetterSenderFunction>> GetFormLetterSenderFunctions()
+    {
+        return await _dataContext.FormLetterSenderFunctions
+            .Where(x => !x.IsDeleted)
+            .OrderBy(x => x.Sort)
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
     public void AttachUnchanged<T>(T entity) where T : MasterDataBase
     {
         var entry = _dataContext.Entry(entity);
