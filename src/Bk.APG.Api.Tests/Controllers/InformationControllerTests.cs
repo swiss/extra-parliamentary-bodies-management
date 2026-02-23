@@ -15,10 +15,11 @@ internal class InformationControllerTests
         _controller = new InformationController();
     }
 
-    [Test]
-    public void GetApplicationVersion_WhenEnvVariableIsDefined_ReturnsVersion()
+    [TestCase("1.1.0_hash", "1.1.0 (hash)")]
+    [TestCase("1.1.0_timestamp_hash", "1.1.0 (timestamp_hash)")]
+    public void GetApplicationVersion_WhenEnvVariableIsDefined_ReturnsVersion(string envVariable, string expectedDisplayVersion)
     {
-        Environment.SetEnvironmentVariable("APPLICATION_VERSION", "v1");
+        Environment.SetEnvironmentVariable("APPLICATION_VERSION", envVariable);
 
         var result = _controller.GetApplicationVersion();
 
@@ -29,7 +30,7 @@ internal class InformationControllerTests
 
         Assert.That(value, Is.Not.Null);
         Assert.That(value, Is.InstanceOf<VersionDto>());
-        Assert.That(((VersionDto)value).ApplicationVersion, Is.EqualTo("v1"));
+        Assert.That(((VersionDto)value).ApplicationVersion, Is.EqualTo(expectedDisplayVersion));
     }
 
     [Test]
@@ -46,6 +47,6 @@ internal class InformationControllerTests
 
         Assert.That(value, Is.Not.Null);
         Assert.That(value, Is.InstanceOf<VersionDto>());
-        Assert.That(((VersionDto)value).ApplicationVersion, Is.Null);
+        Assert.That(((VersionDto)value).ApplicationVersion, Is.EqualTo(string.Empty));
     }
 }

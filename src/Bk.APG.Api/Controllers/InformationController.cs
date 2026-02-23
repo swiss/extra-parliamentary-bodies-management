@@ -1,3 +1,4 @@
+using System.Text;
 using Bk.APG.Business.Dtos;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,14 +13,23 @@ public class InformationController : ControllerBase
     [HttpGet("version")]
     public ActionResult GetApplicationVersion()
     {
+        var displayVersion = new StringBuilder();
         var version = Environment.GetEnvironmentVariable(ApplicationVersionEnvVariableName);
 
         var parts = version?.Split('_') ?? [];
-        if (parts.Length == 2)
+
+        if (parts.Length >= 2)
         {
-            version = $"{parts[0]} ({parts[1]})";
+            displayVersion.Append(parts[0]);
+            displayVersion.Append(" (");
+            displayVersion.Append(string.Join("_", parts[1..]));
+            displayVersion.Append(')');
+        }
+        else
+        {
+            displayVersion.Append(version); //Fallback
         }
 
-        return Ok(new VersionDto { ApplicationVersion = version });
+        return Ok(new VersionDto { ApplicationVersion = displayVersion.ToString() });
     }
 }
