@@ -231,7 +231,9 @@ internal class CommitteeTests
     {
         var committee = new CommitteeBuilder()
             .WithMembership(new MembershipBuilder()
-                .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-3))).Build())
+                .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-3)))
+                .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(1)))
+                .Build())
             .Build();
 
         Assert.That(committee.NeedsAttentionNoMembers, Is.False);
