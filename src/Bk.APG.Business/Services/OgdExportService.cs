@@ -536,7 +536,7 @@ public class OgdExportService : IOgdExportService
 
     private async Task<IEnumerable<Triple>> CreateCommitteeTypeDimension(Graph graph)
     {
-        var committeeTypes = await _committeeTypeRepository.GetList();
+        var committeeTypes = (await _committeeTypeRepository.GetList()).Where(x => x.Id != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid);
 
         var committeeTypeTriples =
             _dimensionService.CreateTriples(

@@ -148,12 +148,6 @@ public class MembershipService : IMembershipService
             var committeeId = committeeGroup.Key.CommitteeId;
             var committeeOgdId = committeeGroup.Key.OgdId;
 
-            // TODO PP: this type can be basically excluded in the base selection already, then we wouldn't need this here. Comes as PBI and must be removed here then.
-            if (first.Committee!.CommitteeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
-            {
-                continue;
-            }
-
             var dto = new MembershipGenderLanguageStatisticDto
             {
                 CommitteeId = committeeId,
@@ -211,12 +205,6 @@ public class MembershipService : IMembershipService
             var first = group.First();
 
             var committeeTypeId = group.Key;
-
-            // TODO PP: this type can be basically excluded in the base selection already, then we wouldn't need this here. Comes as PBI and must be removed here then.
-            if (committeeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
-            {
-                continue;
-            }
 
             var dto = new MembershipGenderLanguageStatisticDto
             {
@@ -305,14 +293,7 @@ public class MembershipService : IMembershipService
         {
             var first = group.First();
 
-            var departmentId = group.Key.DepartmentId;
             var committeeTypeId = group.Key.CommitteeTypeGroup;
-
-            // TODO PP: this type can be basically excluded in the base selection already, then we wouldn't need this here. Comes as PBI and must be removed here then.
-            if (committeeTypeId == CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
-            {
-                continue;
-            }
 
             var dto = new MembershipGenderLanguageStatisticDto
             {
