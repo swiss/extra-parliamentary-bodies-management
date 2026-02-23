@@ -9,4 +9,5 @@ public interface IOccupationRepository
     // Used, to cleanup the migrated data, as there are hundreds of duplicates.
     Task RemoveAllGermanDuplicatesForCleanup();
     Task<Occupation?> GetById(Guid id);
+    Occupation? GetByUri(string uri);
 }
