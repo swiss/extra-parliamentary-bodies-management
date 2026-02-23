@@ -176,7 +176,7 @@ public class PersonRepository : IPersonRepository
     public async Task<IEnumerable<Person>> GetForOgdExport()
     {
         return await _dataContext.Persons
-            .Include(p => p.Memberships)
+            .Include(p => p.Memberships.Where(m => m.Committee!.CommitteeTypeId != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid))
             .Include(p => p.Occupations)
             .Include(p => p.Office)
                 .ThenInclude(o => o!.Department)
