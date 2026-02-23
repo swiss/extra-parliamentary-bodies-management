@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.0
+
+-   Form letter sender management #BKDO-1109
+-   Exclude CrossBorderFederalAgencies from OGD export #BKDO-2798
+
 ## 1.1.0
 
 -   RDF Export with multiple Targets (Lindas and LindasNext) [BKDO-2501](https://bkdev.atlassian.net/browse/BKDO-2501)
