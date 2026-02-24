@@ -41,7 +41,7 @@ public static class WorklistTaskExtensions
         }
         else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal)
         {
-            navigationUrl = $"/general-election/committees/{worklistTask.CommitteeId}";
+            navigationUrl = $"/general-election/committees/{worklistTask.CommitteeId}?tab=data";
         }
         else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests)
         {
