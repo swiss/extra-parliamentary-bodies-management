@@ -68,4 +68,36 @@ public static class EiamAssignmentExtensions
 
         return assignableIds;
     }
+
+    public static IEnumerable<EiamAssignment> GetAssignmentsForReadyForProposalForward(this EiamAssignment eiamAssignment, Guid committeeId)
+    {
+        var assignableIds = new List<EiamAssignment>();
+        switch (eiamAssignment.Role)
+        {
+            case Role.Admin:
+                assignableIds.Add(eiamAssignment.Children
+                    .First(departmentAssignment => departmentAssignment.Children.Any(officeAssignment => officeAssignment.Children.Any(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId))));
+                break;
+            case Role.Department:
+                assignableIds.Add(eiamAssignment.Parent!);
+                assignableIds.Add(eiamAssignment.Department!.IsBigDepartment
+                    ? eiamAssignment.Children.First(officeAssignment => officeAssignment.Children.Any(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId))
+                    : eiamAssignment.Children
+                        .SelectMany(officeAssignment => officeAssignment.Children)
+                        .First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+                break;
+            case Role.Office:
+                assignableIds.Add(eiamAssignment.Parent!);
+                assignableIds.Add(eiamAssignment.Children.First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+                break;
+            case Role.Secretariat:
+                assignableIds.Add(eiamAssignment.Committee!.Department!.IsBigDepartment ? eiamAssignment.Parent! : eiamAssignment.Parent!.Parent!);
+                break;
+            case Role.Observer:
+            default:
+                throw new ArgumentOutOfRangeException($"Role {eiamAssignment.Role} not supported");
+        }
+
+        return assignableIds;
+    }
 }

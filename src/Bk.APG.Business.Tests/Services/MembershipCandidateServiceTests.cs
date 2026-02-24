@@ -34,6 +34,7 @@ internal class MembershipCandidateServiceTests
 
         _worklistTaskRepository.GetAllByPersonId(Arg.Any<Guid>()).Returns([]);
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(Arg.Any<Guid>()).Returns([]);
+        _worklistTaskRepository.GetByWorklistTaskTypeId(Arg.Any<Guid>()).Returns([]);
     }
 
     [TearDown]
@@ -61,12 +62,12 @@ internal class MembershipCandidateServiceTests
 
         await _service.PartialUpdateMembershipCandidate(membershipCandidateId, partialUpdate);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(existingMembershipCandidate.FunctionId, Is.EqualTo(partialUpdate.FunctionId));
             Assert.That(existingMembershipCandidate.Remarks, Is.EqualTo(partialUpdate.Remarks));
             Assert.That(existingMembershipCandidate.RemarksStatus, Is.EqualTo(partialUpdate.RemarksStatus));
-        });
+        }
     }
 
     [Test]
@@ -96,7 +97,7 @@ internal class MembershipCandidateServiceTests
 
         await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(existingMembershipCandidate.GivenName, Is.EqualTo(updateDto.GivenName));
             Assert.That(existingMembershipCandidate.Surname, Is.EqualTo(updateDto.Surname));
@@ -110,7 +111,7 @@ internal class MembershipCandidateServiceTests
             Assert.That(existingMembershipCandidate.MembershipAdditionId, Is.EqualTo(updateDto.MembershipAdditionId));
             Assert.That(existingMembershipCandidate.EndDate, Is.EqualTo(updateDto.EndDate));
             Assert.That(existingMembershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(updateDto.InCorrelationWithFederalDuty));
-        });
+        }
     }
 
     [Test]
@@ -189,7 +190,7 @@ internal class MembershipCandidateServiceTests
 
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(generalElectionCommittee.CandidateListStateId, Is.EqualTo(CandidateListState.Completed));
             Assert.That(worklistTasks.All(t => t.WorklistTaskStateId == WorklistTaskState.Completed), Is.True);
@@ -201,7 +202,8 @@ internal class MembershipCandidateServiceTests
             Assert.That(validationResult.DuplicateCheckResults.ToList(), Has.Count.EqualTo(0));
             Assert.That(validationResult.CreatedPersons.ToList(), Has.Count.EqualTo(1));
             Assert.That(validationResult.ExistingPersons.ToList(), Has.Count.EqualTo(1));
-        });
+        }
+
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
     }
 
@@ -245,7 +247,7 @@ internal class MembershipCandidateServiceTests
 
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, false);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(worklistTasks.All(t => t.WorklistTaskStateId == WorklistTaskState.Completed), Is.False);
             Assert.That(membershipCandidates[0].IsSelected, Is.True);
@@ -256,7 +258,8 @@ internal class MembershipCandidateServiceTests
             Assert.That(validationResult.DuplicateCheckResults.ToList(), Has.Count.EqualTo(1));
             Assert.That(validationResult.CreatedPersons.ToList(), Has.Count.EqualTo(0));
             Assert.That(validationResult.ExistingPersons.ToList(), Has.Count.EqualTo(1));
-        });
+        }
+
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
     }
 
@@ -290,7 +293,7 @@ internal class MembershipCandidateServiceTests
 
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, false);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(worklistTasks.All(t => t.WorklistTaskStateId == WorklistTaskState.Completed), Is.True);
             Assert.That(membershipCandidates[0].IsSelected, Is.True);
@@ -301,7 +304,8 @@ internal class MembershipCandidateServiceTests
             Assert.That(validationResult.DuplicateCheckResults.ToList(), Has.Count.EqualTo(0));
             Assert.That(validationResult.CreatedPersons.ToList(), Has.Count.EqualTo(0));
             Assert.That(validationResult.ExistingPersons.ToList(), Has.Count.EqualTo(2));
-        });
+        }
+
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
     }
 
@@ -323,11 +327,12 @@ internal class MembershipCandidateServiceTests
 
         await _service.SaveCandidateList(committeeId, candidateIds);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(membershipCandidates[0].IsSelected, Is.True);
             Assert.That(membershipCandidates[1].IsSelected, Is.False);
-        });
+        }
+
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
     }
 
@@ -370,13 +375,14 @@ internal class MembershipCandidateServiceTests
 
         await _service.ForwardCandidateList(committeeId, forwardDto);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(departmentTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
             Assert.That(departmentTask.Description, Is.EqualTo(forwardDto.Description));
             Assert.That(officeTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
             Assert.That(membershipCandidates[0].IsSelected, Is.True);
-        });
+        }
+
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
         await _worklistTaskRepository.Received(1).CommitChanges();
     }
@@ -420,13 +426,14 @@ internal class MembershipCandidateServiceTests
 
         await _service.ForwardCandidateList(committeeId, forwardDto);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(officeTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
             Assert.That(officeTask.Description, Is.EqualTo(forwardDto.Description));
             Assert.That(secretariatTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
             Assert.That(membershipCandidates[0].IsSelected, Is.True);
-        });
+        }
+
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
         await _worklistTaskRepository.Received(1).CommitChanges();
     }
@@ -470,15 +477,111 @@ internal class MembershipCandidateServiceTests
 
         await _service.ForwardCandidateList(committeeId, forwardDto);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(secretariatTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
             Assert.That(secretariatTask.Description, Is.EqualTo(forwardDto.Description));
             Assert.That(officeTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Inactive));
             Assert.That(membershipCandidates[0].IsSelected, Is.True);
-        });
+        }
+
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
         await _worklistTaskRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task FinalizeReadyForProposal_WithPassedValidation_ShouldCompleteAdminTaskAndReleaseGeneralElection()
+    {
+        var committeeId = Guid.NewGuid();
+        var secretariatAssignment = new EiamAssignmentBuilder().WithRole(Role.Secretariat).Build();
+        var departmentAssignment = new EiamAssignmentBuilder().WithRole(Role.Department).Build();
+        var adminAssignment = new EiamAssignmentBuilder().WithRole(Role.Admin).WithId(EiamAssignment.AdminId).Build();
+
+        var committeeType = new CommitteeTypeBuilder()
+            .WithId(CommitteeType.ManagementCommitteeGuid)
+            .Build();
+        var committee = new CommitteeBuilder()
+            .WithCommitteeType(committeeType)
+            .Build();
+        committee.EiamAssignmentId = secretariatAssignment.Id;
+        committee.ContactPoints.Add(new ContactPointBuilder()
+            .WithCommittee(committee)
+            .WithEndDate(null)
+            .WithContactPointType(new ContactPointTypeBuilder().WithId(ContactPointType.SecretariatGuid).Build())
+            .Build());
+
+        var department = new DepartmentBuilder().Build();
+        department.EiamAssignmentId = departmentAssignment.Id;
+
+        var committeeForUpdate = new GeneralElectionCommitteeBuilder()
+            .WithCommitteeId(committeeId)
+            .WithCommittee(committee)
+            .WithDepartment(department)
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .Build();
+
+        var secretariatTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithAssignedTo(secretariatAssignment)
+            .Build();
+        var departmentTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithAssignedTo(departmentAssignment)
+            .Build();
+        var adminTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(adminAssignment)
+            .Build();
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(adminAssignment);
+        _authorizationService.GetCurrentUserName().Returns("admin.user");
+        _generalElectionCommitteeRepository.GetByCommitteeId(committeeId).Returns(committeeForUpdate);
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(committeeForUpdate, committeeForUpdate);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(committeeForUpdate.Id).Returns([secretariatTask, departmentTask, adminTask]);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(committeeId).Returns([secretariatTask, departmentTask, adminTask]);
+
+        var result = await _service.FinalizeReadyForProposal(committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.AllValidationsPassed, Is.True);
+            Assert.That(adminTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+            Assert.That(committeeForUpdate.ReleaseGeneralElection, Is.True);
+        }
+
+        await _generalElectionCommitteeRepository.Received(2).CommitChanges();
+        await _worklistTaskRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task FinalizeReadyForProposal_WithFailedValidation_ShouldReturnValidationResultWithoutFinalizing()
+    {
+        var committeeId = Guid.NewGuid();
+        var committeeForUpdate = new GeneralElectionCommitteeBuilder()
+            .WithCommitteeId(committeeId)
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithMinimalMember(1)
+            .WithMaximalMember(10)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(committeeId).Returns(committeeForUpdate);
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(committeeForUpdate);
+
+        var result = await _service.FinalizeReadyForProposal(committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.AllValidationsPassed, Is.False);
+            Assert.That(committeeForUpdate.ReleaseGeneralElection, Is.False);
+        }
+
+        await _generalElectionCommitteeRepository.DidNotReceive().CommitChanges();
+        await _worklistTaskRepository.DidNotReceive().CommitChanges();
     }
 
     [Test]
@@ -504,11 +607,11 @@ internal class MembershipCandidateServiceTests
 
         var result = await _service.GetMembers(committeeId);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.ActiveMemberships.Count(), Is.EqualTo(1));
             Assert.That(result.InactiveMemberships, Is.Empty);
-        });
+        }
     }
 
     [Test]
@@ -740,11 +843,11 @@ internal class MembershipCandidateServiceTests
 
         await _service.ValidateCandidateList(committeeId, candidateIds, false);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(generalElectionCommittee.CandidateListStateId, Is.EqualTo(CandidateListState.Completed));
             Assert.That(generalElectionCommittee.IsValidated, Is.True);
-        });
+        }
     }
 
     [Test]
@@ -839,11 +942,12 @@ internal class MembershipCandidateServiceTests
 
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(validationResult.AreJustificationsMissing, Is.True);
             Assert.That(validationResult.IsValid, Is.True);
-        });
+        }
+
         await _worklistTaskRepository.Received(1).Create(Arg.Is<WorklistTask>(t => t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications));
     }
 
@@ -879,11 +983,12 @@ internal class MembershipCandidateServiceTests
         _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns([new WorklistTaskBuilder().Build()]);
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(validationResult.AreJustificationsMissing, Is.True);
             Assert.That(existingJustificationTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
-        });
+        }
+
         await _worklistTaskRepository.DidNotReceive().Create(Arg.Is<WorklistTask>(t => t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications));
     }
 
@@ -919,11 +1024,12 @@ internal class MembershipCandidateServiceTests
 
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(validationResult.AreJustificationsMissing, Is.False);
             Assert.That(validationResult.IsValid, Is.True);
-        });
+        }
+
         await _worklistTaskRepository.DidNotReceive().Create(Arg.Is<WorklistTask>(t => t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications));
     }
 
@@ -963,11 +1069,11 @@ internal class MembershipCandidateServiceTests
 
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(validationResult.AreJustificationsMissing, Is.False);
             Assert.That(existingJustificationTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
-        });
+        }
     }
 
     [Test]
@@ -1059,18 +1165,43 @@ internal class MembershipCandidateServiceTests
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .Build();
 
+        var secretariatAssignment = new EiamAssignmentBuilder().WithRole(Role.Secretariat).Build();
+        var departmentAssignment = new EiamAssignmentBuilder().WithRole(Role.Department).Build();
+        var adminAssignment = new EiamAssignmentBuilder().WithRole(Role.Admin).WithId(EiamAssignment.AdminId).Build();
+        var readyForProposalSecretariatTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithAssignedTo(secretariatAssignment)
+            .Build();
+        var readyForProposalDepartmentTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithAssignedTo(departmentAssignment)
+            .Build();
+        var readyForProposalAdminTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithAssignedTo(adminAssignment)
+            .Build();
+
         _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([missingSecretariatTask, missingDataProtectionOfficerTask]);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([
+            missingSecretariatTask,
+            missingDataProtectionOfficerTask,
+            readyForProposalSecretariatTask,
+            readyForProposalDepartmentTask,
+            readyForProposalAdminTask
+        ]);
         _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([]);
 
         var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(validationResult.AreContactPointsMissing, Is.False);
             Assert.That(missingSecretariatTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
             Assert.That(missingDataProtectionOfficerTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
-        });
+        }
     }
 
     [Test]
