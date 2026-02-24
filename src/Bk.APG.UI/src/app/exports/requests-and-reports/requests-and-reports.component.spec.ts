@@ -128,16 +128,13 @@ describe('RequestsAndReportsComponent', () => {
         expect(component.form.controls.analysisDate1.value).toEqual(today());
     });
 
-    it.each([ReportType.DissolvedCommittees, ReportType.CompareListGE])(
-        'should update "date 1" field and enable "date 2" field properly for document Type "%s"',
-        dt => {
-            component.analysisDateDefaultValue = new Date(2023, 2, 2);
-            component.form.controls.documentType.setValue(dt);
-            expect(component.form.controls.analysisDate1.value).toEqual(component.analysisDateDefaultValue);
-            expect(component.form.controls.analysisDate2.value).toEqual(today());
-            expect(component.form.controls.analysisDate2.disabled).toEqual(false);
-        }
-    );
+    it.each([ReportType.CompareListGE])('should update "date 1" field and enable "date 2" field properly for document Type "%s"', dt => {
+        component.analysisDateDefaultValue = new Date(2023, 2, 2);
+        component.form.controls.documentType.setValue(dt);
+        expect(component.form.controls.analysisDate1.value).toEqual(component.analysisDateDefaultValue);
+        expect(component.form.controls.analysisDate2.value).toEqual(today());
+        expect(component.form.controls.analysisDate2.disabled).toEqual(false);
+    });
 
     it.each([ReportType.ParliamentaryReport, ReportType.Vacancies, ReportType.AppendixFederalCouncilCheck])(
         'should clear and disable "date 2" field for document Type "%s"',
@@ -155,7 +152,7 @@ describe('RequestsAndReportsComponent', () => {
 
     it('should load at start with the correct count of entries', () => {
         fixture.detectChanges();
-        expect(committeesServiceMock.getCommitteeListForExport).toHaveBeenCalledTimes(3);
+        expect(committeesServiceMock.getCommitteeListForExport).toHaveBeenCalledTimes(5);
     });
 
     it('should call dataAnalysisService.generateExport with correct parameters', () => {

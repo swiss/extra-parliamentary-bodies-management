@@ -63,6 +63,8 @@ export class CommitteesService {
         params = appendMany(params, 'departmentIds', filterParameter?.departments);
         params = appendMany(params, 'officeIds', filterParameter?.offices);
         params = appendMany(params, 'committeeTypeIds', filterParameter?.committeeTypes);
+        params = append(params, 'reportType', filterParameter?.documentType);
+        params = append(params, 'analyisDate1', filterParameter?.analysisDate1);
         return params;
     };
 

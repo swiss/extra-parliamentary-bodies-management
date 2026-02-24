@@ -1384,6 +1384,15 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Liste_Vakanzen.
+        /// </summary>
+        public static string Vacancies_Report_Filename {
+            get {
+                return ResourceManager.GetString("Vacancies_Report_Filename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to GS.
         /// </summary>
         public static string Worklist_DepartmentRole {

@@ -389,7 +389,7 @@ public class ReportService : IReportService
 
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
 
-        var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
+        var committees = (await _committeeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
 
         var generalElectionCommittees = committees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
 
@@ -399,20 +399,12 @@ public class ReportService : IReportService
         {
             TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + " - " + nextTermOfOfficeDate.EndDate?.Year,
 
-            VacanciesCommittees = reportDepartments,
-
-            //NonReleasedCommissions = nonReleasedCommissionsDto,
-            //MarketOrientatedCommissions = marketOrientatedCommissionsDto,
-            //MoreThan15MembersCommittees = moreThan15MembersCommitteesDto,
-            //MissingGenderMembersCommittees = missingGenderMembersCommitteesDto,
-            //MissingLanguageMembersCommittees = missingItalianAndFrenchMembersCommitteesDto,
-            //LongerDutyMembersCommittees = membersWith12OrMoreYearsDto,
-            //FederalDutyMembersCommittees = committeesWithMembersInFederalDutyDto
+            Departments = reportDepartments,
         };
 
         var documentStream = await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", vacanciesReportDto, "vacanciesReport");
 
-        return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.DecisionFederalCouncil_Filename}.docx", documentStream);
+        return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.Vacancies_Report_Filename}.docx", documentStream);
     }
 
     private static List<ReportDepartmentWithCommitteeTypeDto> GetCommitteesByDepartmentAndTypes(IEnumerable<Committee> committees, IEnumerable<Department> departments)
@@ -492,7 +484,9 @@ public class ReportService : IReportService
             foreach (var committee in filteredCommittees)
             {
                 var freeText = "";
+                var freeText2 = "";
                 var membershipCount = committee.Memberships.Count;
+                var onlyAddWhenData = false;
 
                 if (type == ReportCommitteeType.SelectionProcedure)
                 {
@@ -501,8 +495,9 @@ public class ReportService : IReportService
                 }
                 else if (type == ReportCommitteeType.Vacancies)
                 {
-                    // TODO PP 
+                    onlyAddWhenData = true;
                     freeText = string.Join(", ", committee.MembershipAdditionsInGeneralElection.Select(m => m.GetText()));
+                    freeText2 = !string.IsNullOrWhiteSpace(committee.LinkHomepageGerman) ? committee.LinkHomepageGerman : !string.IsNullOrWhiteSpace(committee.LinkHomepageFrench) ? committee.LinkHomepageFrench : string.Empty;
                     membershipCount = committee.VacanciesGeneralElection != null ? (int)committee.VacanciesGeneralElection : 0;
                 }
                 else
@@ -510,15 +505,19 @@ public class ReportService : IReportService
                     freeText = termOfOfficeDate != null && committee.EndDate < termOfOfficeDate.EndDate && committee.EndDate > termOfOfficeDate.BeginDate ? string.Format(BusinessTexts.Report_EndDateInPast, committee.EndDate.Value.ToShortDateString()) : termOfOfficeDate != null && committee.BeginDate > termOfOfficeDate.BeginDate && committee.BeginDate < termOfOfficeDate.EndDate ? string.Format(BusinessTexts.Report_BeginDateInFuture, committee.BeginDate.ToShortDateString()) : string.Empty;
                 }
 
-                var committeeDto = new ReportCommitteeDto
+                if (!onlyAddWhenData || membershipCount > 0)
                 {
-                    Name = committee.GetDescription(),
-                    MemberCount = membershipCount,
-                    Justification = committee.JustificationMembers,
-                    FreeText = freeText
-                };
+                    var committeeDto = new ReportCommitteeDto
+                    {
+                        Name = committee.GetDescription(),
+                        MemberCount = membershipCount,
+                        Justification = committee.JustificationMembers,
+                        FreeText = freeText,
+                        FreeText2 = freeText2,
+                    };
 
-                committeeList.Add(committeeDto);
+                    committeeList.Add(committeeDto);
+                }
             }
 
             dtoDict[department.GetText()].Committees = committeeList;
