@@ -200,6 +200,74 @@ public class CommitteeRepository : ICommitteeRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<Committee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
+    {
+        // avoid trouble with UTC value from UI. Converting to local time is not allowed, so we add a day to filter value.
+        var filterDate = filterDto.AnalysisDate1 != null ? filterDto.AnalysisDate1.Value.AddDays(1) : DateOnly.FromDateTime(DateTime.Today.AddDays(1));
+
+        var committees = await _dataContext.Committees
+            .Include(item => item.CommitteeLevel)
+            .Include(item => item.Department)
+            .Include(item => item.Office)
+            .Include(item => item.CommitteeType)
+            .Include(item => item.TermOfOffice)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Gender)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Language)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item!.Function)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item!.ElectionType)
+            .Include(item => item.MembershipAdditionsInGeneralElection)
+            .FilterCommitteeByReportFilterParametersDto(filterDto, departmentId, officeId, committeeId)
+            .AsSplitQuery()
+            .Select(c => new Committee
+            {
+                Id = c.Id,
+                Modified = c.Modified,
+                ModifiedBy = c.ModifiedBy,
+                Created = c.Created,
+                CreatedBy = c.CreatedBy,
+                BeginDate = c.BeginDate,
+                EndDate = c.EndDate,
+                TermOfOfficeDateId = c.TermOfOfficeDateId,
+                DepartmentId = c.DepartmentId,
+                Department = c.Department,
+                OfficeId = c.OfficeId,
+                Office = c.Office,
+                CommitteeLevelId = c.CommitteeLevelId,
+                CommitteeLevel = c.CommitteeLevel,
+                CommitteeTypeId = c.CommitteeTypeId,
+                CommitteeType = c.CommitteeType,
+                IsDeleted = c.IsDeleted,
+                DescriptionGerman = c.DescriptionGerman,
+                DescriptionFrench = c.DescriptionFrench,
+                DescriptionItalian = c.DescriptionItalian,
+                DescriptionRomansh = c.DescriptionRomansh,
+                JustificationMembers = c.JustificationMembers,
+                JustificationGenders = c.JustificationGenders,
+                JustificationLanguages = c.JustificationLanguages,
+                MarketOrientated = c.MarketOrientated,
+                MeasuresGenders = c.MeasuresGenders,
+                MeasuresLanguages = c.MeasuresLanguages,
+                RemarksBaseData = c.RemarksBaseData,
+                RemarksBaseDataAdmin = c.RemarksBaseDataAdmin,
+                VacanciesGeneralElection = c.VacanciesGeneralElection,
+                LinkHomepageGerman = c.LinkHomepageGerman,
+                LinkHomepageFrench = c.LinkHomepageFrench,
+                LinkHomepageItalian = c.LinkHomepageItalian,
+                LinkHomepageRomansh = c.LinkHomepageRomansh,
+                MembershipAdditionsInGeneralElection = c.MembershipAdditionsInGeneralElection,
+            })
+            .OrderBy(c => c.DescriptionGerman)
+            .ToListAsync();
+
+        return committees;
+    }
+
     public async Task<IEnumerable<Committee>> GetForOgdExport()
     {
         return await _dataContext.Committees
