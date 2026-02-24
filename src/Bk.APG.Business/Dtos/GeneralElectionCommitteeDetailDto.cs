@@ -62,6 +62,10 @@ public class GeneralElectionCommitteeDetailDto
     public bool CanValidateCandidateList { get; set; }
     public bool CanForwardCandidateList { get; set; }
     public bool IsCandidateListCompleted { get; set; }
+    public string? ReadyForProposalAssignedTo { get; set; }
+    public bool CanForwardReadyForProposal { get; set; }
+    public bool CanFinalizeReadyForProposal { get; set; }
+    public bool IsReadyForProposal { get; set; }
     public required CommitteeQuotasDto Quotas { get; set; }
     public IEnumerable<MembershipCandidateDetailDto> Candidates { get; set; } = new List<MembershipCandidateDetailDto>();
 }
