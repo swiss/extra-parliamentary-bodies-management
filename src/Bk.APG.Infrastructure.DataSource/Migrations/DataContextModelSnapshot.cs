@@ -2273,7 +2273,7 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("character varying(250)")
                         .HasColumnName("created_by");
 
-                    b.Property<Guid?>("DepartmentId")
+                    b.Property<Guid>("DepartmentId")
                         .HasColumnType("uuid")
                         .HasColumnName("department_id");
 
@@ -2319,7 +2319,7 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
-                    b.Property<Guid?>("SenderFunctionId")
+                    b.Property<Guid>("SenderFunctionId")
                         .HasColumnType("uuid")
                         .HasColumnName("sender_function_id");
 
