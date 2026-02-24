@@ -258,6 +258,53 @@ public class EiamAssignmentServiceTests
     }
 
     [Test]
+    public async Task GetAllForReadyForProposalForward_WithDepartmentRole_ShouldReturnParentAndSecretariat()
+    {
+        var committeeId = Guid.NewGuid();
+        var parentAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "parent-external-id",
+            Role = Role.Admin
+        };
+        var secretariatAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "secretariat-external-id",
+            Role = Role.Secretariat,
+            CommitteeId = committeeId
+        };
+        var officeAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "office-external-id",
+            Role = Role.Office,
+            Children = new List<EiamAssignment> { secretariatAssignment }
+        };
+        var currentAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "department-external-id",
+            Role = Role.Department,
+            Parent = parentAssignment,
+            Department = new DepartmentBuilder().WithIsBigDepartment(false).Build(),
+            Children = new List<EiamAssignment> { officeAssignment }
+        };
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+
+        var result = (await _service.GetAllForReadyForProposalForward(committeeId)).ToList();
+
+        await _authorizationService.Received(1).GetCurrentEiamAssignment();
+
+        Assert.That(result, Has.Count.EqualTo(2));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.Any(a => a.Id == parentAssignment.Id), Is.True);
+            Assert.That(result.Any(a => a.Id == secretariatAssignment.Id), Is.True);
+        }
+    }
+
+    [Test]
     public async Task GetCurrentEiamAssignment_ShouldReturnCurrentAssignment()
     {
         var currentAssignment = new EiamAssignment
@@ -401,4 +448,3 @@ public class EiamAssignmentServiceTests
         Assert.That(committeeId, Is.EqualTo(eiamId));
     }
 }
-

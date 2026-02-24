@@ -209,7 +209,7 @@ internal class WorklistTaskExtensionsTests
 
             var result = _worklistTask.GetNavigationUrl();
 
-            Assert.That(result, Is.EqualTo($"/general-election/committees/{committeeId}"));
+            Assert.That(result, Is.EqualTo($"/general-election/committees/{committeeId}?tab=data"));
         }
 
         [Test]

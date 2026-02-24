@@ -30,6 +30,13 @@ public class EiamAssignmentService : IEiamAssignmentService
         return availableAssignments.Select(x => EiamAssignmentMapper.ToDto(x));
     }
 
+    public async Task<IEnumerable<EiamAssignmentDto>> GetAllForReadyForProposalForward(Guid committeeId)
+    {
+        var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
+        var availableAssignments = currentEiamAssignment.GetAssignmentsForReadyForProposalForward(committeeId).ToList();
+        return availableAssignments.Select(x => EiamAssignmentMapper.ToDto(x));
+    }
+
     public async Task<EiamAssignmentDto> GetCurrentEiamAssignment()
     {
         var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
