@@ -4,5 +4,5 @@ public class VacanciesReportDto
 {
     public required string TermOfOfficeDateRange { get; set; }
 
-    public IEnumerable<ReportDepartmentWithCommitteesDto>? VacanciesCommittees { get; set; }
+    public IEnumerable<ReportDepartmentWithCommitteesDto>? Departments { get; set; }
 }

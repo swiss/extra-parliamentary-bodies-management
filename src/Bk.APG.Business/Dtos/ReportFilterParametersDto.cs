@@ -19,7 +19,6 @@ public enum ReportType
     ParliamentaryReport,
     AppendixFederalCouncil,
     AppendixFederalCouncilCheck,
-    DissolvedCommittees,
     Vacancies,
     CompareListGE,
     AttachmentFCR_GE,
