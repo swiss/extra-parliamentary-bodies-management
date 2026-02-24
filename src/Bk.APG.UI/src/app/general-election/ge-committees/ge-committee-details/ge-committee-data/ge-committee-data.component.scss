@@ -10,6 +10,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: $ob-spacing-sm;
+    }
+
+    .header-left {
+        display: flex;
+        flex-direction: column;
+        gap: $ob-spacing-xs;
     }
 
     .buttons {
@@ -18,5 +25,9 @@
         white-space: nowrap;
         align-self: flex-end;
         margin-bottom: $ob-spacing-sm;
+    }
+
+    mat-chip {
+        align-self: center;
     }
 }
