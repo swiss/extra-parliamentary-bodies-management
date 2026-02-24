@@ -140,6 +140,7 @@ public class GeneralElectionCommitteeServiceTests
             .WithRole(Role.Department)
             .Build();
         var activeCandidateListTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListCreate)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignment)
             .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
@@ -192,6 +193,101 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(result.CanSaveCandidateList, Is.False);
             Assert.That(result.CanValidateCandidateList, Is.False);
             Assert.That(result.CanForwardCandidateList, Is.False);
+        }
+    }
+
+    [Test]
+    public async Task GetGeneralElectionCommittee_WithReadyForFederalCouncilProposalState_ShouldSetIsReadyForProposal()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.ReadyForFederalCouncilProposal)
+            .Build();
+        var currentAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Department)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([]);
+
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsReadyForProposal, Is.True);
+            Assert.That(result.CanForwardReadyForProposal, Is.False);
+            Assert.That(result.CanFinalizeReadyForProposal, Is.False);
+        }
+    }
+
+    [Test]
+    public async Task GetGeneralElectionCommittee_WithActiveReadyForProposalTaskForCurrentNonAdmin_ShouldSetCanForwardReadyForProposal()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var currentAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Secretariat)
+            .Build();
+        var activeReadyForProposalTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignment)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([activeReadyForProposalTask]);
+
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.ReadyForProposalAssignedTo, Is.EqualTo(currentAssignment.GetText()));
+            Assert.That(result.CanForwardReadyForProposal, Is.True);
+            Assert.That(result.CanFinalizeReadyForProposal, Is.False);
+        }
+    }
+
+    [Test]
+    public async Task GetGeneralElectionCommittee_WithAdminAndNotReadyForProposal_ShouldSetCanFinalizeReadyForProposal()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Completed)
+            .Build();
+        var currentAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "admin-external-id",
+            Role = Role.Admin
+        };
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([]);
+
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsReadyForProposal, Is.False);
+            Assert.That(result.CanForwardReadyForProposal, Is.False);
+            Assert.That(result.CanFinalizeReadyForProposal, Is.True);
         }
     }
 

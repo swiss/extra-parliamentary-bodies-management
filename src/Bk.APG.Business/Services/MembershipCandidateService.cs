@@ -74,7 +74,6 @@ public class MembershipCandidateService : IMembershipCandidateService
                 if (generalElectionCommittee.CandidateListStateId != CandidateListState.Completed)
                 {
                     await CompleteCandidateList(generalElectionCommittee);
-                    await CreateReadyForFederalCouncilProposalTasks(generalElectionCommittee);
                 }
 
                 validationResult.AreJustificationsMissing = await CheckJustificationsMissingAndCreateTasks(generalElectionCommittee);
@@ -84,6 +83,8 @@ public class MembershipCandidateService : IMembershipCandidateService
             }
 
             validationResult.AreContactPointsMissing = await CheckContactPointsAndCreateTasks(generalElectionCommittee);
+
+            await ActivateReadyForProposalTasks(generalElectionCommittee, validationResult);
 
             await _generalElectionCommitteeRepository.CommitChanges();
 
@@ -95,6 +96,55 @@ public class MembershipCandidateService : IMembershipCandidateService
         }
 
         return validationResult;
+    }
+
+    private async Task ActivateReadyForProposalTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
+    {
+        var readyForProposalTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
+            .Where(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal).ToList();
+
+        if (readyForProposalTasks.Count == 0 && generalElectionCommittee.CandidateListStateId == CandidateListState.Completed)
+        {
+            readyForProposalTasks = await CreateReadyForFederalCouncilProposalTasks(generalElectionCommittee);
+        }
+
+        if (!validationResult.AllValidationsPassed)
+        {
+            return;
+        }
+
+        var secretariatTask = readyForProposalTasks.Single(x => x.AssignedTo?.Role == Role.Secretariat);
+        var officeTask = readyForProposalTasks.SingleOrDefault(x => x.AssignedTo?.Role == Role.Office);
+        var departmentTask = readyForProposalTasks.Single(x => x.AssignedTo?.Role == Role.Department);
+        var adminTask = readyForProposalTasks.Single(x => x.AssignedToId == EiamAssignment.AdminId);
+
+        if (secretariatTask.WorklistTaskStateId != WorklistTaskState.Active)
+        {
+            secretariatTask.WorklistTaskStateId = WorklistTaskState.Active;
+            secretariatTask.Modified = DateTime.UtcNow;
+            secretariatTask.ModifiedBy = "System";
+        }
+
+        SetReadyForProposalTaskInactiveIfOpen(officeTask);
+        SetReadyForProposalTaskInactiveIfOpen(departmentTask);
+        SetReadyForProposalTaskInactiveIfOpen(adminTask);
+
+        validationResult.IsReadyForProposalActivated = true;
+    }
+
+    private static void SetReadyForProposalTaskInactiveIfOpen(WorklistTask? worklistTask)
+    {
+        if (worklistTask is null)
+        {
+            return;
+        }
+
+        if (worklistTask.WorklistTaskStateId != WorklistTaskState.Inactive)
+        {
+            worklistTask.WorklistTaskStateId = WorklistTaskState.Inactive;
+            worklistTask.Modified = DateTime.UtcNow;
+            worklistTask.ModifiedBy = "System";
+        }
     }
 
     private async Task CheckCandidateMembershipsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
@@ -427,9 +477,11 @@ public class MembershipCandidateService : IMembershipCandidateService
         return areJustificationsMissing;
     }
 
-    private async Task CreateReadyForFederalCouncilProposalTasks(GeneralElectionCommittee generalElectionCommittee)
+    private async Task<List<WorklistTask>> CreateReadyForFederalCouncilProposalTasks(GeneralElectionCommittee generalElectionCommittee)
     {
-        var gewStartTask = (await _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart)).OrderByDescending(x => x.Created).First();
+        var gewStartTask = (await _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart)).OrderByDescending(x => x.Created).FirstOrDefault();
+        var fallbackDueDate = generalElectionCommittee.SecretariatReadyForProposalDueDate ?? DateOnly.FromDateTime(DateTime.UtcNow.AddDays(14));
+        var departmentDueDate = gewStartTask?.DueDate ?? fallbackDueDate;
 
         var newTasks = new List<WorklistTask>();
         if (generalElectionCommittee.Department!.IsBigDepartment)
@@ -438,10 +490,12 @@ public class MembershipCandidateService : IMembershipCandidateService
         }
 
         newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Committee!.EiamAssignmentId!.Value, generalElectionCommittee.SecretariatReadyForProposalDueDate!.Value));
-        newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Department.EiamAssignmentId, gewStartTask.DueDate));
+        newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Department.EiamAssignmentId, departmentDueDate));
         newTasks.Add(GenerateProposalTask(generalElectionCommittee, EiamAssignment.AdminId, DateOnly.FromDateTime(DateTime.UtcNow.AddDays(14))));
 
         await _worklistTaskRepository.CreateRange(newTasks);
+
+        return newTasks;
     }
 
     private static WorklistTask GenerateProposalTask(GeneralElectionCommittee generalElectionCommittee, Guid assignedToId, DateOnly dueDate)
@@ -585,6 +639,85 @@ public class MembershipCandidateService : IMembershipCandidateService
         scope.Complete();
 
         _logger.LogInformation("Forwarded candidate list for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+    }
+
+    public async Task ForwardReadyForProposal(Guid committeeId, ReadyForProposalForwardDto forwardDto)
+    {
+        _logger.LogInformation("Forward ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+        var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+        var forwardTo = await _eiamAssignmentRepository.GetById(forwardDto.ForwardToId);
+
+        var readyForProposalTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
+            .Where(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal).ToList();
+
+        var activeTask = readyForProposalTasks.Single(x => x.WorklistTaskStateId == WorklistTaskState.Active);
+        var targetTask = readyForProposalTasks.Single(x => x.AssignedToId == forwardDto.ForwardToId);
+        targetTask.WorklistTaskStateId = WorklistTaskState.Active;
+        targetTask.Description = forwardDto.Description;
+
+        var hasOfficeTask = readyForProposalTasks.Any(x => x.AssignedTo!.Role == Role.Office);
+        var currentStage = GetReadyForProposalStage(currentEiamAssignment.Role, hasOfficeTask);
+        var targetStage = GetReadyForProposalStage(forwardTo.Role, hasOfficeTask);
+
+        activeTask.WorklistTaskStateId = targetStage > currentStage ? WorklistTaskState.Completed : WorklistTaskState.Inactive;
+
+        await _generalElectionCommitteeRepository.CommitChanges();
+        await _worklistTaskRepository.CommitChanges();
+
+        scope.Complete();
+
+        _logger.LogInformation("Forwarded ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+    }
+
+    public async Task<CandidateListValidationResultDto> FinalizeReadyForProposal(Guid committeeId)
+    {
+        _logger.LogInformation("Finalize ready-for-proposal for general election committee {CommitteeId}", committeeId);
+
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
+        var selectedCandidateIds = generalElectionCommittee.MembershipCandidates.Where(x => x.IsSelected).Select(x => x.Id).ToList();
+        var validationResult = await ValidateCandidateList(committeeId, selectedCandidateIds, true);
+
+        if (!validationResult.AllValidationsPassed)
+        {
+            _logger.LogInformation("Finalize ready-for-proposal failed because of validation errors for general election committee {CommitteeId}", committeeId);
+            return validationResult;
+        }
+
+        using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+
+        var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
+        if (currentEiamAssignment.Role != Role.Admin)
+        {
+            throw new AuthorizationException("Only admin can finalize ready-for-proposal");
+        }
+
+        var readyForProposalTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
+            .Where(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal).ToList();
+
+        foreach (var readyForProposalTask in readyForProposalTasks.Where(readyForProposalTask => readyForProposalTask.WorklistTaskStateId != WorklistTaskState.Completed))
+        {
+            readyForProposalTask.WorklistTaskStateId = WorklistTaskState.Completed;
+            readyForProposalTask.Modified = DateTime.UtcNow;
+            readyForProposalTask.ModifiedBy = "System";
+        }
+
+        var gecommitteeForUpdate = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+        gecommitteeForUpdate.CandidateListStateId = CandidateListState.ReadyForFederalCouncilProposal;
+        gecommitteeForUpdate.ReleaseGeneralElection = true;
+        gecommitteeForUpdate.Modified = DateTime.UtcNow;
+        gecommitteeForUpdate.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+        await _generalElectionCommitteeRepository.CommitChanges();
+        await _worklistTaskRepository.CommitChanges();
+
+        scope.Complete();
+
+        _logger.LogInformation("Finalized ready-for-proposal for general election committee {CommitteeId}", committeeId);
+        return validationResult;
     }
 
     public async Task PartialUpdateMembershipCandidate(Guid id, MembershipCandidatePartialUpdateDto membershipCandidatePartialUpdate)
@@ -732,5 +865,19 @@ public class MembershipCandidateService : IMembershipCandidateService
         {
             candidate.IsSelected = selectedIds.Contains(candidate.Id);
         }
+    }
+
+    private static int GetReadyForProposalStage(Role role, bool hasOfficeTask)
+    {
+        return role switch
+        {
+            Role.Secretariat => 0,
+            Role.Office when hasOfficeTask => 1,
+            Role.Department when hasOfficeTask => 2,
+            Role.Admin when hasOfficeTask => 3,
+            Role.Department => 1,
+            Role.Admin => 2,
+            _ => throw new ArgumentOutOfRangeException(nameof(role), role, @"Role not supported for ready-for-proposal stage handling")
+        };
     }
 }
