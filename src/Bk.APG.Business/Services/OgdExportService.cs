@@ -100,7 +100,6 @@ public class OgdExportService : IOgdExportService
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceVestedInterest, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceVestedInterest}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeFunctionStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeFunctionStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeCantonStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeCantonStatistic}/"));
-        graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeCantonDetailStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeCantonDetailStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeTypeStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeTypeStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic}/"));
@@ -117,7 +116,7 @@ public class OgdExportService : IOgdExportService
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommittee),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
-                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusPublished)),
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommittee),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
@@ -131,7 +130,7 @@ public class OgdExportService : IOgdExportService
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriPerson),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
-                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusPublished)),
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriPerson),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
@@ -148,7 +147,7 @@ public class OgdExportService : IOgdExportService
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
-                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusPublished)),
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
@@ -162,7 +161,7 @@ public class OgdExportService : IOgdExportService
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
-                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusPublished)),
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
@@ -176,7 +175,7 @@ public class OgdExportService : IOgdExportService
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
-                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusPublished)),
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
@@ -190,7 +189,7 @@ public class OgdExportService : IOgdExportService
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
-                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusPublished)),
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
@@ -198,13 +197,13 @@ public class OgdExportService : IOgdExportService
             ]
         );
 
-        var committeeTypeDepartmentStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeDepartmentStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik Version 2", "Export der Gremienstatistik pro Gremiumtyp und Departement");
+        var committeeTypeDepartmentStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeDepartmentStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik", "Export der Gremienstatistik pro Gremiumtyp und Departement");
         committeeTypeDepartmentStatisticCubeMetadata.AddRange(
             [
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeDepartmentStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
-                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusPublished)),
                 new Triple(
                     graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeDepartmentStatistic),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
