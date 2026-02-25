@@ -242,7 +242,7 @@ export class RequestsAndReportsComponent {
                 this.form.controls.analysisDate1.setValue(today());
             }
 
-            if ([ReportType.CompareListGE].includes(this.form.controls.documentType.value!)) {
+            if (this.form.controls.documentType.value! === ReportType.CompareListGE) {
                 this.form.controls.analysisDate1.setValue(this.analysisDateDefaultValue);
                 this.form.controls.analysisDate2.setValue(today());
                 this.form.controls.analysisDate2.enable();
