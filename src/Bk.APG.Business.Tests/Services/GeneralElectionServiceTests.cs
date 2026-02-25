@@ -216,6 +216,25 @@ public class GeneralElectionServiceTests
 
         await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, false);
 
+        Assert.Multiple(() =>
+        {
+            Assert.That(membershipCandidate.MaximumEmploymentLevel, Is.EqualTo(membership.MaximumEmploymentLevel));
+            Assert.That(membershipCandidate.ElectionTypeId, Is.EqualTo(ElectionType.ReElectionGuid));
+            Assert.That(membershipCandidate.FunctionId, Is.EqualTo(membership.FunctionId));
+            Assert.That(membershipCandidate.ElectionOfficeId, Is.EqualTo(membership.ElectionOfficeId));
+            Assert.That(membershipCandidate.MembershipAdditionId, Is.EqualTo(membership.MembershipAdditionId));
+            Assert.That(membershipCandidate.Remarks, Is.EqualTo(membership.Remarks));
+            Assert.That(membershipCandidate.RemarksStatus, Is.EqualTo(membership.RemarksStatus));
+            Assert.That(membershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(membership.InCorrelationWithFederalDuty));
+            Assert.That(membershipCandidate.Modified, Is.EqualTo(membership.Modified));
+            Assert.That(membershipCandidate.ModifiedBy, Is.EqualTo(membership.ModifiedBy));
+            Assert.That(membershipCandidate.JustificationLongerDuty, Is.EqualTo(membership.JustificationLongerDuty));
+            Assert.That(membershipCandidate.JustificationShorterDuty, Is.EqualTo(membership.JustificationShorterDuty));
+            Assert.That(membershipCandidate.JustificationMemberInFederalDuty, Is.EqualTo(membership.JustificationMemberInFederalDuty));
+            Assert.That(membershipCandidate.JustificationMemberInFederalAssembly, Is.EqualTo(membership.JustificationMemberInFederalAssembly));
+            Assert.That(membershipCandidate.RequirementsProfile, Is.EqualTo(membership.RequirementsProfile));
+        });
+
         await _membershipCandidateRepository.Received(1).CommitChanges();
     }
 

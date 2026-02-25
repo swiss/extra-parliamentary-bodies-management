@@ -121,14 +121,17 @@ internal class CommitteeMapperTests
             Assert.That(committeeDetailDto.JustificationGenders, Is.EqualTo(committee.JustificationGenders));
             Assert.That(committeeDetailDto.MeasuresGenders, Is.EqualTo(committee.MeasuresGenders));
 
-            Assert.That(committeeDetailDto.GermanThreshold, Is.EqualTo(committee.CommitteeType!.GermanThresholdPercentage is not null ? committee.CommitteeType!.GermanThresholdPercentage : committee.CommitteeType!.GermanMinimalThreshold));
-            Assert.That(committeeDetailDto.GermanQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.GermanUri) / activeMembersCount * 100 : 0));
-            Assert.That(committeeDetailDto.FrenchThreshold, Is.EqualTo(committee.CommitteeType!.FrenchThresholdPercentage is not null ? committee.CommitteeType!.FrenchThresholdPercentage : committee.CommitteeType!.FrenchMinimalThreshold));
-            Assert.That(committeeDetailDto.FrenchQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.FrenchUri) / activeMembersCount * 100 : 0));
-            Assert.That(committeeDetailDto.ItalianThreshold, Is.EqualTo(committee.CommitteeType!.ItalianThresholdPercentage is not null ? committee.CommitteeType!.ItalianThresholdPercentage : committee.CommitteeType!.ItalianMinimalThreshold));
-            Assert.That(committeeDetailDto.ItalianQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.ItalianUri) / activeMembersCount * 100 : 0));
-            Assert.That(committeeDetailDto.RomanshThreshold, Is.EqualTo(committee.CommitteeType!.RomanshThresholdPercentage is not null ? committee.CommitteeType!.RomanshThresholdPercentage : committee.CommitteeType!.RomanshMinimalThreshold));
-            Assert.That(committeeDetailDto.RomanshQuota, Is.EqualTo(activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.RomanshUri) / activeMembersCount * 100 : 0));
+            var committeeType = committee.CommitteeType!;
+            var isPercentageBased = committeeType.GermanThresholdPercentage is not null;
+            Assert.That(committeeDetailDto.IsPercentageBased, Is.EqualTo(isPercentageBased));
+            Assert.That(committeeDetailDto.GermanThreshold, Is.EqualTo((isPercentageBased ? committeeType.GermanThresholdPercentage : committeeType.GermanMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.GermanQuota, Is.EqualTo(isPercentageBased ? committee.GermanQuota : committee.GermanCount));
+            Assert.That(committeeDetailDto.FrenchThreshold, Is.EqualTo((isPercentageBased ? committeeType.FrenchThresholdPercentage : committeeType.FrenchMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.FrenchQuota, Is.EqualTo(isPercentageBased ? committee.FrenchQuota : committee.FrenchCount));
+            Assert.That(committeeDetailDto.ItalianThreshold, Is.EqualTo((isPercentageBased ? committeeType.ItalianThresholdPercentage : committeeType.ItalianMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.ItalianQuota, Is.EqualTo(isPercentageBased ? committee.ItalianQuota : committee.ItalianCount));
+            Assert.That(committeeDetailDto.RomanshThreshold, Is.EqualTo((isPercentageBased ? committeeType.RomanshThresholdPercentage : committeeType.RomanshMinimalThreshold) ?? 0));
+            Assert.That(committeeDetailDto.RomanshQuota, Is.EqualTo(isPercentageBased ? committee.RomanshQuota : committee.RomanshCount));
             Assert.That(committeeDetailDto.JustificationLanguages, Is.EqualTo(committee.JustificationLanguages));
             Assert.That(committeeDetailDto.MeasuresLanguages, Is.EqualTo(committee.MeasuresLanguages));
 
@@ -139,6 +142,7 @@ internal class CommitteeMapperTests
             Assert.That(committeeDetailDto.NeedsAttentionNoMembers, Is.EqualTo(committee.NeedsAttentionNoMembers));
             Assert.That(committeeDetailDto.NeedsAttentionAboveMaxMembers, Is.EqualTo(committee.NeedsAttentionAboveMaxMembers));
             Assert.That(committeeDetailDto.NeedsAttentionDataProtectionOfficer, Is.EqualTo(committee.NeedsAttentionDataProtectionOfficer));
+            Assert.That(committeeDetailDto.NeedsAttentionSecretariat, Is.EqualTo(committee.NeedsAttentionSecretariat));
             Assert.That(committeeDetailDto.NeedsAttentionBasicData, Is.EqualTo(committee.NeedsAttentionBasicData));
             Assert.That(committeeDetailDto.NeedsAttentionMembershipExpired, Is.EqualTo(committee.NeedsAttentionMembershipExpired));
         });
@@ -205,17 +209,11 @@ internal class CommitteeMapperTests
     public void ToDimensionItem_WithValidCommittee_ShouldMapCorrectly()
     {
         var committeeId = Guid.NewGuid();
-        var committeeOgdId = 1;
+        const int committeeOgdId = 1;
 
         var committeeTypeId = Guid.NewGuid();
 
-        var authorityUri = "https://www.example.committee.admin.ch/authority.html";
-        var germanUri = "https://www.example.committee.admin.ch/de.html";
-        var frenchUri = "https://www.example.committee.admin.ch/fr.html";
-        var italianUri = "https://www.example.committee.admin.ch/it.html";
-        var romanshUri = "https://www.example.committee.admin.ch/rm.html";
-
-        var secretariatOgdId = 3;
+        const int secretariatOgdId = 3;
 
         var contactPointTypeSecretariat =
             new ContactPointTypeBuilder()
@@ -237,11 +235,6 @@ internal class CommitteeMapperTests
                 .WithFrenchDescription("fr")
                 .WithItalianDescription("it")
                 .WithRomanschDescription("rm")
-                .WithLinkAuthorityWebsite(authorityUri)
-                .WithGermanLinkHomepage(germanUri)
-                .WithFrenchLinkHomepage(frenchUri)
-                .WithItalianLinkHomepage(italianUri)
-                .WithRomanshLinkHomepage(romanshUri)
                 .WithCommitteeTypeId(committeeTypeId)
                 .WithContactPoint(secretariat)
                 .Build();
@@ -250,41 +243,27 @@ internal class CommitteeMapperTests
 
         Assert.That(result, Is.Not.Null);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Key, Is.EqualTo(committeeOgdId));
             Assert.That(result.Name.Text, Is.EqualTo("de"));
-            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(9));
-            Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(1));
-        });
+            Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(2));
+        }
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.AdditionalLiteralProperties[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[0].Object.Text, Is.EqualTo("de"));
-            Assert.That(result.AdditionalLiteralProperties[1].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[1].Object.Text, Is.EqualTo("fr"));
-            Assert.That(result.AdditionalLiteralProperties[2].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[2].Object.Text, Is.EqualTo("it"));
-            Assert.That(result.AdditionalLiteralProperties[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaName));
-            Assert.That(result.AdditionalLiteralProperties[3].Object.Text, Is.EqualTo("rm"));
-            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(authorityUri));
-            Assert.That(result.AdditionalLiteralProperties[5].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[5].Object.Text, Is.EqualTo(germanUri));
-            Assert.That(result.AdditionalLiteralProperties[6].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[6].Object.Text, Is.EqualTo(frenchUri));
-            Assert.That(result.AdditionalLiteralProperties[7].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[7].Object.Text, Is.EqualTo(italianUri));
-            Assert.That(result.AdditionalLiteralProperties[8].Predicate, Is.EqualTo(OgdExportConstants.SchemaUrl));
-            Assert.That(result.AdditionalLiteralProperties[8].Object.Text, Is.EqualTo(romanshUri));
-        });
-
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.AdditionalUriProperties[0].Predicate, Is.EqualTo(OgdExportConstants.CommitteeHasSecretariat));
-            Assert.That(result.AdditionalUriProperties[0].Object, Is.EqualTo($"organization:{secretariat.OgdId}"));
-        });
+            Assert.That(result.AdditionalUriProperties[0].Object, Is.EqualTo($"{OgdExportConstants.NamespaceOrganization}:{secretariat.OgdId}"));
+            Assert.That(result.AdditionalUriProperties[1].Predicate, Is.EqualTo(OgdExportConstants.CommitteeHasLegalForm));
+            Assert.That(result.AdditionalUriProperties[1].Object, Is.EqualTo(OgdExportConstants.CreateUriLinkForLdAdminCh(committee.LegalForm!.Uri)));
+        }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.CommitteeAdditionalAuthorityMembers));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(committee.AdditionalAuthorityMembers.ToString().ToLowerInvariant()));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.DataType, Is.EqualTo(new Uri(OgdExportConstants.DataTypeBoolean)));
+        }
     }
 
     [Test]

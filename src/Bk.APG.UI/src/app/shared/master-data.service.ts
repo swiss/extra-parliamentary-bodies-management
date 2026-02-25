@@ -10,6 +10,7 @@ import {Council} from '@api/Council';
 import {Department} from '@api/Department';
 import {ElectionOffice} from '@api/ElectionOffice';
 import {ElectionType} from '@api/ElectionType';
+import {FormLettersSenderFunction} from '@api/FormLettersSenderFunction';
 import {FunctionDto} from '@api/Function';
 import {Gender} from '@api/Gender';
 import {InterestCommittee} from '@api/InterestCommittee';
@@ -60,6 +61,7 @@ export class MasterDataService {
     councils = signal<Council[]>([]);
     worklistTaskTypes = signal<WorklistTaskType[]>([]);
     worklistTaskStates = signal<WorklistTaskState[]>([]);
+    formLetterSenderFunctions = signal<FormLettersSenderFunction[]>([]);
 
     constructor(
         private readonly http: HttpClient,
@@ -99,6 +101,7 @@ export class MasterDataService {
                 this.councils.set(masterData.councils);
                 this.worklistTaskTypes.set(masterData.worklistTaskTypes);
                 this.worklistTaskStates.set(masterData.worklistTaskStates);
+                this.formLetterSenderFunctions.set(masterData.formLetterSenderFunctions);
             });
     }
 

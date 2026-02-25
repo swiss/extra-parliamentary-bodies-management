@@ -8,7 +8,7 @@ The following example should be helpful to start.
 ```
 services:
   apg-postgres:
-    image: repo.bit.admin.ch:8444/postgres:13.4
+    image: postgres:13.4
     container_name: apg-postgres
     restart: on-failure
     environment:
@@ -24,7 +24,7 @@ services:
       - apg-net
 
   apg-pgadmin:
-    image: repo.bit.admin.ch:8444/dpage/pgadmin4:5.6
+    image: dpage/pgadmin4:5.6
     container_name: apg-pgadmin
     restart: on-failure
     environment:
@@ -39,7 +39,7 @@ services:
       - apg-net
 
   apg-mailhog:
-    image: repo.bit.admin.ch:8444/mailhog/mailhog
+    image: mailhog/mailhog:latest
     container_name: apg-mailhog
     restart: on-failure
     ports:
@@ -49,7 +49,7 @@ services:
       - apg-net
 
   apg-kcpostgres:
-    image: repo.bit.admin.ch:8444/postgres:17
+    image: postgres:17
     container_name: apg-kcpostgres
     restart: on-failure
     volumes:
@@ -62,7 +62,7 @@ services:
       - apg-net
 
   apg-keycloak:
-    image: repo.bit.admin.ch:8444/keycloak/keycloak:24.0.1
+    image: keycloak/keycloak:24.0.1
     container_name: apg-keycloak
     restart: on-failure
     volumes:
@@ -85,7 +85,7 @@ services:
   apg-minio:
     container_name: apg-minio
     restart: on-failure
-    image: repo.bit.admin.ch:8444/minio/minio
+    image: minio/minio:latest
     ports:
       - "9010:9000"
       - "9011:9001"
