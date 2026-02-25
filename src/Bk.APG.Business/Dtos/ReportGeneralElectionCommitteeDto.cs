@@ -6,6 +6,7 @@ namespace Bk.APG.Business.Dtos;
 
 public class ReportGeneralElectionCommitteeDto
 {
+    // This DTO, even though called GeneralElection, can also be used for normal committees!
     public Guid Id { get; init; }
     public DateOnly BeginDate { get; set; }
     public DateOnly? EndDate { get; set; }
@@ -63,6 +64,8 @@ public class ReportGeneralElectionCommitteeDto
     public bool ExtraParliamentaryCommission => CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid || CommitteeTypeId == CommitteeType.AdministrationCommissionGuid;
 
     public ICollection<ContactPoint> ContactPoints { get; set; } = new List<ContactPoint>();
+
+    public ICollection<MembershipAddition> MembershipAdditionsInGeneralElection { get; set; } = new List<MembershipAddition>();
 
     public string GetDescription()
     {
