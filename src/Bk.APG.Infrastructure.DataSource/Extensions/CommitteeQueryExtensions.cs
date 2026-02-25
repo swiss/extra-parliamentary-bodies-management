@@ -194,6 +194,26 @@ public static class CommitteeQueryExtensions
     {
         if (filterDto != null)
         {
+            if (filterDto.ReportType != null)
+            {
+                var reportIsGeneralElectionOnly = false;
+
+                if (Enum.TryParse<ReportType>(filterDto.ReportType, out var parsedReportType))
+                {
+                    if (parsedReportType == ReportType.Vacancies)
+                    {
+                        reportIsGeneralElectionOnly = true;
+                        query = query.Where(c => c.VacanciesGeneralElection > 0);
+                    }
+                    // TODO, other report type will have to be added here.
+
+                    if (reportIsGeneralElectionOnly)
+                    {
+                        query = query.Where(c => c.CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && c.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid);
+                    }
+                }
+            }
+
             if (filterDto.DepartmentIds is not null && filterDto.DepartmentIds.Any())
             {
                 query = query.Where(c => filterDto.DepartmentIds.Contains(c.DepartmentId));
@@ -207,6 +227,59 @@ public static class CommitteeQueryExtensions
             if (filterDto.CommitteeTypeIds is not null && filterDto.CommitteeTypeIds.Any())
             {
                 query = query.Where(c => filterDto.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+            }
+        }
+
+        if (departmentId == Guid.Empty && officeId == Guid.Empty && committeeId == Guid.Empty)
+        {
+            return query;
+        }
+
+        if (departmentId != Guid.Empty)
+        {
+            query = query.Where(c => c.DepartmentId == departmentId);
+        }
+
+        if (officeId != Guid.Empty)
+        {
+            query = query.Where(c => c.OfficeId == officeId);
+        }
+
+        if (committeeId != Guid.Empty)
+        {
+            query = query.Where(c => c.Id == committeeId);
+        }
+
+        return query;
+    }
+
+    public static IQueryable<Committee> FilterCommitteeByReportFilterParametersDto(this IQueryable<Committee> query, ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
+    {
+        if (filterDto != null)
+        {
+            if (filterDto.DepartmentIds is not null && filterDto.DepartmentIds.Any())
+            {
+                query = query.Where(c => filterDto.DepartmentIds.Contains(c.DepartmentId));
+            }
+
+            if (filterDto.OfficeIds is not null && filterDto.OfficeIds.Any())
+            {
+                query = query.Where(c => filterDto.OfficeIds.Contains(c.OfficeId));
+            }
+
+            if (filterDto.CommitteeTypeIds is not null && filterDto.CommitteeTypeIds.Any())
+            {
+                query = query.Where(c => filterDto.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+            }
+
+            if (filterDto.AnalysisDate1 is not null)
+            {
+                query = query.Where(c => c.BeginDate < filterDto.AnalysisDate1 && (c.EndDate == null || c.EndDate > filterDto.AnalysisDate1));
+            }
+
+            if (filterDto.CommitteeIds is not null && filterDto.CommitteeIds.Any())
+            {
+                query = query.Where(c => filterDto.CommitteeIds.Contains(c.Id));
             }
         }
 
