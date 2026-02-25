@@ -37,6 +37,7 @@ describe('PersonDataFormComponent', () => {
         legislaturePeriods: jest.fn(),
         councils: jest.fn(),
         offices: jest.fn(),
+        countries: jest.fn(),
     };
 
     const personsServiceMock = {
@@ -157,7 +158,7 @@ describe('PersonDataFormComponent', () => {
                 expect(addressGroup.controls.companyName.value).toBe('');
                 expect(addressGroup.controls.street.value).toBe('');
                 expect(addressGroup.controls.poBox.value).toBe('');
-                expect(addressGroup.controls.countryCode.value).toBe('');
+                expect(addressGroup.controls.countryId.value).toBeNull();
                 expect(addressGroup.controls.zip.value).toBe('');
                 expect(addressGroup.controls.city.value).toBe('');
                 expect(addressGroup.controls.phone.value).toBe('');
@@ -197,7 +198,7 @@ describe('PersonDataFormComponent', () => {
             officeAddressGroup.controls.zip.setValue('');
             officeAddressGroup.controls.city.setValue('');
             officeAddressGroup.controls.cantonId.setValue(null);
-            officeAddressGroup.controls.countryCode.setValue('');
+            officeAddressGroup.controls.countryId.setValue(null);
 
             // Change to office address as active
             component.changeActiveAddress('officeAddress');
@@ -207,7 +208,7 @@ describe('PersonDataFormComponent', () => {
             expect(officeAddressGroup.controls.zip.hasError('required')).toBe(true);
             expect(officeAddressGroup.controls.city.hasError('required')).toBe(true);
             expect(officeAddressGroup.controls.cantonId.hasError('required')).toBe(true);
-            expect(officeAddressGroup.controls.countryCode.hasError('required')).toBe(true);
+            expect(officeAddressGroup.controls.countryId.hasError('required')).toBe(true);
 
             // Private address should not have required errors since it's not active
             expect(privateAddressGroup.controls.street.hasError('required')).toBe(false);
@@ -412,19 +413,19 @@ describe('PersonDataFormComponent', () => {
                     expect(addressGroup.controls.cantonId.hasError('required')).toBe(false);
                 });
 
-                it('should require countryCode when address is active', () => {
+                it('should require countryId when address is active', () => {
                     addressGroup.controls.activeAddress.setValue(false);
-                    addressGroup.controls.countryCode.setValue('');
-                    addressGroup.controls.countryCode.updateValueAndValidity();
-                    expect(addressGroup.controls.countryCode.hasError('required')).toBe(false);
+                    addressGroup.controls.countryId.setValue(null);
+                    addressGroup.controls.countryId.updateValueAndValidity();
+                    expect(addressGroup.controls.countryId.hasError('required')).toBe(false);
 
                     addressGroup.controls.activeAddress.setValue(true);
-                    addressGroup.controls.countryCode.updateValueAndValidity();
-                    expect(addressGroup.controls.countryCode.hasError('required')).toBe(true);
+                    addressGroup.controls.countryId.updateValueAndValidity();
+                    expect(addressGroup.controls.countryId.hasError('required')).toBe(true);
 
-                    addressGroup.controls.countryCode.setValue('CH');
-                    addressGroup.controls.countryCode.updateValueAndValidity();
-                    expect(addressGroup.controls.countryCode.hasError('required')).toBe(false);
+                    addressGroup.controls.countryId.setValue('CH');
+                    addressGroup.controls.countryId.updateValueAndValidity();
+                    expect(addressGroup.controls.countryId.hasError('required')).toBe(false);
                 });
             });
         });
@@ -437,7 +438,7 @@ describe('PersonDataFormComponent', () => {
             addressControlPrivate.controls.city.setValue(city);
             addressControlPrivate.controls.cantonId.setValue('');
             addressControlPrivate.controls.companyName.setValue('');
-            addressControlPrivate.controls.countryCode.setValue('');
+            addressControlPrivate.controls.countryId.setValue('');
             addressControlPrivate.controls.email.setValue('');
             addressControlPrivate.controls.mobile.setValue('');
             addressControlPrivate.controls.phone.setValue('');
@@ -456,7 +457,7 @@ describe('PersonDataFormComponent', () => {
             addressControlOffice.controls.city.setValue(city);
             addressControlOffice.controls.cantonId.setValue('');
             addressControlOffice.controls.companyName.setValue('');
-            addressControlOffice.controls.countryCode.setValue('');
+            addressControlOffice.controls.countryId.setValue('');
             addressControlOffice.controls.email.setValue('');
             addressControlOffice.controls.mobile.setValue('');
             addressControlOffice.controls.phone.setValue('');
@@ -479,7 +480,7 @@ describe('PersonDataFormComponent', () => {
             addressControlOffice.controls.city.setValue(city);
             addressControlOffice.controls.cantonId.setValue('');
             addressControlOffice.controls.companyName.setValue('');
-            addressControlOffice.controls.countryCode.setValue('');
+            addressControlOffice.controls.countryId.setValue('');
             addressControlOffice.controls.email.setValue('');
             addressControlOffice.controls.mobile.setValue('');
             addressControlOffice.controls.phone.setValue('');
@@ -505,7 +506,7 @@ describe('PersonDataFormComponent', () => {
                 addressControlPrivate.controls.street.setValue(activePrivate && cityPrivate ? 'Street' : '');
                 addressControlPrivate.controls.zip.setValue(activePrivate && cityPrivate ? '3000' : '');
                 addressControlPrivate.controls.cantonId.setValue(activePrivate && cityPrivate ? 'BE' : '');
-                addressControlPrivate.controls.countryCode.setValue(activePrivate && cityPrivate ? 'CH' : '');
+                addressControlPrivate.controls.countryId.setValue(activePrivate && cityPrivate ? 'CH' : '');
                 addressControlPrivate.controls.companyName.setValue('');
                 addressControlPrivate.controls.email.setValue('');
                 addressControlPrivate.controls.mobile.setValue('');
@@ -519,7 +520,7 @@ describe('PersonDataFormComponent', () => {
                 addressControlOffice.controls.street.setValue(activeOffice ? 'Street' : '');
                 addressControlOffice.controls.zip.setValue(activeOffice ? '8000' : '');
                 addressControlOffice.controls.cantonId.setValue(activeOffice ? 'ZH' : '');
-                addressControlOffice.controls.countryCode.setValue(activeOffice ? 'CH' : '');
+                addressControlOffice.controls.countryId.setValue(activeOffice ? 'CH' : '');
                 addressControlOffice.controls.companyName.setValue('');
                 addressControlOffice.controls.email.setValue('');
                 addressControlOffice.controls.mobile.setValue('');
@@ -531,12 +532,12 @@ describe('PersonDataFormComponent', () => {
                 addressControlPrivate.controls.zip.updateValueAndValidity();
                 addressControlPrivate.controls.city.updateValueAndValidity();
                 addressControlPrivate.controls.cantonId.updateValueAndValidity();
-                addressControlPrivate.controls.countryCode.updateValueAndValidity();
+                addressControlPrivate.controls.countryId.updateValueAndValidity();
                 addressControlOffice.controls.street.updateValueAndValidity();
                 addressControlOffice.controls.zip.updateValueAndValidity();
                 addressControlOffice.controls.city.updateValueAndValidity();
                 addressControlOffice.controls.cantonId.updateValueAndValidity();
-                addressControlOffice.controls.countryCode.updateValueAndValidity();
+                addressControlOffice.controls.countryId.updateValueAndValidity();
 
                 // Manually trigger formState update to make computed signals re-evaluate
                 component['formState'].update(v => v + 1);
@@ -571,7 +572,7 @@ describe('PersonDataFormComponent', () => {
             addressControlOffice.controls.city.setValue('');
             addressControlOffice.controls.cantonId.setValue('');
             addressControlOffice.controls.companyName.setValue('');
-            addressControlOffice.controls.countryCode.setValue('');
+            addressControlOffice.controls.countryId.setValue('');
             addressControlOffice.controls.email.setValue('');
             addressControlOffice.controls.mobile.setValue('');
             addressControlOffice.controls.phone.setValue('');
@@ -728,7 +729,7 @@ describe('PersonDataFormComponent', () => {
 
         component.setCanton(event, 'privateAddress');
 
-        expect(component.personForm.controls.privateAddress.controls.countryCode.value).toBe('CH');
+        expect(component.personForm.controls.privateAddress.controls.countryId.value).toBe('8368f092-2614-400b-8eff-9f186f5d8799');
     });
 
     it('should not set value in country when setCanton with abroad canton ID', () => {
@@ -736,7 +737,7 @@ describe('PersonDataFormComponent', () => {
 
         component.setCanton(event, 'privateAddress');
 
-        expect(component.personForm.controls.privateAddress.controls.countryCode.value).toBe(null);
+        expect(component.personForm.controls.privateAddress.controls.countryId.value).toBe(null);
     });
 
     it.each([

@@ -87,7 +87,7 @@
   "person.salutationText": "Formule d'appel",
   "person.details.address.activeAddress": "Adresse postale",
   "person.details.address.poBox": "Case postale",
-  "person.details.address.countryCode": "Code du pays",
+  "person.details.address.country": "Pays",
   "person.details.address.zip": "NPA",
   "person.details.address.city": "Lieu",
   "person.details.address.canton": "Canton",

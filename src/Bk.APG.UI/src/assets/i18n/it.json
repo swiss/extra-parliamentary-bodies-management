@@ -87,7 +87,7 @@
   "person.salutationText": "Intestazione nella lettera",
   "person.details.address.activeAddress": "Indirizzo postale",
   "person.details.address.poBox": "Casella postale",
-  "person.details.address.countryCode": "Codice del Paese",
+  "person.details.address.country": "Paese",
   "person.details.address.zip": "NPA",
   "person.details.address.city": "Luogo",
   "person.details.address.canton": "Cantone",
