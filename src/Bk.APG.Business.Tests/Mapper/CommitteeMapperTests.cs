@@ -257,6 +257,13 @@ internal class CommitteeMapperTests
             Assert.That(result.AdditionalUriProperties[1].Predicate, Is.EqualTo(OgdExportConstants.CommitteeHasLegalForm));
             Assert.That(result.AdditionalUriProperties[1].Object, Is.EqualTo(OgdExportConstants.CreateUriLinkForLdAdminCh(committee.LegalForm!.Uri)));
         }
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.CommitteeAdditionalAuthorityMembers));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(committee.AdditionalAuthorityMembers.ToString().ToLowerInvariant()));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.DataType, Is.EqualTo(new Uri(OgdExportConstants.DataTypeBoolean)));
+        }
     }
 
     [Test]
