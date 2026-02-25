@@ -14,7 +14,7 @@ public class UidService : IUidService, IHealthCheck
     private readonly UidConfiguration _uidConfiguration;
 
     // according to decision of FCh we are limiting the displayed legal forms. This list reflects the masterdata of legalforms (https://bkdev.atlassian.net/browse/BKDO-1518)
-    private readonly List<string> _allowedLegalForms = new() { "0103", "0104", "0106", "0107", "0108", "0109", "0110", "0224", "0234", "0302", "0571" };
+    private readonly List<string> _allowedLegalForms = new() { "0103", "0104", "0106", "0107", "0108", "0109", "0110", "0117", "0224", "0234", "0302", "0571" };
 
     public UidService(IPublicServices publicService, IMasterDataService masterDataService, IOptions<UidConfiguration> uidConfiguration)
     {
@@ -37,7 +37,7 @@ public class UidService : IUidService, IHealthCheck
 
         var config = new searchConfiguration
         {
-            searchMode = searchMode.Auto,
+            searchMode = searchMode.Normal,
             maxNumberOfRecords = 100,
             searchNameAndAddressHistory = false
         };
