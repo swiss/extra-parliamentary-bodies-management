@@ -202,9 +202,6 @@ public class CommitteeRepository : ICommitteeRepository
 
     public async Task<IEnumerable<Committee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
     {
-        // avoid trouble with UTC value from UI. Converting to local time is not allowed, so we add a day to filter value.
-        var filterDate = filterDto.AnalysisDate1 != null ? filterDto.AnalysisDate1.Value.AddDays(1) : DateOnly.FromDateTime(DateTime.Today.AddDays(1));
-
         var committees = await _dataContext.Committees
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)

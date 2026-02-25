@@ -37,7 +37,7 @@ public class UidService : IUidService, IHealthCheck
 
         var config = new searchConfiguration
         {
-            searchMode = searchMode.Normal,
+            searchMode = searchMode.Auto,
             maxNumberOfRecords = 100,
             searchNameAndAddressHistory = false
         };
