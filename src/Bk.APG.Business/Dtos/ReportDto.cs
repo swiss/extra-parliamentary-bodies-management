@@ -18,6 +18,7 @@ public class ReportCommitteeDto
     public int MemberCount { get; set; }
     public string? Justification { get; set; }
     public string? FreeText { get; set; }
+    public string? FreeText2 { get; set; }
 }
 
 public class ReportDepartmentWithCommitteesDto
@@ -95,6 +96,13 @@ public class ReportCommitteeWithFreeTextDto
 {
     public required string Name { get; set; }
     public string? FreeText { get; set; }
+}
+
+public class ReportVacanciesDetailDto
+{
+    public required string Name { get; set; }
+    public int Vacancies { get; set; }
+    public string? MembershipAdditionsString { get; set; }
 }
 
 public enum ReportMembershipType
