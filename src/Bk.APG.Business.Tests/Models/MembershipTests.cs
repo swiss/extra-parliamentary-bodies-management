@@ -68,13 +68,16 @@ internal class MembershipTests
         Assert.That(membership.IsActive, Is.EqualTo(expected));
     }
 
-    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, -15, -12, true)]
-    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, -15, -11, false)]
-    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, 0, 3, true)]
-    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, 0, 4, false)]
-    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, -2, -1, true)]
-    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", -2, -1, false)]
-    public void JustificationShorterDutyNeeded_ShouldReturnCorrectResult(string termOfOfficeIdAsStringId, int yearOffsetStart, int yearOffsetEnd, bool expected)
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2012-01-01", "2027-12-31", false)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2012-01-01", "2027-12-30", true)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2025-01-01", "2027-12-30", true)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2026-01-01", "2027-12-30", true)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2024-01-01", "2027-12-30", true)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2024-01-02", "2027-12-30", true)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2014-01-02", "2027-12-31", false)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "2023-01-01", "2027-12-30", true)]
+    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "2024-01-01", "2027-12-30", false)]
+    public void JustificationShorterDutyNeeded_ShouldReturnCorrectResult(string termOfOfficeIdAsStringId, string startDate, string endDate, bool expected)
     {
         var membership = new MembershipBuilder()
             .WithCommittee(
@@ -83,9 +86,10 @@ internal class MembershipTests
                     .WithFrenchDescription("FR")
                     .WithItalianDescription("IT")
                     .WithTermOfOfficeId(new Guid(termOfOfficeIdAsStringId))
+                    .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().WithEndDate(new DateOnly(2027, 12, 31)).Build())
                     .Build())
-            .WithBeginDate(DateOnly.FromDateTime(DateTime.UtcNow.AddYears(yearOffsetStart)))
-            .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddYears(yearOffsetEnd).AddDays(-1)))
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(startDate)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
             .Build();
 
         Assert.That(membership.JustificationShorterDutyNeeded, Is.EqualTo(expected));
@@ -93,7 +97,8 @@ internal class MembershipTests
 
     [TestCase("2024-01-01", "2027-12-31", false)]
     [TestCase("2024-01-01", "2027-12-30", true)]
-    [TestCase("2024-12-31", "2027-12-31", true)]
+    [TestCase("2025-02-01", "2027-12-30", true)]
+    [TestCase("2025-02-01", "2027-12-31", false)]
     [TestCase("2024-01-01", "2028-01-01", false)]
     public void JustificationShorterDutyNeeded_WhenCalled_ShouldReturnCorrectResult(string beginDate, string endDate, bool expected)
     {
@@ -104,6 +109,7 @@ internal class MembershipTests
                     .WithFrenchDescription("FR")
                     .WithItalianDescription("IT")
                     .WithTermOfOfficeId(new Guid(TermOfOffice.Period4YearsInGeneralElectionGuidAsString))
+                    .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().WithEndDate(new DateOnly(2027, 12, 31)).Build())
                     .Build())
             .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(beginDate)))
             .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
@@ -348,11 +354,11 @@ internal class MembershipTests
         Assert.That(membership.NeedsAttentionLongerDuty, Is.EqualTo(expected));
     }
 
-    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "", 1, true)]
-    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "", 1, false)]
-    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "", 10, false)]
-    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "", 10, false)]
-    public void NeedsAttentionShorterDuty_ShouldReturnExpected(string termOfOfficeId, string justificationShorterDuty, int endYearsOffset, bool expected)
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "", "2027-12-31", false)]
+    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "", "2027-12-31", false)]
+    [TestCase(TermOfOffice.Period4YearsInGeneralElectionGuidAsString, "", "2027-12-30", true)]
+    [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", "", "2027-12-31", false)]
+    public void NeedsAttentionShorterDuty_ShouldReturnExpected(string termOfOfficeId, string justificationShorterDuty, string endDate, bool expected)
     {
         var membership = new MembershipBuilder()
             .WithCommittee(
@@ -361,10 +367,11 @@ internal class MembershipTests
                     .WithFrenchDescription("FR")
                     .WithItalianDescription("IT")
                     .WithTermOfOffice(new TermOfOfficeBuilder().WithId(new Guid(termOfOfficeId)).Build())
+                    .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().WithEndDate(new DateOnly(2027, 12, 31)).Build())
                     .Build())
             .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Male).Build()).Build())
-            .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-2)))
-            .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddYears(endYearsOffset)))
+            .WithBeginDate(DateOnly.FromDateTime(new DateTime(2027, 1, 1)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
             .WithJustificationShorterDuty(justificationShorterDuty)
             .Build();
 
