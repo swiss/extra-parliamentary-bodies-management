@@ -341,7 +341,7 @@ public class PersonService : IPersonService
             CompanyName = update.CompanyName,
             Street = update.Street,
             PoBox = update.PoBox,
-            CountryCode = update.CountryCode,
+            CountryId = update.CountryId,
             Zip = update.Zip,
             City = update.City,
             CantonId = update.CantonId,
@@ -360,7 +360,7 @@ public class PersonService : IPersonService
         address.CompanyName = update.CompanyName;
         address.Street = update.Street;
         address.PoBox = update.PoBox;
-        address.CountryCode = update.CountryCode;
+        address.CountryId = update.CountryId;
         address.Zip = update.Zip;
         address.City = update.City;
         address.CantonId = update.CantonId;

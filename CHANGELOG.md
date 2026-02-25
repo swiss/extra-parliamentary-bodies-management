@@ -5,6 +5,8 @@
 -   Form letter sender management [BKDO-1109](https://bkdev.atlassian.net/browse/BKDO-1109)
 -   Exclude CrossBorderFederalAgencies from OGD export [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
 -   Migrate "Anstalt" legal form to "Institut des öffentlichen Rechts" [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
+-   Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
+
 
 ## 1.1.0
 
@@ -13,7 +15,6 @@
 -   Add task for general election person interest validation #BKDO-970
 -   Add task for general election person base data validation #BKDO-966
 -   Recipient Export added #BKDO-777
--   Introduce Countries master data #BKDO-1103
 
 ## 1.0.4
 -   Fix logic determining when shorter duty justification is needed #BKDO-2730

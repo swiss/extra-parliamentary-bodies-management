@@ -25,7 +25,7 @@ describe('PersonsAddressDetailComponent', () => {
 
     it('should compute zipCity correctly with all fields', () => {
         fixture.componentRef.setInput('addressDetail', {
-            countryCode: 'US',
+            country: 'US',
             zip: '12345',
             city: 'New York',
             canton: 'NY',
@@ -34,7 +34,7 @@ describe('PersonsAddressDetailComponent', () => {
         expect(component.zipCity()).toBe('US-12345 New York (NY)');
     });
 
-    it('should compute zipCity correctly without countryCode', () => {
+    it('should compute zipCity correctly without country', () => {
         fixture.componentRef.setInput('addressDetail', {
             zip: '12345',
             city: 'New York',
@@ -46,7 +46,7 @@ describe('PersonsAddressDetailComponent', () => {
 
     it('should compute zipCity correctly without canton', () => {
         fixture.componentRef.setInput('addressDetail', {
-            countryCode: 'US',
+            country: 'US',
             zip: '12345',
             city: 'New York',
         } as AddressDetails);
@@ -71,7 +71,7 @@ describe('PersonsAddressDetailComponent', () => {
 
     it('should update zipCity when addressDetail changes', () => {
         fixture.componentRef.setInput('addressDetail', {
-            countryCode: 'DE',
+            country: 'DE',
             zip: '10115',
             city: 'Berlin',
             canton: '',
@@ -80,7 +80,7 @@ describe('PersonsAddressDetailComponent', () => {
         expect(component.zipCity()).toBe('DE-10115 Berlin');
 
         fixture.componentRef.setInput('addressDetail', {
-            countryCode: 'DE',
+            country: 'DE',
             zip: '10115',
             city: 'Berlin',
             canton: 'BE',
@@ -91,7 +91,7 @@ describe('PersonsAddressDetailComponent', () => {
 
     it('should compute zipCity correctly', () => {
         fixture.componentRef.setInput('addressDetail', {
-            countryCode: 'FR',
+            country: 'FR',
             zip: '75001',
             city: 'Paris',
             canton: 'IDF',
