@@ -260,6 +260,8 @@ public static class CommitteeMapper
             dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.CommitteeHasLegalForm, OgdExportConstants.CreateUriLinkForLdAdminCh(committee.LegalForm!.Uri)));
         }
 
+        dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.CommitteeAdditionalAuthorityMembers, new Literal(committee.AdditionalAuthorityMembers.ToString().ToLowerInvariant(), new Uri(OgdExportConstants.DataTypeBoolean))));
+
         return dimensionItem;
     }
 
