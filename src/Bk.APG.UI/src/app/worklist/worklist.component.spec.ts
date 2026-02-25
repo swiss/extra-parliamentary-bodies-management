@@ -57,10 +57,16 @@ describe('WorklistComponent', () => {
             getWorklistTasks: jest.fn().mockReturnValue(of(mockPagedResult)),
         } as Partial<WorklistService>;
 
+        const routerMock = {
+            navigate: jest.fn(),
+            navigateByUrl: jest.fn(),
+        };
+
         await TestBed.configureTestingModule({
             imports: [WorklistComponent, MockPipe(TranslatePipe), MockModule(MatIconModule)],
             providers: [
                 {provide: WorklistService, useValue: worklistServiceMock},
+                {provide: Router, useValue: routerMock},
                 {provide: TranslateService, useValue: translateServiceMock},
                 provideHttpClient(),
             ],
@@ -84,6 +90,9 @@ describe('WorklistComponent', () => {
     });
 
     it('should load worklist tasks on initialization', () => {
+        component.reload$.next();
+        fixture.detectChanges();
+
         expect(worklistService.getWorklistTasks).toHaveBeenCalledWith({pageIndex: 0, pageSize: 25}, {direction: 'asc', sort: 'dueDate'}, {});
         expect(component.tasksTable.data).toEqual(mockWorklistTasks);
         expect(component.totalCount()).toBe(2);

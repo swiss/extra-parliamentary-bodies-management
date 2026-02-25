@@ -56,4 +56,11 @@ public class OccupationRepository : IOccupationRepository
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id);
     }
+
+    public Occupation? GetByUri(string uri)
+    {
+        return _dataContext.Occupations
+            .AsNoTracking()
+            .SingleOrDefault(x => x.Uri == uri);
+    }
 }

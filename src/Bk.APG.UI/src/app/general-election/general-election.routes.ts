@@ -47,7 +47,15 @@ export const generalElectionRoutes: Routes = [
         loadComponent: () => import('../exports/form-letters/form-letters.component').then(m => m.FormLettersComponent),
         data: {
             isGeneralElection: true,
-            allowedRoles: [Role.Allow],
+            allowedRoles: [Role.Admin, Role.Department],
+        },
+    },
+    {
+        path: 'exports/formLettersSenders',
+        loadChildren: () => import('../exports/form-letters-sender/form-letters-sender.routes').then(m => m.formLettersSenderRoutes),
+        data: {
+            isGeneralElection: true,
+            allowedRoles: [Role.Admin, Role.Department],
         },
     },
     {
