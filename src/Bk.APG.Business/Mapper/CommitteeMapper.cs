@@ -74,6 +74,8 @@ public static class CommitteeMapper
             .Where(x => x is { IsActive: true, IsDeleted: false })
             .ToArray();
         var activeMembersCount = activeMembers.Length;
+        var committeeType = committee.CommitteeType!;
+        var isPercentageBased = committeeType.GermanThresholdPercentage is not null;
 
         var committeeDetailDto = new CommitteeDetailDto
         {
@@ -120,14 +122,15 @@ public static class CommitteeMapper
             MaleQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Gender!.Uri == Gender.Male) / activeMembersCount * 100 : 0,
             JustificationGenders = committee.JustificationGenders,
             MeasuresGenders = committee.MeasuresGenders,
-            GermanThreshold = committee.CommitteeType!.GermanThresholdPercentage is not null ? committee.CommitteeType!.GermanThresholdPercentage : committee.CommitteeType!.GermanMinimalThreshold,
-            GermanQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.GermanUri) / activeMembersCount * 100 : 0,
-            FrenchThreshold = committee.CommitteeType!.FrenchThresholdPercentage is not null ? committee.CommitteeType!.FrenchThresholdPercentage : committee.CommitteeType!.FrenchMinimalThreshold,
-            FrenchQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.FrenchUri) / activeMembersCount * 100 : 0,
-            ItalianThreshold = committee.CommitteeType!.ItalianThresholdPercentage is not null ? committee.CommitteeType!.ItalianThresholdPercentage : committee.CommitteeType!.ItalianMinimalThreshold,
-            ItalianQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.ItalianUri) / activeMembersCount * 100 : 0,
-            RomanshThreshold = committee.CommitteeType!.RomanshThresholdPercentage is not null ? committee.CommitteeType!.RomanshThresholdPercentage : committee.CommitteeType!.RomanshMinimalThreshold,
-            RomanshQuota = activeMembersCount > 0 ? (double)activeMembers.Count(x => x.Person!.Language!.Uri == Language.RomanshUri) / activeMembersCount * 100 : 0,
+            IsPercentageBased = isPercentageBased,
+            GermanThreshold = (isPercentageBased ? committeeType.GermanThresholdPercentage : committeeType.GermanMinimalThreshold) ?? 0,
+            GermanQuota = isPercentageBased ? committee.GermanQuota : committee.GermanCount,
+            FrenchThreshold = (isPercentageBased ? committeeType.FrenchThresholdPercentage : committeeType.FrenchMinimalThreshold) ?? 0,
+            FrenchQuota = isPercentageBased ? committee.FrenchQuota : committee.FrenchCount,
+            ItalianThreshold = (isPercentageBased ? committeeType.ItalianThresholdPercentage : committeeType.ItalianMinimalThreshold) ?? 0,
+            ItalianQuota = isPercentageBased ? committee.ItalianQuota : committee.ItalianCount,
+            RomanshThreshold = (isPercentageBased ? committeeType.RomanshThresholdPercentage : committeeType.RomanshMinimalThreshold) ?? 0,
+            RomanshQuota = isPercentageBased ? committee.RomanshQuota : committee.RomanshCount,
             JustificationLanguages = committee.JustificationLanguages,
             MeasuresLanguages = committee.MeasuresLanguages,
             FederalInstitution = committee.FederalInstitution,
@@ -140,6 +143,7 @@ public static class CommitteeMapper
             NeedsAttentionNoMembers = committee.NeedsAttentionNoMembers,
             NeedsAttentionAboveMaxMembers = committee.NeedsAttentionAboveMaxMembers,
             NeedsAttentionDataProtectionOfficer = committee.NeedsAttentionDataProtectionOfficer,
+            NeedsAttentionSecretariat = committee.NeedsAttentionSecretariat,
             NeedsAttentionBasicData = committee.NeedsAttentionBasicData,
             NeedsAttentionMembershipExpired = committee.NeedsAttentionMembershipExpired,
             NeedsAttentionMembershipInterestOrOccupation = committee.NeedsAttentionMembershipInterestOrOccupation
@@ -231,29 +235,6 @@ public static class CommitteeMapper
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(committee.DescriptionRomansh, OgdExportConstants.LanguageRm))
                 ]);
 
-        var uri = new Uri("http://www.w3.org/2001/XMLSchema#anyURI");
-
-        if (!string.IsNullOrWhiteSpace(committee.LinkAuthorityWebsite))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkAuthorityWebsite, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageGerman))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageGerman, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageFrench))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageFrench, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageItalian))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageItalian, uri)));
-        }
-        if (!string.IsNullOrWhiteSpace(committee.LinkHomepageRomansh))
-        {
-            dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(committee.LinkHomepageRomansh, uri)));
-        }
-
         foreach (var contactPoint in committee.ContactPoints)
         {
             if (contactPoint.ContactPointTypeId == ContactPointType.SecretariatGuid)
@@ -261,6 +242,7 @@ public static class CommitteeMapper
                 //the uri of the secretariat has to match the one exported by OgdExportService
                 dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.CommitteeHasSecretariat, $"{OgdExportConstants.NamespaceOrganization}:{contactPoint.OgdId}"));
             }
+
             if (contactPoint.ContactPointTypeId == ContactPointType.DataProtectionOfficerGuid)
             {
                 //the uri of the DPO has to match the one exported by OgdExportService
@@ -272,6 +254,13 @@ public static class CommitteeMapper
         {
             dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.SchemaSubjectOf, $"{OgdExportConstants.NamespaceAppointmentDecision}:{committee.LatestInstitutionAppointmentDecision.OgdId}"));
         }
+
+        if (committee.LegalForm is not null)
+        {
+            dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.CommitteeHasLegalForm, OgdExportConstants.CreateUriLinkForLdAdminCh(committee.LegalForm!.Uri)));
+        }
+
+        dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.CommitteeAdditionalAuthorityMembers, new Literal(committee.AdditionalAuthorityMembers.ToString().ToLowerInvariant(), new Uri(OgdExportConstants.DataTypeBoolean))));
 
         return dimensionItem;
     }

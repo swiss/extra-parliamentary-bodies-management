@@ -29,6 +29,16 @@ public static class PersonMapper
         };
     }
 
+    public static PersonMinimalDto ToPersonMinimalDto(Person person)
+    {
+        return new PersonMinimalDto
+        {
+            Id = person.Id,
+            GivenName = person.GivenName,
+            Surname = person.Surname
+        };
+    }
+
     public static PersonFilterParameters? ToPersonFilterParameters(PersonFilterParametersDto? dto)
     {
         if (dto is null)
@@ -270,7 +280,7 @@ public static class PersonMapper
         var dimensionItem =
             new DimensionItem(
                 person.OgdId,
-                new Literal($"{person.Surname}, {person.GivenName} {person.BirthYear}", OgdExportConstants.LanguageDe),
+                new Literal($"{person.Surname}, {person.GivenName} ({person.BirthYear})", OgdExportConstants.LanguageDe),
                 [
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaGivenName, new Literal(person.GivenName)),
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaFamilyName, new Literal(person.Surname)),
@@ -292,7 +302,7 @@ public static class PersonMapper
             dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaWorksFor, new Literal(person.Employer)));
         }
 
-        if (person.OfficeId != null && person.Office != null && person.FederalDuty)
+        if (person is { OfficeId: not null, Office: not null, FederalDuty: true })
         {
             dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.PersonHasOffice, OgdExportConstants.CreateUriLinkForLdAdminCh(person.Office.Uri)));
 
@@ -315,10 +325,10 @@ public static class PersonMapper
         {
             Predicate = $"{OgdExportConstants.NamespacePerson}:hasPerson", Uri = $"{OgdExportConstants.NamespacePerson}:{person.OgdId}", ShapePropertyMetadata = new ShapePropertyMetadata
             {
-                NameDe = "Person",
-                NameFr = "Personne",
-                NameIt = "Persone",
-                NameEn = "Person",
+                NameDe = "Mitglied",
+                NameFr = "Membre",
+                NameIt = "Membro",
+                NameEn = "Member",
                 Type = OgdExportConstants.CubeKeyDimension,
                 NodeKind = OgdExportConstants.ShaclNodeKindIri,
                 ScaleType = OgdExportConstants.QudtNominalScale,

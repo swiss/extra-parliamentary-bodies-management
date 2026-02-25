@@ -127,12 +127,12 @@ public static class GeneralElectionMapper
             OldMembershipAddition = null,
             MembershipAdditionId = membership.MembershipAdditionId,
             MembershipId = membership.Id,
-            // Justifications for duration are explicitly empty, must be rewritten for every GE!
-            JustificationLongerDuty = string.Empty,
+            JustificationLongerDuty = membership.JustificationLongerDuty,
+            // Justifications for shorter duration are explicitly empty, must be rewritten for every GE!
             JustificationShorterDuty = string.Empty,
             JustificationMemberInFederalDuty = membership.JustificationMemberInFederalDuty,
             JustificationMemberInFederalAssembly = membership.JustificationMemberInFederalAssembly,
-            RequirementsProfile = membership.RequirementsProfile,
+            RequirementsProfile = string.Empty,
             Remarks = membership.Remarks,
             RemarksStatus = membership.RemarksStatus,
             Created = DateTime.UtcNow,
@@ -192,6 +192,11 @@ public static class GeneralElectionMapper
             Modified = membership.Modified,
             ModifiedBy = membership.ModifiedBy,
             InCorrelationWithFederalDuty = membership.InCorrelationWithFederalDuty,
+            JustificationLongerDuty = membership.JustificationLongerDuty,
+            JustificationShorterDuty = membership.JustificationShorterDuty,
+            JustificationMemberInFederalAssembly = membership.JustificationMemberInFederalAssembly,
+            JustificationMemberInFederalDuty = membership.JustificationMemberInFederalDuty,
+            RequirementsProfile = membership.RequirementsProfile,
         };
     }
 
@@ -213,7 +218,7 @@ public static class GeneralElectionMapper
             HasMembershipAddition = membershipCandidate.MembershipAddition is not null,
             IsActive = true,
             IsFuture = false,
-            NeedsAttention = membershipCandidate.NeedsAttention
+            NeedsAttention = membershipCandidate.HasMembershipValidationIssues
         };
 
         string GetFunction()

@@ -202,10 +202,12 @@ public class CommitteeRepository : ICommitteeRepository
     {
         return await _dataContext.Committees
             .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
+            .Where(x => x.CommitteeTypeId != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
             .Include(x => x.CommitteeType)
             .Include(x => x.Department)
             .Include(x => x.Memberships)
             .Include(x => x.ContactPoints)
+            .Include(x => x.LegalForm)
             .Include(x => x.AppointmentDecisions)
                 .ThenInclude(x => x.OriginalDocument)
             .AsSingleQuery()
@@ -336,9 +338,12 @@ public class CommitteeRepository : ICommitteeRepository
 
     public async Task<Committee[]> GetCommitteeDataForStatistics()
     {
+        // For statistic, not all 5 active committeeTypes are relevant, we filter here for the valid ones!
         return await _dataContext.Committees
             .Where(x => !x.IsDeleted)
             .Where(x => !x.CommitteeType!.IsDeleted)
+            .Where(x => x.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid || x.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
+                x.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid || x.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid)
             .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
             .Include(x => x.Department)
             .Include(x => x.CommitteeType)

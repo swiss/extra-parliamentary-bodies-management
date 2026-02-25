@@ -44,6 +44,7 @@ export interface CommitteeDetails {
     needsAttentionNoMembers: boolean;
     needsAttentionAboveMaxMembers: boolean;
     needsAttentionDataProtectionOfficer: boolean;
+    needsAttentionSecretariat: boolean;
     needsAttentionBasicData: boolean;
     needsAttentionMembershipExpired: boolean;
     needsAttentionMembershipInterestOrOccupation: boolean;
@@ -62,6 +63,7 @@ export interface CommitteeDetails {
     measuresGenders?: string;
     generalGenderMeasure?: string;
 
+    isPercentageBased?: boolean;
     germanThreshold?: number;
     germanQuota?: number;
     frenchThreshold?: number;

@@ -98,6 +98,27 @@ internal class PersonMapperTests
     }
 
     [Test]
+    public void ToPersonMinimalDto_ShouldMapCorrectly()
+    {
+        var personId = Guid.NewGuid();
+        var person = new PersonBuilder()
+            .WithId(personId)
+            .WithGivenName("Jane")
+            .WithSurname("Doe")
+            .Build();
+
+        var dto = PersonMapper.ToPersonMinimalDto(person);
+
+        Assert.That(dto, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dto.Id, Is.EqualTo(personId));
+            Assert.That(dto.GivenName, Is.EqualTo(person.GivenName));
+            Assert.That(dto.Surname, Is.EqualTo(person.Surname));
+        });
+    }
+
+    [Test]
     public void MapToPersonFilterParameters_WithoutDto_ShouldReturnNull()
     {
         var result = PersonMapper.ToPersonFilterParameters(null);
@@ -367,7 +388,7 @@ internal class PersonMapperTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.Key, Is.EqualTo(personOgdId));
-            Assert.That(result.Name.Text, Is.EqualTo($"{person.Surname}, {person.GivenName} {person.BirthYear}"));
+            Assert.That(result.Name.Text, Is.EqualTo($"{person.Surname}, {person.GivenName} ({person.BirthYear})"));
             Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(5));
             Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(2));
         }
