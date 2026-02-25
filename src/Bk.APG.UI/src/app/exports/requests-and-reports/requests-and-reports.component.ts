@@ -103,7 +103,7 @@ export class RequestsAndReportsComponent {
         this.form.controls.documentType.valueChanges.pipe(takeUntilDestroyed()).subscribe(_ => this.updateAnalysisDateFields());
 
         if (!this.isGeneralElection) {
-            this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([curr]) => {
+            this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([_, curr]) => {
                 this.onFilter({...curr} as RequestsAndReportsFilterParameters);
             });
 
