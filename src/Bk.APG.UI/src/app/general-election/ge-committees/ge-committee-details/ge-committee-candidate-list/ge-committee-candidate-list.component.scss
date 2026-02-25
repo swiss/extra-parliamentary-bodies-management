@@ -21,6 +21,8 @@
     }
 
     .validation-errors {
+        margin-top: 4px;
+
         ob-alert {
             width: 100%;
             margin-bottom: 8px;
@@ -260,9 +262,8 @@
         position: relative;
     }
 
-    .close-btn {
-        position: absolute;
-        top: 4px;
-        right: 4px;
+    .alert-header {
+        display: flex;
+        justify-content: space-between;
     }
 }

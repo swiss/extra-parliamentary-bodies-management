@@ -6,5 +6,6 @@ public class MembershipCantonStatisticDto
     public required int CommitteeOgdId { get; init; }
     public required Guid CantonId { get; init; }
     public required int CantonOgdId { get; init; }
+    public required string CantonUri { get; init; }
     public required int CantonCount { get; init; }
 }

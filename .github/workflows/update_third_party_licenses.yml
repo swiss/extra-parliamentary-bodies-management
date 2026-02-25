@@ -2,12 +2,15 @@ name: Update THIRD_PARTY_LICENSES
 
 on:
   push:
+    branches:
+      - main #only run on main branch (avoids pipeline being triggered, when tags are pushed)
 
 permissions:
   contents: write  # needed to push the updated file
 
 jobs:
   update-third-party-licenses:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
@@ -40,4 +43,4 @@ jobs:
           git add THIRD_PARTY_LICENSES.md
           git commit -m "chore: update THIRD_PARTY_LICENSES.md"
           
-          git push origin HEAD
+          git push origin HEAD:refs/heads/main

@@ -14,6 +14,7 @@ import {MockModule, MockComponents, MockPipe, MockService} from 'ng-mocks';
 import {BehaviorSubject, of} from 'rxjs';
 import {AuthService} from '../../auth/auth.service';
 import {GeneralElectionCommitteesService} from '../../general-election/ge-committees/ge-committees.service';
+import {FormLettersSenderService} from '../form-letters-sender/form-letters-sender.service';
 import {RecipientsComponent} from './recipients.component';
 import {RecipientsService} from './recipients.service';
 
@@ -75,6 +76,10 @@ describe('RecipientsComponent', () => {
         instant: jest.fn(),
     };
 
+    const formLettersSenderServiceMock = {
+        getFormLettersSenderList: jest.fn().mockReturnValue(of([])),
+    };
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
@@ -105,6 +110,7 @@ describe('RecipientsComponent', () => {
                         isObserver$: of(false),
                     }),
                 },
+                {provide: FormLettersSenderService, useValue: formLettersSenderServiceMock},
             ],
         }).compileComponents();
 

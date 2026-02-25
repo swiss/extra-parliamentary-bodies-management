@@ -44,6 +44,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IGeneralMeasureRepository, GeneralMeasureRepository>();
         services.AddScoped<IEntityAuditLogRepository, EntityAuditLogRepository>();
         services.AddScoped<IApgGeneralSettingsRepository, ApgGeneralSettingsRepository>();
+        services.AddScoped<IFormLetterSenderRepository, FormLetterSenderRepository>();
 
         services.AddScoped<ICantonService, CantonService>();
         services.AddScoped<IPersonService, PersonService>();
@@ -72,9 +73,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IApgGeneralSettingsService, ApgGeneralSettingsService>();
         services.AddScoped<ISalutationGeneratorService, SalutationGeneratorService>();
         services.AddScoped<IOgdDocumentService, OgdDocumentService>();
+        services.AddScoped<IFormLetterSenderService, FormLetterSenderService>();
 
-        services.AddScoped<IConnectionFactory, ConnectionFactory>();
-        services.AddScoped<OgdExportService>();
+        services.AddScoped<ISparqlClientFactory, SparqlClientFactory>();
+        services.AddScoped<IOgdExportService, OgdExportService>();
 
         services.AddScoped<IPostService, PostService>();
 

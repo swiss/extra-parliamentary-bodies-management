@@ -80,6 +80,66 @@ internal class WorklistTaskExtensionsTests
     }
 
     [TestFixture]
+    internal class GetSection : WorklistTaskExtensionsTests
+    {
+        [Test]
+        public void ShouldReturnPersonNameAndCommitteeDescription_WhenTaskTypeIsPersonRelated()
+        {
+            var person = new PersonBuilder()
+                .WithGivenName("Jane")
+                .WithSurname("Doe")
+                .Build();
+            var committee = new CommitteeBuilder()
+                .WithGermanDescription("Committee A")
+                .WithFrenchDescription("Committee A")
+                .WithItalianDescription("Committee A")
+                .WithRomanschDescription("Committee A")
+                .Build();
+            var personRelatedTaskTypes = new[]
+            {
+                WorklistTaskType.GeneralElectionPersonBaseData,
+                WorklistTaskType.GeneralElectionPersonInterests,
+                WorklistTaskType.GeneralElectionMembershipValidation,
+            };
+
+            foreach (var worklistTaskTypeId in personRelatedTaskTypes)
+            {
+                _worklistTask = new WorklistTaskBuilder()
+                    .WithWorklistTaskTypeId(worklistTaskTypeId)
+                    .Build();
+                _worklistTask.Person = person;
+                _worklistTask.PersonId = person.Id;
+                _worklistTask.Committee = committee;
+                _worklistTask.CommitteeId = committee.Id;
+
+                var result = _worklistTask.GetSection();
+
+                Assert.That(result, Is.EqualTo("Jane Doe; Committee A"), $"Failed for task type: {worklistTaskTypeId}");
+            }
+        }
+
+        [Test]
+        public void ShouldReturnCommitteeDescription_WhenTaskTypeIsNotPersonRelated()
+        {
+            var committee = new CommitteeBuilder()
+                .WithGermanDescription("Committee B")
+                .WithFrenchDescription("Committee B")
+                .WithItalianDescription("Committee B")
+                .WithRomanschDescription("Committee B")
+                .Build();
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
+                .Build();
+            _worklistTask.Committee = committee;
+            _worklistTask.CommitteeId = committee.Id;
+
+            var result = _worklistTask.GetSection();
+
+            Assert.That(result, Is.EqualTo("Committee B"));
+        }
+    }
+
+    [TestFixture]
     internal class GetNavigationUrl : WorklistTaskExtensionsTests
     {
         [Test]

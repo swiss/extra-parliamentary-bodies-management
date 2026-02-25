@@ -4,16 +4,9 @@
     <mat-tab [disabled]="committeeDetailsService.isDataTabDisabled()">
         <ng-template mat-tab-label>
             {{ 'committee.details.data' | translate }}
-            <!-- TODO REACTIVATE -->
-            <!-- 
-<apg-unsaved-changes-icon
-    [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
-    [hidden]="!committeeDetailsService.isDataFormDirty() && !committeeDetailsService.committeeDetails()?.needsAttentionBasicData"
-/> 
--->
             <apg-unsaved-changes-icon
                 [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
-                [hidden]="!committeeDetailsService.isDataFormDirty()"
+                [hidden]="!committeeDetailsService.isDataFormDirty() && !committeeDetailsService.committeeDetails()?.needsAttentionBasicData"
             />
         </ng-template>
         <apg-committee-data />
@@ -43,16 +36,13 @@
     <mat-tab [disabled]="committeeDetailsService.isContactsTabDisabled()">
         <ng-template mat-tab-label>
             {{ 'committee.details.contacts' | translate }}
-            <!-- TODO REACTIVATE -->
-            <!-- 
-<apg-unsaved-changes-icon
-    [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
-    [hidden]="!committeeDetailsService.isDataFormDirty() && !committeeDetailsService.committeeDetails()?.needsAttentionBasicData"
-/> 
--->
             <apg-unsaved-changes-icon
                 [toolTip]="committeeDetailsService.isDataFormDirty() ? ('common.saveReminder' | translate) : ('common.pleaseCheckData' | translate)"
-                [hidden]="!committeeDetailsService.isDataFormDirty()"
+                [hidden]="
+                    !committeeDetailsService.isDataFormDirty() &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionSecretariat &&
+                    !committeeDetailsService.committeeDetails()?.needsAttentionDataProtectionOfficer
+                "
             />
         </ng-template>
         <apg-contact-point-list />

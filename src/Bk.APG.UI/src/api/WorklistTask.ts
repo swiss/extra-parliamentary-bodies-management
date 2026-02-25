@@ -9,6 +9,7 @@ export interface WorklistTask {
     department?: string;
     office?: string;
     committee?: string;
+    section?: string;
     isInactive?: boolean;
     isCompleted?: boolean;
     isOverdue?: boolean;
