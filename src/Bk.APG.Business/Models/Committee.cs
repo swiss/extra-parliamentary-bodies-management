@@ -242,7 +242,8 @@ public class Committee : EntityBase
             NeedsAttentionAboveMaxMembers ||
             NeedsAttentionMembershipExpired ||
             NeedsAttentionMembershipInterestOrOccupation ||
-            NeedsAttentionDataProtectionOfficer);
+            NeedsAttentionDataProtectionOfficer ||
+            NeedsAttentionSecretariat);
 
     [NotMapped]
     public bool NeedsAttentionLongerDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionLongerDuty: true });

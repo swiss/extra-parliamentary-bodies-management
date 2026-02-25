@@ -70,6 +70,7 @@ export interface GeneralElectionCommitteeDetails {
     selectionProcedure?: string;
     candidateListState?: string;
     assignedTo?: string;
+    wasGeneralElectionStartedForCommittee: boolean;
     canValidateCandidateList: boolean;
     canSaveCandidateList: boolean;
     canForwardCandidateList: boolean;
@@ -85,6 +86,7 @@ export interface GeneralElectionCommitteeDetails {
     needsAttentionNoMembers: boolean;
     needsAttentionAboveMaxMembers: boolean;
     needsAttentionDataProtectionOfficer: boolean;
+    needsAttentionSecretariat: boolean;
     needsAttentionBasicData: boolean;
     needsAttentionMembershipExpired: boolean;
     needsAttentionMembershipInterestOrOccupation: boolean;

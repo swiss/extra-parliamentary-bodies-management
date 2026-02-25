@@ -67,7 +67,12 @@
     </ng-container>
 
     <tr *matHeaderRowDef="displayedColumns()" mat-header-row></tr>
-    <tr *matRowDef="let row; columns: displayedColumns()" mat-row></tr>
+    <tr
+        *matRowDef="let row; columns: displayedColumns()"
+        mat-row
+        (click)="openMembershipCandidate(row.id)"
+        [class]="row.needsAttention ? 'red-table-row' : ''"
+    ></tr>
     <tr *matNoDataRow>
         <td [colSpan]="displayedColumns().length">{{ 'committees.memberships.table.noEntries' | translate }}</td>
     </tr>

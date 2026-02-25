@@ -15,9 +15,9 @@ using VDS.RDF.Storage;
 
 namespace Bk.APG.Business.Services;
 
-public class OgdExportService
+public class OgdExportService : IOgdExportService
 {
-    private readonly IAsyncStorageProvider _storageProvider;
+    private readonly IReadOnlyDictionary<string, IAsyncStorageProvider> _storageProviders;
     private readonly IDimensionService _dimensionService;
     private readonly ICubeRawDataService _cubeRawDataService;
     private readonly IMembershipService _membershipService;
@@ -33,6 +33,7 @@ public class OgdExportService
     private readonly IOgdDocumentService _ogdDocumentService;
     private readonly ILogger<OgdExportService> _logger;
     private readonly SparqlOptions _sparqlOptions;
+    private readonly SparqlTargetsOptions _targetsOptions;
     private readonly OgdS3Configuration _ogdS3Configuration;
 
     public OgdExportService(
@@ -43,18 +44,19 @@ public class OgdExportService
         ICommitteeService committeeService,
         ICommitteeRepository committeeRepository,
         ICommitteeTypeRepository committeeTypeRepository,
-        IConnectionFactory connectionFactory,
+        ISparqlClientFactory sparqlClientFactory,
         IMembershipRepository membershipRepository,
         IInterestRepository interestRepository,
         ILogger<OgdExportService> logger,
         IOptions<SparqlOptions> sparqlOptions,
+        IOptions<SparqlTargetsOptions> targetsOptions,
         IMasterDataRepository masterDataRepository,
         IContactPointRepository contactPointRepository,
         IDocumentService documentService,
         IOgdDocumentService ogdDocumentService,
         IOptions<OgdS3Configuration> ogdS3Options)
     {
-        _storageProvider = connectionFactory.Create();
+        _storageProviders = sparqlClientFactory.GetStorageProviders();
         _dimensionService = dimensionService;
         _membershipService = membershipService;
         _committeeService = committeeService;
@@ -70,17 +72,12 @@ public class OgdExportService
         _documentService = documentService;
         _ogdDocumentService = ogdDocumentService;
         _sparqlOptions = sparqlOptions.Value;
+        _targetsOptions = targetsOptions.Value;
         _ogdS3Configuration = ogdS3Options.Value;
     }
 
     public async Task Export(CancellationToken ct = default)
     {
-        if (!_sparqlOptions.ExportEnabled)
-        {
-            _logger.LogInformation("OGD export is disabled, exiting");
-            return;
-        }
-
         _logger.LogInformation("OGD export starting");
 
         using var graph = new Graph();
@@ -106,6 +103,7 @@ public class OgdExportService
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeCantonDetailStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeCantonDetailStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeTypeStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeTypeStatistic}/"));
+        graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceLd, new Uri("https://ld.admin.ch/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceRld, new Uri("https://register.ld.admin.ch/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceSchema, new Uri("http://schema.org"));
@@ -117,11 +115,11 @@ public class OgdExportService
         committeeCubeMetadata.AddRange(
             [
                 new Triple(
-                    graph.CreateUriNode(OgdExportConstants.UriPerson),
+                    graph.CreateUriNode(OgdExportConstants.UriCommittee),
                     graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
                     graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
                 new Triple(
-                    graph.CreateUriNode(OgdExportConstants.UriPerson),
+                    graph.CreateUriNode(OgdExportConstants.UriCommittee),
                     graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
                     graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
             ]
@@ -143,11 +141,76 @@ public class OgdExportService
 
         var membershipMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriMembership, "2026-01-14", "2026-01-14", "BK-APG Mitgliedschaften", "Export der Mitgliedschaften von APG");
         var interestMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriVestedInterests, "2026-01-14", "2026-01-14", "BK-APG Interessenbindungen", "Export der Interessenbindungen von APG");
-        var committeeFunctionStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeFunctionStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken auf Funktionsebene", "Export der Gremium Funktions-Statistiken von APG");
-        var committeeCantonStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeCantonStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken Sicht Kantone und Mitglieder", "Export der Gremium Kantons-Statistiken von APG");
-        var committeeCantonDetailStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeCantonDetailStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken detaillierte Sicht Kantone und Mitglieder", "Export der Gremium detaillierten Kantons-Statistiken von APG");
-        var committeeGenderLanguageStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeGenderLanguageStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken im Bereich Geschlechter und Sprachen", "Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG");
-        var committeeTypeStatisticMetadataTriples = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik", "Export der Statistiken zu Sprachen, Geschlechtern und Mengen pro Gremiumtyp");
+
+        var committeeFunctionStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeFunctionStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken auf Funktionsebene", "Export der Gremium Funktions-Statistiken von APG");
+        committeeFunctionStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeFunctionStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeCantonStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeCantonStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken Sicht Kantone und Mitglieder", "Export der Gremium Kantons-Statistiken von APG");
+        committeeCantonStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeCantonStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeGenderLanguageStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeGenderLanguageStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremium Statistiken im Bereich Geschlechter, Sprachen und Alter", "Export der Gremium Kantons-Statistiken im Bereich der Geschlechter & Sprachen von APG");
+        committeeGenderLanguageStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeGenderLanguageStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeTypeStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik", "Export der Statistiken zu Sprachen, Geschlechtern und Mengen pro Gremiumtyp");
+        committeeTypeStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
+
+        var committeeTypeDepartmentStatisticCubeMetadata = CreateMetaDataTriples(graph, OgdExportConstants.UriCommitteeTypeDepartmentStatistic, "2026-01-14", "2026-01-14", "BK-APG Gremiumtypen-Statistik Version 2", "Export der Gremienstatistik pro Gremiumtyp und Departement");
+        committeeTypeDepartmentStatisticCubeMetadata.AddRange(
+            [
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeDepartmentStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaCreativeWorkStatus),
+                    graph.CreateUriNode(OgdExportConstants.LdCreativeWorkStatusDraft)),
+                new Triple(
+                    graph.CreateUriNode(OgdExportConstants.UriCommitteeTypeDepartmentStatistic),
+                    graph.CreateUriNode(OgdExportConstants.SchemaWorkExample),
+                    graph.CreateUriNode(OgdExportConstants.LdApplicationVisualize))
+            ]
+        );
 
         var committeeTypeTriples = await CreateCommitteeTypeDimension(graph);
         var functionTriples = await CreateFunctionDimension(graph);
@@ -177,7 +240,7 @@ public class OgdExportService
                 OgdExportConstants.UriMembership,
                 membershipData.Select(MembershipMapper.ToObservation));
 
-        var interestData = _interestRepository.GetAllForOgdExport();
+        var interestData = await _interestRepository.GetAllForOgdExport();
 
         var interestRawData =
             _cubeRawDataService.CreateTriples(
@@ -191,7 +254,7 @@ public class OgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeFunctionStatistic,
-                functionStatisticData.Select(OgdMapper.ToFunctionStatisticObservation));
+                functionStatisticData.Select(OgdFunctionStatisticMapper.ToFunctionStatisticObservation));
 
         var cantonStatisticData = await _membershipService.GetMembershipsForCantonStatistic(membershipData);
 
@@ -199,15 +262,21 @@ public class OgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeCantonStatistic,
-                cantonStatisticData.Select(OgdMapper.ToCantonStatisticObservation));
+                cantonStatisticData.Select(OgdCantonStatisticMapper.ToCantonStatisticObservation));
 
-        var genderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
+        var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
+
+        var departmentGenderLanguageStatisticData = _membershipService.GetMembershipsForCommitteeTypeAndDepartmentGenderLanguageStatistic(membershipData);
+
+        var extraAndNonExtraParliamentaryCommissions = _membershipService.GetExtraAndNonExtraParliamentaryCommitteesStatistic(membershipData);
+
+        var genderLanguageStatisticData = committeeGenderLanguageStatisticData.Concat(departmentGenderLanguageStatisticData).Concat(extraAndNonExtraParliamentaryCommissions);
 
         var committeeGenderLanguageStatisticRawData =
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeGenderLanguageStatistic,
-                genderLanguageStatisticData.Select(OgdMapper.ToGenderLanguageStatisticObservation));
+                genderLanguageStatisticData.Select(OgdGenderLanguageStatisticMapper.ToGenderLanguageStatisticObservation));
 
         var committeeTypeStatisticData = await _committeeService.GetCommitteeTypeStatistic();
 
@@ -215,9 +284,17 @@ public class OgdExportService
             _cubeRawDataService.CreateTriples(
                 graph,
                 OgdExportConstants.UriCommitteeTypeStatistic,
-                committeeTypeStatisticData.Select(OgdMapper.ToCommitteeTypeStatisticObservation));
+                committeeTypeStatisticData.Select(OgdCommitteeTypeStatisticMapper.ToCommitteeTypeStatisticObservation));
 
-        var allTriples = committeeTypeTriples
+        var committeeTypeDepartmentStatisticData = await _committeeService.GetCommitteeTypeDepartmentStatistic();
+
+        var committeeTypeDepartmentStatisticRawData =
+            _cubeRawDataService.CreateTriples(
+                graph,
+                OgdExportConstants.UriCommitteeTypeDepartmentStatistic,
+                committeeTypeDepartmentStatisticData.Select(OgdCommitteeTypeDepartmentStatisticMapper.ToCommitteeTypeDepartmentStatisticObservation));
+
+        var chunks = committeeTypeTriples
             .Concat(functionTriples)
             .Concat(interestFunctionTriples)
             .Concat(interestCommitteeTriples)
@@ -234,50 +311,141 @@ public class OgdExportService
             .Concat(membershipRawData)
             .Concat(membershipMetadataTriples)
             .Concat(interestMetadataTriples)
-            .Concat(committeeFunctionStatisticMetadataTriples)
-            .Concat(committeeCantonStatisticMetadataTriples)
-            .Concat(committeeGenderLanguageStatisticMetadataTriples)
-            .Concat(committeeTypeStatisticMetadataTriples)
+            .Concat(committeeFunctionStatisticCubeMetadata)
+            .Concat(committeeCantonStatisticCubeMetadata)
+            .Concat(committeeGenderLanguageStatisticCubeMetadata)
+            .Concat(committeeTypeStatisticCubeMetadata)
+            .Concat(committeeTypeDepartmentStatisticCubeMetadata)
             .Concat(interestRawData)
             .Concat(committeeFunctionStatisticRawData)
             .Concat(committeeCantonStatisticRawData)
             .Concat(committeeGenderLanguageStatisticRawData)
             .Concat(committeeTypeStatisticDataRawData)
-            .Concat(appointmentDecisionTriples);
+            .Concat(committeeTypeDepartmentStatisticRawData)
+            .Concat(appointmentDecisionTriples)
+            .Chunk(10000);
 
-        _logger.LogInformation("OGD export: deleting graph");
-        await _storageProvider.DeleteGraphAsync(_sparqlOptions.ExportGraphName, ct);
+        // Delete graph on all targets before updating with new data
+        foreach (var target in _storageProviders.Keys.OrderBy(k => k))
+        {
+            try
+            {
+                var storageProvider = _storageProviders[target];
+                var graphUri = _targetsOptions.Targets[target].GraphName;
 
-        _logger.LogInformation("OGD export: creating new graph");
-        await _storageProvider.UpdateGraphAsync(_sparqlOptions.ExportGraphName, allTriples, [], ct);
+                _logger.LogInformation("OGD export: Deleting graph on target {TargetName}", target);
+                await storageProvider.DeleteGraphAsync(graphUri, ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "OGD export: Error while deleting graph on target {TargetName}", target);
+            }
+        }
 
-        var cantonDetailStatisticData = await _membershipService.GetMembershipsForDetailedCantonStatistic(membershipData);
+        // Update graph on all targets in chunks
+        var current = 0;
+        foreach (var chunk in chunks)
+        {
+            current++;
+            foreach (var target in _storageProviders.Keys.OrderBy(k => k))
+            {
+                try
+                {
+                    var storageProvider = _storageProviders[target];
+                    var graphUri = _targetsOptions.Targets[target].GraphName;
 
-        var committeeCantonDetailStatisticRawData =
-            _cubeRawDataService.CreateTriples(
-                graph,
-                OgdExportConstants.UriCommitteeCantonDetailStatistic,
-                cantonDetailStatisticData.Select(OgdMapper.ToCantonDetailStatisticObservation));
+                    _logger.LogInformation("OGD export: Updating data on target {TargetName}. Chunk: {Current}", target, current);
+                    await storageProvider.UpdateGraphAsync(graphUri, chunk, [], ct);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "OGD export: Error while updating data on target {TargetName}. Chunk: {Current}", target, current);
+                }
+            }
+        }
 
-        var additionalTriples = committeeCantonDetailStatisticRawData
-            .Concat(committeeCantonDetailStatisticMetadataTriples);
+        // Note:
+        // According to MiLu (meeting from 03.02.2026 with Pascal) the detailed canton statistic is not needed in the current version of the OGD export.
+        // Code stays here commented out for the time being, in case it is needed again in the future.
 
-        _logger.LogInformation("OGD export: updating detailed statistic");
-        await _storageProvider.UpdateGraphAsync(_sparqlOptions.ExportGraphName, additionalTriples, [], ct);
+        //  var cantonDetailStatisticData = await _membershipService.GetMembershipsForDetailedCantonStatistic(membershipData);
+        //
+        //  var committeeCantonDetailStatisticRawData =
+        //      _cubeRawDataService.CreateTriples(
+        //          graph,
+        //          OgdExportConstants.UriCommitteeCantonDetailStatistic,
+        //          cantonDetailStatisticData.Select(OgdMapper.ToCantonDetailStatisticObservation));
+        //
+        //  var additionalTriples = committeeCantonDetailStatisticRawData
+        //      .Concat(committeeCantonDetailStatisticMetadataTriples);
+        //
+        // _logger.LogInformation("OGD export: updating detailed statistic");
+        // await _storageProvider.UpdateGraphAsync(_sparqlOptions.ExportGraphName, additionalTriples, [], ct);
 
         _logger.LogInformation("OGD export: completed successfully");
     }
 
-    private IEnumerable<Triple> CreateCommitteeDimension(Graph graph, IEnumerable<Committee> committees)
+    private List<Triple> CreateCommitteeDimension(Graph graph, Committee[] committees)
     {
-        var committeeDimensionItems = committees.Select(CommitteeMapper.ToDimensionItem);
+        var committeeTriples = new List<Triple>();
 
-        var committeeTriples =
+        committeeTriples.AddRange(
             _dimensionService.CreateTriples(
-                committeeDimensionItems,
+                committees.Select(CommitteeMapper.ToDimensionItem),
                 graph,
                 $"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommittee}",
-                [new Literal("Behördenkommissionen", "de")]);
+                [new Literal("Behördenkommissionen", "de")]));
+
+        foreach (var committee in committees)
+        {
+            var committeeUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}";
+            var homepageUri = $"{committeeUri}/homepage";
+
+            if (!string.IsNullOrWhiteSpace(committee.LinkHomepageGerman))
+            {
+                committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageGerman, "de")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("de")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
+            }
+
+            if (!string.IsNullOrWhiteSpace(committee.LinkHomepageFrench))
+            {
+                committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageFrench, "fr")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("fr")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
+            }
+
+            if (!string.IsNullOrWhiteSpace(committee.LinkHomepageItalian))
+            {
+                committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageItalian, "it")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("it")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
+            }
+
+            if (!string.IsNullOrWhiteSpace(committee.LinkHomepageRomansh))
+            {
+                committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(homepageUri)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkHomepageRomansh, "rm")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaInLanguage), graph.CreateLiteralNode("rm")));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(homepageUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/Homepage")));
+            }
+
+            if (!string.IsNullOrWhiteSpace(committee.LinkAuthorityWebsite))
+            {
+                var linkUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}/authorityWebsite";
+                committeeTriples.Add(new Triple(graph.CreateUriNode(committeeUri), graph.CreateUriNode(OgdExportConstants.SchemaWebpage), graph.CreateUriNode(linkUri)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(linkUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaWebpage)));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(linkUri), graph.CreateUriNode(OgdExportConstants.SchemaUrl), graph.CreateLiteralNode(committee.LinkAuthorityWebsite, new Uri(OgdExportConstants.SchemaAnyUri))));
+                committeeTriples.Add(new Triple(graph.CreateUriNode(linkUri), graph.CreateUriNode(OgdExportConstants.SchemaAdditionalType), graph.CreateUriNode($"{OgdExportConstants.LdWebsiteType}/AuthorityWebsite")));
+            }
+        }
 
         return committeeTriples;
     }
@@ -308,7 +476,7 @@ public class OgdExportService
             var encodedDocumentName = Uri.EscapeDataString(documentName);
             var documentUrl = $"{_ogdS3Configuration.BaseUrl}/{_ogdS3Configuration.bucket}/{path}/{encodedDocumentName}";
             appointmentDecisionItems.Add(new DimensionItem(appointmentDecision.OgdId, new Literal(encodedDocumentName),
-                [new AdditionalLiteralProperty("schema:url", new Literal(documentUrl, new Uri("http://www.w3.org/2001/XMLSchema#anyURI")))]
+                [new AdditionalLiteralProperty(OgdExportConstants.SchemaUrl, new Literal(documentUrl, new Uri(OgdExportConstants.SchemaAnyUri)))]
             ));
         }
 
@@ -368,7 +536,7 @@ public class OgdExportService
 
     private async Task<IEnumerable<Triple>> CreateCommitteeTypeDimension(Graph graph)
     {
-        var committeeTypes = await _committeeTypeRepository.GetList();
+        var committeeTypes = (await _committeeTypeRepository.GetList()).Where(x => x.Id != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid);
 
         var committeeTypeTriples =
             _dimensionService.CreateTriples(
@@ -454,28 +622,57 @@ public class OgdExportService
             var addressUri = $"{contactPointUri}/address";
             var memberUri = $"{contactPointUri}/member/1";
 
-            // mandatory triples
             var triples = new List<Triple>
             {
                 new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaGovernmentOrganization)),
-                new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaName), graph.CreateLiteralNode(cp.CompanyName)),
                 new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaAddress), graph.CreateUriNode(addressUri)),
-
                 new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.RdfType), graph.CreateUriNode(OgdExportConstants.SchemaPostalAddress)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaStreetAddress), graph.CreateLiteralNode(cp.Street)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostOfficeBoxNumber), graph.CreateLiteralNode(cp.PoBox)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostalCode), graph.CreateLiteralNode(cp.Zip)),
-                new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaAddressLocality), graph.CreateLiteralNode(cp.City)),
             };
+
+            if (!string.IsNullOrWhiteSpace(cp.CompanyName))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaName), graph.CreateLiteralNode(cp.CompanyName)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.Street))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaStreetAddress), graph.CreateLiteralNode(cp.Street)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.PoBox))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostOfficeBoxNumber), graph.CreateLiteralNode(cp.PoBox)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.Zip))
+            {
+                triples.Add(new Triple(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaPostalCode), graph.CreateLiteralNode(cp.Zip)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(cp.City))
+            {
+                triples.Add(new(graph.CreateUriNode(addressUri), graph.CreateUriNode(OgdExportConstants.SchemaAddressLocality), graph.CreateLiteralNode(cp.City)));
+            }
 
             if (cp.ReleasePersonData)
             {
-                triples.Add(new(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaMember), graph.CreateUriNode(memberUri)));
-                triples.Add(new(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaFamilyName), graph.CreateLiteralNode(cp.Surname)));
-                triples.Add(new(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaGivenName), graph.CreateLiteralNode(cp.GivenName)));
-                triples.Add(new(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaTitle), graph.CreateLiteralNode(cp.Title)));
+                triples.Add(new Triple(graph.CreateUriNode(contactPointUri), graph.CreateUriNode(OgdExportConstants.SchemaMember), graph.CreateUriNode(memberUri)));
 
-                // optional: personal email
+                if (!string.IsNullOrWhiteSpace(cp.Surname))
+                {
+                    triples.Add(new Triple(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaFamilyName), graph.CreateLiteralNode(cp.Surname)));
+                }
+
+                if (!string.IsNullOrWhiteSpace(cp.GivenName))
+                {
+                    triples.Add(new Triple(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaGivenName), graph.CreateLiteralNode(cp.GivenName)));
+                }
+
+                if (!string.IsNullOrWhiteSpace(cp.Title))
+                {
+                    triples.Add(new Triple(graph.CreateUriNode(memberUri), graph.CreateUriNode(OgdExportConstants.SchemaTitle), graph.CreateLiteralNode(cp.Title)));
+                }
+
                 if (!string.IsNullOrWhiteSpace(cp.PersonalEmail))
                 {
                     triples.Add(new Triple(
@@ -485,7 +682,6 @@ public class OgdExportService
                     ));
                 }
 
-                // optional: personal phone or mobile
                 if (!string.IsNullOrWhiteSpace(cp.PersonalPhone))
                 {
                     triples.Add(new Triple(
@@ -514,7 +710,6 @@ public class OgdExportService
                 ));
             }
 
-            // optional: email
             if (!string.IsNullOrWhiteSpace(cp.Email))
             {
                 triples.Add(new Triple(
@@ -524,7 +719,6 @@ public class OgdExportService
                 ));
             }
 
-            // optional: phone
             if (!string.IsNullOrWhiteSpace(cp.Phone))
             {
                 triples.Add(new Triple(
@@ -534,7 +728,6 @@ public class OgdExportService
                 ));
             }
 
-            // optional: section
             if (!string.IsNullOrWhiteSpace(cp.Section))
             {
                 triples.Add(new Triple(

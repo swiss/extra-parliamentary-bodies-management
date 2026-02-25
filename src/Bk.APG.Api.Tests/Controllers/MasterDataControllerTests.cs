@@ -11,13 +11,14 @@ internal class MasterDataControllerTests
 {
     private readonly IMasterDataService _masterDataService = Substitute.For<IMasterDataService>();
     private readonly ICantonService _cantonService = Substitute.For<ICantonService>();
+    private readonly ICountryService _countryService = Substitute.For<ICountryService>();
 
     private MasterDataController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new MasterDataController(_masterDataService, _cantonService);
+        _controller = new MasterDataController(_masterDataService, _cantonService, _countryService);
     }
 
     [TearDown]

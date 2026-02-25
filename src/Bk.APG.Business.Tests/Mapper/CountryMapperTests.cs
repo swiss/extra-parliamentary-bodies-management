@@ -32,7 +32,8 @@ internal class CountryMapperTests
             NameIt = "testname_it",
             ShortNameDe = "test_short_name_de",
             ShortNameFr = "test_short_name_fr",
-            ShortNameIt = "test_short_name_it"
+            ShortNameIt = "test_short_name_it",
+            StartDate = DateOnly.FromDateTime(DateTime.Now),
         };
 
         var result = CountryMapper.ToCountry(masterDataModel);

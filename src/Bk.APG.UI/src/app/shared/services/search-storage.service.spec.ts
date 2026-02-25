@@ -1,11 +1,11 @@
 import {TestBed} from '@angular/core/testing';
-import {SESSION_STORAGE} from '../injection.tokens';
+import {LOCAL_STORAGE} from '../injection.tokens';
 import {SearchStorageService} from './search-storage.service';
 
 describe('SearchStorageService', () => {
     let service: SearchStorageService;
 
-    const sessionStorageMock = {
+    const localStorageMock = {
         getItem: jest.fn(),
         setItem: jest.fn(),
         removeItem: jest.fn(),
@@ -13,7 +13,7 @@ describe('SearchStorageService', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
-            providers: [{provide: SESSION_STORAGE, useValue: sessionStorageMock}],
+            providers: [{provide: LOCAL_STORAGE, useValue: localStorageMock}],
         });
         service = TestBed.inject(SearchStorageService);
     });
@@ -27,7 +27,7 @@ describe('SearchStorageService', () => {
     });
 
     it('should return params', () => {
-        sessionStorageMock.getItem.mockReturnValueOnce('{"success": true}');
+        localStorageMock.getItem.mockReturnValueOnce('{"success": true}');
 
         const result = service.getParams('test');
 
@@ -39,12 +39,12 @@ describe('SearchStorageService', () => {
         const testObj = {saved: true};
         service.setParams('test', testObj);
 
-        expect(sessionStorageMock.setItem).toHaveBeenCalledTimes(1);
-        expect(sessionStorageMock.setItem).toHaveBeenCalledWith('search-params-test', JSON.stringify(testObj));
+        expect(localStorageMock.setItem).toHaveBeenCalledTimes(1);
+        expect(localStorageMock.setItem).toHaveBeenCalledWith('search-params-test', JSON.stringify(testObj));
     });
 
     it('should patch params', () => {
-        sessionStorageMock.getItem.mockReturnValueOnce('{"propertyKeepValue":"keep", "propertyOverride": "willbeoverridden"}');
+        localStorageMock.getItem.mockReturnValueOnce('{"propertyKeepValue":"keep", "propertyOverride": "willbeoverridden"}');
 
         const patch = {
             propertyOverride: 'newvalue',
@@ -58,13 +58,13 @@ describe('SearchStorageService', () => {
 
         service.patchParams('test', patch);
 
-        expect(sessionStorageMock.setItem).toHaveBeenCalledTimes(1);
-        expect(sessionStorageMock.setItem).toHaveBeenCalledWith('search-params-test', JSON.stringify(expectedObjAfterPatch));
+        expect(localStorageMock.setItem).toHaveBeenCalledTimes(1);
+        expect(localStorageMock.setItem).toHaveBeenCalledWith('search-params-test', JSON.stringify(expectedObjAfterPatch));
     });
 
     it('should remove params', () => {
         service.removeParams('test');
-        expect(sessionStorageMock.removeItem).toHaveBeenCalledTimes(1);
-        expect(sessionStorageMock.removeItem).toHaveBeenCalledWith('search-params-test');
+        expect(localStorageMock.removeItem).toHaveBeenCalledTimes(1);
+        expect(localStorageMock.removeItem).toHaveBeenCalledWith('search-params-test');
     });
 });

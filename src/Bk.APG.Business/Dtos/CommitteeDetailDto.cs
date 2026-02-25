@@ -50,6 +50,7 @@ public class CommitteeDetailDto
     public string? JustificationGenders { get; set; }
     public string? MeasuresGenders { get; set; }
     public string? GeneralGenderMeasure { get; set; }
+    public bool IsPercentageBased { get; set; }
     public double? GermanThreshold { get; set; }
     public double? GermanQuota { get; set; }
     public double? FrenchThreshold { get; set; }
@@ -69,6 +70,7 @@ public class CommitteeDetailDto
     public bool NeedsAttentionNoMembers { get; set; }
     public bool NeedsAttentionAboveMaxMembers { get; set; }
     public bool NeedsAttentionDataProtectionOfficer { get; set; }
+    public bool NeedsAttentionSecretariat { get; set; }
     public bool NeedsAttentionBasicData { get; set; }
     public bool NeedsAttentionMembershipExpired { get; set; }
     public bool NeedsAttentionMembershipInterestOrOccupation { get; set; }

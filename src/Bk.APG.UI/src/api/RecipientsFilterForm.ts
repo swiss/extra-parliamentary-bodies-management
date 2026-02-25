@@ -6,4 +6,5 @@ export interface RecipientsFilterForm {
     committeeTypes: FormControl<string[] | null>;
     correspondenceLanguages: FormControl<string[] | null>;
     electionTypes: FormControl<string[] | null>;
+    formLetterSender: FormControl<string | null>;
 }
