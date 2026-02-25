@@ -32,7 +32,6 @@ internal class AddressUpdateValidatorTests
             CompanyName = new string('a', 151),
             Street = new string('a', 101),
             PoBox = new string('a', 51),
-            CountryCode = new string('a', 11),
             Zip = new string('a', 11),
             City = new string('a', 101),
             Phone = new string('a', 21),
@@ -45,7 +44,6 @@ internal class AddressUpdateValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.CompanyName);
         result.ShouldHaveValidationErrorFor(x => x.Street);
         result.ShouldHaveValidationErrorFor(x => x.PoBox);
-        result.ShouldHaveValidationErrorFor(x => x.CountryCode);
         result.ShouldHaveValidationErrorFor(x => x.Zip);
         result.ShouldHaveValidationErrorFor(x => x.City);
         result.ShouldHaveValidationErrorFor(x => x.Phone);
@@ -127,7 +125,6 @@ internal class AddressUpdateValidatorTests
             CompanyName = "Test Company",
             Street = "Test Street 123",
             PoBox = "PO Box 123",
-            CountryCode = "CH",
             Zip = "1234",
             City = "Test City",
             Phone = "+41 12 345 67 89",

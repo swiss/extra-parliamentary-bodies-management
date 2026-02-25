@@ -32,6 +32,7 @@ internal class MasterDataControllerTests
     {
         _masterDataService.GetLanguages().Returns([]);
         _cantonService.GetAll().Returns([]);
+        _countryService.GetAll().Returns([]);
         _masterDataService.GetGenders().Returns([]);
         _masterDataService.GetSalutations().Returns([]);
         _masterDataService.GetInterestCommittees().Returns([]);
@@ -59,6 +60,7 @@ internal class MasterDataControllerTests
 
         await _masterDataService.Received(1).GetLanguages();
         await _cantonService.Received(1).GetAll();
+        await _countryService.Received(1).GetAll();
         await _masterDataService.Received(1).GetGenders();
         await _masterDataService.Received(1).GetSalutations();
         await _masterDataService.Received(1).GetInterestCommittees();
