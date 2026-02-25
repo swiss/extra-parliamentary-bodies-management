@@ -7,8 +7,6 @@ public static class OgdExportConstants
     public const string SchemaIdentifier = "schema:identifier";
     public const string SchemaDescription = "schema:description";
     public const string SchemaUrl = "schema:url";
-    public const string SchemaGender = "schema:gender";
-    public const string SchemaLanguage = "schema:language";
     public const string SchemaGivenName = "schema:givenName";
     public const string SchemaFamilyName = "schema:familyName";
     public const string SchemaHonorificPrefix = "schema:honorificPrefix";
@@ -59,9 +57,11 @@ public static class OgdExportConstants
     public const string CommitteeHasSecretariat = "committee:hasSecretariat";
     public const string CommitteeHasDataProtectionOfficer = "committee:hasDataProtectionOfficer";
     public const string CommitteeHasLegalForm = "committee:hasLegalForm";
+    public const string CommitteeAdditionalAuthorityMembers = "committee:additionalAuthorityMembers";
 
     public const string DataTypeInt = "http://www.w3.org/2001/XMLSchema#int";
     public const string DataTypeDecimal = "http://www.w3.org/2001/XMLSchema#decimal";
+    public const string DataTypeBoolean = "http://www.w3.org/2001/XMLSchema#boolean";
 
     public const string LanguageDe = "de";
     public const string LanguageFr = "fr";
@@ -127,13 +127,9 @@ public static class OgdExportConstants
 
     public const string UriCommitteeFunctionStatistic = $"{NamespaceCommitteeFunctionStatistic}:1";
     public const string UriCommitteeCantonStatistic = $"{NamespaceCommitteeCantonStatistic}:1";
-    public const string UriCommitteeCantonDetailStatistic = $"{NamespaceCommitteeCantonDetailStatistic}:1";
     public const string UriCommitteeGenderLanguageStatistic = $"{NamespaceCommitteeGenderLanguageStatistic}:1";
     public const string UriCommitteeTypeStatistic = $"{NamespaceCommitteeTypeStatistic}:1";
     public const string UriCommitteeTypeDepartmentStatistic = $"{NamespaceCommitteeTypeDepartmentStatistic}:1";
-
-    // set to the production date of APG
-    public const string SchemaPublishedDate = "2026-01-14";
 
     public static string CreateUriLinkForLdAdminCh(string uri)
     {
