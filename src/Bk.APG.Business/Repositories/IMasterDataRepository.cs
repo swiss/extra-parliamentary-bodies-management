@@ -34,6 +34,7 @@ public interface IMasterDataRepository
     Task<IEnumerable<WorklistTaskState>> GetWorklistTaskStates();
     Task<ICollection<Occupation>> GetOccupations();
     Task<ICollection<Occupation>> GetOccupationsByIds(ICollection<Guid> ids);
+    Task<IEnumerable<FormLetterSenderFunction>> GetFormLetterSenderFunctions();
     void AttachUnchanged<T>(T entity) where T : MasterDataBase;
     Task<T?> GetById<T>(Guid id) where T : MasterDataBase;
 }

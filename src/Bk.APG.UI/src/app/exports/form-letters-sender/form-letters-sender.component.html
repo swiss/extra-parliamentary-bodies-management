@@ -1,0 +1,77 @@
+<div class="form-letters-sender-header">
+    <h3>{{ 'formLetter.sender.table.title' | translate }}</h3>
+    <button mat-button obButton="secondary" type="button" (click)="createSender()" [matTooltip]="'formLetter.sender.table.create' | translate">
+        <mat-icon svgIcon="plus" />
+        {{ 'formLetter.sender.table.create' | translate }}
+    </button>
+</div>
+
+<table [dataSource]="dataSource" class="ob-table" mat-table matSort>
+    <ng-container matColumnDef="description">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'formLetter.sender.table.header.description' | translate }}
+        </th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'formLetter.sender.table.header.description' | translate }}">
+            {{ element.description }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="senderFunction">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'formLetter.sender.table.header.senderFunction' | translate }}
+        </th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'formLetter.sender.table.header.senderFunction' | translate }}">
+            {{ element.senderFunction }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="surname">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'formLetter.sender.table.header.surname' | translate }}
+        </th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'formLetter.sender.table.header.surname' | translate }}">
+            {{ element.surname }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="givenName">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'formLetter.sender.table.header.givenName' | translate }}
+        </th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'formLetter.sender.table.header.givenName' | translate }}">
+            {{ element.givenName }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="department">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>
+            {{ 'formLetter.sender.table.header.department' | translate }}
+        </th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'formLetter.sender.table.header.department' | translate }}">
+            {{ element.department }}
+        </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef mat-header-cell></th>
+        <td *matCellDef="let element" mat-cell class="actions-column">
+            <button
+                type="button"
+                obButton="secondary"
+                mat-icon-button
+                [matTooltip]="'formLetter.sender.table.delete' | translate"
+                (click)="$event.stopPropagation(); deleteSender(element)"
+            >
+                <mat-icon svgIcon="delete" />
+            </button>
+        </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+    <tr (click)="editSender(row.id)" *matRowDef="let row; columns: displayedColumns" mat-row></tr>
+    <tr *matNoDataRow class="ob-no-data-row">
+        <td [attr.colspan]="displayedColumns.length">
+            {{ 'common.noEntries' | translate }}
+        </td>
+    </tr>
+</table>

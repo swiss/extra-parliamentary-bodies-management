@@ -24,6 +24,7 @@ export class RecipientsService {
             committeeIds: filterParameters?.committees || [],
             correspondenceLanguages: filterParameters.correspondenceLanguages || [],
             electionTypes: filterParameters.electionTypes || [],
+            formLetterSenderId: filterParameters.formLetterSender || null,
         };
 
         return this.http.post('/api/Report/download', body, {

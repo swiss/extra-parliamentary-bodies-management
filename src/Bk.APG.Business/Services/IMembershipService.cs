@@ -12,6 +12,8 @@ public interface IMembershipService
     Task<MembershipDetailDto> CreateMembership(MembershipCreateDto createDto);
     Task<MembershipUpdateDto> UpdateMembership(Guid id, MembershipUpdateDto updateDto);
     IEnumerable<MembershipGenderLanguageStatisticDto> GetMembershipsForGenderLanguageStatistic(IEnumerable<Membership> memberships);
+    IEnumerable<MembershipGenderLanguageStatisticDto> GetMembershipsForCommitteeTypeAndDepartmentGenderLanguageStatistic(IEnumerable<Membership> memberships);
+    IEnumerable<MembershipGenderLanguageStatisticDto> GetExtraAndNonExtraParliamentaryCommitteesStatistic(IEnumerable<Membership> memberships);
     Task<IEnumerable<MembershipCantonStatisticDto>> GetMembershipsForCantonStatistic(IEnumerable<Membership> memberships);
     Task<IEnumerable<MembershipStatisticByCantonDto>> GetMembershipsForDetailedCantonStatistic(IEnumerable<Membership> memberships);
     Task DeleteMembership(Guid id);
