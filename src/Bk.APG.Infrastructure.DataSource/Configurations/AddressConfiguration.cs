@@ -38,5 +38,10 @@ public class AddressConfiguration : EntityBaseConfiguration<Address>
             .HasOne(a => a.Canton)
             .WithMany()
             .HasForeignKey(a => a.CantonId);
+
+        builder
+            .HasOne(a => a.Country)
+            .WithMany()
+            .HasForeignKey(a => a.CountryId);
     }
 }

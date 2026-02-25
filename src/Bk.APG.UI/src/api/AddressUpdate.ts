@@ -3,7 +3,7 @@ export interface AddressUpdate {
     companyName?: string;
     street?: string;
     poBox?: string;
-    countryCode?: string;
+    countryId?: string;
     zip?: string;
     city?: string;
     phone?: string;

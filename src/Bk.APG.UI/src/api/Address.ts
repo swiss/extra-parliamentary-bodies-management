@@ -1,11 +1,12 @@
 import {Canton} from './Canton';
+import {Country} from './Country';
 
 export interface Address {
     id: string;
     companyName?: string;
     street?: string;
     poBox?: string;
-    countryCode?: string;
+    country: Country;
     zip?: string;
     city?: string;
     phone?: string;
