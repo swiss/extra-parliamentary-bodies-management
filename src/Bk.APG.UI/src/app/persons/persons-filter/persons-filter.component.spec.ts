@@ -7,10 +7,10 @@ import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule} from '@angular/material/select';
 import {Router} from '@angular/router';
 import {TranslateModule} from '@ngx-translate/core';
-import {ObButtonModule} from '@oblique/oblique';
+import {ObButtonModule, ObInputClearDirective} from '@oblique/oblique';
 import {MasterDataService} from '@shared/master-data.service';
 import {SearchStorageService} from '@shared/services/search-storage.service';
-import {MockComponent, MockModule} from 'ng-mocks';
+import {MockComponent, MockDirective, MockModule} from 'ng-mocks';
 import {BehaviorSubject} from 'rxjs';
 import {AuthService} from '../../auth/auth.service';
 import {Role} from '../../auth/Role';
@@ -55,6 +55,7 @@ describe('PersonFilterComponent', () => {
                 MockModule(ObButtonModule),
                 MockComponent(MatIcon),
                 PersonsFilterComponent,
+                MockDirective(ObInputClearDirective),
             ],
             providers: [
                 {provide: MasterDataService, useValue: masterDataServiceMock},

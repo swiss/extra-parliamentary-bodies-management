@@ -109,6 +109,7 @@ public class MembershipRepository : IMembershipRepository
         return
             _dataContext.Memberships
                 .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && m.EndDate > DateOnly.FromDateTime(DateTime.Today))
+                .Where(m => m.Committee!.CommitteeTypeId != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
                 .Include(m => m.Person!.Gender)
                 .Include(m => m.Person!.CorrespondenceAddress!.Canton)
                 .Include(m => m.Person!.Language)
@@ -165,7 +166,8 @@ public class MembershipRepository : IMembershipRepository
                   _dataContext.Committees.Any(c =>
                         c.Id == m.CommitteeId &&
                         c.BeginDate <= today &&
-                        (c.EndDate == null || c.EndDate > today))
+                        (c.EndDate == null || c.EndDate > today) &&
+                        c.CommitteeTypeId != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid)
             group new { m, f } by new { m.CommitteeId, CommitteeOgdId = m.Committee!.OgdId, m.FunctionId, FunctionOgdId = f.OgdId } into g
             orderby g.Key.CommitteeId, g.Key.CommitteeOgdId
             select new MembershipFunctionStatisticDto

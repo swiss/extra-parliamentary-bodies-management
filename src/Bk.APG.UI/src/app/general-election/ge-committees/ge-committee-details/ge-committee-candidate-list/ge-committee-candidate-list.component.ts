@@ -32,7 +32,7 @@ import {
 } from '@angular/material/table';
 import {MatTooltip} from '@angular/material/tooltip';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CandidateListDuplicateCheckResult} from '@api/CandidateListDuplicateCheckResult';
+import {CandidateListValidationResult} from '@api/CandidateListValidationResult';
 import {DuplicateReason} from '@api/DuplicateReason';
 import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
 import {MembershipCandidateCreate} from '@api/MembershipCandidateCreate';
@@ -123,8 +123,10 @@ export type MembershipCandidateColumns =
 })
 export class GeneralElectionCommitteeCandidateListComponent implements AfterViewInit {
     generalElectionCommittee = signal<GeneralElectionCommitteeDetails | undefined>(undefined);
-    validationErrors = signal<string[]>([]);
-    areJustificationsMissing = signal(false);
+    validationResult = signal<CandidateListValidationResult | undefined>(undefined);
+    personDuplicates = computed(() =>
+        (this.validationResult()?.duplicateCheckResults ?? []).filter(duplicate => duplicate.duplicateReason !== DuplicateReason.NoDuplicateFound)
+    );
     dataSource = new MatTableDataSource<MembershipCandidateDetail>();
     DuplicateReason = DuplicateReason;
     readonly pageSizeOptions = [25, 50, 100];
@@ -135,9 +137,6 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
     membershipCandidateForms = new Map<string, FormGroup>(); // membershipCandidateId -> FormGroup
     newMembershipCandidateForm: FormGroup;
     vacanciesForm: FormGroup;
-    personDuplicates: CandidateListDuplicateCheckResult[] = [];
-    createdPersons: PersonDetails[] = [];
-    existingPersons: PersonDetails[] = [];
     validated = false;
 
     selectedPerson = signal<PersonDetails | undefined>(undefined);
@@ -234,7 +233,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
                 this.initializeForms(generalElectionCommittee.candidates ?? []);
                 this.selectedIds = (generalElectionCommittee.candidates ?? []).filter(x => x.isSelected).map(x => x.id);
                 this.allSelected = false;
-                this.validationErrors.set([]);
+                this.clearValidationList('errors');
                 this.generalElectionCommittee.set(generalElectionCommittee);
             });
 
@@ -444,13 +443,9 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
         this.membershipCandidateListService.validateCandidateList(this.route.snapshot.params.id, this.selectedIds, this.duplicateCheckConfirmed).subscribe({
             next: validationResult => {
                 this.validated = true;
-                this.validationErrors.set(validationResult.errors);
-                this.areJustificationsMissing.set(validationResult.areJustificationsMissing);
-                this.personDuplicates = validationResult.duplicateCheckResults.filter(y => y.duplicateReason !== DuplicateReason.NoDuplicateFound);
-                this.existingPersons = validationResult.existingPersons;
-                if (validationResult.isValid && this.personDuplicates.length === 0) {
+                this.validationResult.set(validationResult);
+                if (validationResult.isValid && this.personDuplicates().length === 0) {
                     this.generalElectionCommitteeDetailsService.reload$.next();
-                    this.createdPersons = validationResult.createdPersons;
                     this.notificationService.success({message: 'generalElection.candidateList.validate.success', timeout: 10000});
                 } else {
                     if (!validationResult.isValid) {
@@ -462,12 +457,8 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
         });
     }
 
-    clearExistingPersonList() {
-        this.existingPersons = [];
-    }
-
-    clearCreatedPersonList() {
-        this.createdPersons = [];
+    clearValidationList(list: keyof CandidateListValidationResult) {
+        this.validationResult.update(currentValidationResult => (currentValidationResult ? {...currentValidationResult, [list]: []} : currentValidationResult));
     }
 
     saveVacancies() {

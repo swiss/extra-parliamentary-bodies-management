@@ -2232,6 +2232,278 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                     b.ToTable("entity_audit_log", "data");
                 });
 
+            modelBuilder.Entity("Bk.APG.Business.Models.FormLetterSender", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CityFrench")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city_french");
+
+                    b.Property<string>("CityGerman")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city_german");
+
+                    b.Property<string>("CityItalian")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city_italian");
+
+                    b.Property<string>("CityRomansh")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("city_romansh");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid>("DepartmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("department_id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("GivenName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("given_name");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modified");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("modified_by");
+
+                    b.Property<Guid>("OfficeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("office_id");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("phone");
+
+                    b.Property<uint>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("SenderFunctionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sender_function_id");
+
+                    b.Property<Guid?>("SignatureFileReferenceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("signature_file_reference_id");
+
+                    b.Property<string>("StreetFrench")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("street_french");
+
+                    b.Property<string>("StreetGerman")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("street_german");
+
+                    b.Property<string>("StreetItalian")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("street_italian");
+
+                    b.Property<string>("StreetRomansh")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("street_romansh");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("surname");
+
+                    b.Property<string>("Website")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("website");
+
+                    b.Property<string>("Zip")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("zip");
+
+                    b.HasKey("Id")
+                        .HasName("pk_form_letter_senders");
+
+                    b.HasIndex("DepartmentId")
+                        .HasDatabaseName("ix_form_letter_senders_department_id");
+
+                    b.HasIndex("OfficeId")
+                        .HasDatabaseName("ix_form_letter_senders_office_id");
+
+                    b.HasIndex("SenderFunctionId")
+                        .HasDatabaseName("ix_form_letter_senders_sender_function_id");
+
+                    b.HasIndex("SignatureFileReferenceId")
+                        .HasDatabaseName("ix_form_letter_senders_signature_file_reference_id");
+
+                    b.ToTable("form_letter_senders", "data");
+                });
+
+            modelBuilder.Entity("Bk.APG.Business.Models.FormLetterSenderFunction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DescriptionDe")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_de");
+
+                    b.Property<string>("DescriptionFr")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_fr");
+
+                    b.Property<string>("DescriptionIt")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_it");
+
+                    b.Property<string>("DescriptionRm")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_rm");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modified");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("modified_by");
+
+                    b.Property<int>("OgdId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("ogd_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OgdId"));
+
+                    b.Property<int>("OldId")
+                        .HasColumnType("integer")
+                        .HasColumnName("old_id");
+
+                    b.Property<int>("Sort")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("sort");
+
+                    b.Property<string>("TextDe")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_de");
+
+                    b.Property<string>("TextFr")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_fr");
+
+                    b.Property<string>("TextIt")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_it");
+
+                    b.Property<string>("TextRm")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_rm");
+
+                    b.Property<string>("Uri")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("uri");
+
+                    b.HasKey("Id")
+                        .HasName("pk_form_letter_sender_functions");
+
+                    b.HasIndex("OgdId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_form_letter_sender_functions_ogd_id");
+
+                    b.HasIndex("Uri")
+                        .IsUnique()
+                        .HasDatabaseName("ix_form_letter_sender_functions_uri");
+
+                    b.ToTable("form_letter_sender_functions", "data");
+                });
+
             modelBuilder.Entity("Bk.APG.Business.Models.Function", b =>
                 {
                     b.Property<Guid>("Id")
@@ -5667,6 +5939,43 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                     b.Navigation("Office");
 
                     b.Navigation("Parent");
+                });
+
+            modelBuilder.Entity("Bk.APG.Business.Models.FormLetterSender", b =>
+                {
+                    b.HasOne("Bk.APG.Business.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_form_letter_senders_departments_department_id");
+
+                    b.HasOne("Bk.APG.Business.Models.Office", "Office")
+                        .WithMany()
+                        .HasForeignKey("OfficeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_form_letter_senders_offices_office_id");
+
+                    b.HasOne("Bk.APG.Business.Models.FormLetterSenderFunction", "SenderFunction")
+                        .WithMany()
+                        .HasForeignKey("SenderFunctionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_form_letter_senders_form_letter_sender_functions_sender_fun");
+
+                    b.HasOne("Bk.APG.Business.Models.DocumentStorage", "SignatureFileReference")
+                        .WithMany()
+                        .HasForeignKey("SignatureFileReferenceId")
+                        .HasConstraintName("fk_form_letter_senders_document_storages_signature_file_refere");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Office");
+
+                    b.Navigation("SenderFunction");
+
+                    b.Navigation("SignatureFileReference");
                 });
 
             modelBuilder.Entity("Bk.APG.Business.Models.GeneralElectionCommittee", b =>

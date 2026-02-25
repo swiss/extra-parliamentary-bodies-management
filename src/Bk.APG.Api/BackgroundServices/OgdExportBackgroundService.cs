@@ -36,7 +36,7 @@ public class OgdExportBackgroundService : BackgroundService
                     if (ogdExportEnabled)
                     {
                         var timer = Stopwatch.StartNew();
-                        var exportService = scope.ServiceProvider.GetRequiredService<OgdExportService>();
+                        var exportService = scope.ServiceProvider.GetRequiredService<IOgdExportService>();
                         await exportService.Export(ct);
                         timer.Stop();
                         _logger.LogInformation("Export to LINDAS finished. Duration: {Duration:g}", timer.Elapsed);

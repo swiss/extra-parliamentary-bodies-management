@@ -46,7 +46,6 @@ import {AuthService} from '../../auth/auth.service';
 export class WorklistFilterComponent {
     readonly reload$ = new Subject<void>();
     readonly filter = output<WorklistFilterParameters>();
-    formFilter?: WorklistFilterParameters;
     readonly form = this.setupWorklistFilterForm();
     readonly departmentOffices = computed(() => {
         const offices = this.masterDataService.permittedOffices();
@@ -76,7 +75,6 @@ export class WorklistFilterComponent {
     }
 
     reset(): void {
-        this.formFilter = undefined;
         this.searchStorageService.removeParams(worklistSearchStorageKey);
         this.form.reset();
     }
@@ -104,9 +102,7 @@ export class WorklistFilterComponent {
     }
 
     private setupWorklistFilterForm(): FormGroup<WorklistFilterForm> {
-        const params = this.searchStorageService.getParams(worklistSearchStorageKey);
-
-        const formGroup = this.fb.group<WorklistFilterForm>({
+        return this.fb.group<WorklistFilterForm>({
             committee: this.fb.control<string | null>(null),
             departments: this.fb.control<string[] | null>(null),
             offices: this.fb.control<string[] | null>(null),
@@ -119,16 +115,10 @@ export class WorklistFilterComponent {
             dueDateFrom: this.fb.control<Date | null>(null),
             dueDateTo: this.fb.control<Date | null>(null),
         });
-
-        if (params) {
-            this.formFilter = params;
-        }
-        return formGroup;
     }
 
     private setInitialFilterValuesToEmit() {
-        if (this.formFilter) {
-            this.form.patchValue(this.formFilter);
-        }
+        const params = this.searchStorageService.getParams(worklistSearchStorageKey) ?? {};
+        this.form.patchValue(params);
     }
 }

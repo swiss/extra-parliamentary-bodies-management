@@ -49,6 +49,7 @@ public class MasterDataController : ControllerBase
             Councils = await _masterDataService.GetCouncils(),
             WorklistTaskTypes = await _masterDataService.GetWorklistTaskTypes(),
             WorklistTaskStates = await _masterDataService.GetWorklistTaskStates(),
+            FormLetterSenderFunctions = await _masterDataService.GetFormLetterSenderFunctions(),
             Countries = await _countryService.GetAll()
         };
         return Ok(masterData);

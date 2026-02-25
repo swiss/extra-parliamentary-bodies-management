@@ -49,6 +49,10 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
         var membershipCandidate = await _dataContext.MembershipCandidates
             .Include(m => m.MembershipAddition)
             .Include(m => m.ElectionOffice)
+            .Include(m => m.GeneralElectionCommittee!.TermOfOfficeDate)
+            .Include(m => m.Person!.Memberships)
+            .Include(m => m.Person!.LegislaturePeriods)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (membershipCandidate is null)

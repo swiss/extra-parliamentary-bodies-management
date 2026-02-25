@@ -109,6 +109,7 @@ internal class MembershipCandidateServiceTests
             Assert.That(existingMembershipCandidate.MaximumEmploymentLevel, Is.EqualTo(updateDto.MaximumEmploymentLevel));
             Assert.That(existingMembershipCandidate.MembershipAdditionId, Is.EqualTo(updateDto.MembershipAdditionId));
             Assert.That(existingMembershipCandidate.EndDate, Is.EqualTo(updateDto.EndDate));
+            Assert.That(existingMembershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(updateDto.InCorrelationWithFederalDuty));
         });
     }
 
@@ -174,19 +175,14 @@ internal class MembershipCandidateServiceTests
             {
                 DuplicateReason = DuplicateReason.NoDuplicateFound
             });
-        _personService.CreatePersonInGeneralElection(membershipCandidates[0]).Returns(new PersonDetailDto
-        {
-            Id = Guid.NewGuid(),
-            GivenName = "Peter",
-            Surname = "Tester",
-            BirthYear = 1965,
-            Language = "de",
-            LanguageId = Guid.NewGuid(),
-            CorrespondenceLanguage = "de",
-            Gender = "männlich",
-            GenderId = Guid.NewGuid(),
-            MaskAddress = false
-        });
+        _personService.CreatePersonInGeneralElection(membershipCandidates[0]).Returns(new PersonBuilder()
+            .WithGivenName("Peter")
+            .WithSurname("Tester")
+            .WithBirthYear(1965)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build());
         _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns(worklistTasks);
         _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns([new WorklistTaskBuilder().Build()]);
@@ -236,19 +232,14 @@ internal class MembershipCandidateServiceTests
             {
                 DuplicateReason = DuplicateReason.FullMatch
             });
-        _personService.CreatePersonInGeneralElection(membershipCandidates[0]).Returns(new PersonDetailDto
-        {
-            Id = Guid.NewGuid(),
-            GivenName = "Peter",
-            Surname = "Tester",
-            BirthYear = 1965,
-            Language = "de",
-            LanguageId = Guid.NewGuid(),
-            CorrespondenceLanguage = "de",
-            Gender = "männlich",
-            GenderId = Guid.NewGuid(),
-            MaskAddress = false
-        });
+        _personService.CreatePersonInGeneralElection(membershipCandidates[0]).Returns(new PersonBuilder()
+            .WithGivenName("Peter")
+            .WithSurname("Tester")
+            .WithBirthYear(1965)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build());
         _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns(worklistTasks);
 
@@ -735,19 +726,14 @@ internal class MembershipCandidateServiceTests
 
         _personService.GetDuplicatePersonForGeneralElection(membershipCandidates[0]).Returns(
             new CandidateListDuplicateCheckResultDto { DuplicateReason = DuplicateReason.NoDuplicateFound });
-        _personService.CreatePersonInGeneralElection(membershipCandidates[0]).Returns(new PersonDetailDto
-        {
-            Id = Guid.NewGuid(),
-            GivenName = "Test",
-            Surname = "User",
-            BirthYear = 1980,
-            Language = "de",
-            LanguageId = Guid.NewGuid(),
-            CorrespondenceLanguage = "de",
-            Gender = "männlich",
-            GenderId = Guid.NewGuid(),
-            MaskAddress = false
-        });
+        _personService.CreatePersonInGeneralElection(membershipCandidates[0]).Returns(new PersonBuilder()
+            .WithGivenName("Test")
+            .WithSurname("User")
+            .WithBirthYear(1980)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build());
         _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns(worklistTasks);
         _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns([new WorklistTaskBuilder().Build()]);
@@ -1018,8 +1004,9 @@ internal class MembershipCandidateServiceTests
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns(new List<WorklistTask>());
         _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([]);
 
-        await _service.ValidateCandidateList(committeeId, candidateIds, true);
+        var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
+        Assert.That(validationResult.AreContactPointsMissing, Is.True);
         await _worklistTaskRepository.Received(1).Create(Arg.Is<WorklistTask>(t => t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat));
         await _worklistTaskRepository.Received(1).Create(Arg.Is<WorklistTask>(t => t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer));
     }
@@ -1076,52 +1063,49 @@ internal class MembershipCandidateServiceTests
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([missingSecretariatTask, missingDataProtectionOfficerTask]);
         _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([]);
 
-        await _service.ValidateCandidateList(committeeId, candidateIds, true);
+        var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
         Assert.Multiple(() =>
         {
+            Assert.That(validationResult.AreContactPointsMissing, Is.False);
             Assert.That(missingSecretariatTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
             Assert.That(missingDataProtectionOfficerTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
         });
     }
 
     [Test]
-    public async Task ValidateCandidateList_SelectedCandidateWithoutPerson_ShouldCreateInterestsAndBaseDataTasks()
+    public async Task ValidateCandidateList_SelectedNewCandidate_ShouldCreateInterestsAndBaseDataTasks()
     {
         var committeeId = Guid.NewGuid();
         var candidateId = Guid.NewGuid();
         var candidateIds = new List<Guid> { candidateId };
-        var personId = Guid.NewGuid();
+
+        var person = new PersonBuilder()
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
         var membershipCandidate = new MembershipCandidateBuilder()
             .WithId(candidateId)
-            .WithPersonId(personId)
+            .WithPerson(person)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
             .Build();
-        membershipCandidate.Person = null;
 
         var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
             .WithMinimalMember(0)
             .WithMaximalMember(10)
+            .WithCommitteeType(new CommitteeTypeBuilder().WithId(CommitteeType.AuthoritiesCommissionGuid).Build())
             .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
             .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
             .Build();
+        membershipCandidate.GeneralElectionCommittee = generalElectionCommittee;
 
         _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
-        _worklistTaskRepository.GetAllByPersonId(personId).Returns([]);
+        _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([]);
         _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns([new WorklistTaskBuilder().Build()]);
         _personService.GetDuplicatePersonForGeneralElection(membershipCandidate).Returns(new CandidateListDuplicateCheckResultDto { DuplicateReason = DuplicateReason.NoDuplicateFound });
-        _personService.CreatePersonInGeneralElection(membershipCandidate).Returns(new PersonDetailDto
-        {
-            Id = personId,
-            GivenName = "Peter",
-            Surname = "Tester",
-            BirthYear = 1965,
-            Language = "de",
-            LanguageId = Guid.NewGuid(),
-            CorrespondenceLanguage = "de",
-            Gender = "männlich",
-            GenderId = Guid.NewGuid(),
-            MaskAddress = false
-        });
+        _personService.CreatePersonInGeneralElection(membershipCandidate).Returns(person);
 
         await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
@@ -1221,6 +1205,157 @@ internal class MembershipCandidateServiceTests
     }
 
     [Test]
+    public async Task ValidateCandidateList_SelectedCandidateMissingInterests_ShouldIncludePersonInMissingInterests()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+        var candidateIds = new List<Guid> { candidateId };
+
+        var committeeType = new CommitteeTypeBuilder()
+            .WithId(CommitteeType.ManagementCommitteeGuid)
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithCommitteeType(committeeType)
+            .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            .Build();
+
+        var person = new PersonBuilder()
+            .WithSurname("Test")
+            .WithGivenName("User")
+            .WithEmployer("Employer")
+            .WithOccupations(new List<Occupation> { new OccupationBuilder().Build() })
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        generalElectionCommittee.MembershipCandidates.Add(membershipCandidate);
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([]);
+        _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns([new WorklistTaskBuilder().Build()]);
+
+        var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(validationResult.PersonsWithMissingInterests, Has.Count.EqualTo(1));
+            Assert.That(validationResult.PersonsWithMissingBaseData, Has.Count.EqualTo(0));
+            var missingPerson = validationResult.PersonsWithMissingInterests.Single();
+            Assert.That(missingPerson.Id, Is.EqualTo(person.Id));
+            Assert.That(missingPerson.GivenName, Is.EqualTo(person.GivenName));
+            Assert.That(missingPerson.Surname, Is.EqualTo(person.Surname));
+        }
+    }
+
+    [Test]
+    public async Task ValidateCandidateList_SelectedCandidateMissingBaseData_ShouldIncludePersonInMissingBaseData()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+        var candidateIds = new List<Guid> { candidateId };
+
+        var committeeType = new CommitteeTypeBuilder()
+            .WithId(CommitteeType.ManagementCommitteeGuid)
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithCommitteeType(committeeType)
+            .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            .Build();
+
+        var person = new PersonBuilder()
+            .WithNoInterest(true)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        generalElectionCommittee.MembershipCandidates.Add(membershipCandidate);
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([]);
+        _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns([new WorklistTaskBuilder().Build()]);
+
+        var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(validationResult.PersonsWithMissingInterests, Has.Count.EqualTo(0));
+            Assert.That(validationResult.PersonsWithMissingBaseData, Has.Count.EqualTo(1));
+            var missingPerson = validationResult.PersonsWithMissingBaseData.Single();
+            Assert.That(missingPerson.Id, Is.EqualTo(person.Id));
+            Assert.That(missingPerson.GivenName, Is.EqualTo(person.GivenName));
+            Assert.That(missingPerson.Surname, Is.EqualTo(person.Surname));
+        }
+    }
+
+    [Test]
+    public async Task ValidateCandidateList_CandidateMissingPersonId_ShouldSkipPersonTaskChecks()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+        var candidateIds = new List<Guid> { candidateId };
+
+        var person = new PersonBuilder()
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .Build();
+        membershipCandidate.PersonId = null;
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
+            .Build();
+
+        membershipCandidate.GeneralElectionCommittee = generalElectionCommittee;
+        membershipCandidate.GeneralElectionCommitteeId = generalElectionCommittee.Id;
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([]);
+
+        var validationResult = await _service.ValidateCandidateList(committeeId, candidateIds, true);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(validationResult.PersonsWithMissingInterests, Has.Count.EqualTo(0));
+            Assert.That(validationResult.PersonsWithMissingBaseData, Has.Count.EqualTo(0));
+        }
+
+        await _worklistTaskRepository.Received(1).GetAllByPersonId(person.Id);
+        await _worklistTaskRepository.DidNotReceive().Create(Arg.Is<WorklistTask>(t =>
+            t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+            t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData));
+    }
+
+    [Test]
     public async Task ValidateCandidateList_NotSelectedCandidateWithActiveTasks_ShouldCompleteTasks()
     {
         var committeeId = Guid.NewGuid();
@@ -1264,12 +1399,17 @@ internal class MembershipCandidateServiceTests
         var candidateId = Guid.NewGuid();
         var candidateIds = new List<Guid> { candidateId };
 
-        var personId = Guid.NewGuid();
+        var person = new PersonBuilder()
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
         var membershipCandidate = new MembershipCandidateBuilder()
             .WithId(candidateId)
-            .WithPersonId(personId)
+            .WithPerson(person)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
             .Build();
-        membershipCandidate.Person = null;
 
         var interestsTask = new WorklistTaskBuilder()
             .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
@@ -1290,27 +1430,17 @@ internal class MembershipCandidateServiceTests
             .WithMaximalMember(10)
             .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
             .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
-            .WithCommitteeType(new CommitteeTypeBuilder().WithFemaleAndMaleThreshold(0, 0).WithLanguagesThreshold(null, null, null, null).WithLanguagesPercentageThreshold(null, null, null, null).Build())
+            .WithCommitteeType(new CommitteeTypeBuilder().WithId(CommitteeType.AuthoritiesCommissionGuid)
+                .WithFemaleAndMaleThreshold(0, 0).WithLanguagesThreshold(null, null, null, null).WithLanguagesPercentageThreshold(null, null, null, null).Build())
             .Build();
+        membershipCandidate.GeneralElectionCommittee = generalElectionCommittee;
 
         _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
-        _worklistTaskRepository.GetAllByPersonId(personId).Returns([interestsTask, baseDataTask]);
+        _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([interestsTask, baseDataTask]);
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns(new List<WorklistTask> { candidateListTask });
         _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns([new WorklistTaskBuilder().Build()]);
         _personService.GetDuplicatePersonForGeneralElection(membershipCandidate).Returns(new CandidateListDuplicateCheckResultDto { DuplicateReason = DuplicateReason.NoDuplicateFound });
-        _personService.CreatePersonInGeneralElection(membershipCandidate).Returns(new PersonDetailDto
-        {
-            Id = personId,
-            GivenName = "Peter",
-            Surname = "Tester",
-            BirthYear = 1965,
-            Language = "de",
-            LanguageId = Guid.NewGuid(),
-            CorrespondenceLanguage = "de",
-            Gender = "männlich",
-            GenderId = Guid.NewGuid(),
-            MaskAddress = false
-        });
+        _personService.CreatePersonInGeneralElection(membershipCandidate).Returns(person);
 
         await _service.ValidateCandidateList(committeeId, candidateIds, true);
 
@@ -1322,5 +1452,296 @@ internal class MembershipCandidateServiceTests
 
         await _worklistTaskRepository.DidNotReceive().Create(Arg.Is<WorklistTask>(t => t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests));
         await _worklistTaskRepository.DidNotReceive().Create(Arg.Is<WorklistTask>(t => t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData));
+    }
+
+    [Test]
+    public async Task ValidateCandidateList_SelectedCandidateMissingMaximumEmploymentLevel_ShouldCreateMembershipValidationTask()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+
+        var committeeType = new CommitteeTypeBuilder().WithId(Guid.NewGuid()).Build();
+        var committee = new CommitteeBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCommitteeType(committeeType)
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .WithCommitteeType(committeeType)
+            .WithCommitteeId(committee.Id)
+            .WithCommitteeTypeId(committeeType.Id)
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithMarketOrientated(true)
+            .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .Build();
+
+        var person = new PersonBuilder()
+            .WithGivenName("Max")
+            .WithSurname("Muster")
+            .WithNoInterest(true)
+            .WithNoEmployment(true)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .WithIsSelected(true)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        membershipCandidate.MaximumEmploymentLevel = null;
+        generalElectionCommittee.MembershipCandidates.Add(membershipCandidate);
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([]);
+
+        var validationResult = await _service.ValidateCandidateList(committeeId, new List<Guid> { candidateId }, true);
+
+        await _worklistTaskRepository.Received(1).Create(Arg.Is<WorklistTask>(t =>
+            t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation &&
+            t.MembershipCandidateId == candidateId));
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(validationResult.PersonsWithMembershipValidationIssues, Has.Count.EqualTo(1));
+            var missingPerson = validationResult.PersonsWithMembershipValidationIssues.Single();
+            Assert.That(missingPerson.Id, Is.EqualTo(person.Id));
+            Assert.That(missingPerson.GivenName, Is.EqualTo(person.GivenName));
+            Assert.That(missingPerson.Surname, Is.EqualTo(person.Surname));
+        }
+    }
+
+    [Test]
+    public async Task ValidateCandidateList_SelectedCandidateMissingInterests_ShouldSkipMembershipValidationTasks()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+
+        var committeeType = new CommitteeTypeBuilder().WithId(CommitteeType.ManagementCommitteeGuid).Build();
+        var committee = new CommitteeBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCommitteeType(committeeType)
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .WithCommitteeType(committeeType)
+            .WithCommitteeId(committee.Id)
+            .WithCommitteeTypeId(committeeType.Id)
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithMarketOrientated(true)
+            .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .Build();
+
+        var person = new PersonBuilder()
+            .WithNoEmployment(true)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .WithIsSelected(true)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        membershipCandidate.MaximumEmploymentLevel = null;
+        generalElectionCommittee.MembershipCandidates.Add(membershipCandidate);
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByPersonId(person.Id).Returns([]);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([]);
+
+        var validationResult = await _service.ValidateCandidateList(committeeId, new List<Guid> { candidateId }, true);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(validationResult.PersonsWithMissingInterests, Has.Count.EqualTo(1));
+            Assert.That(validationResult.PersonsWithMembershipValidationIssues, Has.Count.EqualTo(0));
+        }
+
+        await _worklistTaskRepository.DidNotReceive().Create(Arg.Is<WorklistTask>(t =>
+            t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation));
+    }
+
+    [Test]
+    public async Task ValidateCandidateList_SelectedCandidateWithMembershipValidationIssue_ShouldActivateTask()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+
+        var committeeType = new CommitteeTypeBuilder().WithId(CommitteeType.NonExtraParliamentaryCommitteeGuid).Build();
+        var committee = new CommitteeBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCommitteeType(committeeType)
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .WithCommitteeType(committeeType)
+            .WithCommitteeId(committee.Id)
+            .WithCommitteeTypeId(committeeType.Id)
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithMarketOrientated(true)
+            .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .Build();
+
+        var person = new PersonBuilder()
+            .WithNoInterest(true)
+            .WithNoEmployment(true)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .WithIsSelected(true)
+            .WithElectionTypeId(ElectionType.ReElectionGuid)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        membershipCandidate.MaximumEmploymentLevel = null;
+        generalElectionCommittee.MembershipCandidates.Add(membershipCandidate);
+
+        var membershipTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMembershipValidation)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithMembershipCandidateId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([membershipTask]);
+
+        var validationResult = await _service.ValidateCandidateList(committeeId, new List<Guid> { candidateId }, true);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(membershipTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
+            Assert.That(validationResult.PersonsWithMembershipValidationIssues, Has.Count.EqualTo(1));
+        }
+
+        await _worklistTaskRepository.DidNotReceive().Create(Arg.Is<WorklistTask>(t =>
+            t.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation));
+    }
+
+    [Test]
+    public async Task ValidateCandidateList_SelectedCandidateWithoutMembershipValidationIssue_ShouldCompleteMembershipTask()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+
+        var committeeType = new CommitteeTypeBuilder().WithId(CommitteeType.NonExtraParliamentaryCommitteeGuid).Build();
+        var committee = new CommitteeBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCommitteeType(committeeType)
+            .Build();
+        var termOfOffice = new TermOfOfficeBuilder().WithId(Guid.NewGuid()).Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .WithCommitteeType(committeeType)
+            .WithCommitteeId(committee.Id)
+            .WithCommitteeTypeId(committeeType.Id)
+            .WithTermOfOffice(termOfOffice)
+            .WithTermOfOfficeId(termOfOffice.Id)
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithMarketOrientated(false)
+            .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .Build();
+
+        var person = new PersonBuilder()
+            .WithNoInterest(true)
+            .WithNoEmployment(true)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .WithIsSelected(true)
+            .WithElectionTypeId(ElectionType.ReElectionGuid)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        membershipCandidate.MaximumEmploymentLevel = 60;
+        generalElectionCommittee.MembershipCandidates.Add(membershipCandidate);
+
+        var membershipTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMembershipValidation)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithMembershipCandidateId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([membershipTask]);
+
+        await _service.ValidateCandidateList(committeeId, new List<Guid> { candidateId }, true);
+
+        Assert.That(membershipTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+    }
+
+    [Test]
+    public async Task ValidateCandidateList_NotSelectedCandidateWithMembershipValidationTask_ShouldCompleteTask()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidateId = Guid.NewGuid();
+
+        var person = new PersonBuilder()
+            .WithNoInterest(true)
+            .WithNoEmployment(true)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithCorrespondenceLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .Build();
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithPerson(person)
+            .WithIsSelected(true)
+            .Build();
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithMinimalMember(0)
+            .WithMaximalMember(10)
+            .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
+            .WithCandidateListStateId(CandidateListState.Completed)
+            .Build();
+        membershipCandidate.GeneralElectionCommittee = generalElectionCommittee;
+
+        var membershipTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMembershipValidation)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithMembershipCandidateId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([membershipTask]);
+
+        await _service.ValidateCandidateList(committeeId, [], true);
+
+        Assert.That(membershipTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
     }
 }

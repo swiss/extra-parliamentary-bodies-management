@@ -226,6 +226,12 @@ public class GeneralElectionService : IGeneralElectionService
                 membershipCandidate.InCorrelationWithFederalDuty = updatedMembership.InCorrelationWithFederalDuty;
                 membershipCandidate.Modified = updatedMembership.Modified;
                 membershipCandidate.ModifiedBy = updatedMembership.ModifiedBy;
+                membershipCandidate.InCorrelationWithFederalDuty = membership.InCorrelationWithFederalDuty;
+                membershipCandidate.JustificationLongerDuty = membership.JustificationLongerDuty;
+                membershipCandidate.JustificationShorterDuty = membership.JustificationShorterDuty;
+                membershipCandidate.JustificationMemberInFederalAssembly = membership.JustificationMemberInFederalAssembly;
+                membershipCandidate.JustificationMemberInFederalDuty = membership.JustificationMemberInFederalDuty;
+                membershipCandidate.RequirementsProfile = membership.RequirementsProfile;
 
                 await _membershipCandidateRepository.CommitChanges();
 
@@ -308,12 +314,6 @@ public class GeneralElectionService : IGeneralElectionService
 
     private static bool CheckMembership(Membership membership, DateOnly termOfOfficeStartDate)
     {
-        // all former memberships are ignored // TODO PP, this would be all! Discuss with Jill.
-        //if (membership.EndDate < termOfOfficeStartDate)
-        //{
-        //    return false;
-        //}
-
         // any form of retirement will be ignored
         if (membership.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid || membership.ElectionTypeId == ElectionType.MembershipEndedBecauseOfDeathGuid ||
             membership.ElectionTypeId == ElectionType.OtherRetirementReasonGuid || membership.ElectionTypeId == ElectionType.RetirementGuid)

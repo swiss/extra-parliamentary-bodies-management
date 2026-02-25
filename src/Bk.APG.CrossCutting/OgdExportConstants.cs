@@ -7,8 +7,6 @@ public static class OgdExportConstants
     public const string SchemaIdentifier = "schema:identifier";
     public const string SchemaDescription = "schema:description";
     public const string SchemaUrl = "schema:url";
-    public const string SchemaGender = "schema:gender";
-    public const string SchemaLanguage = "schema:language";
     public const string SchemaGivenName = "schema:givenName";
     public const string SchemaFamilyName = "schema:familyName";
     public const string SchemaHonorificPrefix = "schema:honorificPrefix";
@@ -37,6 +35,11 @@ public static class OgdExportConstants
     public const string SchemaBirthDate = "schema:birthDate";
     public const string SchemaContactPoint = "schema:contactPoint";
     public const string SchemaContributor = "schema:contributor";
+    public const string SchemaWebpage = "schema:webpage";
+    public const string SchemaInLanguage = "schema:inLanguage";
+    public const string SchemaPosition = "schema:position";
+
+    public const string SchemaAnyUri = "http://www.w3.org/2001/XMLSchema#anyURI";
 
     public const string PersonHasOccupation = "person:hasOccupation";
     public const string PersonHasOffice = "person:hasOffice";
@@ -49,9 +52,16 @@ public static class OgdExportConstants
     public const string LdFCh = "ld:FCh";
     public const string LdCreativeWorkStatusDraft = "ld:vocabulary/CreativeWorkStatus/Draft";
     public const string LdApplicationVisualize = "ld:application/visualize";
+    public const string LdWebsiteType = "ld:fch/apg/vocabulary/website-type";
 
     public const string CommitteeHasSecretariat = "committee:hasSecretariat";
     public const string CommitteeHasDataProtectionOfficer = "committee:hasDataProtectionOfficer";
+    public const string CommitteeHasLegalForm = "committee:hasLegalForm";
+    public const string CommitteeAdditionalAuthorityMembers = "committee:additionalAuthorityMembers";
+
+    public const string DataTypeInt = "http://www.w3.org/2001/XMLSchema#int";
+    public const string DataTypeDecimal = "http://www.w3.org/2001/XMLSchema#decimal";
+    public const string DataTypeBoolean = "http://www.w3.org/2001/XMLSchema#boolean";
 
     public const string LanguageDe = "de";
     public const string LanguageFr = "fr";
@@ -92,6 +102,7 @@ public static class OgdExportConstants
     public const string NamespaceAuthoritiesCommission = "authorities-commission";
     public const string NamespaceManagementCommission = "management-commission";
     public const string NamespaceFederalAgenciesCommission = "federal-agencies-commission";
+    public const string NamespaceCommitteeTypeDepartmentStatistic = "committee-type-department-statistic";
 
     public const string NamespaceLd = "ld";
     public const string NamespaceRld = "rld";
@@ -101,10 +112,13 @@ public static class OgdExportConstants
     public const string NamespaceCube = "cube";
 
     public const string ShaclNodeKindIri = "w3:ns/shacl#IRI";
+    public const string ShaclNodeKindLiteral = "w3:ns/shacl#Literal";
 
     public const string CubeKeyDimension = "cube:KeyDimension";
+    public const string CubeMeasureDimension = "cube:MeasureDimension";
 
     public const string QudtNominalScale = "qudt:NominalScale";
+    public const string QudtRatioScale = "qudt:RatioScale";
 
     public const string UriMembership = "membership:1";
     public const string UriCommittee = "committee:1";
@@ -113,12 +127,9 @@ public static class OgdExportConstants
 
     public const string UriCommitteeFunctionStatistic = $"{NamespaceCommitteeFunctionStatistic}:1";
     public const string UriCommitteeCantonStatistic = $"{NamespaceCommitteeCantonStatistic}:1";
-    public const string UriCommitteeCantonDetailStatistic = $"{NamespaceCommitteeCantonDetailStatistic}:1";
     public const string UriCommitteeGenderLanguageStatistic = $"{NamespaceCommitteeGenderLanguageStatistic}:1";
     public const string UriCommitteeTypeStatistic = $"{NamespaceCommitteeTypeStatistic}:1";
-
-    // set to the production date of APG
-    public const string SchemaPublishedDate = "2026-01-14";
+    public const string UriCommitteeTypeDepartmentStatistic = $"{NamespaceCommitteeTypeDepartmentStatistic}:1";
 
     public static string CreateUriLinkForLdAdminCh(string uri)
     {

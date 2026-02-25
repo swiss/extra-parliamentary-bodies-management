@@ -15,4 +15,8 @@ export class OnlinePublicationService {
     getOgdExportSetting(): Observable<boolean> {
         return this.http.get<boolean>('/api/apgGeneralSettings');
     }
+
+    triggerPublication(): Observable<void> {
+        return this.http.post<void>('/api/apgGeneralSettings/ogdExport', null);
+    }
 }

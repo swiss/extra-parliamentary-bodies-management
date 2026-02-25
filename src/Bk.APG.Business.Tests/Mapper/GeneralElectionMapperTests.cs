@@ -90,11 +90,11 @@ internal class GeneralElectionMapperTests
             Assert.That(membershipCandidate.FunctionId, Is.EqualTo(membership.FunctionId));
             Assert.That(membershipCandidate.ElectionOfficeId, Is.EqualTo(membership.ElectionOfficeId));
             Assert.That(membershipCandidate.MembershipAdditionId, Is.EqualTo(membership.MembershipAdditionId));
-            Assert.That(membershipCandidate.JustificationLongerDuty, Is.EqualTo(string.Empty));
+            Assert.That(membershipCandidate.JustificationLongerDuty, Is.EqualTo(membership.JustificationLongerDuty));
             Assert.That(membershipCandidate.JustificationShorterDuty, Is.EqualTo(string.Empty));
             Assert.That(membershipCandidate.JustificationMemberInFederalDuty, Is.EqualTo(membership.JustificationMemberInFederalDuty));
             Assert.That(membershipCandidate.JustificationMemberInFederalAssembly, Is.EqualTo(membership.JustificationMemberInFederalAssembly));
-            Assert.That(membershipCandidate.RequirementsProfile, Is.EqualTo(membership.RequirementsProfile));
+            Assert.That(membershipCandidate.RequirementsProfile, Is.EqualTo(string.Empty));
             Assert.That(membershipCandidate.Remarks, Is.EqualTo(membership.Remarks));
             Assert.That(membershipCandidate.RemarksStatus, Is.EqualTo(membership.RemarksStatus));
             Assert.That(membershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(membership.InCorrelationWithFederalDuty));
@@ -132,7 +132,43 @@ internal class GeneralElectionMapperTests
             Assert.That(result.HasMembershipAddition, Is.EqualTo(membershipCandidate.MembershipAddition is not null));
             Assert.That(result.IsActive, Is.True);
             Assert.That(result.IsFuture, Is.False);
-            Assert.That(result.NeedsAttention, Is.EqualTo(membershipCandidate.NeedsAttention));
+            Assert.That(result.NeedsAttention, Is.EqualTo(membershipCandidate.HasMembershipValidationIssues));
+        });
+    }
+
+    [Test]
+    public void ToMembershipCandidateMirrorDto_ShouldMapCorrectly()
+    {
+        var candidateListId = Guid.NewGuid();
+        var termOfOfficeBeginDate = new DateOnly(2028, 1, 1);
+        var termOfOfficeEndDate = new DateOnly(2031, 12, 31);
+
+        var membership = new MembershipBuilder()
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-3)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2)))
+            .WithIsActive(true)
+            .Build();
+
+        var membershipCandidate = GeneralElectionMapper.ToMembershipCandidateMirrorDto(membership);
+
+        Assert.That(membershipCandidate, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(membershipCandidate.MaximumEmploymentLevel, Is.EqualTo(membership.MaximumEmploymentLevel));
+            Assert.That(membershipCandidate.ElectionTypeId, Is.EqualTo(ElectionType.ReElectionGuid));
+            Assert.That(membershipCandidate.FunctionId, Is.EqualTo(membership.FunctionId));
+            Assert.That(membershipCandidate.ElectionOfficeId, Is.EqualTo(membership.ElectionOfficeId));
+            Assert.That(membershipCandidate.MembershipAdditionId, Is.EqualTo(membership.MembershipAdditionId));
+            Assert.That(membershipCandidate.Remarks, Is.EqualTo(membership.Remarks));
+            Assert.That(membershipCandidate.RemarksStatus, Is.EqualTo(membership.RemarksStatus));
+            Assert.That(membershipCandidate.Modified, Is.EqualTo(membership.Modified));
+            Assert.That(membershipCandidate.ModifiedBy, Is.EqualTo(membership.ModifiedBy));
+            Assert.That(membershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(membership.InCorrelationWithFederalDuty));
+            Assert.That(membershipCandidate.JustificationLongerDuty, Is.EqualTo(membership.JustificationLongerDuty));
+            Assert.That(membershipCandidate.JustificationShorterDuty, Is.EqualTo(membership.JustificationShorterDuty));
+            Assert.That(membershipCandidate.JustificationMemberInFederalDuty, Is.EqualTo(membership.JustificationMemberInFederalDuty));
+            Assert.That(membershipCandidate.JustificationMemberInFederalAssembly, Is.EqualTo(membership.JustificationMemberInFederalAssembly));
+            Assert.That(membershipCandidate.RequirementsProfile, Is.EqualTo(membership.RequirementsProfile));
         });
     }
 }
