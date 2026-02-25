@@ -577,7 +577,7 @@ internal class PersonServiceTests
             PoBox = "pobox_office",
             Street = "street_office",
             Zip = "zip_office",
-            CountryCode = "country_code_office"
+            CountryId = Guid.NewGuid()
         };
 
         var person = new Person
