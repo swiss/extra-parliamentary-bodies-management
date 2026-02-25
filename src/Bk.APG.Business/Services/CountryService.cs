@@ -16,9 +16,9 @@ public class CountryService : ICountryService
 
     public async Task<IEnumerable<CountryDto>> GetAll()
     {
-        var cantons = await _countryRepository.GetAll();
+        var countries = await _countryRepository.GetAll();
 
-        return cantons.Select(c => CountryMapper.ToCountryDto(c)).OrderBy(c => c.Sort).ThenBy(c => c.Text);
+        return countries.Select(c => CountryMapper.ToCountryDto(c)).OrderBy(c => c.Sort).ThenBy(c => c.Description);
     }
 
     public async Task<Country> CreateOrUpdate(Country country)
