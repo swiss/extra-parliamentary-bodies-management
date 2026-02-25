@@ -5,6 +5,7 @@
 -   Form letter sender management [BKDO-1109](https://bkdev.atlassian.net/browse/BKDO-1109)
 -   Exclude CrossBorderFederalAgencies from OGD export [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
 -   Migrate "Anstalt" legal form to "Institut des öffentlichen Rechts" [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
+-   Mark OGD cubes as published for visualiziation [BKDO-2894](https://bkdev.atlassian.net/browse/BKDO-2894)
 
 ## 1.1.0
 
