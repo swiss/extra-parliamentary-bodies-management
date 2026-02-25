@@ -21,7 +21,7 @@ internal class AddressMapperTests
             Assert.That(addressDto.CompanyName, Is.EqualTo(address.CompanyName));
             Assert.That(addressDto.Street, Is.EqualTo(address.Street));
             Assert.That(addressDto.PoBox, Is.EqualTo(address.PoBox));
-            Assert.That(addressDto.CountryCode, Is.EqualTo(address.CountryCode));
+            Assert.That(addressDto.Country, Is.EqualTo(address.CountryCode));
             Assert.That(addressDto.Zip, Is.EqualTo(address.Zip));
             Assert.That(addressDto.City, Is.EqualTo(address.City));
             Assert.That(addressDto.Phone, Is.EqualTo(address.Phone));
@@ -45,7 +45,8 @@ internal class AddressMapperTests
             Assert.That(addressDto.CompanyName, Is.Empty);
             Assert.That(addressDto.Street, Is.Empty);
             Assert.That(addressDto.PoBox, Is.Empty);
-            Assert.That(addressDto.CountryCode, Is.Empty);
+            Assert.That(addressDto.Country, Is.Empty);
+            Assert.That(addressDto.Canton, Is.Empty);
             Assert.That(addressDto.Zip, Is.Empty);
             Assert.That(addressDto.City, Is.Empty);
             Assert.That(addressDto.Phone, Is.Empty);
@@ -65,7 +66,7 @@ internal class AddressMapperTests
             City = "city_private",
             Street = "street_private",
             CompanyName = "companyname_private",
-            CountryCode = "countrycode_private",
+            CountryId = Guid.NewGuid(),
             Email = "email_private",
             Mobile = "mobile_private",
             Phone = "phone_private",
@@ -82,7 +83,7 @@ internal class AddressMapperTests
             Assert.That(address.CompanyName, Is.EqualTo(addressDto.CompanyName));
             Assert.That(address.Street, Is.EqualTo(addressDto.Street));
             Assert.That(address.PoBox, Is.EqualTo(addressDto.PoBox));
-            Assert.That(address.CountryCode, Is.EqualTo(addressDto.CountryCode));
+            Assert.That(address.CountryId, Is.EqualTo(addressDto.CountryId));
             Assert.That(address.Zip, Is.EqualTo(addressDto.Zip));
             Assert.That(address.City, Is.EqualTo(addressDto.City));
             Assert.That(address.CantonId, Is.EqualTo(addressDto.CantonId));
