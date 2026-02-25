@@ -87,7 +87,7 @@
   "person.salutationText": "Briefanrede",
   "person.details.address.activeAddress": "Anschriftadresse",
   "person.details.address.poBox": "Postfach",
-  "person.details.address.countryCode": "Landescode",
+  "person.details.address.country": "Land",
   "person.details.address.zip": "PLZ",
   "person.details.address.city": "Ort",
   "person.details.address.canton": "Kanton",
