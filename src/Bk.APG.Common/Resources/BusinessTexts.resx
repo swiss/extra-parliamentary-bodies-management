@@ -330,6 +330,9 @@
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
         <value>APG_Bundesratsbeschluss</value>
     </data>
+    <data name="Vacancies_Report_Filename" xml:space="preserve">
+        <value>Liste_Vakanzen</value>
+    </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Nationalrätin</value>
     </data>
