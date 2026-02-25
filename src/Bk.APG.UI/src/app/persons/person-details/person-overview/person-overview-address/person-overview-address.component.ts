@@ -12,7 +12,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 export class PersonOverviewAddressComponent {
     addressDetail = input.required<AddressDetails>();
     zipCity = computed(() => {
-        const {countryCode, zip, city, canton} = this.addressDetail();
-        return [`${countryCode ? `${countryCode}-` : ''}${zip ?? ''}`, city, `${canton ? `(${canton})` : ''}`].filter(x => !!x).join(' ');
+        const {country, zip, city, canton} = this.addressDetail();
+        return [`${country ? `${country}-` : ''}${zip ?? ''}`, city, `${canton ? `(${canton})` : ''}`].filter(x => !!x).join(' ');
     });
 }

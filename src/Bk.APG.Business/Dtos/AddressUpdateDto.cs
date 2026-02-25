@@ -6,7 +6,7 @@ public class AddressUpdateDto
     public string? CompanyName { get; init; }
     public string? Street { get; init; }
     public string? PoBox { get; init; }
-    public string? CountryCode { get; init; }
+    public Guid? CountryId { get; init; }
     public string? Zip { get; init; }
     public string? City { get; init; }
     public Guid? CantonId { get; init; }
