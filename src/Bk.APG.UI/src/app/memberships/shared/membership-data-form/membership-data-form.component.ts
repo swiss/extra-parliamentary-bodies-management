@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import {AfterViewChecked, Component, computed, DestroyRef, effect, Input, model, OnInit, Signal, signal, ViewChild} from '@angular/core';
+import {Component, computed, DestroyRef, effect, Input, model, OnInit, Signal, signal, ViewChild} from '@angular/core';
 import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
 import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {MatAutocompleteModule, MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
@@ -80,7 +80,7 @@ import {CommitteeSearchComponent} from '../committee-search/committee-search.com
         HelpTooltipComponent,
     ],
 })
-export class MembershipDataFormComponent implements OnInit, AfterViewChecked {
+export class MembershipDataFormComponent implements OnInit {
     @Input() isUpdateMode = false;
     @ViewChild(PersonSearchComponent) formComponentPersonSearch: PersonSearchComponent | null = null;
     @ViewChild(CommitteeSearchComponent) formComponentCommitteeSearch: CommitteeSearchComponent | null = null;
@@ -274,49 +274,54 @@ export class MembershipDataFormComponent implements OnInit, AfterViewChecked {
             }
         });
 
-        const effectRef = effect(() => {
-            if (this.isUpdateMode && this.membershipModification() && (this.committeeEntity() || this.personEntity())) {
-                const committee$ = !this.committeeEntity()
-                    ? this.committeesService.getCommitteeDetails(this.membershipModification()!.committeeId)
-                    : of(this.committeeEntity()!);
-
-                const person$ = !this.personEntity() ? this.personService.getPersonDetails(this.membershipModification()!.personId) : of(this.personEntity()!);
-
-                forkJoin({committee: committee$, person: person$})
-                    .pipe(takeUntilDestroyed(this.destroyRef))
-                    .subscribe(({committee, person}) => {
-                        if (!this.committeeEntity()) {
-                            this.committeeSelected.set(committee);
-                        }
-                        if (!this.personEntity()) {
-                            this.personSelected.set(person);
-                        }
-
-                        this.handleElectionOfficeField();
-                        this.resetForm(this.membershipModification()!);
-
-                        this.membershipAdditionId = this.membershipModification()?.membershipAdditionId;
-
-                        this.canEdit = (this.membershipModification() as MembershipUpdate).canEdit;
-                        this.canEditBeginDate = (this.membershipModification() as MembershipUpdate).canEditBeginDate;
-
-                        this.membershipForm.controls.beginDate.enable();
-                        this.membershipForm.controls.endDate.enable();
-
-                        if (!this.canEdit) {
-                            this.membershipForm.controls.beginDate.disable();
-                            this.membershipForm.controls.endDate.disable();
-                        } else if (this.canEditBeginDate) {
-                            this.membershipForm.controls.beginDate.enable();
-                        } else {
-                            this.membershipForm.controls.beginDate.disable();
-                        }
-
-                        this.updateValidity(false);
-                    });
-
-                effectRef.destroy();
+        effect(() => {
+            if (!this.isUpdateMode || !this.membershipModification() || !(this.committeeEntity() || this.personEntity())) {
+                return;
             }
+
+            const committee$ = this.committeeEntity()
+                ? of(this.committeeEntity())
+                : this.committeesService.getCommitteeDetails(this.membershipModification()!.committeeId);
+
+            const person$ = this.personEntity() ? of(this.personEntity()) : this.personService.getPersonDetails(this.membershipModification()!.personId);
+
+            forkJoin({committee: committee$, person: person$})
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe(({committee, person}) => {
+                    if (!this.committeeEntity()) {
+                        this.committeeSelected.set(committee);
+                    }
+                    if (!this.personEntity()) {
+                        this.personSelected.set(person);
+                    }
+
+                    this.handleElectionOfficeField();
+                    this.resetForm(this.membershipModification()!);
+
+                    this.membershipAdditionId = this.membershipModification()?.membershipAdditionId;
+
+                    this.canEdit = (this.membershipModification() as MembershipUpdate).canEdit;
+                    this.canEditBeginDate = (this.membershipModification() as MembershipUpdate).canEditBeginDate;
+
+                    const beginDateControl = this.membershipForm.controls.beginDate;
+                    const endDateControl = this.membershipForm.controls.endDate;
+
+                    if (!this.canEdit) {
+                        beginDateControl.disable();
+                        endDateControl.disable();
+                    } else {
+                        endDateControl.enable();
+                        if (this.canEditBeginDate) {
+                            beginDateControl.enable();
+                        } else {
+                            beginDateControl.disable();
+                        }
+                    }
+
+                    this.updateValidity(false);
+
+                    this.setupForm();
+                });
         });
 
         effect(() => {
@@ -329,7 +334,7 @@ export class MembershipDataFormComponent implements OnInit, AfterViewChecked {
         });
     }
 
-    ngAfterViewChecked() {
+    setupForm() {
         if (!this.isUpdateMode) {
             this.membershipForm.controls.endDate.markAllAsTouched();
             if (this.formComponentCommitteeSearch) {
