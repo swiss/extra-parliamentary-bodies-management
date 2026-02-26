@@ -75,6 +75,10 @@ export interface GeneralElectionCommitteeDetails {
     canSaveCandidateList: boolean;
     canForwardCandidateList: boolean;
     isCandidateListCompleted: boolean;
+    readyForProposalAssignedTo?: string;
+    canForwardReadyForProposal: boolean;
+    canFinalizeReadyForProposal: boolean;
+    isReadyForProposal: boolean;
     quotas?: CommitteeQuotas;
     candidates?: MembershipCandidateDetail[];
     termOfOfficeBeginDate: Date;

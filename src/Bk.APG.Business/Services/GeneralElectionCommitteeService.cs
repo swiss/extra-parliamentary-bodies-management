@@ -55,13 +55,20 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         dto.GeneralLanguageMeasure = generalLanguageMeasure?.Description;
 
         var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
-        var candidateListTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).ToList();
+        var generalElectionCommitteeTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).ToList();
+        var candidateListTasks = generalElectionCommitteeTasks
+            .Where(x => x.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate || x.WorklistTaskTypeId == WorklistTaskType.CandidateListForward || x.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove).ToList();
         var activeCandidateListTask = candidateListTasks.FirstOrDefault(x => x.WorklistTaskStateId == WorklistTaskState.Active);
+        var activeReadyForProposalTask = generalElectionCommitteeTasks
+            .FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && x.WorklistTaskStateId == WorklistTaskState.Active);
         var wasGeneralElectionStartedForCommittee = candidateListTasks.Count != 0;
 
         var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id;
         var isCompleted = generalElectionCommittee.CandidateListStateId == CandidateListState.Completed;
         var canValidate = currentEiamAssignment.Role is Role.Department or Role.Admin;
+        var isReadyForProposal = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal;
+        var canForwardReadyForProposal = activeReadyForProposalTask?.AssignedToId == currentEiamAssignment.Id;
+        var canFinalizeReadyForProposal = currentEiamAssignment.Role == Role.Admin && !isReadyForProposal && isCompleted;
 
         dto.AssignedTo = activeCandidateListTask?.AssignedTo!.GetText();
         dto.WasGeneralElectionStartedForCommittee = wasGeneralElectionStartedForCommittee;
@@ -69,6 +76,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         dto.CanValidateCandidateList = wasGeneralElectionStartedForCommittee && canValidate;
         dto.CanForwardCandidateList = wasGeneralElectionStartedForCommittee && canForward;
         dto.IsCandidateListCompleted = isCompleted;
+        dto.ReadyForProposalAssignedTo = activeReadyForProposalTask?.AssignedTo!.GetText();
+        dto.CanForwardReadyForProposal = canForwardReadyForProposal;
+        dto.CanFinalizeReadyForProposal = canFinalizeReadyForProposal;
+        dto.IsReadyForProposal = isReadyForProposal;
 
         return dto;
     }
@@ -172,7 +183,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         existingCommittee.DepartmentId = updateDto.DepartmentId;
         existingCommittee.CommitteeTypeId = updateDto.CommitteeTypeId;
 
-        existingCommittee.ReleaseGeneralElection = updateDto.ReleaseGeneralElection;
         existingCommittee.FederalLawEstablishment = updateDto.FederalLawEstablishment;
         existingCommittee.FederalInstitution = updateDto.FederalInstitution;
         existingCommittee.SupervisionDuty = updateDto.SupervisionDuty;
