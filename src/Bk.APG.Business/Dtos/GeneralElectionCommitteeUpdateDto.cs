@@ -13,7 +13,6 @@ public class GeneralElectionCommitteeUpdateDto
     public required Guid OfficeId { get; set; }
     public required Guid DepartmentId { get; set; }
     public required Guid CommitteeTypeId { get; set; }
-    public bool? ReleaseGeneralElection { get; init; }
     public bool? FederalLawEstablishment { get; init; }
     public bool? SupervisionDuty { get; init; }
     public bool? MarketOrientated { get; init; }

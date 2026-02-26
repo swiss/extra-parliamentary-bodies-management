@@ -12,6 +12,10 @@
         <ob-alert type="info">{{ 'generalElection.committee.candidateList.noGeneralElectionStartedForCommittee' | translate }}</ob-alert>
     }
 
+    @if (validationResult()?.isReadyForProposalActivated) {
+        <ob-alert type="info">{{ 'generalElection.committee.candidateList.readyForProposalActivated' | translate }}</ob-alert>
+    }
+
     @let validationErrors = validationResult()?.errors ?? [];
     @if (validationErrors.length) {
         @for (error of validationErrors; track error) {
