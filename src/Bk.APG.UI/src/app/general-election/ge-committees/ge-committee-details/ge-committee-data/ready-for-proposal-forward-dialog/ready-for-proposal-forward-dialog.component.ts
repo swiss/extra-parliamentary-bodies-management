@@ -5,15 +5,15 @@ import {MatButton} from '@angular/material/button';
 import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
 import {MatInput} from '@angular/material/input';
 import {MatError, MatFormField, MatLabel, MatOption, MatSelect} from '@angular/material/select';
-import {CandidateListForward} from '@api/CandidateListForward';
 import {EiamAssignment} from '@api/EiamAssignment';
+import {ReadyForProposalForward} from '@api/ReadyForProposalForward';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ObButtonDirective, ObErrorMessagesDirective, ObMatErrorDirective, ObNotificationService} from '@oblique/oblique';
 import {GeneralElectionCommitteeDetailsService} from '../../ge-committee-details.service';
-import {GeneralElectionCommitteeCandidateListService} from '../ge-committee-candidate-list.service';
+import {GeneralElectionCommitteeDataService} from '../ge-committee-data.service';
 
 @Component({
-    selector: 'apg-candidate-list-forward-dialog',
+    selector: 'apg-ready-for-proposal-forward-dialog',
     imports: [
         MatDialogContent,
         MatDialogActions,
@@ -34,25 +34,23 @@ import {GeneralElectionCommitteeCandidateListService} from '../ge-committee-cand
         CdkTextareaAutosize,
         MatInput,
     ],
-    templateUrl: './candidate-list-forward-dialog.component.html',
-    styleUrl: './candidate-list-forward-dialog.component.scss',
+    templateUrl: './ready-for-proposal-forward-dialog.component.html',
+    styleUrl: './ready-for-proposal-forward-dialog.component.scss',
 })
-export class CandidateListForwardDialogComponent implements OnInit {
+export class ReadyForProposalForwardDialogComponent implements OnInit {
     availableAssignments = signal<EiamAssignment[]>([]);
     form = this.buildForm();
 
     constructor(
-        @Inject(MAT_DIALOG_DATA) private readonly data: {committeeId: string; candidateIds: string[]},
+        @Inject(MAT_DIALOG_DATA) private readonly data: {committeeId: string},
         private readonly formBuilder: FormBuilder,
-        private readonly candidateListService: GeneralElectionCommitteeCandidateListService,
+        private readonly dataService: GeneralElectionCommitteeDataService,
         private readonly detailsService: GeneralElectionCommitteeDetailsService,
         private readonly notificationService: ObNotificationService
     ) {}
 
     ngOnInit(): void {
-        this.candidateListService
-            .getAssignmentsForCandidateListForward(this.data.committeeId)
-            .subscribe(assignments => this.availableAssignments.set(assignments));
+        this.dataService.getAssignmentsForReadyForProposalForward(this.data.committeeId).subscribe(assignments => this.availableAssignments.set(assignments));
     }
 
     forward() {
@@ -61,15 +59,13 @@ export class CandidateListForwardDialogComponent implements OnInit {
             return;
         }
 
-        this.candidateListService
-            .forwardCandidateList(this.data.committeeId, {candidateIds: this.data.candidateIds, ...this.form.getRawValue()} as CandidateListForward)
-            .subscribe({
-                next: () => {
-                    this.detailsService.reload$.next();
-                    this.notificationService.success('generalElection.committee.candidateList.forward.success');
-                },
-                error: () => this.notificationService.error('generalElection.committee.candidateList.forward.error'),
-            });
+        this.dataService.forwardReadyForProposal(this.data.committeeId, this.form.getRawValue() as ReadyForProposalForward).subscribe({
+            next: () => {
+                this.detailsService.reload$.next();
+                this.notificationService.success('generalElection.committee.data.readyForProposal.forward.success');
+            },
+            error: () => this.notificationService.error('generalElection.committee.data.readyForProposal.forward.error'),
+        });
     }
 
     private buildForm() {
