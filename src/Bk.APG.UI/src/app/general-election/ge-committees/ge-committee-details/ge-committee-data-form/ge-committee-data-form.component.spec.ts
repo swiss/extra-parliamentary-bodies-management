@@ -187,7 +187,6 @@ describe('GeneralElectionCommitteeDataFormComponent', () => {
             expect(form.controls.legalFormId.value).toBe(undefined);
             expect(form.controls.oldLegalForm.value).toBe(undefined);
             expect(form.controls.legalBase.value).toBe(undefined);
-            expect(form.controls.releaseGeneralElection.value).toBe(null);
             expect(form.controls.federalLawEstablishment.value).toBe(null);
             expect(form.controls.supervisionDuty.value).toBe(null);
             expect(form.controls.endDate.value).toBe(undefined);

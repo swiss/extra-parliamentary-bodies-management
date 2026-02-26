@@ -50,6 +50,31 @@ public class GeneralElectionCommitteeController : ControllerBase
         return Ok();
     }
 
+    [HttpGet]
+    [Route("{committeeId:guid}/ready-for-proposal/forward")]
+    public async Task<IActionResult> GetAssignmentsReadyForProposalForward(Guid committeeId)
+    {
+        var assignments = await _eiamAssignmentService.GetAllForReadyForProposalForward(committeeId);
+        return Ok(assignments);
+    }
+
+    [HttpPost]
+    [Route("{committeeId:guid}/ready-for-proposal/forward")]
+    public async Task<IActionResult> ForwardReadyForProposal(Guid committeeId, [FromBody] ReadyForProposalForwardDto forwardDto)
+    {
+        await _membershipCandidateService.ForwardReadyForProposal(committeeId, forwardDto);
+        return Ok();
+    }
+
+    [HttpPost]
+    [Authorize(Policy = APGPolicies.RequireAdminRole)]
+    [Route("{committeeId:guid}/ready-for-proposal/finalize")]
+    public async Task<IActionResult> FinalizeReadyForProposal(Guid committeeId)
+    {
+        var result = await _membershipCandidateService.FinalizeReadyForProposal(committeeId);
+        return Ok(result);
+    }
+
     [HttpPost]
     [Route("{committeeId:guid}/candidate-list/validate")]
     public async Task<IActionResult> ValidateCandidateList(Guid committeeId, [FromBody] CandidateListValidationRequest candidateListValidationRequest)

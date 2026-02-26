@@ -1,6 +1,18 @@
 import {CommonModule, DatePipe} from '@angular/common';
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DOCUMENT, effect, Inject, signal, viewChild} from '@angular/core';
-import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    computed,
+    DOCUMENT,
+    effect,
+    Inject,
+    signal,
+    ViewContainerRef,
+    viewChild,
+} from '@angular/core';
+import {toSignal} from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton, MatIconButton} from '@angular/material/button';
 import {MatCard, MatCardContent} from '@angular/material/card';
@@ -34,17 +46,16 @@ import {MatTooltip} from '@angular/material/tooltip';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CandidateListValidationResult} from '@api/CandidateListValidationResult';
 import {DuplicateReason} from '@api/DuplicateReason';
-import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
 import {MembershipCandidateCreate} from '@api/MembershipCandidateCreate';
 import {MembershipCandidateDetail} from '@api/MembershipCandidateDetail';
 import {MembershipCandidatePartialUpdate} from '@api/MembershipCandidatePartialUpdate';
 import {PersonDetails} from '@api/PersonDetails';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {TranslatePipe} from '@ngx-translate/core';
 import {ObAlertComponent, ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService, WINDOW} from '@oblique/oblique';
 import {downloadFileFromHttpResponse} from '@shared/file-util';
 import {MasterDataService} from '@shared/master-data.service';
 import {MembersQuotasComponent} from '@shared/members-quotas/members-quotas.component';
-import {distinctUntilChanged, EMPTY, merge, switchMap} from 'rxjs';
+import {EMPTY, switchMap} from 'rxjs';
 import {AuthService} from '../../../../auth/auth.service';
 import {ConfigsService} from '../../../../configs.service';
 import {PersonSearchComponent} from '../../../../persons/shared/person-search/person-search.component';
@@ -122,7 +133,7 @@ export type MembershipCandidateColumns =
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GeneralElectionCommitteeCandidateListComponent implements AfterViewInit {
-    generalElectionCommittee = signal<GeneralElectionCommitteeDetails | undefined>(undefined);
+    generalElectionCommittee = this.generalElectionCommitteeDetailsService.committeeDetails;
     validationResult = signal<CandidateListValidationResult | undefined>(undefined);
     personDuplicates = computed(() =>
         (this.validationResult()?.duplicateCheckResults ?? []).filter(duplicate => duplicate.duplicateReason !== DuplicateReason.NoDuplicateFound)
@@ -188,7 +199,6 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
     constructor(
         private readonly route: ActivatedRoute,
         private readonly router: Router,
-        private readonly translateService: TranslateService,
         private readonly membershipCandidateListService: GeneralElectionCommitteeCandidateListService,
         private readonly generalElectionCommitteesService: GeneralElectionCommitteesService,
         private readonly formBuilder: FormBuilder,
@@ -200,6 +210,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
         protected readonly masterDataService: MasterDataService,
         private readonly dialog: MatDialog,
         private readonly cdRef: ChangeDetectorRef,
+        private readonly viewContainerRef: ViewContainerRef,
         @Inject(WINDOW) private readonly window: Window,
         @Inject(DOCUMENT) private readonly document: Document
     ) {
@@ -219,23 +230,17 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
             vacancies: [],
         });
 
-        merge(
-            this.generalElectionCommitteeDetailsService.reload$,
-            this.membershipCandidateListService.reload$,
-            this.translateService.onLangChange.pipe(distinctUntilChanged((prev, curr) => prev.lang === curr.lang))
-        )
-            .pipe(
-                switchMap(() => this.generalElectionCommitteeDetailsService.generalElectionCommitteeDetails(this.route.snapshot.params.id)),
-                takeUntilDestroyed()
-            )
-            .subscribe(generalElectionCommittee => {
+        effect(() => {
+            const generalElectionCommittee = this.generalElectionCommittee();
+            if (generalElectionCommittee !== undefined) {
                 this.dataSource.data = generalElectionCommittee.candidates ?? [];
                 this.initializeForms(generalElectionCommittee.candidates ?? []);
                 this.selectedIds = (generalElectionCommittee.candidates ?? []).filter(x => x.isSelected).map(x => x.id);
                 this.allSelected = false;
                 this.clearValidationList('errors');
                 this.generalElectionCommittee.set(generalElectionCommittee);
-            });
+            }
+        });
 
         const effectRef = effect(() => {
             if (this.vacancies()) {
@@ -398,7 +403,10 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
     }
 
     openForwardDialog() {
-        this.dialog.open(CandidateListForwardDialogComponent, {data: {committeeId: this.route.snapshot.params.id, candidateIds: this.selectedIds}});
+        this.dialog.open(CandidateListForwardDialogComponent, {
+            data: {committeeId: this.route.snapshot.params.id, candidateIds: this.selectedIds},
+            viewContainerRef: this.viewContainerRef,
+        });
     }
 
     downloadCandidateList() {
@@ -432,7 +440,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
     saveSelectedIds() {
         this.membershipCandidateListService.saveCandidateList(this.route.snapshot.params.id, this.selectedIds).subscribe({
             next: () => {
-                this.membershipCandidateListService.reload$.next();
+                this.generalElectionCommitteeDetailsService.reload$.next();
                 this.notificationService.success('generalElection.candidateList.save.success');
             },
             error: () => this.notificationService.error('generalElection.candidateList.save.error'),
