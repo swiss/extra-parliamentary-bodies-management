@@ -1,12 +1,31 @@
 <div class="committee-data-header">
-    <h2>
-        @if (!!committeeUpdate()) {
-            {{ 'committee.details.data.edit' | translate }} - {{ committeeUpdate()!.committeeNumber }} ({{
-                (committeeUpdate()?.endDate ? 'generalElection.committee.archived' : 'generalElection.existingCommittee') | translate
-            }}) ({{ isExtraParliamentaryCommission ? ('committee.details.extraParliamentaryCommissionAbbreviation' | translate) : '' }})
+    <div class="header-left">
+        <h2>
+            @if (!!committeeUpdate()) {
+                {{ 'committee.details.data.edit' | translate }} - {{ committeeUpdate()!.committeeNumber }} ({{
+                    (committeeUpdate()?.endDate ? 'generalElection.committee.archived' : 'generalElection.existingCommittee') | translate
+                }}) ({{ isExtraParliamentaryCommission ? ('committee.details.extraParliamentaryCommissionAbbreviation' | translate) : '' }})
+            }
+        </h2>
+        @if (readyForProposalAssignedTo()) {
+            <h3>
+                {{ 'generalElection.committee.data.readyForProposal.finalize' | translate }}
+                {{ 'generalElection.committee.candidateList.assignedTo' | translate }} {{ readyForProposalAssignedTo() }}
+            </h3>
         }
-    </h2>
+    </div>
     <div class="buttons">
+        @if (isReadyForProposal()) {
+            <mat-chip class="success">{{ 'generalElection.committee.data.readyForProposal.finalize' | translate }}</mat-chip>
+        }
+        @if (canForwardReadyForProposal()) {
+            <button mat-button obButton="secondary" type="button" (click)="openForwardDialog()">{{ 'common.forward' | translate }}</button>
+        }
+        @if (canFinalizeReadyForProposal()) {
+            <button mat-button obButton="secondary" type="button" (click)="finalizeReadyForProposal()">
+                {{ 'generalElection.committee.data.readyForProposal.finalize' | translate }}
+            </button>
+        }
         <button (click)="reset()" [disabled]="!form().dirty" mat-button obButton="secondary" type="button">{{ 'common.reset' | translate }}</button>
         <button mat-button obButton="primary" type="button" [disabled]="!form().dirty || !form().valid" (click)="save()">
             {{ 'common.save' | translate }}
