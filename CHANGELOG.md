@@ -6,6 +6,7 @@
 -   Exclude CrossBorderFederalAgencies from OGD export [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
 -   Migrate "Anstalt" legal form to "Institut des öffentlichen Rechts" [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
 -   Mark OGD cubes as published for visualiziation [BKDO-2894](https://bkdev.atlassian.net/browse/BKDO-2894)
+-   Add general election ready for federal council proposal [BKDO-826](https://bkdev.atlassian.net/browse/BKDO-826)
 
 ## 1.1.0
 
