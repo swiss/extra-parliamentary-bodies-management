@@ -6,12 +6,10 @@ import {EiamAssignment} from '@api/EiamAssignment';
 import {MembershipCandidateCreate} from '@api/MembershipCandidateCreate';
 import {MembershipCandidateDetail} from '@api/MembershipCandidateDetail';
 import {MembershipCandidatePartialUpdate} from '@api/MembershipCandidatePartialUpdate';
-import {Observable, Subject} from 'rxjs';
+import {Observable} from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class GeneralElectionCommitteeCandidateListService {
-    reload$ = new Subject<void>();
-
     private static readonly EXCEL_ACCEPT_HEADER = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
     constructor(private readonly http: HttpClient) {}
