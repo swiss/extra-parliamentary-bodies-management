@@ -42,11 +42,11 @@ internal class GeneralElectionCommitteeControllerTests
 
         await _eiamAssignmentService.Received(1).GetAllForCandidateListForward(committeeId);
         Assert.That(result, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.StatusCode, Is.EqualTo(200));
             Assert.That(result.Value, Is.EqualTo(assignments));
-        });
+        }
     }
 
     [Test]
@@ -61,6 +61,56 @@ internal class GeneralElectionCommitteeControllerTests
         await _membershipCandidateService.Received(1).ForwardCandidateList(committeeId, forwardDto);
         Assert.That(result, Is.Not.Null);
         Assert.That(result.StatusCode, Is.EqualTo(200));
+    }
+
+    [Test]
+    public async Task GetAssignmentsReadyForProposalForward_ShouldCallServiceAndReturnAssignments()
+    {
+        var assignments = new Faker<EiamAssignmentDto>().Generate(2);
+        var committeeId = Guid.NewGuid();
+        _eiamAssignmentService.GetAllForReadyForProposalForward(committeeId).Returns(assignments);
+
+        var result = await _controller.GetAssignmentsReadyForProposalForward(committeeId) as OkObjectResult;
+
+        await _eiamAssignmentService.Received(1).GetAllForReadyForProposalForward(committeeId);
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Value, Is.EqualTo(assignments));
+        }
+    }
+
+    [Test]
+    public async Task ForwardReadyForProposal_ShouldCallServiceAndReturnOk()
+    {
+        var committeeId = Guid.NewGuid();
+        var forwardDto = new Faker<ReadyForProposalForwardDto>().Generate();
+        _membershipCandidateService.ForwardReadyForProposal(committeeId, forwardDto).Returns(Task.CompletedTask);
+
+        var result = await _controller.ForwardReadyForProposal(committeeId, forwardDto) as OkResult;
+
+        await _membershipCandidateService.Received(1).ForwardReadyForProposal(committeeId, forwardDto);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(200));
+    }
+
+    [Test]
+    public async Task FinalizeReadyForProposal_ShouldCallServiceAndReturnOk()
+    {
+        var committeeId = Guid.NewGuid();
+        var validationResult = new CandidateListValidationResultDto();
+        _membershipCandidateService.FinalizeReadyForProposal(committeeId).Returns(validationResult);
+
+        var result = await _controller.FinalizeReadyForProposal(committeeId) as OkObjectResult;
+
+        await _membershipCandidateService.Received(1).FinalizeReadyForProposal(committeeId);
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.StatusCode, Is.EqualTo(200));
+            Assert.That(result.Value, Is.EqualTo(validationResult));
+        }
     }
 
     [Test]
@@ -79,11 +129,11 @@ internal class GeneralElectionCommitteeControllerTests
 
         await _membershipCandidateService.Received(1).ValidateCandidateList(committeeId, validationRequest.SelectedCandidateIds, validationRequest.DuplicateCheckConfirmed);
         Assert.That(result, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.StatusCode, Is.EqualTo(200));
             Assert.That(result.Value, Is.EqualTo(validationResult));
-        });
+        }
     }
 
     [Test]
@@ -119,11 +169,11 @@ internal class GeneralElectionCommitteeControllerTests
         var responseObject = response as OkObjectResult;
 
         Assert.That(responseObject, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(responseObject.StatusCode, Is.EqualTo(200));
             Assert.That(responseObject.Value, Is.EqualTo(committees));
-        });
+        }
     }
 
     [Test]
@@ -136,11 +186,11 @@ internal class GeneralElectionCommitteeControllerTests
         var result = await _controller.GetByIdForJustificationUpdate(Guid.NewGuid()) as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.StatusCode, Is.EqualTo(200));
             Assert.That(result.Value, Is.EqualTo(committeeJustificationUpdateDto));
-        });
+        }
     }
 
     [Test]
@@ -157,11 +207,11 @@ internal class GeneralElectionCommitteeControllerTests
         var result = await _controller.GetGeneralElectionCommitteesForRecipientExport(filterDto) as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.StatusCode, Is.EqualTo(200));
             Assert.That(result.Value, Is.EqualTo(committeeList));
-        });
+        }
     }
 
     [Test]
@@ -174,11 +224,11 @@ internal class GeneralElectionCommitteeControllerTests
         var result = await _controller.UpdateVacancies(Guid.NewGuid(), 3) as OkObjectResult;
 
         Assert.That(result, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.StatusCode, Is.EqualTo(200));
             Assert.That(result.Value, Is.EqualTo(committeeJustificationUpdateDto));
-        });
+        }
     }
 
     [Test]
@@ -197,17 +247,16 @@ internal class GeneralElectionCommitteeControllerTests
 
         var candidate = MembershipCandidateMapper.ToMembershipCandidateDetailDto(new MembershipCandidateBuilder().Build());
 
-        var generalElectionCommitteeId = Guid.NewGuid();
         _membershipCandidateService.GetDuplicateMembershipCandidateForList(candidateToCheck.CommitteeId, candidateToCheck.Surname, candidateToCheck.GivenName, candidateToCheck.BirthYear, candidateToCheck.GenderId, candidateToCheck.LanguageId).Returns(candidate);
 
         var result = await _controller.GetDuplicateMembershipCandidate(candidateToCheck) as OkObjectResult;
 
         await _membershipCandidateService.Received(1).GetDuplicateMembershipCandidateForList(candidateToCheck.CommitteeId, candidateToCheck.Surname, candidateToCheck.GivenName, candidateToCheck.BirthYear, candidateToCheck.GenderId, candidateToCheck.LanguageId);
         Assert.That(result, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(result.StatusCode, Is.EqualTo(200));
             Assert.That(result.Value, Is.EqualTo(candidate));
-        });
+        }
     }
 }

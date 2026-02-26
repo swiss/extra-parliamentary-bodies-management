@@ -7,10 +7,12 @@ export interface CandidateListValidationResult {
     errors: string[];
     areJustificationsMissing: boolean;
     areContactPointsMissing: boolean;
+    isReadyForProposalActivated: boolean;
     duplicateCheckResults: CandidateListDuplicateCheckResult[];
     createdPersons: PersonDetails[];
     existingPersons: PersonDetails[];
     isAdditionalMembershipValidationRequired: boolean;
+    allValidationsPassed: boolean;
     personsWithMissingInterests: PersonMinimal[];
     personsWithMissingBaseData: PersonMinimal[];
     personsWithMembershipValidationIssues: PersonMinimal[];

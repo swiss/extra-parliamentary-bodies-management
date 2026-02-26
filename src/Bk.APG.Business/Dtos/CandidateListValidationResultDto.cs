@@ -13,4 +13,9 @@ public class CandidateListValidationResultDto
     public List<PersonMinimalDto> PersonsWithMissingInterests { get; } = [];
     public List<PersonMinimalDto> PersonsWithMissingBaseData { get; } = [];
     public List<PersonMinimalDto> PersonsWithMembershipValidationIssues { get; } = [];
+
+    public bool AllValidationsPassed => !AreJustificationsMissing && !AreContactPointsMissing && !IsAdditionalMembershipValidationRequired &&
+        Errors.Count == 0 && PersonsWithMembershipValidationIssues.Count == 0;
+
+    public bool IsReadyForProposalActivated { get; set; }
 }
