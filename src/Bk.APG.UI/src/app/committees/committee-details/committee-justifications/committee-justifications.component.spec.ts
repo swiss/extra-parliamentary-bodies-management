@@ -22,6 +22,7 @@ import {EntityAuditLogService} from '@shared/entity-audit-log/entity-audit-log.s
 import {RichTextEditorComponent} from '@shared/rich-text-editor/rich-text-editor.component';
 import {MockComponent, MockComponents, MockDirectives, MockModule, MockPipe} from 'ng-mocks';
 import {of, Subject, throwError} from 'rxjs';
+import {GeneralElectionService} from '../../../general-election/general-election.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeDetailsService} from '../committee-details.service';
 import {CommitteeJustificationsComponent} from './committee-justifications.component';
@@ -44,12 +45,16 @@ describe('CommitteeJustificationsComponent', () => {
     };
 
     const committeeDetailsServiceMock = {
-        committeeDetails: signal<CommitteeDetails>({canEdit: true} as CommitteeDetails),
+        committeeDetails: signal<CommitteeDetails>({canCreateJustification: true} as CommitteeDetails),
     };
 
     const notificationServiceMock: Partial<ObNotificationService> = {
         success: jest.fn(),
         error: jest.fn(),
+    };
+
+    const mockGeneralElectionService = {
+        isGeneralElectionVisible: jest.fn(),
     };
 
     const reloadEntityAuditLogSubject = new Subject<void>();
@@ -81,6 +86,7 @@ describe('CommitteeJustificationsComponent', () => {
                 {provide: CommitteesService, useValue: committeesServiceMock},
                 {provide: ObNotificationService, useValue: notificationServiceMock},
                 {provide: EntityAuditLogService, useValue: entityAuditLogServiceMock},
+                {provide: GeneralElectionService, useValue: mockGeneralElectionService},
                 provideHttpClient(),
                 provideHttpClientTesting(),
             ],

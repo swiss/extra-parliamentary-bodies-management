@@ -12,6 +12,7 @@ import {ObGlobalEventsService} from '@oblique/oblique';
 import {MembersQuotasComponent} from '@shared/members-quotas/members-quotas.component';
 import {MockPipe, MockService} from 'ng-mocks';
 import {of} from 'rxjs';
+import {GeneralElectionService} from '../../../general-election/general-election.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeDetailsService} from '../committee-details.service';
 import {CommitteeMembersComponent} from './committee-members.component';
@@ -45,6 +46,10 @@ describe('CommitteeMembersComponent', () => {
         committeeDetails: signal<CommitteeDetails>({canEdit: true} as CommitteeDetails),
     };
 
+    const mockGeneralElectionService = {
+        isGeneralElectionVisible: jest.fn(),
+    };
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [MockPipe(TranslatePipe), CommitteeMembersComponent, MembersQuotasComponent, MatIconTestingModule],
@@ -54,6 +59,7 @@ describe('CommitteeMembersComponent', () => {
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: CommitteesService, useValue: committeesServiceMock},
                 {provide: CommitteeDetailsService, useValue: committeeDetailsServiceMock},
+                {provide: GeneralElectionService, useValue: mockGeneralElectionService},
                 {provide: ObGlobalEventsService, useValue: MockService<ObGlobalEventsService>},
             ],
         }).compileComponents();

@@ -28,6 +28,7 @@ import {ObAlertModule, ObButtonDirective} from '@oblique/oblique';
 import {HelpTooltipComponent} from '@shared/help-tooltip/help-tooltip.component';
 import {MembersQuotasComponent} from '@shared/members-quotas/members-quotas.component';
 import {distinctUntilChanged, startWith, switchMap} from 'rxjs';
+import {GeneralElectionService} from '../../../general-election/general-election.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeDetailsService} from '../committee-details.service';
 
@@ -111,11 +112,12 @@ export class CommitteeMembersComponent {
     ];
 
     constructor(
+        protected readonly generalElectionService: GeneralElectionService,
+        protected readonly committeeDetailsService: CommitteeDetailsService,
         private readonly router: Router,
         private readonly route: ActivatedRoute,
         private readonly translateService: TranslateService,
-        private readonly committeesService: CommitteesService,
-        protected readonly committeeDetailsService: CommitteeDetailsService
+        private readonly committeesService: CommitteesService
     ) {
         this.translateService.onLangChange
             .pipe(
