@@ -1,4 +1,10 @@
 @if (committeeDetailsService.committeeDetails(); as committeeDetails) {
+    @if (!this.generalElectionService.isGeneralElectionVisible() && committeeDetails.futureGeneralElectionCommittee) {
+        <ob-alert type="info">{{ 'committee.generalElection.notRunning.noEdit.hint' | translate }}<br /></ob-alert>
+    }
+    @if (this.generalElectionService.isGeneralElectionVisible() && committeeDetails.futureGeneralElectionCommittee) {
+        <ob-alert type="info">{{ 'committee.generalElection.running.noEdit.hint' | translate }}<br /></ob-alert>
+    }
     @if (committeeDetails.needsAttentionAboveMaxMembers) {
         <ob-alert type="warning">{{ 'committee.details.warning.aboveMaxMembers' | translate }}<br /></ob-alert>
     }
