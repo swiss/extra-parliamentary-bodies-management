@@ -64,15 +64,19 @@ export class AppComponent implements OnInit {
                         label: 'navigation.exports.requestsAndReports',
                         isExternal: false,
                     },
-                    {
-                        id: 'formLetters',
-                        url: 'formLetters',
-                        label: 'navigation.exports.formLetters',
-                        isExternal: false,
-                    },
                 ],
             },
         ];
+
+        const exports = navigationLinks.find(link => link.id === 'exports');
+        if (this.generalElectionService.isGeneralElectionEnabled() && (this.roles().includes(Role.Department) || this.roles().includes(Role.Admin))) {
+            exports!.children!.push({
+                id: 'formLetters',
+                url: 'formLetters',
+                label: 'navigation.exports.formLetters',
+                isExternal: false,
+            });
+        }
 
         if (this.roles().includes(Role.Admin) || this.roles().includes(Role.Department)) {
             const children = [];

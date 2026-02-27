@@ -120,6 +120,26 @@ describe('AppComponent', () => {
         expect(administrationNavigation?.length).toBe(expected);
     });
 
+    it.each([
+        {roles: [Role.Admin], generalElectionEnabled: true, expected: true},
+        {roles: [Role.Department], generalElectionEnabled: true, expected: true},
+        {roles: [Role.Allow], generalElectionEnabled: true, expected: false},
+        {roles: [Role.Admin], generalElectionEnabled: false, expected: false},
+    ])(
+        'should show formLetters export navigation only for allowed roles when general election is enabled',
+        async ({roles, generalElectionEnabled, expected}) => {
+            generalElectionServiceMock.isGeneralElectionEnabled.mockReturnValue(generalElectionEnabled);
+            roles$Subject.next(roles);
+            fixture.detectChanges();
+            await fixture.whenStable();
+
+            const exportsChildren = component.navigation().find(nav => nav.id === 'exports')?.children ?? [];
+            const hasFormLettersEntry = exportsChildren.some(child => child.id === 'formLetters');
+
+            expect(hasFormLettersEntry).toBe(expected);
+        }
+    );
+
     it('should call logout', () => {
         component.logout();
 
