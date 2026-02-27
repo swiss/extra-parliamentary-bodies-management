@@ -37,5 +37,6 @@ public class CommitteeUpdateDto
     public bool CanEditDepartment { get; set; }
     public bool CanEditLegalbase { get; set; }
     public decimal MembersCount { get; set; }
+    public bool FutureGeneralElectionCommittee { get; set; }
     public required uint RowVersion { get; init; }
 }
