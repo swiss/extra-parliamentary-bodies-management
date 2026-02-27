@@ -1,3 +1,9 @@
+@if (committeeDetailsService.committeeDetails(); as committeeDetails) {
+    @if (committeeDetails.futureGeneralElectionCommittee) {
+        <ob-alert type="info">{{ 'committee.generalElection.futureCommittee.hint' | translate }}<br /></ob-alert>
+    }
+}
+
 <div class="header-title">
     <h3>{{ committeeDetailsService.committeeDetails()?.description }}</h3>
     <apg-help-tooltip text="committee.helpTooltip.appointmentDecisionsGeneral" />

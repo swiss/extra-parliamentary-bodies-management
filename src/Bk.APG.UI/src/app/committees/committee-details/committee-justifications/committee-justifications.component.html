@@ -1,3 +1,12 @@
+@if (committeeDetails(); as committee) {
+    @if (!this.generalElectionService.isGeneralElectionVisible() && committee.futureGeneralElectionCommittee) {
+        <ob-alert type="info">{{ 'committee.generalElection.notRunning.noEdit.hint' | translate }}<br /></ob-alert>
+    }
+    @if (this.generalElectionService.isGeneralElectionVisible() && committee.futureGeneralElectionCommittee) {
+        <ob-alert type="info">{{ 'committee.generalElection.running.noEdit.hint' | translate }}<br /></ob-alert>
+    }
+}
+
 <form [formGroup]="committeeJustificationForm" id="committeeJustificationForm">
     <div class="committee-members-header">
         <div class="header-title">
