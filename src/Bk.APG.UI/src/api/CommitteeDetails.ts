@@ -49,6 +49,7 @@ export interface CommitteeDetails {
     needsAttentionMembershipExpired: boolean;
     needsAttentionMembershipInterestOrOccupation: boolean;
     canCreateMembership: boolean;
+    canCreateJustification: boolean;
     period4YearsInGeneralElection: boolean;
     canEdit: boolean;
     vacanciesInCurrentTermOfOffice?: number;
@@ -76,4 +77,5 @@ export interface CommitteeDetails {
     measuresLanguages?: string;
     generalLanguageMeasure?: string;
     federalInstitution?: boolean;
+    futureGeneralElectionCommittee: boolean;
 }

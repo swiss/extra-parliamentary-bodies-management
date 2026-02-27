@@ -294,4 +294,7 @@ public class Committee : EntityBase
             .Where(x => x.OriginalDocument != null)
             .OrderByDescending(x => x.OriginalDocument!.Modified)
             .FirstOrDefault();
+
+    [NotMapped]
+    public bool FutureGeneralElectionCommittee => BeginDate > TermOfOfficeDate!.BeginDate && IsInGeneralElection;
 }
