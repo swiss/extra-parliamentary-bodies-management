@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0
+## 1.1.1
 
 -   Form letter sender management [BKDO-1109](https://bkdev.atlassian.net/browse/BKDO-1109)
 -   Exclude CrossBorderFederalAgencies from OGD export [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
