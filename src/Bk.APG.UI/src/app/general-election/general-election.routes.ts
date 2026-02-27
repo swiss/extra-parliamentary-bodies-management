@@ -1,6 +1,7 @@
 import {Routes} from '@angular/router';
 import {ObUnsavedChangesGuard} from '@oblique/oblique';
 import {Role} from '../auth/Role';
+import {RoleGuard} from '../auth/role.guard';
 import {GeneralElectionCommitteeExistsGuard} from './ge-committees/ge-committee-exists.guard';
 
 export const generalElectionRoutes: Routes = [
@@ -44,6 +45,7 @@ export const generalElectionRoutes: Routes = [
     },
     {
         path: 'exports/formLetters',
+        canActivate: [RoleGuard],
         loadComponent: () => import('../exports/form-letters/form-letters.component').then(m => m.FormLettersComponent),
         data: {
             isGeneralElection: true,
@@ -52,6 +54,7 @@ export const generalElectionRoutes: Routes = [
     },
     {
         path: 'exports/formLettersSenders',
+        canActivate: [RoleGuard],
         loadChildren: () => import('../exports/form-letters-sender/form-letters-sender.routes').then(m => m.formLettersSenderRoutes),
         data: {
             isGeneralElection: true,
