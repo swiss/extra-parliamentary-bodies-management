@@ -7,7 +7,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap, ParamMap, Router} from '@angular/router';
 import {CommitteeDetails} from '@api/CommitteeDetails';
 import {LangChangeEvent, TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObNotificationService} from '@oblique/oblique';
+import {ObAlertModule, ObNotificationService} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {HelpTooltipComponent} from '@shared/help-tooltip/help-tooltip.component';
 import {MockComponents, MockModule, MockPipe, MockService} from 'ng-mocks';
@@ -73,6 +73,7 @@ describe('AppointmentDecisionListComponent', () => {
                 MockModule(MatIconModule),
                 MockModule(MatTooltipModule),
                 MockModule(MatButtonModule),
+                MockModule(ObAlertModule),
                 MockComponents(ConfirmDialogComponent, HelpTooltipComponent),
                 AppointmentDecisionListComponent,
             ],

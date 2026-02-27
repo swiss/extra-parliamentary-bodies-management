@@ -292,4 +292,38 @@ internal class WorklistTaskServiceTests
 
         Assert.ThrowsAsync<NotSupportedException>(async () => await _service.ForwardWorklistTask(worklistTask.Id, forwardDto));
     }
+
+    [Test]
+    public async Task CreateWorklistTasksForSingleCommitteeInBigDepartment_WithDto_ShouldReturnResult()
+    {
+        _authorizationService.GetCurrentUserName().Returns("userName");
+
+        var department = new DepartmentBuilder().WithIsBigDepartment(true).Build();
+        var geCommittee = new GeneralElectionCommitteeBuilder().Build();
+        var parentTask = new WorklistTaskBuilder().Build();
+        var worklistTask = new WorklistTaskBuilder().WithParentWorklistTask(parentTask).Build();
+        var committee = new CommitteeBuilder().WithDepartment(department).WithGeneralElectionCommittee(geCommittee).Build();
+
+        await _service.CreateWorklistTasksForSingleCommittee(worklistTask, committee);
+
+        _authorizationService.Received(1).GetCurrentUserName();
+        await _worklistTaskRepository.Received(1).CreateRange(Arg.Is<List<WorklistTask>>(x => x.Count == 3));
+    }
+
+    [Test]
+    public async Task CreateWorklistTasksForSingleCommitteeInSmallDepartment_WithDto_ShouldReturnResult()
+    {
+        _authorizationService.GetCurrentUserName().Returns("userName");
+
+        var department = new DepartmentBuilder().WithIsBigDepartment(false).Build();
+        var geCommittee = new GeneralElectionCommitteeBuilder().Build();
+        var parentTask = new WorklistTaskBuilder().Build();
+        var worklistTask = new WorklistTaskBuilder().WithParentWorklistTask(parentTask).Build();
+        var committee = new CommitteeBuilder().WithDepartment(department).WithGeneralElectionCommittee(geCommittee).Build();
+
+        await _service.CreateWorklistTasksForSingleCommittee(worklistTask, committee);
+
+        _authorizationService.Received(1).GetCurrentUserName();
+        await _worklistTaskRepository.Received(1).CreateRange(Arg.Is<List<WorklistTask>>(x => x.Count == 2));
+    }
 }
