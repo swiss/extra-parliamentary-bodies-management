@@ -210,7 +210,10 @@ public class GeneralElectionServiceTests
     {
         var membershipId = Guid.NewGuid();
         var membership = new MembershipBuilder().WithId(membershipId).Build();
-        var membershipCandidate = new MembershipCandidateBuilder().WithMembership(membership).Build();
+        var membershipCandidate = new MembershipCandidateBuilder()
+          .WithMembership(membership)
+          .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(false)
+          .Build()).Build();
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
 
@@ -239,11 +242,31 @@ public class GeneralElectionServiceTests
     }
 
     [Test]
+    public async Task MirrorOrDeleteMembershipForGeneralElection_WithValidatedCandidateList_ShouldSkipChanges()
+    {
+        var membershipId = Guid.NewGuid();
+        var membership = new MembershipBuilder().WithId(membershipId).Build();
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithMembership(membership)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(true)
+            .Build()).Build();
+
+        _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
+
+        await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, false);
+
+        await _membershipCandidateRepository.DidNotReceiveWithAnyArgs().CommitChanges();
+    }
+
+    [Test]
     public async Task MirrorOrDeleteMembershipForGeneralElection_WithDeleteCandidate_ShouldCallDelete()
     {
         var membershipId = Guid.NewGuid();
         var membership = new MembershipBuilder().WithId(membershipId).Build();
-        var membershipCandidate = new MembershipCandidateBuilder().WithMembership(membership).Build();
+        var membershipCandidate = new MembershipCandidateBuilder()
+          .WithMembership(membership)
+          .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(false)
+          .Build()).Build();
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
 
