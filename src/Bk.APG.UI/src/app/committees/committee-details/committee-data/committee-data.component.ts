@@ -6,11 +6,12 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CommitteeUpdate} from '@api/CommitteeUpdate';
 import {TranslateService, TranslatePipe} from '@ngx-translate/core';
-import {ObNotificationService, ObButtonDirective, ObHttpApiInterceptorEvents} from '@oblique/oblique';
+import {ObNotificationService, ObButtonDirective, ObHttpApiInterceptorEvents, ObAlertModule} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {EntityAuditLogService} from '@shared/entity-audit-log/entity-audit-log.service';
 import {filter, switchMap} from 'rxjs';
 import {AuthService} from '../../../auth/auth.service';
+import {GeneralElectionService} from '../../../general-election/general-election.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeDataFormComponent} from '../../shared/committee-data-form/committee-data-form.component';
 import {CommitteeDetailsService} from '../committee-details.service';
@@ -19,7 +20,7 @@ import {CommitteeDetailsService} from '../committee-details.service';
     selector: 'apg-committee-data',
     templateUrl: './committee-data.component.html',
     styleUrl: './committee-data.component.scss',
-    imports: [MatButton, ObButtonDirective, CommitteeDataFormComponent, TranslatePipe],
+    imports: [MatButton, ObButtonDirective, CommitteeDataFormComponent, TranslatePipe, ObAlertModule],
 })
 export class CommitteeDataComponent implements OnInit {
     committeeUpdate = signal<CommitteeUpdate | undefined>(undefined);
@@ -32,10 +33,11 @@ export class CommitteeDataComponent implements OnInit {
     private readonly isAdmin = toSignal(this.authService.isAdmin$);
 
     constructor(
+        protected readonly committeeDetailsService: CommitteeDetailsService,
+        protected readonly generalElectionService: GeneralElectionService,
         private readonly route: ActivatedRoute,
         private readonly router: Router,
         private readonly committeesService: CommitteesService,
-        private readonly committeeDetailsService: CommitteeDetailsService,
         private readonly notificationService: ObNotificationService,
         private readonly dr: DestroyRef,
         private readonly httpApiInterceptorEvents: ObHttpApiInterceptorEvents,

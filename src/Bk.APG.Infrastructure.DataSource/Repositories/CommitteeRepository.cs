@@ -433,13 +433,15 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.LegalForm)
             .Include(item => item.TermOfOfficeDate)
             .Include(item => item.Memberships)
+            .Include(item => item.GeneralElectionCommittees)
+            .Include(item => item.EiamAssignment)
             .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Gender)
             .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Language)
             .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Interests)
-            .Include(x => x.ContactPoints).ThenInclude(x => x.ContactPointType)
-            .Include(x => x.ContactPoints).ThenInclude(x => x.Language)
-            .Include(x => x.ContactPoints).ThenInclude(x => x.Gender)
-            .Include(x => x.MembershipAdditionsInGeneralElection)
+            .Include(item => item.ContactPoints).ThenInclude(x => x.ContactPointType)
+            .Include(item => item.ContactPoints).ThenInclude(x => x.Language)
+            .Include(item => item.ContactPoints).ThenInclude(x => x.Gender)
+            .Include(item => item.MembershipAdditionsInGeneralElection)
             .AsSplitQuery();
     }
 }

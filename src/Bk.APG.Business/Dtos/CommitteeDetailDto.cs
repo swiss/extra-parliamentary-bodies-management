@@ -38,6 +38,7 @@ public class CommitteeDetailDto
     public bool IsDeleted { get; set; }
     public bool IsActive { get; set; }
     public bool CanCreateMembership { get; set; }
+    public bool CanCreateJustification { get; set; }
     public bool CanEdit { get; set; }
     public bool? FederalInstitution { get; set; }
 
@@ -74,6 +75,7 @@ public class CommitteeDetailDto
     public bool NeedsAttentionBasicData { get; set; }
     public bool NeedsAttentionMembershipExpired { get; set; }
     public bool NeedsAttentionMembershipInterestOrOccupation { get; set; }
+    public bool FutureGeneralElectionCommittee { get; set; }
 
     public ICollection<ContactPointDetailDto> ContactPoints { get; set; } = new List<ContactPointDetailDto>();
 }

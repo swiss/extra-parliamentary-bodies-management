@@ -44,6 +44,7 @@ export interface GeneralElectionCommitteeDetails {
     period4YearsInGeneralElection: boolean;
     canEdit: boolean;
     canEditSelectionProcedure: boolean;
+    canCreateJustification: boolean;
     vacanciesInCurrentTermOfOffice?: number;
     calculatedVacancies?: number;
     justificationMembers?: string;
@@ -95,4 +96,5 @@ export interface GeneralElectionCommitteeDetails {
     needsAttentionMembershipExpired: boolean;
     needsAttentionMembershipInterestOrOccupation: boolean;
     justificationsNeedAttention: boolean;
+    futureGeneralElectionCommittee: boolean;
 }

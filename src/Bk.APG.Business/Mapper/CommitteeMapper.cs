@@ -146,7 +146,8 @@ public static class CommitteeMapper
             NeedsAttentionSecretariat = committee.NeedsAttentionSecretariat,
             NeedsAttentionBasicData = committee.NeedsAttentionBasicData,
             NeedsAttentionMembershipExpired = committee.NeedsAttentionMembershipExpired,
-            NeedsAttentionMembershipInterestOrOccupation = committee.NeedsAttentionMembershipInterestOrOccupation
+            NeedsAttentionMembershipInterestOrOccupation = committee.NeedsAttentionMembershipInterestOrOccupation,
+            FutureGeneralElectionCommittee = committee.FutureGeneralElectionCommittee
         };
         return committeeDetailDto;
     }
@@ -208,6 +209,7 @@ public static class CommitteeMapper
             MembersCount = committee.ActiveMemberCount,
             VacanciesInGeneralElection = committee.VacanciesGeneralElection,
             MembershipAdditionsInGeneralElection = committee.MembershipAdditionsInGeneralElection.Select(x => x.Id).ToArray(),
+            FutureGeneralElectionCommittee = committee.FutureGeneralElectionCommittee,
             RowVersion = committee.RowVersion
         };
     }
