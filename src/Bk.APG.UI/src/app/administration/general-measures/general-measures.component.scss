@@ -33,11 +33,23 @@ $gap: 16px;
             }
         }
 
-        .actions {
+        .footer {
             display: flex;
             justify-content: flex-end;
-            gap: calc($gap / 2);
-            margin-top: $gap;
+
+            .workflow-status {
+                margin-top: $gap;
+                margin-bottom: 0;
+                flex: 1;
+            }
+
+            .actions {
+                display: flex;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+                gap: calc($gap / 2);
+                margin-top: $gap;
+            }
         }
     }
 
