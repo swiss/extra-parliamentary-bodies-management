@@ -91,6 +91,7 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
     public async Task<MembershipCandidate?> GetByMembershipIdForUpdate(Guid membershipId, uint? updateDtoRowVersion = null)
     {
         var membershipCandidate = await _dataContext.MembershipCandidates
+            .Include(m => m.GeneralElectionCommittee)
             .Include(m => m.MembershipAddition)
             .Include(m => m.ElectionOffice)
             .FirstOrDefaultAsync(m => m.MembershipId == membershipId);
