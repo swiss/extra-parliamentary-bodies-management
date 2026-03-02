@@ -1,0 +1,30 @@
+<h4 mat-dialog-title>{{ 'common.forward' | translate }}</h4>
+<mat-dialog-content>
+    <form [formGroup]="form">
+        <fieldset>
+            <p>{{ 'generalMeasures.workflow.forward.dialog.text' | translate }}</p>
+            <mat-form-field>
+                <mat-label>{{ 'candidateList.forward.forwardTo' | translate }}</mat-label>
+                <mat-select [value]="forwardToAdmin" disabled>
+                    <mat-option [value]="forwardToAdmin">{{ forwardToLabelKey | translate }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field obErrorMessages>
+                <mat-label>{{ 'generalMeasures.workflow.forward.dialog.message' | translate }}</mat-label>
+                <textarea
+                    required
+                    cdkTextareaAutosize
+                    [cdkAutosizeMinRows]="3"
+                    [cdkAutosizeMaxRows]="15"
+                    matInput
+                    [formControl]="form.controls.message"
+                ></textarea>
+                <mat-error />
+            </mat-form-field>
+        </fieldset>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button type="button" mat-button obButton="secondary" mat-dialog-close>{{ 'common.cancel' | translate }}</button>
+    <button type="button" mat-button obButton="primary" (click)="forward()">{{ 'common.forward' | translate }}</button>
+</mat-dialog-actions>
