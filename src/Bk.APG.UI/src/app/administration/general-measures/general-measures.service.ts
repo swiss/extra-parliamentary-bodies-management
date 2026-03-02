@@ -16,4 +16,12 @@ export class GeneralMeasuresService {
     saveGeneralMeasure(generalMeasureUpdate: GeneralMeasureUpdate) {
         return this.http.put('/api/generalMeasures', generalMeasureUpdate);
     }
+
+    validate(departmentId: string) {
+        return this.http.post<void>(`/api/generalMeasures/${departmentId}/validate`, {});
+    }
+
+    forward(departmentId: string, message: string, forwardToAdmin: boolean) {
+        return this.http.post<void>(`/api/generalMeasures/${departmentId}/forward`, {message, forwardToAdmin});
+    }
 }
