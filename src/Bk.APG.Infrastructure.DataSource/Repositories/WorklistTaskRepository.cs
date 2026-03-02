@@ -180,4 +180,21 @@ public class WorklistTaskRepository : IWorklistTaskRepository
             .Where(x => x.PersonId == personId)
             .ToListAsync();
     }
+
+    public async Task<List<WorklistTask>> GetByDepartmentIdsAndWorklistTaskTypeIds(IEnumerable<Guid> departmentIds, IEnumerable<Guid> worklistTaskTypeIds)
+    {
+        return await _dataContext.WorklistTasks
+            .Where(x => x.DepartmentId.HasValue &&
+                departmentIds.Contains(x.DepartmentId.Value) &&
+                worklistTaskTypeIds.Contains(x.WorklistTaskTypeId))
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<List<WorklistTask>> GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(Guid departmentId, IEnumerable<Guid> worklistTaskTypeIds)
+    {
+        return await _dataContext.WorklistTasks
+            .Where(x => x.DepartmentId == departmentId && worklistTaskTypeIds.Contains(x.WorklistTaskTypeId))
+            .ToListAsync();
+    }
 }
