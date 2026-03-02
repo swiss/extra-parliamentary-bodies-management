@@ -6,11 +6,12 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
 import {MatCard, MatCardContent} from '@angular/material/card';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from '@angular/material/expansion';
 import {Department} from '@api/Department';
 import {GeneralMeasure} from '@api/GeneralMeasure';
 import {GeneralMeasureUpdate} from '@api/GeneralMeasureUpdate';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObButtonDirective, ObErrorMessagesDirective, ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
 import {MasterDataService} from '@shared/master-data.service';
 import {RichTextEditorComponent} from '@shared/rich-text-editor/rich-text-editor.component';
@@ -26,6 +27,8 @@ describe('GeneralMeasuresComponent', () => {
     let mockGeneralMeasuresService: Partial<GeneralMeasuresService>;
     let mockNotificationService: Partial<ObNotificationService>;
     let mockHttpApiInterceptorEvents: Partial<ObHttpApiInterceptorEvents>;
+    let mockDialog: Partial<MatDialog>;
+    let mockTranslateService: Partial<TranslateService>;
 
     const mockDepartments: Department[] = [
         {
@@ -50,12 +53,22 @@ describe('GeneralMeasuresComponent', () => {
             department: 'Department 1',
             justificationLanguages: '<p>Language justification 1</p>',
             justificationGenders: '<p>Gender justification 1</p>',
+            isDepartmentTaskActive: true,
+            isAdminTaskActive: false,
+            canForwardToAdmin: true,
+            canValidate: false,
+            canForwardToDepartment: false,
         },
         {
             departmentId: 'dept-2',
             department: 'Department 2',
             justificationLanguages: '<p>Language justification 2</p>',
             justificationGenders: '<p>Gender justification 2</p>',
+            isDepartmentTaskActive: false,
+            isAdminTaskActive: true,
+            canForwardToAdmin: false,
+            canValidate: true,
+            canForwardToDepartment: true,
         },
     ];
 
@@ -67,6 +80,8 @@ describe('GeneralMeasuresComponent', () => {
         mockGeneralMeasuresService = {
             getGeneralMeasures: jest.fn().mockReturnValue(of(mockGeneralMeasures)),
             saveGeneralMeasure: jest.fn().mockReturnValue(of({})),
+            forward: jest.fn().mockReturnValue(of({})),
+            validate: jest.fn().mockReturnValue(of({})),
         };
 
         mockNotificationService = {
@@ -76,6 +91,16 @@ describe('GeneralMeasuresComponent', () => {
 
         mockHttpApiInterceptorEvents = {
             deactivateNotificationOnNextAPICalls: jest.fn(),
+        };
+
+        mockDialog = {
+            open: jest.fn().mockReturnValue({
+                afterClosed: jest.fn().mockReturnValue(of(true)),
+            } as Partial<MatDialogRef<unknown>>),
+        };
+
+        mockTranslateService = {
+            instant: jest.fn((key: string) => key),
         };
 
         await TestBed.configureTestingModule({
@@ -92,6 +117,8 @@ describe('GeneralMeasuresComponent', () => {
                 {provide: GeneralMeasuresService, useValue: mockGeneralMeasuresService},
                 {provide: ObNotificationService, useValue: mockNotificationService},
                 {provide: ObHttpApiInterceptorEvents, useValue: mockHttpApiInterceptorEvents},
+                {provide: MatDialog, useValue: mockDialog},
+                {provide: TranslateService, useValue: mockTranslateService},
                 provideHttpClient(),
             ],
         })
@@ -361,6 +388,70 @@ describe('GeneralMeasuresComponent', () => {
             };
 
             expect(mockGeneralMeasuresService.saveGeneralMeasure).toHaveBeenCalledWith(expectedUpdate);
+        });
+    });
+
+    describe('workflow actions', () => {
+        beforeEach(() => {
+            mockMasterDataService.departments!.set(mockDepartments);
+            fixture.detectChanges();
+        });
+
+        it('should forward to admin and reload data on success', () => {
+            (mockDialog.open as jest.Mock).mockReturnValue({
+                afterClosed: jest.fn().mockReturnValue(of({message: 'Bitte prüfen.', forwardToAdmin: true})),
+            });
+
+            component['openForwardDialog'](mockGeneralMeasures[0]);
+
+            expect(mockGeneralMeasuresService.forward).toHaveBeenCalledWith('dept-1', 'Bitte prüfen.', true);
+            expect(mockNotificationService.success).toHaveBeenCalledWith('generalMeasures.workflow.forwardToAdmin.success');
+            expect(mockGeneralMeasuresService.getGeneralMeasures).toHaveBeenCalled();
+        });
+
+        it('should show error when forward to admin fails', () => {
+            (mockGeneralMeasuresService.forward as any).mockReturnValue(throwError(() => new Error('Forward failed')));
+            (mockDialog.open as jest.Mock).mockReturnValue({
+                afterClosed: jest.fn().mockReturnValue(of({message: 'Bitte prüfen.', forwardToAdmin: true})),
+            });
+
+            component['openForwardDialog'](mockGeneralMeasures[0]);
+
+            expect(mockNotificationService.error).toHaveBeenCalledWith('generalMeasures.workflow.forwardToAdmin.error');
+        });
+
+        it('should validate and reload data on success', () => {
+            (mockDialog.open as jest.Mock).mockReturnValue({
+                afterClosed: jest.fn().mockReturnValue(of(true)),
+            });
+
+            component['openValidateDialog']('dept-2');
+
+            expect(mockGeneralMeasuresService.validate).toHaveBeenCalledWith('dept-2');
+            expect(mockNotificationService.success).toHaveBeenCalledWith('generalMeasures.workflow.validate.success');
+            expect(mockGeneralMeasuresService.getGeneralMeasures).toHaveBeenCalled();
+        });
+
+        it('should not validate when dialog is cancelled', () => {
+            (mockDialog.open as jest.Mock).mockReturnValue({
+                afterClosed: jest.fn().mockReturnValue(of(false)),
+            });
+
+            component['openValidateDialog']('dept-2');
+
+            expect(mockGeneralMeasuresService.validate).not.toHaveBeenCalled();
+        });
+
+        it('should forward to department and reload data on success', () => {
+            (mockDialog.open as jest.Mock).mockReturnValue({
+                afterClosed: jest.fn().mockReturnValue(of({message: 'Bitte ergänzen.', forwardToAdmin: false})),
+            });
+
+            component['openForwardDialog'](mockGeneralMeasures[1]);
+
+            expect(mockGeneralMeasuresService.forward).toHaveBeenCalledWith('dept-2', 'Bitte ergänzen.', false);
+            expect(mockNotificationService.success).toHaveBeenCalledWith('generalMeasures.workflow.forwardToDepartment.success');
+            expect(mockGeneralMeasuresService.getGeneralMeasures).toHaveBeenCalled();
         });
     });
 });
