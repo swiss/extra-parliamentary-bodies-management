@@ -206,6 +206,12 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (membershipCandidate != null)
         {
+            if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true)
+            {
+                _logger.LogInformation("Membership candidate list already validated, skip mirror entries");
+                return;
+            }
+
             if (deleteCandidate)
             {
                 // if the end date has been shortened or the election type is an ending one, we can delete the membershipCandidate
