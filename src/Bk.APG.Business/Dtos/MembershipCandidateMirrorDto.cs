@@ -11,10 +11,8 @@ public class MembershipCandidateMirrorDto
     public string? RemarksStatus { get; set; }
     public bool InCorrelationWithFederalDuty { get; set; }
     public string? JustificationLongerDuty { get; set; }
-    public string? JustificationShorterDuty { get; set; }
     public string? JustificationMemberInFederalDuty { get; set; }
     public string? JustificationMemberInFederalAssembly { get; set; }
-    public string? RequirementsProfile { get; set; }
     public required DateTime Modified { get; set; }
     public required string ModifiedBy { get; set; }
 }
