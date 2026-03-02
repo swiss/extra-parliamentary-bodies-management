@@ -136,5 +136,100 @@ internal class GeneralMeasuresControllerTests
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<ForbidResult>());
     }
-}
 
+    [Test]
+    public async Task Forward_WhenDepartmentUserForOwnDepartment_ShouldCallServiceAndReturnNoContent()
+    {
+        var departmentId = Guid.NewGuid();
+        var department = new DepartmentBuilder().WithId(departmentId).Build();
+        var forwardDto = new GeneralMeasureForwardDto { Message = "Bitte prüfen.", ForwardToAdmin = true };
+
+        _authorizationService.IsDepartment.Returns(true);
+        _authorizationService.GetDepartment().Returns(department);
+
+        var result = await _controller.Forward(departmentId, forwardDto);
+
+        await _generalMeasureService.Received(1).Forward(departmentId, forwardDto.Message, forwardDto.ForwardToAdmin);
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
+    }
+
+    [Test]
+    public async Task Forward_WhenForwardToAdminAndNotDepartment_ShouldReturnForbid()
+    {
+        var departmentId = Guid.NewGuid();
+        var forwardDto = new GeneralMeasureForwardDto { Message = "Bitte prüfen.", ForwardToAdmin = true };
+        _authorizationService.IsDepartment.Returns(false);
+
+        var result = await _controller.Forward(departmentId, forwardDto);
+
+        await _generalMeasureService.DidNotReceive().Forward(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<bool>());
+        Assert.That(result, Is.InstanceOf<ForbidResult>());
+    }
+
+    [Test]
+    public async Task Forward_WhenForwardToAdminAndDepartmentUserForDifferentDepartment_ShouldReturnForbid()
+    {
+        var departmentId = Guid.NewGuid();
+        var otherDepartmentId = Guid.NewGuid();
+        var department = new DepartmentBuilder().WithId(otherDepartmentId).Build();
+        var forwardDto = new GeneralMeasureForwardDto { Message = "Bitte prüfen.", ForwardToAdmin = true };
+
+        _authorizationService.IsDepartment.Returns(true);
+        _authorizationService.GetDepartment().Returns(department);
+
+        var result = await _controller.Forward(departmentId, forwardDto);
+
+        await _generalMeasureService.DidNotReceive().Forward(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<bool>());
+        Assert.That(result, Is.InstanceOf<ForbidResult>());
+    }
+
+    [Test]
+    public async Task ValidateGeneralMeasure_WhenAdmin_ShouldCallServiceAndReturnNoContent()
+    {
+        var departmentId = Guid.NewGuid();
+        _authorizationService.IsAdmin.Returns(true);
+
+        var result = await _controller.ValidateGeneralMeasure(departmentId);
+
+        await _generalMeasureService.Received(1).Validate(departmentId);
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
+    }
+
+    [Test]
+    public async Task ValidateGeneralMeasure_WhenNotAdmin_ShouldReturnForbid()
+    {
+        var departmentId = Guid.NewGuid();
+        _authorizationService.IsAdmin.Returns(false);
+
+        var result = await _controller.ValidateGeneralMeasure(departmentId);
+
+        await _generalMeasureService.DidNotReceive().Validate(Arg.Any<Guid>());
+        Assert.That(result, Is.InstanceOf<ForbidResult>());
+    }
+
+    [Test]
+    public async Task Forward_WhenForwardToDepartmentAndAdmin_ShouldCallServiceAndReturnNoContent()
+    {
+        var departmentId = Guid.NewGuid();
+        var forwardDto = new GeneralMeasureForwardDto { Message = "Bitte ergänzen.", ForwardToAdmin = false };
+        _authorizationService.IsAdmin.Returns(true);
+
+        var result = await _controller.Forward(departmentId, forwardDto);
+
+        await _generalMeasureService.Received(1).Forward(departmentId, forwardDto.Message, forwardDto.ForwardToAdmin);
+        Assert.That(result, Is.InstanceOf<NoContentResult>());
+    }
+
+    [Test]
+    public async Task Forward_WhenForwardToDepartmentAndNotAdmin_ShouldReturnForbid()
+    {
+        var departmentId = Guid.NewGuid();
+        var forwardDto = new GeneralMeasureForwardDto { Message = "Bitte ergänzen.", ForwardToAdmin = false };
+        _authorizationService.IsAdmin.Returns(false);
+
+        var result = await _controller.Forward(departmentId, forwardDto);
+
+        await _generalMeasureService.DidNotReceive().Forward(Arg.Any<Guid>(), Arg.Any<string>(), Arg.Any<bool>());
+        Assert.That(result, Is.InstanceOf<ForbidResult>());
+    }
+}
