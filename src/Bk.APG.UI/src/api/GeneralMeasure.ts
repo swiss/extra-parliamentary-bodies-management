@@ -3,4 +3,9 @@ export interface GeneralMeasure {
     department: string;
     justificationLanguages?: string;
     justificationGenders?: string;
+    isDepartmentTaskActive: boolean;
+    isAdminTaskActive: boolean;
+    canForwardToDepartment: boolean;
+    canForwardToAdmin: boolean;
+    canValidate: boolean;
 }

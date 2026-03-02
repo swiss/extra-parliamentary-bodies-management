@@ -8,13 +8,20 @@ namespace Bk.APG.Business.Services;
 public class GeneralMeasureService : IGeneralMeasureService
 {
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly IAuthorizationService _authorizationService;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly ILogger<GeneralMeasureService> _logger;
 
-    public GeneralMeasureService(IGeneralMeasureRepository generalMeasureRepository, IAuthorizationService authorizationService, IMasterDataRepository masterDataRepository, ILogger<GeneralMeasureService> logger)
+    public GeneralMeasureService(
+        IGeneralMeasureRepository generalMeasureRepository,
+        IWorklistTaskRepository worklistTaskRepository,
+        IAuthorizationService authorizationService,
+        IMasterDataRepository masterDataRepository,
+        ILogger<GeneralMeasureService> logger)
     {
         _generalMeasureRepository = generalMeasureRepository;
+        _worklistTaskRepository = worklistTaskRepository;
         _authorizationService = authorizationService;
         _masterDataRepository = masterDataRepository;
         _logger = logger;
@@ -41,12 +48,31 @@ public class GeneralMeasureService : IGeneralMeasureService
             departmentIds.AddRange(allDepartments.Select(x => x.Id));
         }
 
-        var result = departmentIds.Select(departmentId => new GeneralMeasureDto
+        var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
+        var generalMeasureTasks = await _worklistTaskRepository.GetByDepartmentIdsAndWorklistTaskTypeIds(departmentIds, [WorklistTaskType.GeneralMeasureCheck, WorklistTaskType.GeneralMeasureValidate]);
+
+        var result = departmentIds.Select(departmentId =>
         {
-            DepartmentId = departmentId,
-            Department = allDepartments.Single(x => x.Id == departmentId).GetText(),
-            JustificationGenders = genderMeasuresByDepartment.TryGetValue(departmentId, out var genders) ? genders : null,
-            JustificationLanguages = languageMeasuresByDepartment.TryGetValue(departmentId, out var languages) ? languages : null
+            var departmentTask = generalMeasureTasks.SingleOrDefault(x => x.DepartmentId == departmentId && x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck);
+            var adminTask = generalMeasureTasks.SingleOrDefault(x => x.DepartmentId == departmentId && x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureValidate);
+            var isDepartmentTaskActive = departmentTask?.WorklistTaskStateId == WorklistTaskState.Active;
+            var isAdminTaskActive = adminTask?.WorklistTaskStateId == WorklistTaskState.Active;
+            var canForwardToAdmin = isDepartmentTaskActive && departmentTask?.AssignedToId == currentEiamAssignment.Id;
+            var canForwardToDepartment = isAdminTaskActive && currentEiamAssignment.Role == Role.Admin;
+            var canValidate = isAdminTaskActive && currentEiamAssignment.Role == Role.Admin;
+
+            return new GeneralMeasureDto
+            {
+                DepartmentId = departmentId,
+                Department = allDepartments.Single(x => x.Id == departmentId).GetText(),
+                JustificationGenders = genderMeasuresByDepartment.TryGetValue(departmentId, out var genders) ? genders : null,
+                JustificationLanguages = languageMeasuresByDepartment.TryGetValue(departmentId, out var languages) ? languages : null,
+                IsDepartmentTaskActive = isDepartmentTaskActive,
+                IsAdminTaskActive = isAdminTaskActive,
+                CanForwardToAdmin = canForwardToAdmin,
+                CanForwardToDepartment = canForwardToDepartment,
+                CanValidate = canValidate
+            };
         }).ToList();
 
         return result;
@@ -115,5 +141,52 @@ public class GeneralMeasureService : IGeneralMeasureService
             await _generalMeasureRepository.CommitChanges();
             _logger.LogInformation("Updated language measure {MeasureId}", genderMeasure.Id);
         }
+    }
+
+    public async Task Forward(Guid departmentId, string message, bool forwardToAdmin)
+    {
+        _logger.LogInformation("Forward general measure for department {DepartmentId} to {ForwardTarget}", departmentId, forwardToAdmin ? "admin" : "department");
+
+        var tasks = await _worklistTaskRepository.GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(departmentId, [WorklistTaskType.GeneralMeasureCheck, WorklistTaskType.GeneralMeasureValidate]);
+        var departmentTask = tasks.Single(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck);
+        var adminTask = tasks.Single(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureValidate);
+        var userName = _authorizationService.GetCurrentUserName();
+        var now = DateTime.UtcNow;
+
+        if (forwardToAdmin)
+        {
+            departmentTask.WorklistTaskStateId = WorklistTaskState.Completed;
+            departmentTask.Modified = now;
+            departmentTask.ModifiedBy = userName;
+
+            adminTask.WorklistTaskStateId = WorklistTaskState.Active;
+            adminTask.Modified = now;
+            adminTask.ModifiedBy = userName;
+            adminTask.Description = message;
+        }
+        else
+        {
+            departmentTask.WorklistTaskStateId = WorklistTaskState.Active;
+            departmentTask.Modified = now;
+            departmentTask.ModifiedBy = userName;
+            departmentTask.Description = message;
+
+            adminTask.WorklistTaskStateId = WorklistTaskState.Inactive;
+            adminTask.Modified = now;
+            adminTask.ModifiedBy = userName;
+        }
+
+        await _worklistTaskRepository.CommitChanges();
+    }
+
+    public async Task Validate(Guid departmentId)
+    {
+        _logger.LogInformation("Validate general measure for department {DepartmentId}", departmentId);
+
+        var adminTask = (await _worklistTaskRepository.GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(departmentId, [WorklistTaskType.GeneralMeasureValidate])).Single();
+        adminTask.WorklistTaskStateId = WorklistTaskState.Completed;
+        adminTask.Modified = DateTime.UtcNow;
+        adminTask.ModifiedBy = _authorizationService.GetCurrentUserName();
+        await _worklistTaskRepository.CommitChanges();
     }
 }
