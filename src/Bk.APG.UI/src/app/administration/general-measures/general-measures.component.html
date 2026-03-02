@@ -11,55 +11,67 @@
                     <strong>{{ generalMeasure.department }}</strong>
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <div class="ob-flex">
-                <mat-card>
-                    <mat-card-content>
-                        <form [formGroup]="getGeneralMeasureFormGroup(generalMeasure.departmentId)">
-                            <div class="input-grid">
-                                <div obErrorMessages>
-                                    <apg-rich-text-editor
-                                        [title]="'generalMeasures.justificationLanguages' | translate"
-                                        [heightMax]="200"
-                                        [heightMin]="100"
-                                        controlName="justificationLanguages"
-                                        [plugins]="['flite', 'lance']"
-                                    />
-                                </div>
+            <form [formGroup]="getGeneralMeasureFormGroup(generalMeasure.departmentId)">
+                <div class="input-grid">
+                    <div obErrorMessages>
+                        <apg-rich-text-editor
+                            [title]="'generalMeasures.justificationLanguages' | translate"
+                            [heightMax]="200"
+                            [heightMin]="100"
+                            controlName="justificationLanguages"
+                            [plugins]="['flite', 'lance']"
+                        />
+                    </div>
 
-                                <div obErrorMessages>
-                                    <apg-rich-text-editor
-                                        [title]="'generalMeasures.justificationGenders' | translate"
-                                        [heightMax]="200"
-                                        [heightMin]="100"
-                                        controlName="justificationGenders"
-                                        [plugins]="['flite', 'lance']"
-                                    />
-                                </div>
-                            </div>
-                            <div class="actions">
-                                <button
-                                    (click)="resetGeneralMeasure(generalMeasure.departmentId)"
-                                    mat-button
-                                    obButton="secondary"
-                                    type="button"
-                                    [disabled]="!getGeneralMeasureFormGroup(generalMeasure.departmentId).dirty"
-                                >
-                                    {{ 'common.reset' | translate }}
-                                </button>
-                                <button
-                                    mat-button
-                                    obButton="primary"
-                                    type="button"
-                                    (click)="saveGeneralMeasure(generalMeasure.departmentId)"
-                                    [disabled]="!getGeneralMeasureFormGroup(generalMeasure.departmentId).dirty"
-                                >
-                                    {{ 'common.save' | translate }}
-                                </button>
-                            </div>
-                        </form>
-                    </mat-card-content>
-                </mat-card>
-            </div>
+                    <div obErrorMessages>
+                        <apg-rich-text-editor
+                            [title]="'generalMeasures.justificationGenders' | translate"
+                            [heightMax]="200"
+                            [heightMin]="100"
+                            controlName="justificationGenders"
+                            [plugins]="['flite', 'lance']"
+                        />
+                    </div>
+                </div>
+                <div class="footer">
+                    @if (generalMeasure.isDepartmentTaskActive) {
+                        <h3 class="workflow-status">{{ 'generalMeasures.workflow.state.department' | translate }}</h3>
+                    }
+                    @if (generalMeasure.isAdminTaskActive) {
+                        <h3 class="workflow-status">{{ 'generalMeasures.workflow.state.admin' | translate }}</h3>
+                    }
+                    <div class="actions">
+                        @if (generalMeasure.canForwardToAdmin || generalMeasure.canForwardToDepartment) {
+                            <button mat-button obButton="secondary" type="button" (click)="openForwardDialog(generalMeasure)">
+                                {{ 'common.forward' | translate }}
+                            </button>
+                        }
+                        @if (generalMeasure.canValidate) {
+                            <button mat-button obButton="primary" type="button" (click)="openValidateDialog(generalMeasure.departmentId)">
+                                {{ 'generalMeasures.workflow.actions.validate' | translate }}
+                            </button>
+                        }
+                        <button
+                            (click)="resetGeneralMeasure(generalMeasure.departmentId)"
+                            mat-button
+                            obButton="secondary"
+                            type="button"
+                            [disabled]="!getGeneralMeasureFormGroup(generalMeasure.departmentId).dirty"
+                        >
+                            {{ 'common.reset' | translate }}
+                        </button>
+                        <button
+                            mat-button
+                            obButton="primary"
+                            type="button"
+                            (click)="saveGeneralMeasure(generalMeasure.departmentId)"
+                            [disabled]="!getGeneralMeasureFormGroup(generalMeasure.departmentId).dirty"
+                        >
+                            {{ 'common.save' | translate }}
+                        </button>
+                    </div>
+                </div>
+            </form>
         </mat-expansion-panel>
     }
 </fieldset>
