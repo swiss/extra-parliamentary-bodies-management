@@ -6,6 +6,7 @@ import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObNotificationService} from '@oblique/oblique';
 import {MockPipes} from 'ng-mocks';
 import {of, Subject, throwError} from 'rxjs';
+import {GeneralElectionCommitteeDetailsService} from '../../ge-committee-details.service';
 import {GeneralElectionCommitteeCandidateListService} from '../ge-committee-candidate-list.service';
 import {CandidateListForwardDialogComponent} from './candidate-list-forward-dialog.component';
 
@@ -13,6 +14,7 @@ describe('CandidateListForwardDialogComponent', () => {
     let component: CandidateListForwardDialogComponent;
     let fixture: ComponentFixture<CandidateListForwardDialogComponent>;
     let candidateListService: jest.Mocked<GeneralElectionCommitteeCandidateListService>;
+    let detailsService: jest.Mocked<GeneralElectionCommitteeDetailsService>;
     let notificationService: jest.Mocked<ObNotificationService>;
 
     const mockDialogData = {
@@ -24,6 +26,8 @@ describe('CandidateListForwardDialogComponent', () => {
         candidateListService = {
             getAssignmentsForCandidateListForward: jest.fn(() => of([])),
             forwardCandidateList: jest.fn(() => of(undefined)),
+        } as any;
+        detailsService = {
             reload$: {next: jest.fn()},
         } as any;
 
@@ -42,6 +46,7 @@ describe('CandidateListForwardDialogComponent', () => {
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: MAT_DIALOG_DATA, useValue: mockDialogData},
                 {provide: GeneralElectionCommitteeCandidateListService, useValue: candidateListService},
+                {provide: GeneralElectionCommitteeDetailsService, useValue: detailsService},
                 {provide: ObNotificationService, useValue: notificationService},
             ],
             schemas: [NO_ERRORS_SCHEMA],
@@ -60,7 +65,7 @@ describe('CandidateListForwardDialogComponent', () => {
 
     describe('ngOnInit', () => {
         it('should load available assignments', () => {
-            const mockAssignments = [{id: 'assignment-1', name: 'Assignment 1'}];
+            const mockAssignments = [{id: 'assignment-1', text: 'Assignment 1'}];
             candidateListService.getAssignmentsForCandidateListForward.mockReturnValue(of(mockAssignments as any));
 
             component.ngOnInit();
@@ -84,7 +89,7 @@ describe('CandidateListForwardDialogComponent', () => {
                 forwardToId: 'assignment-1',
                 description: 'Test description',
             });
-            expect(candidateListService.reload$.next).toHaveBeenCalled();
+            expect(detailsService.reload$.next).toHaveBeenCalled();
             expect(notificationService.success).toHaveBeenCalledWith('generalElection.committee.candidateList.forward.success');
         });
 

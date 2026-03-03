@@ -30,6 +30,7 @@ public class EiamAssignmentRepository : IEiamAssignmentRepository
             .Include(ea => ea.Children).ThenInclude(c => c.Children).ThenInclude(cc => cc.Department)
             .Include(ea => ea.Children).ThenInclude(c => c.Children).ThenInclude(cc => cc.Office)
             .Include(ea => ea.Children).ThenInclude(c => c.Children).ThenInclude(cc => cc.Committee)
+            .Include(ea => ea.Children).ThenInclude(c => c.Children).ThenInclude(c => c.Children).ThenInclude(cc => cc.Committee)
             .AsSplitQuery()
             .AsNoTracking()
             .FirstOrDefaultAsync(ea => ea.ExternalId == externalId);

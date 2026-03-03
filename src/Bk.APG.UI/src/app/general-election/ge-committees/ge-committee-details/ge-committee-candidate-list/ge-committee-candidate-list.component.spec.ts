@@ -9,12 +9,11 @@ import {DuplicateReason} from '@api/DuplicateReason';
 import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
 import {MembershipCandidateDetail} from '@api/MembershipCandidateDetail';
 import {PersonDetails} from '@api/PersonDetails';
-import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObHttpApiInterceptorEvents, ObNotificationService, WINDOW} from '@oblique/oblique';
 import * as fileUtil from '@shared/file-util';
 import {DOCUMENT} from '@shared/injection.tokens';
 import {MasterDataService} from '@shared/master-data.service';
-import {MockModule, MockPipe} from 'ng-mocks';
+import {MockModule} from 'ng-mocks';
 import {of, Subject, throwError} from 'rxjs';
 import {AuthService} from '../../../../auth/auth.service';
 import {GeneralElectionCommitteesService} from '../../ge-committees.service';
@@ -31,6 +30,10 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
     let isDepartmentSubject: Subject<boolean>;
     let isOfficeSubject: Subject<boolean>;
     let isObserverSubject: Subject<boolean>;
+    let generalElectionCommitteeDetailsServiceMock: {
+        committeeDetails: ReturnType<typeof signal<GeneralElectionCommitteeDetails>>;
+        reload$: Subject<void>;
+    };
 
     const mockMembershipCandidates: MembershipCandidateDetail[] = [
         {
@@ -104,12 +107,6 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
         ]),
     };
 
-    const translateServiceMock = {
-        currentLang: 'de',
-        onLangChange: new Subject(),
-        get: jest.fn(),
-    };
-
     const activatedRouteMock = {
         snapshot: {
             params: {id: 'committee-123'},
@@ -131,8 +128,9 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
             isObserver$: isObserverSubject,
         };
 
-        const generalElectionCommitteeDetailsServiceMock = {
+        generalElectionCommitteeDetailsServiceMock = {
             committeeDetails: signal<GeneralElectionCommitteeDetails>({canEdit: true} as GeneralElectionCommitteeDetails),
+            reload$: new Subject<void>(),
         };
 
         const generalElectionCommitteeServiceMock = {
@@ -140,14 +138,13 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
         };
 
         await TestBed.configureTestingModule({
-            imports: [GeneralElectionCommitteeCandidateListComponent, MockModule(ReactiveFormsModule), MockModule(MatIconModule), MockPipe(TranslatePipe)],
+            imports: [GeneralElectionCommitteeCandidateListComponent, MockModule(ReactiveFormsModule), MockModule(MatIconModule)],
             providers: [
                 FormBuilder,
                 {provide: GeneralElectionCommitteeCandidateListService, useValue: membershipCandidateListServiceMock},
                 {provide: AuthService, useValue: authServiceMock},
                 {provide: ObNotificationService, useValue: notificationServiceMock},
                 {provide: MasterDataService, useValue: masterDataServiceMock},
-                {provide: TranslateService, useValue: translateServiceMock},
                 {provide: ActivatedRoute, useValue: activatedRouteMock},
                 {provide: GeneralElectionCommitteeDetailsService, useValue: generalElectionCommitteeDetailsServiceMock},
                 {provide: GeneralElectionCommitteesService, useValue: generalElectionCommitteeServiceMock},
@@ -156,7 +153,9 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                 {provide: DOCUMENT, useValue: document},
                 provideHttpClient(),
             ],
-        }).compileComponents();
+        })
+            .overrideTemplate(GeneralElectionCommitteeCandidateListComponent, '')
+            .compileComponents();
 
         fixture = TestBed.createComponent(GeneralElectionCommitteeCandidateListComponent);
         component = fixture.componentInstance;
@@ -536,12 +535,16 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
 
             component.openForwardDialog();
 
-            expect(dialogServiceMock.open).toHaveBeenCalledWith(expect.anything(), {
-                data: {
-                    committeeId: 'committee-123',
-                    candidateIds: ['candidate-1', 'candidate-2'],
-                },
-            });
+            expect(dialogServiceMock.open).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({
+                    data: {
+                        committeeId: 'committee-123',
+                        candidateIds: ['candidate-1', 'candidate-2'],
+                    },
+                    viewContainerRef: expect.anything(),
+                })
+            );
         });
 
         it('should open dialog with empty candidate list', () => {
@@ -553,24 +556,26 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
 
             component.openForwardDialog();
 
-            expect(dialogServiceMock.open).toHaveBeenCalledWith(expect.anything(), {
-                data: {
-                    committeeId: 'committee-123',
-                    candidateIds: [],
-                },
-            });
+            expect(dialogServiceMock.open).toHaveBeenCalledWith(
+                expect.anything(),
+                expect.objectContaining({
+                    data: {
+                        committeeId: 'committee-123',
+                        candidateIds: [],
+                    },
+                    viewContainerRef: expect.anything(),
+                })
+            );
         });
     });
 
     describe('saveSelectedIds', () => {
         it('should save selected candidate list successfully', () => {
             const saveCandidateListMock = jest.fn().mockReturnValue(of(undefined));
-            const reloadSubject = new Subject<void>();
             membershipCandidateListServiceMock.saveCandidateList = saveCandidateListMock;
-            membershipCandidateListServiceMock.reload$ = reloadSubject;
             component.selectedIds = ['candidate-1', 'candidate-2'];
 
-            const nextSpy = jest.spyOn(reloadSubject, 'next');
+            const nextSpy = jest.spyOn(generalElectionCommitteeDetailsServiceMock.reload$, 'next');
 
             component.saveSelectedIds();
 
@@ -592,9 +597,7 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
 
         it('should save empty candidate list', () => {
             const saveCandidateListMock = jest.fn().mockReturnValue(of(undefined));
-            const reloadSubject = new Subject<void>();
             membershipCandidateListServiceMock.saveCandidateList = saveCandidateListMock;
-            membershipCandidateListServiceMock.reload$ = reloadSubject;
             component.selectedIds = [];
 
             component.saveSelectedIds();
@@ -614,6 +617,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     existingPersons: [],
                     areJustificationsMissing: false,
                     areContactPointsMissing: false,
+                    isReadyForProposalActivated: false,
+                    allValidationsPassed: false,
                     personsWithMissingInterests: [],
                     personsWithMissingBaseData: [],
                     personsWithMembershipValidationIssues: [],
@@ -645,6 +650,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     existingPersons: [],
                     areJustificationsMissing: true,
                     areContactPointsMissing: false,
+                    isReadyForProposalActivated: false,
+                    allValidationsPassed: false,
                     personsWithMissingInterests: [],
                     personsWithMissingBaseData: [],
                     personsWithMembershipValidationIssues: [],
@@ -678,6 +685,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     existingPersons: [],
                     areJustificationsMissing: false,
                     areContactPointsMissing: false,
+                    isReadyForProposalActivated: false,
+                    allValidationsPassed: false,
                     personsWithMissingInterests: [],
                     personsWithMissingBaseData: [],
                     personsWithMembershipValidationIssues: [],
@@ -706,6 +715,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     existingPersons: [{id: '2', surname: 'Regazzoni', givenName: 'Clay', birthYear: 1939} as PersonDetails],
                     areJustificationsMissing: false,
                     areContactPointsMissing: false,
+                    isReadyForProposalActivated: false,
+                    allValidationsPassed: false,
                     personsWithMissingInterests: [],
                     personsWithMissingBaseData: [],
                     personsWithMembershipValidationIssues: [],
@@ -752,6 +763,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                     existingPersons: [],
                     areJustificationsMissing: false,
                     areContactPointsMissing: false,
+                    isReadyForProposalActivated: false,
+                    allValidationsPassed: false,
                     personsWithMissingInterests: [],
                     personsWithMissingBaseData: [],
                     personsWithMembershipValidationIssues: [],
@@ -780,6 +793,8 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
                 existingPersons: [],
                 areJustificationsMissing: false,
                 areContactPointsMissing: false,
+                isReadyForProposalActivated: false,
+                allValidationsPassed: false,
                 personsWithMissingInterests: [],
                 personsWithMissingBaseData: [],
                 personsWithMembershipValidationIssues: [],

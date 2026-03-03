@@ -11,7 +11,9 @@ public interface IMembershipCandidateService
     Task<MembershipListDto> GetMembers(Guid generalElectionCommitteeId);
     Task DeleteMembershipCandidate(Guid id);
     Task ForwardCandidateList(Guid committeeId, CandidateListForwardDto forwardDto);
+    Task ForwardReadyForProposal(Guid committeeId, ReadyForProposalForwardDto forwardDto);
     Task<CandidateListValidationResultDto> ValidateCandidateList(Guid committeeId, IEnumerable<Guid> selectedCandidateIds, bool duplicateCheckDone);
+    Task<CandidateListValidationResultDto> FinalizeReadyForProposal(Guid committeeId);
     Task SaveCandidateList(Guid committeeId, IEnumerable<Guid> candidateIds);
     Task<MembershipCandidateDetailDto?> GetDuplicateMembershipCandidateForList(Guid committeeId, string surname, string givenName, int birthYear, Guid genderId, Guid languageId);
 }

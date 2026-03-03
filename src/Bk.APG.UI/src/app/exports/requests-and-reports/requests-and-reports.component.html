@@ -34,6 +34,9 @@
             {{ 'requestsAndReports.filter.releasedCommittees.label' | translate }}
         </mat-checkbox>
         <div class="buttons">
+            <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="resetGE()">
+                {{ 'requestsAndReports.reset' | translate }}
+            </button>
             <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="generateReport()">
                 {{ 'requestsAndReports.download' | translate }}
             </button>
@@ -47,7 +50,6 @@
                 <mat-option value="AppendixFederalCouncilCheck">{{
                     'requestsAndReports.filter.documentType.appendixFederalCouncilCheck' | translate
                 }}</mat-option>
-                <mat-option value="DissolvedCommittees">{{ 'requestsAndReports.filter.documentType.dissolvedCommittees' | translate }}</mat-option>
                 <mat-option value="Vacancies">{{ 'requestsAndReports.filter.documentType.vacancies' | translate }}</mat-option>
                 <mat-option value="CompareListGE">{{ 'requestsAndReports.filter.documentType.compareListGE' | translate }}</mat-option>
             </mat-select>
@@ -100,6 +102,9 @@
         </mat-form-field>
         <div></div>
         <div class="buttons">
+            <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="reset()">
+                {{ 'requestsAndReports.reset' | translate }}
+            </button>
             <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="generateReport()">
                 {{ 'requestsAndReports.download' | translate }}
             </button>
