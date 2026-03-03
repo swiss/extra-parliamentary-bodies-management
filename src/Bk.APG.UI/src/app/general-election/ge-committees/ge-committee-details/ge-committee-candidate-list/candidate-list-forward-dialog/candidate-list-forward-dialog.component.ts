@@ -9,6 +9,7 @@ import {CandidateListForward} from '@api/CandidateListForward';
 import {EiamAssignment} from '@api/EiamAssignment';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ObButtonDirective, ObErrorMessagesDirective, ObMatErrorDirective, ObNotificationService} from '@oblique/oblique';
+import {GeneralElectionCommitteeDetailsService} from '../../ge-committee-details.service';
 import {GeneralElectionCommitteeCandidateListService} from '../ge-committee-candidate-list.service';
 
 @Component({
@@ -44,6 +45,7 @@ export class CandidateListForwardDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) private readonly data: {committeeId: string; candidateIds: string[]},
         private readonly formBuilder: FormBuilder,
         private readonly candidateListService: GeneralElectionCommitteeCandidateListService,
+        private readonly detailsService: GeneralElectionCommitteeDetailsService,
         private readonly notificationService: ObNotificationService
     ) {}
 
@@ -63,7 +65,7 @@ export class CandidateListForwardDialogComponent implements OnInit {
             .forwardCandidateList(this.data.committeeId, {candidateIds: this.data.candidateIds, ...this.form.getRawValue()} as CandidateListForward)
             .subscribe({
                 next: () => {
-                    this.candidateListService.reload$.next();
+                    this.detailsService.reload$.next();
                     this.notificationService.success('generalElection.committee.candidateList.forward.success');
                 },
                 error: () => this.notificationService.error('generalElection.committee.candidateList.forward.error'),

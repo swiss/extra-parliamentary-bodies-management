@@ -219,6 +219,9 @@ public static class CommitteeMapper
             DepartmentIds = filterDto?.DepartmentIds,
             OfficeIds = filterDto?.OfficeIds,
             CommitteeTypeIds = filterDto?.CommitteeTypeIds,
+            ReportType = filterDto?.ReportType,
+            AnalysisDate1 = filterDto?.AnalysisDate1,
+            AnalysisDate2 = filterDto?.AnalysisDate2,
         };
     }
 

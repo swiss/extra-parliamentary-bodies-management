@@ -9,7 +9,6 @@ import {MatFormField, MatInputModule} from '@angular/material/input';
 import {MatLabel, MatSelectModule} from '@angular/material/select';
 import {MatCell, MatCellDef, MatColumnDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {ActivatedRoute} from '@angular/router';
-import {CommitteeFilterParameters} from '@api/CommitteeFilterParameters';
 import {CommitteeList} from '@api/CommitteeList';
 import {RequestsAndReportsFilterForm} from '@api/RequestsAndReportsFilterForm';
 import {RequestsAndReportsFilterParameters} from '@api/RequestsAndReportsFilterParameters';
@@ -104,14 +103,8 @@ export class RequestsAndReportsComponent {
         this.form.controls.documentType.valueChanges.pipe(takeUntilDestroyed()).subscribe(_ => this.updateAnalysisDateFields());
 
         if (!this.isGeneralElection) {
-            this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([prev, curr]) => {
-                const changedKeys = Object.keys(curr).filter(key => prev[key as keyof typeof prev] !== curr[key as keyof typeof curr]);
-                const excludedControls = ['documentType', 'analysisDate1', 'analysisDate2'];
-
-                if (changedKeys.every(key => excludedControls.includes(key))) {
-                    return;
-                }
-                this.onFilter({...curr} as CommitteeFilterParameters);
+            this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([_, curr]) => {
+                this.onFilter({...curr} as RequestsAndReportsFilterParameters);
             });
 
             combineLatest([
@@ -226,13 +219,30 @@ export class RequestsAndReportsComponent {
         }
     }
 
+    resetGE() {
+        this.form.controls.documentType.setValue(null);
+        this.form.controls.analysisDate1.setValue(null);
+        this.form.controls.committeesWithActiveMembership.setValue(true);
+        this.form.controls.releasedCommittees.setValue(true);
+        this.form.controls.committeeTypes.setValue(null);
+    }
+
+    reset() {
+        this.form.controls.documentType.setValue(null);
+        this.form.controls.analysisDate1.setValue(null);
+        this.form.controls.departments.setValue(null);
+        this.form.controls.offices.setValue(null);
+        this.form.controls.committeeTypes.setValue(null);
+        this.form.controls.analysisDate2.setValue(null);
+    }
+
     private updateAnalysisDateFields() {
         if (!this.isGeneralElection) {
             if ([ReportType.AppendixFederalCouncilCheck, ReportType.Vacancies].includes(this.form.controls.documentType.value!)) {
                 this.form.controls.analysisDate1.setValue(today());
             }
 
-            if ([ReportType.DissolvedCommittees, ReportType.CompareListGE].includes(this.form.controls.documentType.value!)) {
+            if (this.form.controls.documentType.value! === ReportType.CompareListGE) {
                 this.form.controls.analysisDate1.setValue(this.analysisDateDefaultValue);
                 this.form.controls.analysisDate2.setValue(today());
                 this.form.controls.analysisDate2.enable();
