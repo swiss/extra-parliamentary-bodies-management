@@ -14,11 +14,12 @@ public class AddressBuilder
     private readonly string? _companyName;
     private readonly string? _street;
     private readonly string? _poBox;
-    private readonly string? _countryCode;
     private readonly string? _zip;
     private string? _city;
     private Guid? _cantonId;
     private Canton? _canton;
+    private Guid? _countryId;
+    private Country? _country;
     private string? _phone;
     private string? _mobile;
     private string? _email;
@@ -34,10 +35,10 @@ public class AddressBuilder
         _companyName = _faker.Company.CompanyName().OrNull(_faker);
         _street = _faker.Address.StreetName().OrNull(_faker);
         _poBox = _faker.Random.String().OrNull(_faker);
-        _countryCode = _faker.Address.CountryCode().OrNull(_faker);
         _zip = _faker.Address.ZipCode().OrNull(_faker);
         _city = _faker.Address.City().OrNull(_faker);
         _cantonId = _faker.Random.Guid();
+        _countryId = _faker.Random.Guid();
         _phone = _faker.Phone.PhoneNumber().OrNull(_faker);
         _mobile = _faker.Phone.PhoneNumber().OrNull(_faker);
         _email = _faker.Person.Email.OrNull(_faker);
@@ -56,6 +57,12 @@ public class AddressBuilder
         return this;
     }
 
+    public AddressBuilder WithCountryId(Guid? countryId)
+    {
+        _countryId = countryId;
+        return this;
+    }
+
     public AddressBuilder WithCity(string? city)
     {
         _city = city;
@@ -66,6 +73,13 @@ public class AddressBuilder
     {
         _cantonId = canton?.Id;
         _canton = canton;
+        return this;
+    }
+
+    public AddressBuilder WithCountry(Country? country)
+    {
+        _countryId = country?.Id;
+        _country = country;
         return this;
     }
 
@@ -99,7 +113,8 @@ public class AddressBuilder
             CompanyName = _companyName,
             Street = _street,
             PoBox = _poBox,
-            CountryCode = _countryCode,
+            CountryId = _countryId,
+            Country = _country,
             Zip = _zip,
             City = _city,
             CantonId = _cantonId,

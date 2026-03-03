@@ -7,6 +7,7 @@ import {AppointmentDecisionType} from '@api/AppointmentDecisionType';
 import {Canton} from '@api/Canton';
 import {CommitteeType} from '@api/CommitteeType';
 import {Council} from '@api/Council';
+import {Country} from '@api/Country';
 import {Department} from '@api/Department';
 import {ElectionOffice} from '@api/ElectionOffice';
 import {ElectionType} from '@api/ElectionType';
@@ -62,6 +63,7 @@ export class MasterDataService {
     worklistTaskTypes = signal<WorklistTaskType[]>([]);
     worklistTaskStates = signal<WorklistTaskState[]>([]);
     formLetterSenderFunctions = signal<FormLettersSenderFunction[]>([]);
+    countries = signal<Country[]>([]);
 
     constructor(
         private readonly http: HttpClient,
@@ -102,6 +104,7 @@ export class MasterDataService {
                 this.worklistTaskTypes.set(masterData.worklistTaskTypes);
                 this.worklistTaskStates.set(masterData.worklistTaskStates);
                 this.formLetterSenderFunctions.set(masterData.formLetterSenderFunctions);
+                this.countries.set(masterData.countries);
             });
     }
 
