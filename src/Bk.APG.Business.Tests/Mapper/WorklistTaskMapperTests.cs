@@ -146,4 +146,53 @@ internal class WorklistTaskMapperTests
             Assert.That(result.TermOfOfficeDateId, Is.EqualTo(termOfOfficeDateId));
         });
     }
+
+    [Test]
+    public void CreateGeneralMeasureDepartmentCheckWorklistTaskDto_WithDto_ShouldReturnResult()
+    {
+        var parentId = Guid.NewGuid();
+        var termOfOfficeDateId = Guid.NewGuid();
+        var departmentId = Guid.NewGuid();
+        var assignedToId = Guid.NewGuid();
+        var dueDate = DateOnly.FromDateTime(DateTime.Now.AddDays(7));
+
+        var result = WorklistTaskMapper.CreateGeneralMeasureDepartmentCheckWorklistTaskDto(parentId, departmentId, assignedToId, termOfOfficeDateId, dueDate);
+
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.AssignedToId, Is.EqualTo(assignedToId));
+            Assert.That(result.WorklistTaskTypeId, Is.EqualTo(WorklistTaskType.GeneralMeasureCheck));
+            Assert.That(result.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
+            Assert.That(result.ParentTaskId, Is.EqualTo(parentId));
+            Assert.That(result.DepartmentId, Is.EqualTo(departmentId));
+            Assert.That(result.Description, Is.EqualTo(string.Empty));
+            Assert.That(result.DueDate, Is.EqualTo(dueDate));
+            Assert.That(result.TermOfOfficeDateId, Is.EqualTo(termOfOfficeDateId));
+        }
+    }
+
+    [Test]
+    public void CreateGeneralMeasureAdminValidationWorklistTaskDto_WithDto_ShouldReturnResult()
+    {
+        var parentId = Guid.NewGuid();
+        var termOfOfficeDateId = Guid.NewGuid();
+        var departmentId = Guid.NewGuid();
+        var dueDate = DateOnly.FromDateTime(DateTime.Now.AddDays(14));
+
+        var result = WorklistTaskMapper.CreateGeneralMeasureAdminValidationWorklistTaskDto(parentId, departmentId, termOfOfficeDateId, dueDate);
+
+        Assert.That(result, Is.Not.Null);
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.AssignedToId, Is.EqualTo(EiamAssignment.AdminId));
+            Assert.That(result.WorklistTaskTypeId, Is.EqualTo(WorklistTaskType.GeneralMeasureValidate));
+            Assert.That(result.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Inactive));
+            Assert.That(result.ParentTaskId, Is.EqualTo(parentId));
+            Assert.That(result.DepartmentId, Is.EqualTo(departmentId));
+            Assert.That(result.Description, Is.EqualTo(string.Empty));
+            Assert.That(result.DueDate, Is.EqualTo(dueDate));
+            Assert.That(result.TermOfOfficeDateId, Is.EqualTo(termOfOfficeDateId));
+        }
+    }
 }

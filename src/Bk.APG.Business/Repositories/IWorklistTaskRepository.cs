@@ -18,4 +18,6 @@ public interface IWorklistTaskRepository
     Task CommitChanges();
     Task<List<WorklistTask>> GetByWorklistTaskTypeId(Guid worklistTaskTypeId);
     Task<List<WorklistTask>> GetAllByPersonId(Guid personId);
+    Task<List<WorklistTask>> GetByDepartmentIdsAndWorklistTaskTypeIds(IEnumerable<Guid> departmentIds, IEnumerable<Guid> worklistTaskTypeIds);
+    Task<List<WorklistTask>> GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(Guid departmentId, IEnumerable<Guid> worklistTaskTypeIds);
 }
