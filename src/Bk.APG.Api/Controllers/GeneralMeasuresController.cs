@@ -45,4 +45,43 @@ public class GeneralMeasuresController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPost("{departmentId:guid}/forward")]
+    public async Task<IActionResult> Forward(Guid departmentId, [FromBody] GeneralMeasureForwardDto forwardDto)
+    {
+        if (forwardDto.ForwardToAdmin)
+        {
+            if (!_authorizationService.IsDepartment)
+            {
+                return Forbid();
+            }
+
+            var department = await _authorizationService.GetDepartment();
+            if (department?.Id != departmentId)
+            {
+                return Forbid();
+            }
+        }
+        else if (!_authorizationService.IsAdmin)
+        {
+            return Forbid();
+        }
+
+        await _generalMeasureService.Forward(departmentId, forwardDto.Message, forwardDto.ForwardToAdmin);
+
+        return NoContent();
+    }
+
+    [HttpPost("{departmentId:guid}/validate")]
+    public async Task<IActionResult> ValidateGeneralMeasure(Guid departmentId)
+    {
+        if (!_authorizationService.IsAdmin)
+        {
+            return Forbid();
+        }
+
+        await _generalMeasureService.Validate(departmentId);
+
+        return NoContent();
+    }
 }
