@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component, DestroyRef, effect, inject, signal, 
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
-import {MatCard, MatCardContent} from '@angular/material/card';
 import {MatDialog} from '@angular/material/dialog';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from '@angular/material/expansion';
 import {GeneralMeasure} from '@api/GeneralMeasure';
@@ -31,8 +30,6 @@ import {GeneralMeasuresService} from './general-measures.service';
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
-        MatCard,
-        MatCardContent,
         ObButtonDirective,
         ObErrorMessagesDirective,
         HelpTooltipComponent,
