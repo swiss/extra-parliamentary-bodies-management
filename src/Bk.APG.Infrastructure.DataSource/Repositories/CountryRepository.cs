@@ -39,8 +39,6 @@ public class CountryRepository : ICountryRepository
 
     public async Task<Country> Update(Country existing, Country update)
     {
-        _dataContext.Countries.Update(existing);
-
         existing.Modified = update.Modified;
         existing.ModifiedBy = update.ModifiedBy;
         existing.TextDe = update.TextDe;
