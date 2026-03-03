@@ -31,8 +31,6 @@ import {GeneralMeasuresService} from './general-measures.service';
         MatExpansionPanel,
         MatExpansionPanelHeader,
         MatExpansionPanelTitle,
-        MatCard,
-        MatCardContent,
         ObButtonDirective,
         ObErrorMessagesDirective,
         HelpTooltipComponent,

@@ -84,8 +84,6 @@ export class PersonDataFormComponent implements OnInit {
     privateAddressExists = computed(() => !!this.personModification()?.privateAddress);
     officeAddressExists = computed(() => !!this.personModification()?.officeAddress);
 
-    switzerlandId = '8368f092-2614-400b-8eff-9f186f5d8799';
-
     areAddressesEmpty = computed(() => {
         if (this.maskAddress()) {
             return false;
@@ -472,7 +470,7 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.controls[controlId].controls.cantonId.setValue(address.canton?.id);
 
         if (address.canton?.id) {
-            this.personForm.controls[controlId].controls.countryId.setValue(this.switzerlandId);
+            this.personForm.controls[controlId].controls.countryId.setValue(this.configsService.frontendConfig.entityIds.country.switzerlandId);
         }
 
         if (controlId === 'officeAddress') {
@@ -491,7 +489,7 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.controls[controlId].controls.cantonId.setValue(address.canton?.id);
 
         if (address.canton?.id) {
-            this.personForm.controls[controlId].controls.countryId.setValue(this.switzerlandId);
+            this.personForm.controls[controlId].controls.countryId.setValue(this.configsService.frontendConfig.entityIds.country.switzerlandId);
         }
 
         if (controlId === 'officeAddress') {
@@ -505,7 +503,7 @@ export class PersonDataFormComponent implements OnInit {
 
     setCanton(event: MatSelectChange, controlId: AddressControlId) {
         if (event.value && event.value !== this.configsService.frontendConfig.entityIds.canton.abroadId) {
-            this.personForm.controls[controlId].controls.countryId.setValue(this.switzerlandId);
+            this.personForm.controls[controlId].controls.countryId.setValue(this.configsService.frontendConfig.entityIds.country.switzerlandId);
         } else {
             this.personForm.controls[controlId].controls.countryId.setValue(null);
         }
