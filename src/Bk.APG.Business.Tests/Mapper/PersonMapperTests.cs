@@ -321,7 +321,7 @@ internal class PersonMapperTests
                 City = "city_office",
                 Street = "street_office",
                 CompanyName = "companyname_office",
-                CountryCode = "countrycode_office",
+                CountryId = Guid.NewGuid(),
                 Email = "email_office",
                 Mobile = "mobile_office",
                 Phone = "phone_office",

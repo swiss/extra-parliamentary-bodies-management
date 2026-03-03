@@ -49,6 +49,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("character varying(5)")
                         .HasColumnName("country_code");
 
+                    b.Property<Guid?>("CountryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("country_id");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created");
@@ -116,6 +120,9 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
 
                     b.HasIndex("CantonId")
                         .HasDatabaseName("ix_addresses_canton_id");
+
+                    b.HasIndex("CountryId")
+                        .HasDatabaseName("ix_addresses_country_id");
 
                     b.ToTable("addresses", "data");
                 });
@@ -1705,6 +1712,124 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasDatabaseName("ix_councils_uri");
 
                     b.ToTable("councils", "data");
+                });
+
+            modelBuilder.Entity("Bk.APG.Business.Models.Country", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DescriptionDe")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_de");
+
+                    b.Property<string>("DescriptionFr")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_fr");
+
+                    b.Property<string>("DescriptionIt")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_it");
+
+                    b.Property<string>("DescriptionRm")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description_rm");
+
+                    b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("modified");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("modified_by");
+
+                    b.Property<int>("OgdId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("ogd_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OgdId"));
+
+                    b.Property<int>("OldId")
+                        .HasColumnType("integer")
+                        .HasColumnName("old_id");
+
+                    b.Property<int>("Sort")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("sort");
+
+                    b.Property<string>("TextDe")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_de");
+
+                    b.Property<string>("TextFr")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_fr");
+
+                    b.Property<string>("TextIt")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_it");
+
+                    b.Property<string>("TextRm")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasColumnName("text_rm");
+
+                    b.Property<string>("Uri")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("uri");
+
+                    b.HasKey("Id")
+                        .HasName("pk_countries");
+
+                    b.HasIndex("OgdId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_countries_ogd_id");
+
+                    b.HasIndex("Uri")
+                        .IsUnique()
+                        .HasDatabaseName("ix_countries_uri");
+
+                    b.ToTable("countries", "data");
                 });
 
             modelBuilder.Entity("Bk.APG.Business.Models.Department", b =>
@@ -5742,7 +5867,14 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasForeignKey("CantonId")
                         .HasConstraintName("fk_addresses_cantons_canton_id");
 
+                    b.HasOne("Bk.APG.Business.Models.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .HasConstraintName("fk_addresses_countries_country_id");
+
                     b.Navigation("Canton");
+
+                    b.Navigation("Country");
                 });
 
             modelBuilder.Entity("Bk.APG.Business.Models.AppointmentDecision", b =>

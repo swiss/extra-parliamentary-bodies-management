@@ -3,7 +3,7 @@ export interface AddressDetails {
     companyName?: string;
     street?: string;
     poBox?: string;
-    countryCode?: string;
+    country?: string;
     zip?: string;
     city?: string;
     phone?: string;
