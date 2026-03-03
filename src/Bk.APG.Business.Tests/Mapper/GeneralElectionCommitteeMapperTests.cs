@@ -86,6 +86,7 @@ internal class GeneralElectionCommitteeMapperTests
             Assert.That(generalElectionCommittee.MaximalMembers, Is.EqualTo(createDto.MaximalMembers));
             Assert.That(generalElectionCommittee.AdditionalAuthorityMembers, Is.EqualTo(createDto.AdditionalAuthorityMembers));
             Assert.That(generalElectionCommittee.LinkAuthorityWebsite, Is.EqualTo(createDto.LinkAuthorityWebsite));
+            Assert.That(generalElectionCommittee.ReleaseGeneralElection, Is.False);
         });
     }
 

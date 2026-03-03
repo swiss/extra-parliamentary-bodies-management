@@ -46,7 +46,6 @@ import {ConfigsService} from '../../../../configs.service';
 })
 export class GeneralElectionCommitteeDataFormComponent {
     @Output() readonly isExtraParliamentaryCommmission: EventEmitter<boolean> = new EventEmitter();
-
     committeeModification = model<GeneralElectionCommitteeUpdate>();
 
     committeeForm = this.createForm();
@@ -212,7 +211,6 @@ export class GeneralElectionCommitteeDataFormComponent {
             legalFormId: new FormControl<string | undefined>({value: undefined, disabled: false}),
             oldLegalForm: new FormControl<string | undefined>({disabled: true, value: undefined}),
             legalBase: new FormControl<string | undefined>({value: undefined, disabled: false}, {validators: [Validators.maxLength(2000)]}),
-            releaseGeneralElection: new FormControl<boolean | null>(null),
             federalLawEstablishment: new FormControl<boolean | null>(null),
             supervisionDuty: new FormControl<boolean | null>(null),
             marketOrientated: new FormControl<boolean | null>(null),

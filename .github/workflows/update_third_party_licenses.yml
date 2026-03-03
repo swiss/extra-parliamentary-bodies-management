@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main #only run on main branch (avoids pipeline being triggered, when tags are pushed)
+    tags-ignore:
+      - '**'
 
 permissions:
   contents: write  # needed to push the updated file
