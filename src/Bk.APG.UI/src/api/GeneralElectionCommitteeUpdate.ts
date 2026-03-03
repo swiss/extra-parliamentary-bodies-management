@@ -11,7 +11,6 @@ export interface GeneralElectionCommitteeUpdate {
     officeId: string;
     departmentId: string;
     committeeTypeId: string;
-    releaseGeneralElection?: boolean;
     federalLawEstablishment?: boolean;
     supervisionDuty?: boolean;
     marketOrientated?: boolean;

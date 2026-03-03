@@ -50,7 +50,7 @@ public static class OgdExportConstants
     public const string LdAdminChLink = "https://ld.admin.ch/";
     public const string RegisterLdAdminChLink = "https://register.ld.admin.ch/";
     public const string LdFCh = "ld:FCh";
-    public const string LdCreativeWorkStatusDraft = "ld:vocabulary/CreativeWorkStatus/Draft";
+    public const string LdCreativeWorkStatusPublished = "ld:vocabulary/CreativeWorkStatus/Published";
     public const string LdApplicationVisualize = "ld:application/visualize";
     public const string LdWebsiteType = "ld:fch/apg/vocabulary/website-type";
 
@@ -93,7 +93,6 @@ public static class OgdExportConstants
     public const string NamespaceVestedInterest = "vested-interest";
     public const string NamespaceCommitteeFunctionStatistic = "committee-function-statistic";
     public const string NamespaceCommitteeCantonStatistic = "committee-canton-statistic";
-    public const string NamespaceCommitteeCantonDetailStatistic = "committee-canton-detail-statistic";
     public const string NamespaceCommitteeGenderLanguageStatistic = "committee-gender-language-statistic";
     public const string NamespaceCommitteeTypeStatistic = "committee-type-statistic";
     public const string NamespaceExtraparliamentaryCommission = "extra-parliamentary-commission";
