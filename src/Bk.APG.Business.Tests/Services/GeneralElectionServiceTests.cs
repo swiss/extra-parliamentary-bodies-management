@@ -192,17 +192,28 @@ public class GeneralElectionServiceTests
         };
 
         var parentId = Guid.NewGuid();
+        var departments = new List<Department>
+        {
+            new DepartmentBuilder().Build(),
+            new DepartmentBuilder().Build(),
+        };
 
         _committeeRepository.GetAllForGeneralElection(_zeroGuid, _zeroGuid, _zeroGuid).Returns(committees);
         _worklistTaskService.CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>()).Returns(new WorklistTaskBuilder().WithId(parentId).Build());
         _generalElectionCommitteeRepository.Create(Arg.Any<GeneralElectionCommittee>()).Returns(new GeneralElectionCommitteeBuilder().Build());
         _membershipRepository.GetAllActiveMembershipsForCommittee(Arg.Any<Guid>()).Returns(memberships);
+        _masterDataRepository.GetDepartments().Returns(departments);
 
         await _generalElectionService.StartGeneralElection(termOfOfficeDateId, beginDate, endDate, dueDate, description);
 
         await _generalElectionCommitteeRepository.Received(1).DeleteAll();
         await _generalElectionCommitteeRepository.Received(2).Create(Arg.Any<GeneralElectionCommittee>());
         await _membershipCandidateRepository.Received(4).Create(Arg.Any<MembershipCandidate>());
+        await _worklistTaskService.Received(1 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
+        await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
+            x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck && x.WorklistTaskStateId == WorklistTaskState.Active));
+        await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
+            x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureValidate && x.WorklistTaskStateId == WorklistTaskState.Inactive));
     }
 
     [Test]
@@ -210,7 +221,10 @@ public class GeneralElectionServiceTests
     {
         var membershipId = Guid.NewGuid();
         var membership = new MembershipBuilder().WithId(membershipId).Build();
-        var membershipCandidate = new MembershipCandidateBuilder().WithMembership(membership).Build();
+        var membershipCandidate = new MembershipCandidateBuilder()
+          .WithMembership(membership)
+          .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(false)
+          .Build()).Build();
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
 
@@ -239,11 +253,31 @@ public class GeneralElectionServiceTests
     }
 
     [Test]
+    public async Task MirrorOrDeleteMembershipForGeneralElection_WithValidatedCandidateList_ShouldSkipChanges()
+    {
+        var membershipId = Guid.NewGuid();
+        var membership = new MembershipBuilder().WithId(membershipId).Build();
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithMembership(membership)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(true)
+            .Build()).Build();
+
+        _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
+
+        await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, false);
+
+        await _membershipCandidateRepository.DidNotReceiveWithAnyArgs().CommitChanges();
+    }
+
+    [Test]
     public async Task MirrorOrDeleteMembershipForGeneralElection_WithDeleteCandidate_ShouldCallDelete()
     {
         var membershipId = Guid.NewGuid();
         var membership = new MembershipBuilder().WithId(membershipId).Build();
-        var membershipCandidate = new MembershipCandidateBuilder().WithMembership(membership).Build();
+        var membershipCandidate = new MembershipCandidateBuilder()
+          .WithMembership(membership)
+          .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(false)
+          .Build()).Build();
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
 

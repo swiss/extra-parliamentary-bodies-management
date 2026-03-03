@@ -153,11 +153,18 @@ public class GeneralElectionService : IGeneralElectionService
             var parentTask = await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionWorklistTask);
 
             var departments = await _masterDataRepository.GetDepartments();
+            var generalMeasureTaskDueDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(3));
 
             foreach (var department in departments)
             {
                 var generalElectionDepartmentWorklistTask = WorklistTaskMapper.CreateGeneralElectionDepartmentWorklistTaskDto(parentTask.Id, parentTask.Description, department.Id, department.EiamAssignmentId, termOfOfficeDateId);
                 await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionDepartmentWorklistTask);
+
+                var generalMeasureDepartmentCheckTask = WorklistTaskMapper.CreateGeneralMeasureDepartmentCheckWorklistTaskDto(parentTask.Id, department.Id, department.EiamAssignmentId, termOfOfficeDateId, generalMeasureTaskDueDate);
+                await _worklistTaskService.CreateWorklistTaskByAdmin(generalMeasureDepartmentCheckTask);
+
+                var generalMeasureAdminValidationTask = WorklistTaskMapper.CreateGeneralMeasureAdminValidationWorklistTaskDto(parentTask.Id, department.Id, termOfOfficeDateId, generalMeasureTaskDueDate);
+                await _worklistTaskService.CreateWorklistTaskByAdmin(generalMeasureAdminValidationTask);
             }
         }
         catch (Exception ex)
@@ -206,6 +213,12 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (membershipCandidate != null)
         {
+            if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true)
+            {
+                _logger.LogInformation("Membership candidate list already validated, skip mirror entries");
+                return;
+            }
+
             if (deleteCandidate)
             {
                 // if the end date has been shortened or the election type is an ending one, we can delete the membershipCandidate

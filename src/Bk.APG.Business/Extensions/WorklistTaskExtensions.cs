@@ -41,7 +41,7 @@ public static class WorklistTaskExtensions
         }
         else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal)
         {
-            navigationUrl = $"/general-election/committees/{worklistTask.CommitteeId}";
+            navigationUrl = $"/general-election/committees/{worklistTask.CommitteeId}?tab=data";
         }
         else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests)
         {
@@ -59,6 +59,11 @@ public static class WorklistTaskExtensions
                  worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer)
         {
             navigationUrl = $"/committees/{worklistTask.CommitteeId}?tab=contacts";
+        }
+        else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck ||
+                 worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureValidate)
+        {
+            navigationUrl = "/administration/generalMeasures";
         }
 
         return navigationUrl;

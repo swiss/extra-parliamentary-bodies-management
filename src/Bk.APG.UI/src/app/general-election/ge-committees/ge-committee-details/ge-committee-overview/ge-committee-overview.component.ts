@@ -4,7 +4,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatCard, MatCardContent} from '@angular/material/card';
 import {ActivatedRoute} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {combineLatest, distinctUntilChanged, map, startWith, switchMap} from 'rxjs';
+import {catchError, combineLatest, EMPTY, distinctUntilChanged, map, startWith, switchMap} from 'rxjs';
 import {CommitteeOverviewBasicDataComponent} from '../../../../committees/committee-details/committee-overview/committee-overview-basic-data/committee-overview-basic-data.component';
 import {GeneralElectionCommitteeDetailsService} from '../ge-committee-details.service';
 
@@ -33,7 +33,9 @@ export class GeneralElectionCommitteeOverviewComponent {
 
         loading$
             .pipe(
-                switchMap(() => this.geCommitteeDetailsService.generalElectionCommitteeDetails(this.route.snapshot.paramMap.get('id')!)),
+                switchMap(() =>
+                    this.geCommitteeDetailsService.generalElectionCommitteeDetails(this.route.snapshot.paramMap.get('id')!).pipe(catchError(() => EMPTY))
+                ),
                 takeUntilDestroyed()
             )
             .subscribe(committeeDetails => this.geCommitteeDetailsService.committeeDetails.set(committeeDetails));
