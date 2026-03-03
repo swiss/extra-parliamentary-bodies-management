@@ -192,17 +192,28 @@ public class GeneralElectionServiceTests
         };
 
         var parentId = Guid.NewGuid();
+        var departments = new List<Department>
+        {
+            new DepartmentBuilder().Build(),
+            new DepartmentBuilder().Build(),
+        };
 
         _committeeRepository.GetAllForGeneralElection(_zeroGuid, _zeroGuid, _zeroGuid).Returns(committees);
         _worklistTaskService.CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>()).Returns(new WorklistTaskBuilder().WithId(parentId).Build());
         _generalElectionCommitteeRepository.Create(Arg.Any<GeneralElectionCommittee>()).Returns(new GeneralElectionCommitteeBuilder().Build());
         _membershipRepository.GetAllActiveMembershipsForCommittee(Arg.Any<Guid>()).Returns(memberships);
+        _masterDataRepository.GetDepartments().Returns(departments);
 
         await _generalElectionService.StartGeneralElection(termOfOfficeDateId, beginDate, endDate, dueDate, description);
 
         await _generalElectionCommitteeRepository.Received(1).DeleteAll();
         await _generalElectionCommitteeRepository.Received(2).Create(Arg.Any<GeneralElectionCommittee>());
         await _membershipCandidateRepository.Received(4).Create(Arg.Any<MembershipCandidate>());
+        await _worklistTaskService.Received(1 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
+        await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
+            x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck && x.WorklistTaskStateId == WorklistTaskState.Active));
+        await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
+            x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureValidate && x.WorklistTaskStateId == WorklistTaskState.Inactive));
     }
 
     [Test]
