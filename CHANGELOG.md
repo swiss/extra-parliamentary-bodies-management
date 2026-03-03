@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0
+-   Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
+
 ## 1.1.1
 
 -   Form letter sender management [BKDO-1109](https://bkdev.atlassian.net/browse/BKDO-1109)
