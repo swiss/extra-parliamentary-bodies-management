@@ -492,28 +492,6 @@
                             }}
                         </mat-error>
                     </mat-form-field>
-
-                    <mat-form-field obErrorMessages>
-                        <mat-label
-                            >{{ 'person.details.address.country' | translate
-                            }}{{ personForm.controls.officeAddress.controls.countryId.errors?.required ? '*' : '' }}</mat-label
-                        >
-                        <mat-select [formControl]="personForm.controls.officeAddress.controls.countryId" (selectionChange)="setCanton($event, 'officeAddress')">
-                            <mat-option />
-                            @for (country of masterDataService.countries(); track country.id) {
-                                <mat-option [value]="country.id">{{ country.description || country.text }}</mat-option>
-                            }
-                        </mat-select>
-                        <mat-error>
-                            {{
-                                errorService.getControlError(
-                                    personForm.controls.officeAddress.controls.countryId.errors,
-                                    'person.details.address.country' | translate,
-                                    'person.error'
-                                )
-                            }}
-                        </mat-error>
-                    </mat-form-field>
                 </div>
             </fieldset>
         }
