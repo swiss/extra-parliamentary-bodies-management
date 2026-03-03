@@ -56,7 +56,7 @@ public class CantonSyncService : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error while trying to synchronize cantons. Error: {Message}", e.Message);
+                    _logger.LogError(e, "Error while trying to synchronize cantons.");
                 }
 
                 await Task.Delay(TimeSpan.FromDays(1), stoppingToken);

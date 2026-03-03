@@ -84,8 +84,8 @@ internal class CommitteeCreateValidatorTests
     public void Validate_WithInvalidEndDate_ShouldAddErrorForField()
     {
         var model = BuildValidModel();
-        model.BeginDate = DateOnly.FromDateTime(DateTime.Now);
-        model.EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        model.BeginDate = DateOnly.FromDateTime(DateTime.Today);
+        model.EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
 
         var result = _validator.TestValidate(model);
 

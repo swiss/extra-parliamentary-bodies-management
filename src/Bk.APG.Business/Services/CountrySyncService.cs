@@ -29,7 +29,7 @@ public class CountrySyncService : BackgroundService
                     using var scope = _serviceProvider.CreateScope();
                     var masterDataCountryService = scope.ServiceProvider.GetRequiredService<MasterData.Services.ICountryService>();
 
-                    var today = DateOnly.FromDateTime(DateTime.Now);
+                    var today = DateOnly.FromDateTime(DateTime.Today);
 
                     _logger.LogDebug("Trying to synchronize countries...");
                     var countries = (await masterDataCountryService.GetCountries(stoppingToken)).ToList();
@@ -60,7 +60,7 @@ public class CountrySyncService : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error while trying to synchronize countries. Error: {Message}", e.Message);
+                    _logger.LogError(e, "Error while trying to synchronize countries.");
                 }
 
                 await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
