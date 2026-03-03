@@ -60,6 +60,11 @@ public static class WorklistTaskExtensions
         {
             navigationUrl = $"/committees/{worklistTask.CommitteeId}?tab=contacts";
         }
+        else if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck ||
+                 worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureValidate)
+        {
+            navigationUrl = "/administration/generalMeasures";
+        }
 
         return navigationUrl;
     }
