@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   update-third-party-licenses:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.ref_type == 'branch'
     runs-on: ubuntu-latest
 
     steps:
