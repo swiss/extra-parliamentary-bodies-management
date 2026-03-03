@@ -56,6 +56,7 @@ public class DataContext : AuditDbContext
     public DbSet<ApgGeneralSettings> ApgGeneralSettings { get; set; }
     public DbSet<FormLetterSenderFunction> FormLetterSenderFunctions { get; set; }
     public DbSet<FormLetterSender> FormLetterSenders { get; set; }
+    public DbSet<Country> Countries { get; set; }
 
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
 

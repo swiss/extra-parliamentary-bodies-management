@@ -29,7 +29,7 @@ public class ContactPointDetailDto
     {
         get
         {
-            return EndDate is null || EndDate > DateOnly.FromDateTime(DateTime.Now);
+            return EndDate is null || EndDate > DateOnly.FromDateTime(DateTime.Today);
         }
     }
 }
