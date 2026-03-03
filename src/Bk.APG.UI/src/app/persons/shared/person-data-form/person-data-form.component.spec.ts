@@ -76,6 +76,9 @@ describe('PersonDataFormComponent', () => {
                 canton: {
                     abroadId: 'efd079df-bc12-4407-82ae-937ea10379c3',
                 },
+                country: {
+                    switzerlandId: '8368f092-2614-400b-8eff-9f186f5d8799',
+                },
             },
         },
     };

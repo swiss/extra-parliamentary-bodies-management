@@ -5,7 +5,6 @@ import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
-import {MatCard, MatCardContent} from '@angular/material/card';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {MatExpansionPanel, MatExpansionPanelHeader, MatExpansionPanelTitle} from '@angular/material/expansion';
 import {Department} from '@api/Department';
@@ -107,8 +106,8 @@ describe('GeneralMeasuresComponent', () => {
             imports: [
                 GeneralMeasuresComponent,
                 ReactiveFormsModule,
-                MockComponents(MatButton, MatCard, MatExpansionPanel, MatExpansionPanelHeader),
-                MockDirectives(MatCardContent, MatExpansionPanelTitle, ObButtonDirective, ObErrorMessagesDirective),
+                MockComponents(MatButton, MatExpansionPanel, MatExpansionPanelHeader),
+                MockDirectives(MatExpansionPanelTitle, ObButtonDirective, ObErrorMessagesDirective),
                 MockComponent(RichTextEditorComponent),
                 MockPipe(TranslatePipe),
             ],
