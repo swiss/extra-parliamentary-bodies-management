@@ -297,5 +297,29 @@ internal class WorklistTaskExtensionsTests
 
             Assert.That(result, Is.EqualTo($"/committees/{committeeId}?tab=contacts"));
         }
+
+        [Test]
+        public void ShouldReturnUrl_WhenTaskTypeIsGeneralMeasureCheck()
+        {
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureCheck)
+                .Build();
+
+            var result = _worklistTask.GetNavigationUrl();
+
+            Assert.That(result, Is.EqualTo("/administration/generalMeasures"));
+        }
+
+        [Test]
+        public void ShouldReturnUrl_WhenTaskTypeIsGeneralMeasureValidate()
+        {
+            _worklistTask = new WorklistTaskBuilder()
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureValidate)
+                .Build();
+
+            var result = _worklistTask.GetNavigationUrl();
+
+            Assert.That(result, Is.EqualTo("/administration/generalMeasures"));
+        }
     }
 }
