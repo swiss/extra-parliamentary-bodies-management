@@ -35,6 +35,7 @@ export interface EntityIdConfig {
     worklistTaskType: WorklistTaskTypeConfig;
     termOfOffice: TermOfOfficeIdConfig;
     contactPoint: ContactPointIdConfig;
+    country: CountryIdConfig;
 }
 
 export interface ContactPointIdConfig {
@@ -113,6 +114,10 @@ export interface ElectionTypeIdConfig {
     reElectionId: string;
     maximumDutyRetirementId: string;
     deceasedId: string;
+}
+
+export interface CountryIdConfig {
+    switzerlandId: string;
 }
 
 @Injectable({providedIn: 'root'})
