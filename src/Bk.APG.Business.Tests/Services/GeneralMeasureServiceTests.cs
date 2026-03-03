@@ -13,19 +13,30 @@ internal class GeneralMeasureServiceTests
     private GeneralMeasureService _service = null!;
 
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
+    private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
     private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
 
     [SetUp]
     public void Setup()
     {
-        _service = new GeneralMeasureService(_generalMeasureRepository, _authorizationService, _masterDataRepository, NullLogger<GeneralMeasureService>.Instance);
+        _authorizationService.GetCurrentEiamAssignment().Returns(new EiamAssignmentBuilder().Build());
+        _worklistTaskRepository.GetByDepartmentIdsAndWorklistTaskTypeIds(Arg.Any<IEnumerable<Guid>>(), Arg.Any<IEnumerable<Guid>>())
+            .Returns([]);
+
+        _service = new GeneralMeasureService(
+            _generalMeasureRepository,
+            _worklistTaskRepository,
+            _authorizationService,
+            _masterDataRepository,
+            NullLogger<GeneralMeasureService>.Instance);
     }
 
     [TearDown]
     public void TearDown()
     {
         _generalMeasureRepository.ClearSubstitute();
+        _worklistTaskRepository.ClearSubstitute();
         _authorizationService.ClearSubstitute();
         _masterDataRepository.ClearSubstitute();
     }
@@ -98,8 +109,8 @@ internal class GeneralMeasureServiceTests
 
         _authorizationService.IsDepartment.Returns(false);
         _authorizationService.IsAdmin.Returns(true);
-        _generalMeasureRepository.GetGeneralGenderMeasures().Returns(Array.Empty<GeneralGenderMeasure>());
-        _generalMeasureRepository.GetGeneralLanguageMeasures().Returns(Array.Empty<GeneralLanguageMeasure>());
+        _generalMeasureRepository.GetGeneralGenderMeasures().Returns([]);
+        _generalMeasureRepository.GetGeneralLanguageMeasures().Returns([]);
         _masterDataRepository.GetDepartments().Returns(new List<Department> { department });
 
         var result = (await _service.GetGeneralMeasures()).ToList();
@@ -173,13 +184,14 @@ internal class GeneralMeasureServiceTests
 
         await _service.AddOrUpdateGeneralMeasure(updateDto);
 
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(existingGenderMeasure.Description, Is.EqualTo("Updated Gender"));
             Assert.That(existingGenderMeasure.ModifiedBy, Is.EqualTo(userName));
             Assert.That(existingLanguageMeasure.Description, Is.EqualTo("Updated Language"));
             Assert.That(existingLanguageMeasure.ModifiedBy, Is.EqualTo(userName));
-        });
+        }
+
         await _generalMeasureRepository.Received(2).CommitChanges();
         await _generalMeasureRepository.DidNotReceive().AddGeneralGenderMeasure(Arg.Any<GeneralGenderMeasure>());
         await _generalMeasureRepository.DidNotReceive().AddGeneralLanguageMeasure(Arg.Any<GeneralLanguageMeasure>());
@@ -203,10 +215,8 @@ internal class GeneralMeasureServiceTests
 
         await _service.AddOrUpdateGeneralMeasure(updateDto);
 
-        await _generalMeasureRepository.Received(1).AddGeneralGenderMeasure(Arg.Is<GeneralGenderMeasure>(
-            m => m.Description == string.Empty));
-        await _generalMeasureRepository.Received(1).AddGeneralLanguageMeasure(Arg.Is<GeneralLanguageMeasure>(
-            m => m.Description == string.Empty));
+        await _generalMeasureRepository.Received(1).AddGeneralGenderMeasure(Arg.Is<GeneralGenderMeasure>(m => m.Description == string.Empty));
+        await _generalMeasureRepository.Received(1).AddGeneralLanguageMeasure(Arg.Is<GeneralLanguageMeasure>(m => m.Description == string.Empty));
     }
 
     [Test]
@@ -232,8 +242,7 @@ internal class GeneralMeasureServiceTests
 
         Assert.That(existingGenderMeasure.Description, Is.EqualTo("Updated Gender"));
         await _generalMeasureRepository.Received(1).CommitChanges();
-        await _generalMeasureRepository.Received(1).AddGeneralLanguageMeasure(Arg.Is<GeneralLanguageMeasure>(
-            m => m.DepartmentId == departmentId && m.Description == "New Language"));
+        await _generalMeasureRepository.Received(1).AddGeneralLanguageMeasure(Arg.Is<GeneralLanguageMeasure>(m => m.DepartmentId == departmentId && m.Description == "New Language"));
     }
 
     [Test]
@@ -260,8 +269,7 @@ internal class GeneralMeasureServiceTests
 
         Assert.That(existingLanguageMeasure.Description, Is.EqualTo("Updated Language"));
         await _generalMeasureRepository.Received(1).CommitChanges();
-        await _generalMeasureRepository.Received(1).AddGeneralGenderMeasure(Arg.Is<GeneralGenderMeasure>(
-            m => m.DepartmentId == departmentId && m.Description == "New Gender"));
+        await _generalMeasureRepository.Received(1).AddGeneralGenderMeasure(Arg.Is<GeneralGenderMeasure>(m => m.DepartmentId == departmentId && m.Description == "New Gender"));
     }
 
     [Test]
@@ -295,5 +303,174 @@ internal class GeneralMeasureServiceTests
             m.ModifiedBy == userName &&
             m.Created >= beforeTime && m.Created <= afterTime &&
             m.Modified >= beforeTime && m.Modified <= afterTime));
+    }
+
+    [Test]
+    public async Task GetGeneralMeasures_WhenDepartmentTaskIsActiveForCurrentUser_ShouldSetWorkflowFlags()
+    {
+        var departmentId = Guid.NewGuid();
+        var currentAssignmentId = Guid.NewGuid();
+        var termOfOfficeDateId = Guid.NewGuid();
+
+        var department = new DepartmentBuilder().WithId(departmentId).Build();
+        var currentAssignment = new EiamAssignmentBuilder().WithId(currentAssignmentId).Build();
+
+        var departmentTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(currentAssignmentId).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureCheck)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        var adminTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(EiamAssignment.AdminId).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureValidate)
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .Build();
+
+        departmentTask.TermOfOfficeDateId = termOfOfficeDateId;
+        adminTask.TermOfOfficeDateId = termOfOfficeDateId;
+
+        _authorizationService.IsDepartment.Returns(true);
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.GetDepartment().Returns(department);
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _masterDataRepository.GetDepartments().Returns(new List<Department> { department });
+        _generalMeasureRepository.GetGeneralGenderMeasures().Returns([]);
+        _generalMeasureRepository.GetGeneralLanguageMeasures().Returns([]);
+        _worklistTaskRepository.GetByDepartmentIdsAndWorklistTaskTypeIds(Arg.Any<IEnumerable<Guid>>(), Arg.Any<IEnumerable<Guid>>())
+            .Returns([departmentTask, adminTask]);
+
+        var result = (await _service.GetGeneralMeasures()).Single();
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result.IsDepartmentTaskActive, Is.True);
+            Assert.That(result.IsAdminTaskActive, Is.False);
+            Assert.That(result.CanForwardToAdmin, Is.True);
+            Assert.That(result.CanValidate, Is.False);
+            Assert.That(result.CanForwardToDepartment, Is.False);
+        }
+    }
+
+    [Test]
+    public async Task Forward_WhenForwardToAdminAndDepartmentTaskIsActiveForCurrentUser_ShouldCompleteDepartmentAndActivateAdminTask()
+    {
+        var departmentId = Guid.NewGuid();
+        var departmentAssignmentId = Guid.NewGuid();
+        var termOfOfficeDateId = Guid.NewGuid();
+        var department = new DepartmentBuilder().WithId(departmentId).Build();
+        var currentAssignment = new EiamAssignmentBuilder().WithId(departmentAssignmentId).Build();
+
+        var departmentTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(departmentAssignmentId).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureCheck)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        var adminTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(EiamAssignment.AdminId).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureValidate)
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .Build();
+
+        departmentTask.TermOfOfficeDateId = termOfOfficeDateId;
+        adminTask.TermOfOfficeDateId = termOfOfficeDateId;
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _authorizationService.GetCurrentUserName().Returns("dept.user@bk.admin.ch");
+        _worklistTaskRepository.GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(departmentId, Arg.Any<IEnumerable<Guid>>())
+            .Returns([departmentTask, adminTask]);
+
+        await _service.Forward(departmentId, "Bitte prüfen.", true);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(departmentTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+            Assert.That(adminTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
+        }
+
+        await _worklistTaskRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task Validate_WhenAdminTaskIsActiveForCurrentUser_ShouldCompleteAdminTask()
+    {
+        var departmentId = Guid.NewGuid();
+        var termOfOfficeDateId = Guid.NewGuid();
+        var department = new DepartmentBuilder().WithId(departmentId).Build();
+        var currentAssignment = new EiamAssignmentBuilder().WithId(EiamAssignment.AdminId).WithRole(Role.Admin).Build();
+
+        var departmentTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(department.Id).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureCheck)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .Build();
+
+        var adminTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(EiamAssignment.AdminId).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureValidate)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        departmentTask.TermOfOfficeDateId = termOfOfficeDateId;
+        adminTask.TermOfOfficeDateId = termOfOfficeDateId;
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _authorizationService.GetCurrentUserName().Returns("admin.user@bk.admin.ch");
+        _worklistTaskRepository.GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(departmentId, Arg.Any<IEnumerable<Guid>>())
+            .Returns([adminTask]);
+
+        await _service.Validate(departmentId);
+
+        Assert.That(adminTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+        await _worklistTaskRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task Forward_WhenForwardToDepartmentAndAdminTaskIsActiveForCurrentUser_ShouldActivateDepartmentAndSetAdminInactive()
+    {
+        var departmentId = Guid.NewGuid();
+        var departmentAssignmentId = Guid.NewGuid();
+        var termOfOfficeDateId = Guid.NewGuid();
+        var department = new DepartmentBuilder().WithId(departmentId).Build();
+        var currentAssignment = new EiamAssignmentBuilder().WithId(EiamAssignment.AdminId).Build();
+
+        var departmentTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(departmentAssignmentId).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureCheck)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .Build();
+
+        var adminTask = new WorklistTaskBuilder()
+            .WithDepartment(department)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithId(EiamAssignment.AdminId).Build())
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralMeasureValidate)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .Build();
+
+        departmentTask.TermOfOfficeDateId = termOfOfficeDateId;
+        adminTask.TermOfOfficeDateId = termOfOfficeDateId;
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _authorizationService.GetCurrentUserName().Returns("admin.user@bk.admin.ch");
+        _worklistTaskRepository.GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(departmentId, Arg.Any<IEnumerable<Guid>>())
+            .Returns([departmentTask, adminTask]);
+
+        await _service.Forward(departmentId, "Bitte ergänzen.", false);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(departmentTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
+            Assert.That(adminTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Inactive));
+        }
+
+        await _worklistTaskRepository.Received(1).CommitChanges();
     }
 }

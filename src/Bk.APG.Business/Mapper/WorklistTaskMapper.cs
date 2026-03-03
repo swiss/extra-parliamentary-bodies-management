@@ -121,4 +121,34 @@ public static class WorklistTaskMapper
             TermOfOfficeDateId = termOfOfficeDateId
         };
     }
+
+    public static WorklistTaskCreateDto CreateGeneralMeasureDepartmentCheckWorklistTaskDto(Guid parentId, Guid departmentId, Guid assignedToId, Guid termOfOfficeDateId, DateOnly dueDate)
+    {
+        return new WorklistTaskCreateDto
+        {
+            AssignedToId = assignedToId,
+            WorklistTaskTypeId = WorklistTaskType.GeneralMeasureCheck,
+            WorklistTaskStateId = WorklistTaskState.Active,
+            ParentTaskId = parentId,
+            DepartmentId = departmentId,
+            Description = string.Empty,
+            DueDate = dueDate,
+            TermOfOfficeDateId = termOfOfficeDateId
+        };
+    }
+
+    public static WorklistTaskCreateDto CreateGeneralMeasureAdminValidationWorklistTaskDto(Guid parentId, Guid departmentId, Guid termOfOfficeDateId, DateOnly dueDate)
+    {
+        return new WorklistTaskCreateDto
+        {
+            AssignedToId = EiamAssignment.AdminId,
+            WorklistTaskTypeId = WorklistTaskType.GeneralMeasureValidate,
+            WorklistTaskStateId = WorklistTaskState.Inactive,
+            ParentTaskId = parentId,
+            DepartmentId = departmentId,
+            Description = string.Empty,
+            DueDate = dueDate,
+            TermOfOfficeDateId = termOfOfficeDateId
+        };
+    }
 }
