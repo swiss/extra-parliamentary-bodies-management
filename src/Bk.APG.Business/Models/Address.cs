@@ -5,7 +5,10 @@ public class Address : EntityBase
     public string? CompanyName { get; set; }
     public string? Street { get; set; }
     public string? PoBox { get; set; }
+    // TODO PP, will be removed after one release, data migration in current sprint
     public string? CountryCode { get; set; }
+    public Country? Country { get; set; }
+    public Guid? CountryId { get; set; }
     public string? Zip { get; set; }
     public string? City { get; set; }
     public Canton? Canton { get; set; }

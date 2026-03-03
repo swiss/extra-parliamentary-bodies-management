@@ -45,6 +45,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IEntityAuditLogRepository, EntityAuditLogRepository>();
         services.AddScoped<IApgGeneralSettingsRepository, ApgGeneralSettingsRepository>();
         services.AddScoped<IFormLetterSenderRepository, FormLetterSenderRepository>();
+        services.AddScoped<ICountryRepository, CountryRepository>();
 
         services.AddScoped<ICantonService, CantonService>();
         services.AddScoped<IPersonService, PersonService>();
@@ -74,6 +75,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ISalutationGeneratorService, SalutationGeneratorService>();
         services.AddScoped<IOgdDocumentService, OgdDocumentService>();
         services.AddScoped<IFormLetterSenderService, FormLetterSenderService>();
+        services.AddScoped<ICountryService, CountryService>();
 
         services.AddScoped<ISparqlClientFactory, SparqlClientFactory>();
         services.AddScoped<IOgdExportService, OgdExportService>();
@@ -83,6 +85,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ICultureService, CultureService>();
 
         services.AddHostedService<CantonSyncService>();
+        services.AddHostedService<CountrySyncService>();
         services.AddHostedService<OgdExportBackgroundService>();
         services.AddHostedService<EiamAssignmentBackgroundService>();
         services.AddHostedService<EntityAuditLogCleanupBackgroundService>();

@@ -16,9 +16,6 @@ public class AddressUpdateValidator : AbstractValidator<AddressUpdateDto>
         RuleFor(x => x.PoBox)
             .MaximumLength(50);
 
-        RuleFor(x => x.CountryCode)
-            .MaximumLength(10);
-
         RuleFor(x => x.Zip)
             .MaximumLength(10)
             .NotEmpty()
