@@ -253,12 +253,12 @@ export class PersonDataFormComponent implements OnInit {
                 this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
                 this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
                 this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
-                this.personForm.controls.officeAddress.controls.countryCode.updateValueAndValidity();
+                this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.street.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
-                this.personForm.controls.privateAddress.controls.countryCode.updateValueAndValidity();
+                this.personForm.controls.privateAddress.controls.countryId.updateValueAndValidity();
 
                 effectRef.destroy();
             }
@@ -393,7 +393,7 @@ export class PersonDataFormComponent implements OnInit {
             this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.countryCode.updateValueAndValidity();
+            this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
         });
 
         this.personForm.controls.privateAddress.controls.activeAddress.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
@@ -401,7 +401,7 @@ export class PersonDataFormComponent implements OnInit {
             this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.countryCode.updateValueAndValidity();
+            this.personForm.controls.privateAddress.controls.countryId.updateValueAndValidity();
         });
     }
 
@@ -420,12 +420,12 @@ export class PersonDataFormComponent implements OnInit {
             this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.countryCode.updateValueAndValidity();
+            this.personForm.controls.privateAddress.controls.countryId.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.street.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.countryCode.updateValueAndValidity();
+            this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
         } else if (selection === 'officeAddress') {
             this.personForm.controls.officeAddress.patchValue({activeAddress: true});
             this.personForm.controls.privateAddress.patchValue({activeAddress: false});
@@ -434,12 +434,12 @@ export class PersonDataFormComponent implements OnInit {
             this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.countryCode.updateValueAndValidity();
+            this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.street.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.countryCode.updateValueAndValidity();
+            this.personForm.controls.privateAddress.controls.countryId.updateValueAndValidity();
         }
         this.personForm.markAsDirty();
     }
@@ -468,7 +468,11 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.controls[controlId].controls.zip.setValue(address.zip!, {emitEvent: false});
         this.personForm.controls[controlId].controls.city.setValue(address.city!, {emitEvent: false});
         this.personForm.controls[controlId].controls.cantonId.setValue(address.canton?.id);
-        this.personForm.controls[controlId].controls.countryCode.setValue('CH');
+
+        if (address.canton?.id) {
+            this.personForm.controls[controlId].controls.countryId.setValue(this.configsService.frontendConfig.entityIds.country.switzerlandId);
+        }
+
         if (controlId === 'officeAddress') {
             this.filteredZipsAndCitiesOffice.set([]);
         } else {
@@ -483,7 +487,11 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.controls[controlId].controls.zip.setValue(address.zip!, {emitEvent: false});
         this.personForm.controls[controlId].controls.city.setValue(address.city!, {emitEvent: false});
         this.personForm.controls[controlId].controls.cantonId.setValue(address.canton?.id);
-        this.personForm.controls[controlId].controls.countryCode.setValue('CH');
+
+        if (address.canton?.id) {
+            this.personForm.controls[controlId].controls.countryId.setValue(this.configsService.frontendConfig.entityIds.country.switzerlandId);
+        }
+
         if (controlId === 'officeAddress') {
             this.filteredZipsAndCitiesOffice.set([]);
         } else {
@@ -495,9 +503,9 @@ export class PersonDataFormComponent implements OnInit {
 
     setCanton(event: MatSelectChange, controlId: AddressControlId) {
         if (event.value && event.value !== this.configsService.frontendConfig.entityIds.canton.abroadId) {
-            this.personForm.controls[controlId].controls.countryCode.setValue('CH');
+            this.personForm.controls[controlId].controls.countryId.setValue(this.configsService.frontendConfig.entityIds.country.switzerlandId);
         } else {
-            this.personForm.controls[controlId].controls.countryCode.setValue(null);
+            this.personForm.controls[controlId].controls.countryId.setValue(null);
         }
     }
 
@@ -555,7 +563,7 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.controls[controlId].controls.zip.patchValue(null, {emitEvent: false});
         this.personForm.controls[controlId].controls.city.patchValue(null, {emitEvent: false});
         this.personForm.controls[controlId].controls.cantonId.patchValue(null, {emitEvent: false});
-        this.personForm.controls[controlId].controls.countryCode.patchValue(null);
+        this.personForm.controls[controlId].controls.countryId.patchValue(null, {emitEvent: false});
         if (controlId === 'officeAddress') {
             this.filteredZipsAndCitiesOffice.set([]);
         } else {
@@ -659,7 +667,7 @@ export class PersonDataFormComponent implements OnInit {
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.city.value) &&
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.cantonId.value) &&
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.companyName.value) &&
-            this.isNullOrEmpty(this.personForm.controls[controlId].controls.countryCode.value) &&
+            this.isNullOrEmpty(this.personForm.controls[controlId].controls.countryId.value) &&
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.email.value) &&
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.mobile.value) &&
             this.isNullOrEmpty(this.personForm.controls[controlId].controls.phone.value) &&
@@ -760,7 +768,7 @@ export class PersonDataFormComponent implements OnInit {
                 companyName: new FormControl(''),
                 street: new FormControl(''),
                 poBox: new FormControl(''),
-                countryCode: new FormControl(''),
+                countryId: new FormControl<string | undefined>(undefined),
                 zip: new FormControl(''),
                 city: new FormControl(''),
                 phone: new FormControl('', {validators: [Validators.pattern(TEL_PATTERN), Validators.maxLength(20)]}),
@@ -773,7 +781,7 @@ export class PersonDataFormComponent implements OnInit {
                 companyName: new FormControl(''),
                 street: new FormControl(''),
                 poBox: new FormControl(''),
-                countryCode: new FormControl(''),
+                countryId: new FormControl<string | undefined>(undefined),
                 zip: new FormControl(''),
                 city: new FormControl(''),
                 phone: new FormControl('', {validators: [Validators.pattern(TEL_PATTERN), Validators.maxLength(20)]}),
@@ -801,7 +809,7 @@ export class PersonDataFormComponent implements OnInit {
         form.controls.officeAddress.controls.cantonId.setValidators(
             conditionalValidator(() => form.controls.officeAddress.controls.activeAddress.value, Validators.required)
         );
-        form.controls.officeAddress.controls.countryCode.setValidators(
+        form.controls.officeAddress.controls.countryId.setValidators(
             conditionalValidator(() => form.controls.officeAddress.controls.activeAddress.value, Validators.required)
         );
 
@@ -818,7 +826,7 @@ export class PersonDataFormComponent implements OnInit {
         form.controls.privateAddress.controls.cantonId.setValidators(
             conditionalValidator(() => form.controls.privateAddress.controls.activeAddress.value, Validators.required)
         );
-        form.controls.privateAddress.controls.countryCode.setValidators(
+        form.controls.privateAddress.controls.countryId.setValidators(
             conditionalValidator(() => form.controls.privateAddress.controls.activeAddress.value, Validators.required)
         );
 
@@ -838,7 +846,7 @@ export class PersonDataFormComponent implements OnInit {
             !person.privateAddress?.cantonId &&
             !person.privateAddress?.city &&
             !person.privateAddress?.companyName &&
-            !person.privateAddress?.countryCode &&
+            !person.privateAddress?.countryId &&
             !person.privateAddress?.email &&
             !person.privateAddress?.mobile &&
             !person.privateAddress?.phone &&
@@ -854,7 +862,7 @@ export class PersonDataFormComponent implements OnInit {
             !person.officeAddress?.cantonId &&
             !person.officeAddress?.city &&
             !person.officeAddress?.companyName &&
-            !person.officeAddress?.countryCode &&
+            !person.officeAddress?.countryId &&
             !person.officeAddress?.email &&
             !person.officeAddress?.mobile &&
             !person.officeAddress?.phone &&
