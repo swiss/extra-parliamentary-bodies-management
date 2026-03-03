@@ -39,8 +39,12 @@ public class EntityIdOptions
 
     [Required]
     public required TermOfOfficeOptions TermOfOffice { get; init; }
+
     [Required]
     public required ContactPointIdConfig ContactPoint { get; init; }
+
+    [Required]
+    public required CountryOptions Country { get; init; }
 }
 
 public class ContactPointIdConfig
@@ -176,4 +180,10 @@ public class ElectionTypeOptions
 
     [Required]
     public required string DeceasedId { get; init; }
+}
+
+public class CountryOptions
+{
+    [Required]
+    public required string SwitzerlandId { get; init; }
 }
