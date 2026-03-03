@@ -1,12 +1,15 @@
 # Changelog
 
 ## 1.2.0
+-   Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
+
+## 1.1.1
 
 -   Form letter sender management [BKDO-1109](https://bkdev.atlassian.net/browse/BKDO-1109)
 -   Exclude CrossBorderFederalAgencies from OGD export [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
 -   Migrate "Anstalt" legal form to "Institut des öffentlichen Rechts" [BKDO-2798](https://bkdev.atlassian.net/browse/BKDO-2798)
--   Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
-
+-   Mark OGD cubes as published for visualiziation [BKDO-2894](https://bkdev.atlassian.net/browse/BKDO-2894)
+-   Add general election ready for federal council proposal [BKDO-826](https://bkdev.atlassian.net/browse/BKDO-826)
 
 ## 1.1.0
 

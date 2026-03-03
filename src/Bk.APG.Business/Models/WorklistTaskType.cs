@@ -21,5 +21,8 @@ public class WorklistTaskType : MasterDataBase
     public static readonly Guid GeneralElectionMissingSecretariat = Guid.Parse("18e4a819-0176-409a-ace1-7c91b634f7ae");
     public static readonly Guid GeneralElectionMissingDataProtectionOfficer = Guid.Parse("60bce508-9011-42d5-b501-907e5eaad326");
 
+    public static readonly Guid GeneralMeasureCheck = Guid.Parse("c1577045-eda3-445c-8e10-5e326f4650bc");
+    public static readonly Guid GeneralMeasureValidate = Guid.Parse("c262c4b0-8661-488d-a69f-c7ff6ced784a");
+
     public required bool CanBeCreatedManually { get; set; }
 }
