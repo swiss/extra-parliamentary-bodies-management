@@ -200,6 +200,28 @@ public class WorklistTaskService : IWorklistTaskService
         await _generalElectionCommitteeRepository.CommitChanges();
     }
 
+    public async Task CreateWorklistTasksForSingleCommittee(WorklistTask worklistTask, Committee committee)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var forwarderId = worklistTask.AssignedToId;
+        var currentUserName = _authorizationService.GetCurrentUserName();
+
+        var forwardDto = new WorklistTaskForwardDto { CandidateListDescription = worklistTask.Description, CandidateListDueDate = worklistTask.DueDate, CommitteeDescription = string.Empty, CommitteeDueDate = today };
+
+        List<WorklistTask> newTasks = [];
+        if (committee.Department!.IsBigDepartment)
+        {
+            CreateWorklistTasksForCommitteeBigDepartment(forwardDto, worklistTask, newTasks, committee, forwarderId, currentUserName);
+        }
+        else
+        {
+            CreateWorklistTasksForCommitteeSmallDepartment(forwardDto, worklistTask, newTasks, committee, forwarderId, currentUserName);
+        }
+
+        await _worklistTaskRepository.CreateRange(newTasks);
+        _logger.LogInformation("Created tasks for secretariats in department {DepartmentId}", worklistTask.DepartmentId);
+    }
+
     private async Task ForwardGeneralElectionDispatchToSecretariat(WorklistTaskForwardDto forwardDto,
         WorklistTask worklistTask, bool isDepartment, string currentUserName)
     {

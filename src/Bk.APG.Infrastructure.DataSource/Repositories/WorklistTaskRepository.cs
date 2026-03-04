@@ -170,6 +170,8 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<List<WorklistTask>> GetByWorklistTaskTypeId(Guid worklistTaskTypeId)
     {
         return await _dataContext.WorklistTasks
+            .Include(w => w.ParentTask)
+            .Include(w => w.AssignedBy)
             .Where(x => x.WorklistTaskTypeId == worklistTaskTypeId)
             .ToListAsync();
     }
