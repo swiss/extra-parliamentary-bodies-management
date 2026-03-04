@@ -5,13 +5,15 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {AbstractControl, ControlEvent, FormGroup, PristineChangeEvent} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ActivatedRoute, ActivatedRouteSnapshot, Router} from '@angular/router';
+import {CommitteeDetails} from '@api/CommitteeDetails';
 import {CommitteeUpdate} from '@api/CommitteeUpdate';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
+import {ObAlertModule, ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
 import {EntityAuditLogService} from '@shared/entity-audit-log/entity-audit-log.service';
-import {MockComponents, MockPipe} from 'ng-mocks';
+import {MockComponents, MockModule, MockPipe} from 'ng-mocks';
 import {BehaviorSubject, of, Subject, throwError} from 'rxjs';
 import {AuthService} from '../../../auth/auth.service';
+import {GeneralElectionService} from '../../../general-election/general-election.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeDataFormComponent} from '../../shared/committee-data-form/committee-data-form.component';
 import {CommitteeDetailsService} from '../committee-details.service';
@@ -34,6 +36,7 @@ describe('CommitteeDataComponent', () => {
     let matDialogMock: Partial<MatDialog>;
     let translateServiceMock: Partial<TranslateService>;
     let authServiceMock: Partial<AuthService>;
+    let mockGeneralElectionService: Partial<GeneralElectionService>;
 
     beforeEach(async () => {
         reloadSubject = new BehaviorSubject<void>(undefined);
@@ -47,6 +50,7 @@ describe('CommitteeDataComponent', () => {
         };
         committeeDetailsServiceMock = {
             isDataFormDirty: signal(false),
+            committeeDetails: signal<CommitteeDetails>({} as CommitteeDetails),
         };
         activatedRouteMock = {
             snapshot: {
@@ -79,8 +83,12 @@ describe('CommitteeDataComponent', () => {
             isAdmin$: new BehaviorSubject(false),
         };
 
+        mockGeneralElectionService = {
+            isGeneralElectionVisible: jest.fn(),
+        } as any;
+
         await TestBed.configureTestingModule({
-            imports: [MockPipe(TranslatePipe), MockComponents(CommitteeDataFormComponent), CommitteeDataComponent],
+            imports: [MockPipe(TranslatePipe), MockComponents(CommitteeDataFormComponent), MockModule(ObAlertModule), CommitteeDataComponent],
             providers: [
                 {provide: CommitteesService, useValue: committeesServiceMock},
                 {provide: CommitteeDetailsService, useValue: committeeDetailsServiceMock},
@@ -92,6 +100,7 @@ describe('CommitteeDataComponent', () => {
                 {provide: MatDialog, useValue: matDialogMock},
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: AuthService, useValue: authServiceMock},
+                {provide: GeneralElectionService, useValue: mockGeneralElectionService},
             ],
         }).compileComponents();
 

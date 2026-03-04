@@ -6,11 +6,12 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {CommitteeJustificationForm} from '@api/CommitteeJustificationForm';
 import {CommitteeJustificationUpdate} from '@api/CommitteeJustificationUpdate';
 import {TranslatePipe} from '@ngx-translate/core';
-import {ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
+import {ObAlertModule, ObButtonDirective, ObHttpApiInterceptorEvents, ObNotificationService} from '@oblique/oblique';
 import {EntityAuditLogService} from '@shared/entity-audit-log/entity-audit-log.service';
 import {HelpTooltipComponent} from '@shared/help-tooltip/help-tooltip.component';
 import {RichTextEditorComponent} from '@shared/rich-text-editor/rich-text-editor.component';
 import {switchMap} from 'rxjs';
+import {GeneralElectionService} from '../../../general-election/general-election.service';
 import {CommitteesService} from '../../committees.service';
 import {CommitteeDetailsService} from '../committee-details.service';
 
@@ -18,13 +19,13 @@ import {CommitteeDetailsService} from '../committee-details.service';
     selector: 'apg-committee-justifications',
     templateUrl: './committee-justifications.component.html',
     styleUrl: './committee-justifications.component.scss',
-    imports: [ReactiveFormsModule, MatButton, ObButtonDirective, HelpTooltipComponent, RichTextEditorComponent, TranslatePipe],
+    imports: [ReactiveFormsModule, MatButton, ObButtonDirective, HelpTooltipComponent, RichTextEditorComponent, TranslatePipe, ObAlertModule],
 })
 export class CommitteeJustificationsComponent {
     committeeJustificationForm!: FormGroup<CommitteeJustificationForm>;
     committeeJustificationUpdate = signal<CommitteeJustificationUpdate | undefined>(undefined);
 
-    canEdit = computed(() => this.committeeDetails()?.canEdit);
+    canEdit = computed(() => this.committeeDetails()?.canCreateJustification);
 
     protected readonly committeeDetails = computed(() => this.committeeDetailsService.committeeDetails());
 
@@ -32,6 +33,7 @@ export class CommitteeJustificationsComponent {
 
     constructor(
         protected readonly formBuilder: FormBuilder,
+        protected readonly generalElectionService: GeneralElectionService,
         private readonly committeeDetailsService: CommitteeDetailsService,
         private readonly route: ActivatedRoute,
         private readonly router: Router,
