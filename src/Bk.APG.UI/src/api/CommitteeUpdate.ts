@@ -34,5 +34,6 @@ export interface CommitteeUpdate {
     membersCount: number;
     vacanciesInGeneralElection?: number;
     membershipAdditionsInGeneralElection?: string[];
+    futureGeneralElectionCommittee: boolean;
     rowVersion: number;
 }

@@ -45,4 +45,12 @@ public class EiamAssignmentRepository : IEiamAssignmentRepository
 
         return result ?? throw new EntityNotFoundException($"EiamAssignment with id {id} not found");
     }
+
+    public async Task<EiamAssignment> Create(EiamAssignment eiamAssignment)
+    {
+        var entry = await _dataContext.EiamAssignments.AddAsync(eiamAssignment);
+        await _dataContext.SaveChangesAsync();
+
+        return entry.Entity;
+    }
 }

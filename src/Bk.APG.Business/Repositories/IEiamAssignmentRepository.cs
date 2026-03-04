@@ -6,4 +6,5 @@ public interface IEiamAssignmentRepository
 {
     Task<EiamAssignment> GetByExternalId(string externalId);
     Task<EiamAssignment> GetById(Guid id);
+    Task<EiamAssignment> Create(EiamAssignment eiamAssignment);
 }
