@@ -15,9 +15,14 @@ public class CommitteeService : ICommitteeService
     private readonly ICultureService _cultureService;
     private readonly IAuthorizationService _authorizationService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
+    private readonly ITermOfOfficeDateService _termOfOfficeDateService;
+    private readonly IWorklistTaskService _worklistTaskService;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IMembershipRepository _membershipRepository;
+    private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
+    private readonly IEiamAssignmentRepository _eiamAssignmentRepository;
     private readonly ILogger<CommitteeService> _logger;
 
     public CommitteeService(
@@ -26,9 +31,14 @@ public class CommitteeService : ICommitteeService
         ICultureService cultureService,
         IAuthorizationService authorizationService,
         IEiamAssignmentService eiamAssignmentService,
+        ITermOfOfficeDateService termOfOfficeDateService,
+        IWorklistTaskService worklistTaskService,
         IMasterDataRepository masterDataRepository,
         IGeneralMeasureRepository generalMeasureRepository,
         IMembershipRepository membershipRepository,
+        IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
+        IWorklistTaskRepository worklistTaskRepository,
+        IEiamAssignmentRepository eiamAssignmentRepository,
         ILogger<CommitteeService> logger)
     {
         _committeeRepository = committeeRepository;
@@ -36,9 +46,14 @@ public class CommitteeService : ICommitteeService
         _cultureService = cultureService;
         _authorizationService = authorizationService;
         _eiamAssignmentService = eiamAssignmentService;
+        _termOfOfficeDateService = termOfOfficeDateService;
+        _worklistTaskService = worklistTaskService;
         _masterDataRepository = masterDataRepository;
         _generalMeasureRepository = generalMeasureRepository;
         _membershipRepository = membershipRepository;
+        _worklistTaskRepository = worklistTaskRepository;
+        _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
+        _eiamAssignmentRepository = eiamAssignmentRepository;
         _logger = logger;
     }
 
@@ -105,6 +120,13 @@ public class CommitteeService : ICommitteeService
         var committee = await _committeeRepository.GetById(id);
         var dto = CommitteeMapper.ToCommitteeDetailDto(committee);
         dto.CanEdit = await _authorizationService.HasAccessToCommittee(committee);
+        dto.CanCreateJustification = dto.CanEdit;
+
+        if (dto.FutureGeneralElectionCommittee)
+        {
+            dto.CanCreateMembership = false;
+            dto.CanCreateJustification = false;
+        }
 
         var generalGenderMeasure = await _generalMeasureRepository.GetGeneralGenderMeasure(committee.DepartmentId);
         dto.GeneralGenderMeasure = generalGenderMeasure?.Description;
@@ -286,6 +308,46 @@ public class CommitteeService : ICommitteeService
 
         var createdCommittee = await _committeeRepository.Create(committee);
         _logger.LogInformation("Created new committee {CommitteeId}", createdCommittee.Id);
+
+        var newCommittee = await _committeeRepository.GetByIdForUpdate(createdCommittee.Id);
+
+        var eiamAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = newCommittee.CommitteeNumber.ToString(),
+            Role = Role.Secretariat,
+            CommitteeId = newCommittee.Id,
+            ParentId = newCommittee.Office!.EiamAssignmentId,
+        };
+
+        var savedEiamAssignment = await _eiamAssignmentRepository.Create(eiamAssignment);
+
+        newCommittee.EiamAssignmentId = savedEiamAssignment.Id;
+
+        var updatedCommittee = CommitteeMapper.ToCommitteeUpdateDto(newCommittee);
+
+        await UpdateCommittee(newCommittee.Id, updatedCommittee);
+
+        if (createdCommittee.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && await _termOfOfficeDateService.CheckForRunningGeneralElection())
+        {
+            _logger.LogInformation("Generate general election data for committee {CommitteeId}", createdCommittee.Id);
+
+            var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, _authorizationService.GetCurrentUserName());
+
+            var createdGeneralElectionCommittee = await _generalElectionCommitteeRepository.Create(generalElectionCommittee);
+
+            var worklistTasks = await _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch);
+
+            var filteredTasks = worklistTasks.Where(w => w.DepartmentId == createdGeneralElectionCommittee.DepartmentId).ToList();
+
+            var currentCommittee = await _committeeRepository.GetById(createdCommittee.Id);
+
+            if (filteredTasks.Count == 1)
+            {
+                var task = filteredTasks.FirstOrDefault();
+                await _worklistTaskService.CreateWorklistTasksForSingleCommittee(task!, currentCommittee);
+            }
+        }
 
         return await GetCommitteeDetail(createdCommittee.Id);
     }
