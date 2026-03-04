@@ -44,15 +44,19 @@ export class CommitteeJustificationsComponent {
     ) {
         this.committeeJustificationForm = this.createForm();
 
-        const effectRef = effect(() => {
-            if ((this.committeeJustificationUpdate() as CommitteeJustificationUpdate)?.id) {
-                this.committeeJustificationForm.patchValue(this.committeeJustificationUpdate()!);
-                if (!this.canEdit()) {
-                    this.committeeJustificationForm.disable();
-                } else {
-                    this.committeeJustificationForm.enable();
-                }
-                effectRef.destroy();
+        effect(() => {
+            const committeeJustificationUpdate = this.committeeJustificationUpdate();
+            if (committeeJustificationUpdate?.id) {
+                this.committeeJustificationForm.patchValue(committeeJustificationUpdate);
+            }
+        });
+
+        effect(() => {
+            const canEdit = this.canEdit();
+            if (canEdit) {
+                this.committeeJustificationForm.enable();
+            } else {
+                this.committeeJustificationForm.disable();
             }
         });
 
