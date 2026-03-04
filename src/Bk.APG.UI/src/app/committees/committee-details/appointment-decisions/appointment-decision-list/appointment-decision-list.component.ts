@@ -23,7 +23,7 @@ import {MatTooltip} from '@angular/material/tooltip';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AppointmentDecisionList} from '@api/AppointmentDecisionList';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObButtonDirective, ObNotificationService} from '@oblique/oblique';
+import {ObAlertModule, ObButtonDirective, ObNotificationService} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {HelpTooltipComponent} from '@shared/help-tooltip/help-tooltip.component';
 import {combineLatest, distinctUntilChanged, map, merge, of, startWith, Subject, switchMap, tap} from 'rxjs';
@@ -68,6 +68,7 @@ export type AppointmentDecisionColumns =
         DatePipe,
         HelpTooltipComponent,
         TranslatePipe,
+        ObAlertModule,
     ],
 })
 export class AppointmentDecisionListComponent implements AfterViewInit, OnDestroy {
