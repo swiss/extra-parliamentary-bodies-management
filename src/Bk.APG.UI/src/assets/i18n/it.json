@@ -903,5 +903,9 @@
   "formLetter.sender.detail.cityRomansh": "Luogo (RM)",
   "formLetter.sender.detail.signature": "IT_Unterschrift",
   "formLetter.sender.error.required": "{{field}} è un campo obbligatorio",
-  "formLetter.sender.error.maxlength": "Il testo inserito supera il numero massimo di caratteri"
+  "formLetter.sender.error.maxlength": "Il testo inserito supera il numero massimo di caratteri",
+  "committee.generalElection.changesNotMirroredToFuture.hint": "IT_Wenn die GEW läuft müssen Änderungen in den Grunddaten in die GEW manuell kopiert werden. Diese Maske wird nicht gespiegelt, d.h. Änderungen werden nicht automatisch in die GEW übernommen.",
+  "committee.generalElection.futureCommittee.hint": "IT_Es ist möglich in der Maske 'Kontaktstellen' und 'Einsetzungen/Beschlüsse' jetzt schon zu erfassen, da diese Dateneinträge mit einem Start und Enddatum in der DB versehen sind und nicht mit den Validierungen eines Wahlvorschlag zusammenhängen.",
+  "committee.generalElection.notRunning.noEdit.hint": "IT_Dieses Gremium startet in der neuen Amtsperiode (siehe Startdatum in Grunddaten). Es wird erst ab Start der GEW möglich sein, Mitglieder via der Maske 'Wahlvorschlag' zu erfassen, da dadurch sichergestellt werden kann, dass die notwendigen Validierungen durchgeführt werden können.",
+  "committee.generalElection.running.noEdit.hint": "IT_Dieses Gremium startet in der neuen Amtsperiode (siehe Startdatum in Grunddaten). Bitte erfassen Sie die Mitglieder in der GEW Sicht im Register 'Wahlvorschlag'."
 }

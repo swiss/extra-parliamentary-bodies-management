@@ -18,17 +18,24 @@ internal class CommitteeServiceTests
     private ICultureService _cultureService;
     private IAuthorizationService _authorizationService;
     private IEiamAssignmentService _eiamAssignmentService;
+    private ITermOfOfficeDateService _termOfOfficeDateService;
     private IMasterDataRepository _masterDataRepository;
     private IGeneralMeasureRepository _generalMeasureRepository;
     private IMembershipRepository _membershipRepository;
-
+    private IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
+    private IWorklistTaskService _worklistTaskService;
+    private IWorklistTaskRepository _worklistTaskRepository;
+    private IEiamAssignmentRepository _eiamAssignmentRepository;
     private CommitteeService _committeeService;
+
     private List<Membership> _committeeMemberList;
     private Membership _membership1;
     private Membership _membership2;
     private Membership _membership3;
     private Membership _membership4;
     private Membership _membership5;
+
+    private EiamAssignment _eiamAssignment;
 
     private Committee _committee;
     private Guid _committeeId;
@@ -53,6 +60,11 @@ internal class CommitteeServiceTests
         _masterDataRepository = Substitute.For<IMasterDataRepository>();
         _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
         _membershipRepository = Substitute.For<IMembershipRepository>();
+        _termOfOfficeDateService = Substitute.For<ITermOfOfficeDateService>();
+        _worklistTaskService = Substitute.For<IWorklistTaskService>();
+        _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+        _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
+        _eiamAssignmentRepository = Substitute.For<IEiamAssignmentRepository>();
 
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
 
@@ -160,6 +172,10 @@ internal class CommitteeServiceTests
         _committeeMemberList.Add(_membership4);
         _committeeMemberList.Add(_membership5);
 
+        _eiamAssignment = new EiamAssignmentBuilder().Build();
+
+        _eiamAssignmentRepository.Create(Arg.Any<EiamAssignment>()).Returns(_eiamAssignment);
+
         _membershipRepository.GetAllByCommitteeId(_committeeId).Returns(_committeeMemberList);
 
         _authorizationService.IsAdmin.Returns(false);
@@ -181,9 +197,14 @@ internal class CommitteeServiceTests
             _cultureService,
             _authorizationService,
             _eiamAssignmentService,
+            _termOfOfficeDateService,
+            _worklistTaskService,
             _masterDataRepository,
             _generalMeasureRepository,
             _membershipRepository,
+            _generalElectionCommitteeRepository,
+            _worklistTaskRepository,
+            _eiamAssignmentRepository,
             NullLogger<CommitteeService>.Instance);
     }
 
@@ -816,8 +837,10 @@ internal class CommitteeServiceTests
 
         await _committeeService.CreateCommittee(createDto);
 
-        _authorizationService.Received(1).GetCurrentUserName();
+        _authorizationService.Received(2).GetCurrentUserName();
         await _committeeRepository.Received(1).Create(Arg.Is<Committee>(x => x.BeginDate == beginDate));
+        await _committeeRepository.Received(1).GetByIdForUpdate(Arg.Any<Guid>());
+        await _eiamAssignmentRepository.Received(1).Create(Arg.Is<EiamAssignment>(x => x.CommitteeId == _committeeId));
         await _masterDataRepository.Received(1).GetMembershipAdditionsByIds(Arg.Is<Guid[]>(x => x.Single() == membershipAddition.Id));
         _masterDataRepository.Received(1).AttachUnchanged(membershipAddition);
     }
@@ -860,7 +883,7 @@ internal class CommitteeServiceTests
 
         await _committeeService.CreateCommittee(createDto);
 
-        _authorizationService.Received(1).GetCurrentUserName();
+        _authorizationService.Received(2).GetCurrentUserName();
         await _committeeRepository.Received(1).Create(Arg.Is<Committee>(x => x.BeginDate == beginDate));
     }
 

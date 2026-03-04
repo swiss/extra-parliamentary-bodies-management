@@ -1,3 +1,12 @@
+@if (committeeDetailsService.committeeDetails(); as committeeDetails) {
+    @if (!this.generalElectionService.isGeneralElectionVisible() && committeeDetails.futureGeneralElectionCommittee) {
+        <ob-alert type="info">{{ 'committee.generalElection.futureCommittee.hint' | translate }}<br /></ob-alert>
+    }
+    @if (this.generalElectionService.isGeneralElectionVisible() && committeeDetails.futureGeneralElectionCommittee) {
+        <ob-alert type="info">{{ 'committee.generalElection.changesNotMirroredToFuture.hint' | translate }}<br /></ob-alert>
+    }
+}
+
 <div class="committee-data-header">
     <h2>
         @if (!!committeeUpdate()) {
