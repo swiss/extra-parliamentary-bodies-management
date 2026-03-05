@@ -48,8 +48,13 @@ public class WorklistTaskController : ControllerBase
             var generalElectionResult = await _generalElectionService.PrepareGeneralElection(worklistTaskCreateDto);
             return Ok(generalElectionResult);
         }
+        else if (worklistTaskCreateDto.WorklistTaskTypeId == WorklistTaskType.GeneralElectionEnd)
+        {
+            var generalElectionResult = await _generalElectionService.PrepareGeneralElection(worklistTaskCreateDto);
+            return Ok(generalElectionResult);
+        }
 
-        await _worklistTaskService.CreateWorklistTaskByAdmin(worklistTaskCreateDto);
+            await _worklistTaskService.CreateWorklistTaskByAdmin(worklistTaskCreateDto);
         return Ok();
     }
 
