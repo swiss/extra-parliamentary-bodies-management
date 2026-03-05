@@ -178,6 +178,55 @@ public static class GeneralElectionMapper
         };
     }
 
+    public static MembershipCreateDto FromMembershipCandidateToMembershipCreateDto(MembershipCandidate membershipCandidate)
+    {
+        return new MembershipCreateDto
+        {
+            PersonId = membershipCandidate.Person != null ? membershipCandidate.Person.Id : Guid.Empty,
+            MaximumEmploymentLevel = membershipCandidate.MaximumEmploymentLevel,
+            BeginDate = membershipCandidate.BeginDate,
+            EndDate = membershipCandidate.EndDate,
+            ElectionTypeId = ElectionType.ReElectionGuid,
+            FunctionId = membershipCandidate.FunctionId,
+            ElectionOfficeId = membershipCandidate.ElectionOfficeId,
+            MembershipAdditionId = membershipCandidate.MembershipAdditionId,
+            JustificationLongerDuty = membershipCandidate.JustificationLongerDuty,
+            JustificationShorterDuty = membershipCandidate.JustificationShorterDuty,
+            JustificationMemberInFederalDuty = membershipCandidate.JustificationMemberInFederalDuty,
+            JustificationMemberInFederalAssembly = membershipCandidate.JustificationMemberInFederalAssembly,
+            RequirementsProfile = membershipCandidate.RequirementsProfile,
+            Remarks = membershipCandidate.Remarks,
+            RemarksStatus = membershipCandidate.RemarksStatus,
+            InCorrelationWithFederalDuty = membershipCandidate.InCorrelationWithFederalDuty,
+        };
+    }
+
+
+    //public static MembershipUpdateDto FromMembershipCandidateToMembershipUpdateDto(MembershipCandidate membershipCandidate)
+    //{
+    //    return new MembershipUpdateDto
+    //    {
+    //        Id = (Guid)membershipCandidate.MembershipId!,
+    //        CommitteeId = membershipCandidate.GeneralElectionCommittee!.CommitteeId,
+    //        PersonId = membershipCandidate.Person != null ? membershipCandidate.Person.Id : Guid.Empty,
+    //        MaximumEmploymentLevel = membershipCandidate.MaximumEmploymentLevel,
+    //        BeginDate = membershipCandidate.BeginDate,
+    //        EndDate = membershipCandidate.EndDate,
+    //        ElectionTypeId = ElectionType.ReElectionGuid,
+    //        FunctionId = membershipCandidate.FunctionId,
+    //        ElectionOfficeId = membershipCandidate.ElectionOfficeId,
+    //        MembershipAdditionId = membershipCandidate.MembershipAdditionId,
+    //        JustificationLongerDuty = membershipCandidate.JustificationLongerDuty,
+    //        JustificationShorterDuty = membershipCandidate.JustificationShorterDuty,
+    //        JustificationMemberInFederalDuty = membershipCandidate.JustificationMemberInFederalDuty,
+    //        JustificationMemberInFederalAssembly = membershipCandidate.JustificationMemberInFederalAssembly,
+    //        RequirementsProfile = membershipCandidate.RequirementsProfile,
+    //        Remarks = membershipCandidate.Remarks,
+    //        RemarksStatus = membershipCandidate.RemarksStatus,
+    //        InCorrelationWithFederalDuty = membershipCandidate.InCorrelationWithFederalDuty,
+    //    };
+    //}
+
     public static MembershipCandidateMirrorDto ToMembershipCandidateMirrorDto(Membership membership)
     {
         return new MembershipCandidateMirrorDto
