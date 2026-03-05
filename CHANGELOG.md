@@ -7,6 +7,7 @@
 -   Fix membership validation issue for disabled date inputs [BKDO-3084](https://bkdev.atlassian.net/browse/BKDO-3084)
 -   Enable begin date for admins (GEW committee) [BKDO-3088](https://bkdev.atlassian.net/browse/BKDO-3088)
 -   Update institution appointment decision type label [BKDO-3112](https://bkdev.atlassian.net/browse/BKDO-3112)
+-   Update and remove membership addition master data [BKDO-3095](https://bkdev.atlassian.net/browse/BKDO-3095)
 
 ## 1.1.1
 
