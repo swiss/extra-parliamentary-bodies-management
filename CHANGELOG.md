@@ -1,7 +1,10 @@
 # Changelog
 
 ## 1.2.0
--   Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
+
+- Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
+- Fix race condition in committee justification tab [BKDO-3020](https://bkdev.atlassian.net/browse/BKDO-3020)
+- Fix membership validation issue for disabled date inputs [BKDO-3084](https://bkdev.atlassian.net/browse/BKDO-3084)
 
 ## 1.1.1
 
@@ -20,15 +23,19 @@
 -   Recipient Export added #BKDO-777
 
 ## 1.0.4
+
 -   Fix logic determining when shorter duty justification is needed #BKDO-2730
 
 ## 1.0.3
+
 -   Adapt handling of membership endDate and electionType #BKDO-2700
 
 ## 1.0.2
+
 -   Fixes notifications and overview for contact points #BKDO-2655
 -   Allow worklist task page for observers #BKDO-2627
 -   Add missing translations F/I #BKDO-2625
 
 ## 1.0.1
+
 -   Update contact point validators in frontend #BKDO-2620
