@@ -296,5 +296,5 @@ public class Committee : EntityBase
             .FirstOrDefault();
 
     [NotMapped]
-    public bool FutureGeneralElectionCommittee => BeginDate > TermOfOfficeDate!.BeginDate && IsInGeneralElection;
+    public bool FutureGeneralElectionCommittee => BeginDate > TermOfOfficeDate!.EndDate && IsInGeneralElection;
 }

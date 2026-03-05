@@ -334,18 +334,17 @@ public class CommitteeService : ICommitteeService
 
             var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, _authorizationService.GetCurrentUserName());
 
-            var createdGeneralElectionCommittee = await _generalElectionCommitteeRepository.Create(generalElectionCommittee);
+            await _generalElectionCommitteeRepository.Create(generalElectionCommittee);
 
             var worklistTasks = await _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch);
 
-            var filteredTasks = worklistTasks.Where(w => w.DepartmentId == createdGeneralElectionCommittee.DepartmentId).ToList();
-
             var currentCommittee = await _committeeRepository.GetById(createdCommittee.Id);
 
-            if (filteredTasks.Count == 1)
+            // TODO PP alle nötigen Task überprüfen auf ausgeführt oder existierend, gross oder kleines Departement spielt eine Rolle
+            if (worklistTasks.Count > 0)
             {
-                var task = filteredTasks.FirstOrDefault();
-                await _worklistTaskService.CreateWorklistTasksForSingleCommittee(task!, currentCommittee);
+                // var task = filteredTasksGS.FirstOrDefault();
+                await _worklistTaskService.CreateWorklistTasksForSingleCommittee(currentCommittee, worklistTasks);
             }
         }
 
@@ -633,6 +632,7 @@ public class CommitteeService : ICommitteeService
 
     private async Task CheckAuthorizationForUpdate(Committee committee)
     {
+        // TODO PP, was, wenn der Call vom BackendService gemacht wird?
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
             ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
         {

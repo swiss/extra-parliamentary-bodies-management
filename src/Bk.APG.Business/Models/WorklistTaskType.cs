@@ -5,6 +5,8 @@ public class WorklistTaskType : MasterDataBase
     private const string GeneralElectionStartIdAsString = "6b8ea0f1-12d7-49de-ae38-fc57a87a6b1d";
     public static readonly Guid GeneralElectionStart = Guid.Parse(GeneralElectionStartIdAsString);
 
+    public static readonly Guid GeneralElectionEnd = Guid.Parse("3f9c8b7a-6c1e-4e7d-9a2f-5d8c1b3a4f92");
+
     private const string GeneralElectionDispatchIdAsString = "f3e2b1c4-9d7a-4b2e-9231-7cb04a5b0d66";
     public static readonly Guid GeneralElectionDispatch = Guid.Parse(GeneralElectionDispatchIdAsString);
 

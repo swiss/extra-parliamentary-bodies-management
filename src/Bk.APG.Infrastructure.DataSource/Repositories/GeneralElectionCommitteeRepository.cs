@@ -238,6 +238,18 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         return committees;
     }
 
+    public async Task<IEnumerable<GeneralElectionCommittee>> GetAll()
+    {
+        return await _dataContext.GeneralElectionCommittees
+            .Include(item => item.CommitteeLevel)
+            .Include(item => item.Department)
+            .Include(item => item.Office)
+            .Include(item => item.CommitteeType)
+            .Include(item => item.TermOfOffice)
+            .Include(item => item.MembershipCandidates)
+            .ToListAsync();
+    }
+
     public async Task<GeneralElectionCommittee> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null)
     {
         var generalElectionCommittee = await GetGeneralElectionCommittees().FirstOrDefaultAsync(x => x.Id == id);

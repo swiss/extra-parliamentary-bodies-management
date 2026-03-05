@@ -172,4 +172,12 @@ public class GeneralElectionCommitteeController : ControllerBase
 
         return File(content, ExcelMimeType, fileName);
     }
+
+    [HttpGet]
+    [Route("checkCompletion")]
+    public async Task<IActionResult> CheckCompletionGeneralElection(Guid committeeId)
+    {
+        var unfinishedCommitteesList = await _generalElectionCommitteeService.GetAllUnfinishedCommittees();
+        return Ok(unfinishedCommitteesList);
+    }
 }
