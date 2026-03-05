@@ -18,6 +18,7 @@ public class GeneralElectionServiceTests
     private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
     private readonly ITermOfOfficeDateService _termOfOfficeDateService = Substitute.For<ITermOfOfficeDateService>();
     private readonly IEiamAssignmentService _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
+    private readonly IGeneralElectionHelperService _generalElectionHelperService = Substitute.For<IGeneralElectionHelperService>();
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
     private readonly ICommitteeRepository _committeeRepository = Substitute.For<ICommitteeRepository>();
     private readonly IMembershipRepository _membershipRepository = Substitute.For<IMembershipRepository>();
@@ -38,6 +39,7 @@ public class GeneralElectionServiceTests
             _eiamAssignmentService,
             _masterDataRepository,
             _termOfOfficeDateService,
+            _generalElectionHelperService,
             _generalElectionCommitteeRepository,
             _committeeRepository,
             _membershipRepository,
@@ -228,7 +230,7 @@ public class GeneralElectionServiceTests
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
 
-        await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, false);
+        await _generalElectionHelperService.MirrorOrDeleteMembershipForGeneralElection(membership, false);
 
         Assert.Multiple(() =>
         {
@@ -264,7 +266,7 @@ public class GeneralElectionServiceTests
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
 
-        await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, false);
+        await _generalElectionHelperService.MirrorOrDeleteMembershipForGeneralElection(membership, false);
 
         await _membershipCandidateRepository.DidNotReceiveWithAnyArgs().CommitChanges();
     }
@@ -281,7 +283,7 @@ public class GeneralElectionServiceTests
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
 
-        await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
+        await _generalElectionHelperService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
 
         await _membershipCandidateRepository.Received(1).Delete(membershipCandidate);
         await _membershipCandidateRepository.Received(0).CommitChanges();
@@ -302,7 +304,7 @@ public class GeneralElectionServiceTests
         _generalElectionCommitteeRepository.GetByCommitteeId(membership.CommitteeId).Returns(generalElectionCommittee);
         _authorizationService.GetCurrentUserName().Returns("FritzTester");
 
-        await _generalElectionService.CreateNewMembershipCandidate(membership);
+        await _generalElectionHelperService.CreateNewMembershipCandidate(membership, "username");
 
         await _membershipCandidateRepository.Received(1).Create(Arg.Any<MembershipCandidate>());
         await _membershipRepository.Received(0).GetAllMembershipsForCommitteeAndPerson(committeeId, personId);
@@ -336,7 +338,7 @@ public class GeneralElectionServiceTests
         _membershipRepository.GetAllMembershipsForCommitteeAndPerson(committeeId, personId).Returns(oldMemberships);
         _authorizationService.GetCurrentUserName().Returns("FritzTester");
 
-        await _generalElectionService.CreateNewMembershipCandidate(membership);
+        await _generalElectionHelperService.CreateNewMembershipCandidate(membership, "username");
 
         await _membershipCandidateRepository.Received(0).Create(Arg.Any<MembershipCandidate>());
         await _membershipCandidateLogMessageRepository.Received(1).Create(Arg.Any<MembershipCandidateLogMessage>());
@@ -370,7 +372,7 @@ public class GeneralElectionServiceTests
         _membershipRepository.GetAllMembershipsForCommitteeAndPerson(committeeId, personId).Returns(oldMemberships);
         _authorizationService.GetCurrentUserName().Returns("FritzTester");
 
-        await _generalElectionService.CreateNewMembershipCandidate(membership);
+        await _generalElectionHelperService.CreateNewMembershipCandidate(membership, "username");
 
         await _membershipCandidateRepository.Received(1).Create(Arg.Any<MembershipCandidate>());
         await _membershipCandidateLogMessageRepository.Received(0).Create(Arg.Any<MembershipCandidateLogMessage>());
