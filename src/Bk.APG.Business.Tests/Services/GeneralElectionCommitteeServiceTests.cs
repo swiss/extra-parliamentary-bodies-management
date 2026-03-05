@@ -19,6 +19,8 @@ public class GeneralElectionCommitteeServiceTests
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
     private readonly ICultureService _cultureService = Substitute.For<ICultureService>();
+    private readonly ICommitteeService _committeeService = Substitute.For<ICommitteeService>();
+    private readonly IMembershipService _membershipService = Substitute.For<IMembershipService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly DocumentService.Client.IDocumentService _documentService = Substitute.For<DocumentService.Client.IDocumentService>();
@@ -58,6 +60,8 @@ public class GeneralElectionCommitteeServiceTests
             _generalElectionCommitteeRepository,
             _authorizationService,
             _cultureService,
+            _committeeService,
+            _membershipService,
             _generalMeasureRepository,
             _worklistTaskRepository,
             _documentService,
