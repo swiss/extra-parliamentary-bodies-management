@@ -16,6 +16,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly IAuthorizationService _authorizationService;
     private readonly ICultureService _cultureService;
+    private readonly ICommitteeService _committeeService;
+    private readonly IMembershipService _membershipService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly Bk.DocumentService.Client.IDocumentService _documentService;
@@ -25,6 +27,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         IAuthorizationService authorizationService,
         ICultureService cultureService,
+        ICommitteeService committeeService,
+        IMembershipService membershipService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
         Bk.DocumentService.Client.IDocumentService documentService,
@@ -34,6 +38,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _authorizationService = authorizationService;
         _cultureService = cultureService;
+        _committeeService = committeeService;
+        _membershipService = membershipService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
         _documentService = documentService;
@@ -267,6 +273,18 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeUpdateDto(existingCommittee);
     }
 
+    public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetAllUnfinishedCommittees()
+    {
+
+        var committees = await _generalElectionCommitteeRepository.GetAll();
+
+        var unfinishedCommittees = committees.Where(c => c.IsValidated);
+
+        var list = unfinishedCommittees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
+
+        return list;
+    }
+
     public async Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
         _logger.LogInformation("Generate candidate list export for general election committee {CommitteeId}", id);
@@ -305,6 +323,38 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var exportStream = await _documentService.CreateExcel(spreadsheet);
 
         return (GenerateFileName(DateTime.Now, BusinessTexts.CandidateList), exportStream);
+    }
+
+    public async Task<bool> EndGeneralElectionForCommittee(GeneralElectionCommittee committee)
+    {
+        // Writes back all the changes from General Election to the current data
+        var mappedCommittee = GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee(committee);
+        var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
+
+        await _committeeService.UpdateCommittee(updateCommittee.Id, updateCommittee);
+
+        foreach (var candidate in committee.MembershipCandidates)
+        {
+            if (candidate.ElectionTypeId == ElectionType.NewElectionGuid)
+            {
+                var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
+
+                //if (createDto.PersonId == null)
+                //{
+                //    _logger.LogInformation("General Election transfer from committe {CommitteeId} and member {Membername} {Membersurname} aborted, no person attached!", committee.Id, candidate.Surname, candidate.GivenName );
+                //}
+
+                await _membershipService.CreateMembership(createDto);
+            }
+            else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid)
+            {
+                var currentMembership = await _membershipService.GetMembershipForUpdate((Guid)candidate.MembershipId!);
+
+                await _membershipService.UpdateMembership(currentMembership.Id, currentMembership);
+            }
+        }
+
+        return true;
     }
 
     private async Task<List<List<Cell>>> GetCandidateListData(Guid id, IEnumerable<Guid> membershipCandidateIds)
