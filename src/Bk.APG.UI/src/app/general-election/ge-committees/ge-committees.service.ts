@@ -38,9 +38,9 @@ export class GeneralElectionCommitteesService {
         params = appendMany(params, 'committeeTypeIds', filterParameter?.committeeTypes);
         params = appendMany(params, 'isMarketOrientated', filterParameter?.isMarketOrientated);
         params = appendMany(params, 'hasSupervisionDuty', filterParameter?.hasSupervisionDuty);
-        params = append(params, 'vacancies', filterParameter?.vacancies);
-        params = append(params, 'status', filterParameter?.status);
-        params = append(params, 'statusProposal', filterParameter?.statusProposal);
+        params = appendMany(params, 'vacancies', filterParameter?.vacancies);
+        params = appendMany(params, 'isNew', filterParameter?.isNew);
+        params = appendMany(params, 'statusProposal', filterParameter?.statusProposal);
 
         return params;
     };
