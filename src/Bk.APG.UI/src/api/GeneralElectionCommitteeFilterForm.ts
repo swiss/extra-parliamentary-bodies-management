@@ -7,7 +7,7 @@ export interface GeneralElectionCommitteeFilterForm {
     committeeTypes: FormControl<string[] | null>;
     isMarketOrientated: FormControl<boolean[] | null>;
     hasSupervisionDuty: FormControl<boolean[] | null>;
-    status: FormControl<string | null>;
-    vacancies: FormControl<string | null>;
-    statusProposal: FormControl<string | null>;
+    isNew: FormControl<boolean[] | null>;
+    vacancies: FormControl<boolean[] | null>;
+    statusProposal: FormControl<boolean[] | null>;
 }
