@@ -200,26 +200,69 @@ public class WorklistTaskService : IWorklistTaskService
         await _generalElectionCommitteeRepository.CommitChanges();
     }
 
-    public async Task CreateWorklistTasksForSingleCommittee(WorklistTask worklistTask, Committee committee)
+    public async Task CreateWorklistTasksForSingleCommittee(Committee committee, List<WorklistTask> parentTasks)
     {
         var today = DateOnly.FromDateTime(DateTime.Now);
-        var forwarderId = worklistTask.AssignedToId;
-        var currentUserName = _authorizationService.GetCurrentUserName();
 
-        var forwardDto = new WorklistTaskForwardDto { CandidateListDescription = worklistTask.Description, CandidateListDueDate = worklistTask.DueDate, CommitteeDescription = string.Empty, CommitteeDueDate = today };
+        // this is the GeneralElectionDispatch task of the department
+        var parentTaskDepartment = parentTasks.Where(w => w.DepartmentId == committee.DepartmentId && w.OfficeId == null).FirstOrDefault();
+        // this is the GeneralElectionDispatch task of the office, this only exists, when I am a big department and only 1 should exist!
+        var parentTaskOffice = parentTasks.Where(w => w.DepartmentId == committee.DepartmentId && w.OfficeId == committee.OfficeId).FirstOrDefault();
 
-        List<WorklistTask> newTasks = [];
-        if (committee.Department!.IsBigDepartment)
+        // if no parent exists, we do not continue. If the task is still not executed (active), we can ignore it as well, as tasks will be created automatically.
+        if (parentTaskDepartment != null && parentTaskDepartment.WorklistTaskStateId != WorklistTaskState.Active)
         {
-            CreateWorklistTasksForCommitteeBigDepartment(forwardDto, worklistTask, newTasks, committee, forwarderId, currentUserName);
-        }
-        else
-        {
-            CreateWorklistTasksForCommitteeSmallDepartment(forwardDto, worklistTask, newTasks, committee, forwarderId, currentUserName);
-        }
+            var forwarderId = parentTaskDepartment.AssignedToId;
+            var currentUserName = _authorizationService.GetCurrentUserName();
 
-        await _worklistTaskRepository.CreateRange(newTasks);
-        _logger.LogInformation("Created tasks for secretariats in department {DepartmentId}", worklistTask.DepartmentId);
+            var forwardDto = new WorklistTaskForwardDto { CandidateListDescription = parentTaskDepartment.Description, CandidateListDueDate = parentTaskDepartment.DueDate, CommitteeDescription = string.Empty, CommitteeDueDate = today };
+            List<WorklistTask> newTasks = [];
+
+            if (!committee.Department!.IsBigDepartment)
+            {
+                CreateWorklistTasksForCommitteeSmallDepartment(forwardDto, parentTaskDepartment, newTasks, committee, forwarderId, currentUserName);
+            }
+            else
+            {
+                if (parentTaskOffice == null)
+                {
+                    // Office task is missing, has to be created here, TODO PP, that Use Case was completely out of scope
+                    _logger.LogInformation("Creation of worklist tasks for a new office must be made after configuration in EIAM, OfficeId {OfficeId}", committee.OfficeId);
+
+                    //var officeEiamAssignment = _eiamAssignmentRepository.GetByOfficeId();
+
+                    //var newTask = new WorklistTask
+                    //{
+                    //    AssignedToId = officeEiamAssignment.Id,
+                    //    AssignedById = parentTaskDepartment.AssignedToId,
+                    //    DueDate = forwardDto.CandidateListDueDate,
+                    //    Description = forwardDto.CandidateListDescription,
+                    //    WorklistTaskTypeId = WorklistTaskType.GeneralElectionDispatch,
+                    //    WorklistTaskStateId = WorklistTaskState.Active,
+                    //    ParentTaskId = parentTaskDepartment.Id,
+                    //    DepartmentId = parentTaskDepartment.DepartmentId,
+                    //    OfficeId = officeEiamAssignment.OfficeId,
+                    //    Created = DateTime.UtcNow,
+                    //    CreatedBy = currentUserName,
+                    //    Modified = DateTime.UtcNow,
+                    //    ModifiedBy = currentUserName
+                    //};
+                }
+                else
+                {
+                    if (parentTaskDepartment.WorklistTaskStateId != WorklistTaskState.Active)
+                    {
+                        CreateWorklistTasksForCommitteeBigDepartment(forwardDto, parentTaskOffice, newTasks, committee, forwarderId, currentUserName);
+                    }
+                }
+            }
+
+            if (newTasks.Count > 0)
+            {
+                await _worklistTaskRepository.CreateRange(newTasks);
+                _logger.LogInformation("Created tasks for secretariats in department {DepartmentId}", parentTaskDepartment.DepartmentId);
+            }
+        }
     }
 
     private async Task ForwardGeneralElectionDispatchToSecretariat(WorklistTaskForwardDto forwardDto,
