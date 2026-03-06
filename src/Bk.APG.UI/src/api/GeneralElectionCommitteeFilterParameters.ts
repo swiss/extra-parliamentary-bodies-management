@@ -11,8 +11,8 @@ export interface GeneralElectionCommitteeFilterParameters {
     committeeTypes?: CommitteeType['id'][];
     isMarketOrientated?: boolean[];
     hasSupervisionDuty?: boolean[];
-    status?: string;
-    vacancies?: string;
-    statusProposal?: string;
+    isNew?: boolean[];
+    vacancies?: boolean[];
+    statusProposal?: boolean[];
     modifiedBy?: string;
 }
