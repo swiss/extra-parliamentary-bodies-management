@@ -52,6 +52,7 @@ public class GeneralElectionCommitteeBuilder
     private Guid? _candidateListStateId;
     private readonly string? _assignedToRole;
     private bool _isValidated;
+    private bool _wasValidatedOnce;
     private readonly string _selectionProcedure;
     private DateOnly? _officeReadyForProposalDueDate;
     private DateOnly? _secretariatReadyForProposalDueDate;
@@ -109,6 +110,7 @@ public class GeneralElectionCommitteeBuilder
         _candidateListStateId = null;
         _assignedToRole = null;
         _isValidated = false;
+        _wasValidatedOnce = false;
         _selectionProcedure = _faker.Random.String();
         _rowVersion = _faker.Random.UInt();
         _officeReadyForProposalDueDate = _faker.Date.FutureDateOnly();
@@ -313,6 +315,12 @@ public class GeneralElectionCommitteeBuilder
         return this;
     }
 
+    public GeneralElectionCommitteeBuilder WithWasValidatedOnce(bool wasValidatedOnce)
+    {
+        _wasValidatedOnce = wasValidatedOnce;
+        return this;
+    }
+
     public GeneralElectionCommitteeBuilder WithOfficeReadyForProposalDueDate(DateOnly? officeReadyForProposalDueDate)
     {
         _officeReadyForProposalDueDate = officeReadyForProposalDueDate;
@@ -405,7 +413,8 @@ public class GeneralElectionCommitteeBuilder
             JustificationGenders = _justificationGenders,
             MeasuresGenders = _measuresGenders,
             JustificationLanguages = _justificationLanguages,
-            MeasuresLanguages = _measuresLanguages
+            MeasuresLanguages = _measuresLanguages,
+            WasValidatedOnce = _wasValidatedOnce
         };
     }
 }
