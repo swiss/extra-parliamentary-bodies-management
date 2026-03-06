@@ -3088,6 +3088,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("vacancies_general_election");
 
+                    b.Property<bool>("WasValidatedOnce")
+                        .HasColumnType("boolean")
+                        .HasColumnName("was_validated_once");
+
                     b.HasKey("Id")
                         .HasName("pk_general_election_committees");
 

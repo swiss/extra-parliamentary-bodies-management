@@ -5,6 +5,10 @@
     @if (generalElectionCommittee()?.isCandidateListCompleted && !validated) {
         <ob-alert type="warning">{{ 'candidateList.completedHint' | translate }}</ob-alert>
     }
+
+    @if (!generalElectionCommittee()?.isValidated && generalElectionCommittee()?.wasValidatedOnce) {
+        <ob-alert type="warning">{{ 'committee.generalElection.running.wasValidatedOnce.hint' | translate }}</ob-alert>
+    }
 </div>
 
 <div class="validation-errors">
