@@ -72,6 +72,7 @@ public static class GeneralElectionCommitteeMapper
             ModifiedBy = currentUserName,
             IsDeleted = false,
             IsValidated = false,
+            WasValidatedOnce = false,
         };
     }
 
@@ -122,6 +123,7 @@ public static class GeneralElectionCommitteeMapper
             FederalInstitution = generalElectionCommittee.FederalInstitution,
             ExtraParliamentaryCommission = generalElectionCommittee.ExtraParliamentaryCommission,
             IsValidated = generalElectionCommittee.IsValidated,
+            WasValidatedOnce = generalElectionCommittee.WasValidatedOnce,
             SelectionProcedure = generalElectionCommittee.SelectionProcedure,
             JustificationsNeedAttention = generalElectionCommittee.JustificationsNeedAttention,
             CanEditSelectionProcedure = generalElectionCommittee.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
