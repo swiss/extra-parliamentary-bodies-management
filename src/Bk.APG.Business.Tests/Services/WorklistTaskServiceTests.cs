@@ -299,12 +299,20 @@ internal class WorklistTaskServiceTests
         _authorizationService.GetCurrentUserName().Returns("userName");
 
         var department = new DepartmentBuilder().WithIsBigDepartment(true).Build();
-        var geCommittee = new GeneralElectionCommitteeBuilder().Build();
-        var parentTask = new WorklistTaskBuilder().Build();
-        var worklistTask = new WorklistTaskBuilder().WithParentWorklistTask(parentTask).Build();
-        var committee = new CommitteeBuilder().WithDepartment(department).WithGeneralElectionCommittee(geCommittee).Build();
+        var office = new OfficeBuilder().WithDepartment(department).Build();
+        var geCommittee = new GeneralElectionCommitteeBuilder().WithDepartment(department).WithOffice(office).WithOfficeId(office.Id).Build();
+        var parentTask = new WorklistTaskBuilder().WithDepartment(department).WithWorklistTaskStateId(WorklistTaskState.Completed).Build();
+        var worklistTask = new WorklistTaskBuilder().WithDepartment(department).WithOffice(office).WithParentWorklistTask(parentTask).Build();
+        parentTask.OfficeId = null;
+        worklistTask.OfficeId = office.Id;
+        var worklistTasks = new List<WorklistTask>
+        {
+            parentTask,
+            worklistTask
+        };
+        var committee = new CommitteeBuilder().WithDepartment(department).WithOffice(office).WithOfficeId(office.Id).WithGeneralElectionCommittee(geCommittee).Build();
 
-        await _service.CreateWorklistTasksForSingleCommittee(worklistTask, committee);
+        await _service.CreateWorklistTasksForSingleCommittee(committee, worklistTasks);
 
         _authorizationService.Received(1).GetCurrentUserName();
         await _worklistTaskRepository.Received(1).CreateRange(Arg.Is<List<WorklistTask>>(x => x.Count == 3));
@@ -316,12 +324,20 @@ internal class WorklistTaskServiceTests
         _authorizationService.GetCurrentUserName().Returns("userName");
 
         var department = new DepartmentBuilder().WithIsBigDepartment(false).Build();
-        var geCommittee = new GeneralElectionCommitteeBuilder().Build();
-        var parentTask = new WorklistTaskBuilder().Build();
-        var worklistTask = new WorklistTaskBuilder().WithParentWorklistTask(parentTask).Build();
-        var committee = new CommitteeBuilder().WithDepartment(department).WithGeneralElectionCommittee(geCommittee).Build();
+        var office = new OfficeBuilder().WithDepartment(department).Build();
+        var geCommittee = new GeneralElectionCommitteeBuilder().WithDepartment(department).WithOffice(office).WithOfficeId(office.Id).Build();
+        var parentTask = new WorklistTaskBuilder().WithDepartment(department).WithWorklistTaskStateId(WorklistTaskState.Completed).Build();
+        var worklistTask = new WorklistTaskBuilder().WithDepartment(department).WithOffice(office).WithParentWorklistTask(parentTask).Build();
+        parentTask.OfficeId = null;
+        worklistTask.OfficeId = office.Id;
+        var worklistTasks = new List<WorklistTask>
+        {
+            parentTask,
+            worklistTask
+        };
+        var committee = new CommitteeBuilder().WithDepartment(department).WithOffice(office).WithOfficeId(office.Id).WithGeneralElectionCommittee(geCommittee).Build();
 
-        await _service.CreateWorklistTasksForSingleCommittee(worklistTask, committee);
+        await _service.CreateWorklistTasksForSingleCommittee(committee, worklistTasks);
 
         _authorizationService.Received(1).GetCurrentUserName();
         await _worklistTaskRepository.Received(1).CreateRange(Arg.Is<List<WorklistTask>>(x => x.Count == 2));
