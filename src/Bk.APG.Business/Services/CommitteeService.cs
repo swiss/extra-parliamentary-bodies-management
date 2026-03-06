@@ -334,18 +334,16 @@ public class CommitteeService : ICommitteeService
 
             var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, _authorizationService.GetCurrentUserName());
 
-            var createdGeneralElectionCommittee = await _generalElectionCommitteeRepository.Create(generalElectionCommittee);
+            await _generalElectionCommitteeRepository.Create(generalElectionCommittee);
 
             var worklistTasks = await _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch);
 
-            var filteredTasks = worklistTasks.Where(w => w.DepartmentId == createdGeneralElectionCommittee.DepartmentId).ToList();
-
             var currentCommittee = await _committeeRepository.GetById(createdCommittee.Id);
 
-            if (filteredTasks.Count == 1)
+            // As long as the parent tasks exists, we create the childern. When not, everything will go the official way, and we do nothing.
+            if (worklistTasks.Count > 0)
             {
-                var task = filteredTasks.FirstOrDefault();
-                await _worklistTaskService.CreateWorklistTasksForSingleCommittee(task!, currentCommittee);
+                await _worklistTaskService.CreateWorklistTasksForSingleCommittee(currentCommittee, worklistTasks);
             }
         }
 
