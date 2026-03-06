@@ -346,6 +346,7 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         generalElectionCommittee.CandidateListStateId = CandidateListState.Completed;
         generalElectionCommittee.IsValidated = true;
+        generalElectionCommittee.WasValidatedOnce = true;
     }
 
     private async Task CheckCandidatePersonsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
