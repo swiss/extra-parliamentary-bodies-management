@@ -48,6 +48,7 @@ public static class GeneralElectionMapper
             ModifiedBy = currentUserName,
             IsDeleted = false,
             IsValidated = false,
+            WasValidatedOnce = false,
             CandidateListStateId = CandidateListState.Draft,
             AssignedToRole = "admin"
         };
