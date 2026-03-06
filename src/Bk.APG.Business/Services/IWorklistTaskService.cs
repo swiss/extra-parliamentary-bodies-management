@@ -12,5 +12,5 @@ public interface IWorklistTaskService
     Task RemoveAllGeneralElectionTasks(Guid termOfOfficeDateId);
     Task<WorklistTaskUpdateDto> UpdateWorklistTask(Guid id, WorklistTaskUpdateDto updateDto);
     Task ForwardWorklistTask(Guid id, WorklistTaskForwardDto forwardDto);
-    Task CreateWorklistTasksForSingleCommittee(WorklistTask worklistTask, Committee committee);
+    Task CreateWorklistTasksForSingleCommittee(Committee committee, List<WorklistTask> parentTasks);
 }
