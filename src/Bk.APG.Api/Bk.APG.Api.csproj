@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Bk.Monitoring" Version="2.4.1" />
+        <PackageReference Include="Swiss.FCh.Monitoring" Version="2.5.2" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.22" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.22">
