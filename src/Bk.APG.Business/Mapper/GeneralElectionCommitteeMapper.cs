@@ -76,6 +76,7 @@ public static class GeneralElectionCommitteeMapper
             IsDeleted = false,
             IsValidated = false,
             WasValidatedOnce = false,
+            IsFederalCouncilProposalDirty = false,
         };
     }
 
@@ -126,7 +127,9 @@ public static class GeneralElectionCommitteeMapper
             FederalInstitution = generalElectionCommittee.FederalInstitution,
             ExtraParliamentaryCommission = generalElectionCommittee.ExtraParliamentaryCommission,
             IsValidated = generalElectionCommittee.IsValidated,
+            IsReadyForFederalCouncilProposal = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal,
             WasValidatedOnce = generalElectionCommittee.WasValidatedOnce,
+            IsFederalCouncilProposalDirty = generalElectionCommittee.IsFederalCouncilProposalDirty,
             SelectionProcedure = generalElectionCommittee.SelectionProcedure,
             JustificationsNeedAttention = generalElectionCommittee.JustificationsNeedAttention,
             CanEditSelectionProcedure = generalElectionCommittee.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||

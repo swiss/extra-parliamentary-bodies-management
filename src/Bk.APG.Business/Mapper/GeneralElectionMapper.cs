@@ -49,6 +49,7 @@ public static class GeneralElectionMapper
             IsDeleted = false,
             IsValidated = false,
             WasValidatedOnce = false,
+            IsFederalCouncilProposalDirty = false,
             CandidateListStateId = CandidateListState.Draft,
             AssignedToRole = "admin"
         };
