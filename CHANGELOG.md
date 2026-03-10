@@ -10,6 +10,7 @@
 -   Update and remove membership addition master data [BKDO-3095](https://bkdev.atlassian.net/browse/BKDO-3095)
 -   Extend GEW committee overview filters [BKDO-2090](https://bkdev.atlassian.net/browse/BKDO-2090)
 -   Open sourced NuGet Packages integrated (Swiss.FCh.Utils, Swiss.FCh.MasterData, Swiss.FCh.Monitoring) [BKDO-2859](https://bkdev.atlassian.net/browse/BKDO-2859)
+-   Remove obsolete ogd id from general measures [BKDO-3156](https://bkdev.atlassian.net/browse/BKDO-3156)
 
 ## 1.1.1
 
