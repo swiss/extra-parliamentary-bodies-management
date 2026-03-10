@@ -573,6 +573,48 @@ public class GeneralElectionCommitteeServiceTests
         });
     }
 
+    [Test]
+    public async Task InvalidateMembershipCandidateList_WhenCalled_ShouldInvalidateTasks()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var assignmentId = Guid.NewGuid();
+        var currentAssignment = new EiamAssignmentBuilder()
+            .WithId(assignmentId)
+            .WithRole(Role.Department)
+            .Build();
+        var currentAssignmentSecretariat = new EiamAssignmentBuilder()
+            .WithId(assignmentId)
+            .WithRole(Role.Secretariat)
+            .Build();
+        var completedCandidateListTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListApprove)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithAssignedTo(currentAssignment)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        var activeCandidateListTaskSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([completedCandidateListTask, activeCandidateListTaskSecretariat]);
+
+        await _generalElectionCommitteeService.InvalidateMembershipCandidateList(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(completedCandidateListTask.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
+        }
+    }
+
     private static GeneralElectionCommitteeJustificationUpdateDto BuildJustificationUpdateDto()
     {
         return new GeneralElectionCommitteeJustificationUpdateDto
