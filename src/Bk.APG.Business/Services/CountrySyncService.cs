@@ -27,7 +27,7 @@ public class CountrySyncService : BackgroundService
                 try
                 {
                     using var scope = _serviceProvider.CreateScope();
-                    var masterDataCountryService = scope.ServiceProvider.GetRequiredService<MasterData.Services.ICountryService>();
+                    var masterDataCountryService = scope.ServiceProvider.GetRequiredService<Swiss.FCh.MasterData.Services.ICountryService>();
 
                     var today = DateOnly.FromDateTime(DateTime.Today);
 
