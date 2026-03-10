@@ -42,8 +42,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task InvalidateMembershipCandidateList(Guid committeeId)
     {
-        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
         generalElectionCommittee.IsValidated = false;
+        generalElectionCommittee.CandidateListStateId = CandidateListState.Draft;
+
         var taskApproveByDepartment = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).FirstOrDefault(y => y.AssignedTo?.Role == Role.Department
             && y.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove);
         var taskListForSecretariat = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).Where(y => y.AssignedTo?.Role == Role.Secretariat
@@ -64,6 +66,22 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         foreach (var task in taskListForSecretariat)
         {
             task.WorklistTaskStateId = WorklistTaskState.Inactive;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+        await _worklistTaskRepository.CommitChanges();
+    }
+
+    public async Task SetFederalCouncilProposalToDirty(Guid committeeId)
+    {
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+        generalElectionCommittee.IsFederalCouncilProposalDirty = true;
+
+        var taskListForProposal = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).Where(y => y.WorklistTaskStateId == WorklistTaskState.Completed && y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal);
+
+        foreach (var task in taskListForProposal)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Active;
             task.Modified = DateTime.UtcNow;
             task.ModifiedBy = _authorizationService.GetCurrentUserName();
         }
