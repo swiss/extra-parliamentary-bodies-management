@@ -12,7 +12,7 @@ using Bk.APG.CrossCutting.Configuration;
 using Bk.APG.Infrastructure.DataSource;
 using Bk.APG.Infrastructure.DataSource.Repositories;
 using Bk.APG.Infrastructure.Service.Post;
-using Bk.Utils.Converter;
+using Swiss.FCh.Utils.Converter;
 using Configuration = Audit.Core.Configuration;
 
 namespace Bk.APG.Api.Extensions;
