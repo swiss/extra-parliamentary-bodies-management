@@ -18,7 +18,7 @@ public static class CantonMapper
         };
     }
 
-    public static Canton ToCanton(MasterData.Models.Canton canton)
+    public static Canton ToCanton(Swiss.FCh.MasterData.Models.Canton canton)
     {
         return new Canton
         {
