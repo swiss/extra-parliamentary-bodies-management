@@ -478,7 +478,7 @@ internal class MembershipServiceTests
         var updateDto = new MembershipUpdateDto
         {
             Id = membershipToUpdateId,
-            BeginDate = new DateOnly(2024, 1, 1),            
+            BeginDate = new DateOnly(2024, 1, 1),
             CommitteeId = committee.Id,
             EndDate = new DateOnly(2024, 2, 1),
             FunctionId = Guid.NewGuid(),
