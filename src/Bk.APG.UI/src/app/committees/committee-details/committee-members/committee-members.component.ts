@@ -121,7 +121,7 @@ export class CommitteeMembersComponent {
     ) {
         this.translateService.onLangChange
             .pipe(
-                startWith({lang: this.translateService.currentLang}),
+                startWith({lang: this.translateService.getCurrentLang()}),
                 distinctUntilChanged((prev, curr) => prev.lang === curr.lang),
                 switchMap(() => this.committeesService.getCommitteeMembers(this.route.snapshot.params.id)),
                 takeUntilDestroyed()

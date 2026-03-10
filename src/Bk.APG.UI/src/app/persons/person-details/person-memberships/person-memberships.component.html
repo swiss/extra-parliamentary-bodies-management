@@ -19,6 +19,7 @@
         {{ 'membership.create.info' | translate }}
     </button>
 </div>
+
 @for (memberships of tables; track memberships.name) {
     <h4>{{ 'person.details.' + memberships.name | translate }}</h4>
     <table
@@ -66,7 +67,7 @@
             (click)="editMembership(row)"
             *matRowDef="let row; columns: displayedColumns"
             mat-row
-            [ngClass]="row.needsAttention ? 'red-table-row' : !row.isActive ? 'inactive-table-row' : ''"
+            [ngClass]="row.isFuture ? 'green-table-row' : row.needsAttention ? 'red-table-row' : !row.isActive ? 'inactive-table-row' : ''"
         ></tr>
         <tr *matNoDataRow>
             <td [colSpan]="displayedColumns.length">{{ 'person.memberships.table.noEntries' | translate }}</td>

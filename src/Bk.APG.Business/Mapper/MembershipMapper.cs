@@ -35,6 +35,7 @@ public static class MembershipMapper
             EndDate = membership.EndDate,
             ElectionType = membership.ElectionType!.GetText(),
             IsActive = membership.IsActive,
+            IsFuture = membership.IsFuture,
             NeedsAttention = membership.NeedsAttention
         };
     }
