@@ -9,6 +9,10 @@
     @if (!generalElectionCommittee()?.isValidated && generalElectionCommittee()?.wasValidatedOnce) {
         <ob-alert type="warning">{{ 'committee.generalElection.running.wasValidatedOnce.hint' | translate }}</ob-alert>
     }
+
+    @if (generalElectionCommittee()?.isReadyForFederalCouncilProposal && generalElectionCommittee()?.isFederalCouncilProposalDirty) {
+        <ob-alert type="warning">{{ 'committee.generalElection.running.isFederalCouncilProposalDirty.hint' | translate }}</ob-alert>
+    }
 </div>
 
 <div class="validation-errors">

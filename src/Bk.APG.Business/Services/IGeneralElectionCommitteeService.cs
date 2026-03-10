@@ -15,4 +15,5 @@ public interface IGeneralElectionCommitteeService
     Task<GeneralElectionCommitteeUpdateDto> UpdateGeneralElectionCommitteeVacancies(Guid id, int vacancies);
     Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds);
     Task InvalidateMembershipCandidateList(Guid committeeId);
+    Task SetFederalCouncilProposalToDirty(Guid committeeId);
 }
