@@ -12,6 +12,9 @@
 -   Open sourced NuGet Packages integrated (Swiss.FCh.Utils, Swiss.FCh.MasterData, Swiss.FCh.Monitoring) [BKDO-2859](https://bkdev.atlassian.net/browse/BKDO-2859)
 -   Remove obsolete ogd id from general measures [BKDO-3156](https://bkdev.atlassian.net/browse/BKDO-3156)
 -   Show estimated term of office in candidate list [BKDO-2089](https://bkdev.atlassian.net/browse/BKDO-2089)
+-   Stop copying (mirror) memberships for validated candidate list [BKDO-2060](https://bkdev.atlassian.net/browse/BKDO-2860)
+-   Invalidate candidate list when membership changes after validation [BKDO-2797](https://bkdev.atlassian.net/browse/BKDO-2797)
+-   Set flag and copy (mirror) memberships when memberships change after candidate list is ready for proposal [BKDO-2861](https://bkdev.atlassian.net/browse/BKDO-2861)
 
 ## 1.1.1
 
