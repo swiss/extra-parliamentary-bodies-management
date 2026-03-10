@@ -40,6 +40,36 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _logger = logger;
     }
 
+    public async Task InvalidateMembershipCandidateList(Guid committeeId)
+    {
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
+        generalElectionCommittee.IsValidated = false;
+        var taskApproveByDepartment = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).FirstOrDefault(y => y.AssignedTo?.Role == Role.Department
+            && y.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove);
+        var taskListForSecretariat = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).Where(y => y.AssignedTo?.Role == Role.Secretariat
+            && (y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation));
+
+        if (taskApproveByDepartment is not null)
+        {
+            taskApproveByDepartment.WorklistTaskStateId = WorklistTaskState.Active;
+            taskApproveByDepartment.Modified = DateTime.UtcNow;
+            taskApproveByDepartment.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+
+        foreach (var task in taskListForSecretariat)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Inactive;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+        await _worklistTaskRepository.CommitChanges();
+    }
+
     public async Task<GeneralElectionCommitteeDetailDto> GetGeneralElectionCommittee(Guid committeeId)
     {
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
