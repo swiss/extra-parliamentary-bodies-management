@@ -9,5 +9,8 @@ public class GeneralElectionCommitteeFilterParameters
     public IEnumerable<Guid>? CommitteeTypeIds { get; init; }
     public IEnumerable<bool>? IsMarketOrientated { get; init; }
     public IEnumerable<bool>? HasSupervisionDuty { get; init; }
+    public IEnumerable<bool>? IsNew { get; init; }
+    public IEnumerable<bool>? Vacancies { get; init; }
+    public IEnumerable<bool>? StatusProposal { get; init; }
     public IEnumerable<Guid>? CommitteeIds { get; set; }
 }
