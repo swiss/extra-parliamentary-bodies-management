@@ -20,4 +20,5 @@ public class MembershipCandidateDetailDto
     public string? RemarksStatus { get; set; }
     public bool NeedsAttention { get; init; }
     public bool IsSelected { get; set; }
+    public int EstimatedTermOfOffice { get; init; }
 }
