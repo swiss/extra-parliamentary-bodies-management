@@ -30,14 +30,23 @@ using Swiss.FCh.Utils.Rhos.Extensions;
 
 try
 {
+    Log.Information("Host is starting");
+
     var builder = WebApplication.CreateBuilder(args);
 
-    builder
-        .AddSerilog("Bk.APG")
-        .AddRhosConfigurations()
-        .AddRhosPostgresConfiguration(vaultPath: "/app/vault/pg-database-credentials.json")
-        .AddRhosS3Configuration(vaultPath: "/app/vault/s3-credentials.json")
-        .AddRhosS3Configuration(vaultPath: "/app/vault/ogd-s3-credentials.json");
+    builder.AddSerilog("Bk.APG");
+
+    Log.Information("Adding RHOS configuration");
+    builder.AddRhosConfigurations();
+
+    Log.Information("Adding PGSQL secrets");
+    builder.AddRhosPostgresConfiguration(vaultPath: "/app/vault/pg-database-credentials.json");
+
+    Log.Information("Adding S3 secrets");
+    builder.AddRhosS3Configuration(vaultPath: "/app/vault/s3-credentials.json");
+
+    Log.Information("Adding OGD S3 secrets");
+    builder.AddRhosS3Configuration(vaultPath: "/app/vault/ogd-s3-credentials.json");
 
     var authenticationOptions = builder.Services.AddValidatedOptions<AuthenticationOptions>(builder.Configuration, AuthenticationOptions.SectionKey)
         .Get<AuthenticationOptions>()!;
@@ -231,7 +240,12 @@ try
 
     return 0;
 }
-catch (Exception ex) when (ex is not HostAbortedException)
+catch (HostAbortedException ex)
+{
+    Log.Error(ex, "Host aborted");
+    return 1;
+}
+catch (Exception ex)
 {
     Log.Fatal(ex, "Host terminated unexpectedly");
     return 1;
