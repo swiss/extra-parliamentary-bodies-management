@@ -24,7 +24,7 @@ internal class CountryMapperTests
     [Test]
     public void ToCountry_WithMasterDataModel_ShouldMapToModel()
     {
-        var masterDataModel = new Swiss.FCh.MasterData.Models.Country
+        var masterDataModel = new MasterData.Models.Country
         {
             Uri = "test_uri",
             NameDe = "test_name_de",
