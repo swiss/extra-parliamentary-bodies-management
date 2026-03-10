@@ -24,7 +24,7 @@ internal class CantonMapperTests
     [Test]
     public void ToCanton_WithMasterDataModel_ShouldMapToModel()
     {
-        var masterDataModel = new MasterData.Models.Canton
+        var masterDataModel = new Swiss.FCh.MasterData.Models.Canton
         {
             Uri = "test_uri",
             NameDe = "test_name_de",
