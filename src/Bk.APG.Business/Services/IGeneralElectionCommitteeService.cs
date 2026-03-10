@@ -14,4 +14,5 @@ public interface IGeneralElectionCommitteeService
     Task<GeneralElectionCommitteeJustificationUpdateDto> UpdateGeneralElectionCommitteeJustifications(Guid committeeId, GeneralElectionCommitteeJustificationUpdateDto updateDto);
     Task<GeneralElectionCommitteeUpdateDto> UpdateGeneralElectionCommitteeVacancies(Guid id, int vacancies);
     Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds);
+    Task InvalidateMembershipCandidateList(Guid committeeId);
 }
