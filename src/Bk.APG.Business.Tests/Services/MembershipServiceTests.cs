@@ -33,6 +33,8 @@ internal class MembershipServiceTests
     [TearDown]
     public void TearDown()
     {
+        _generalElectionService.ClearSubstitute();
+        _generalElectionCommitteeService.ClearSubstitute();
         _membershipRepository.ClearSubstitute();
         _committeeRepository.ClearSubstitute();
         _authorizationService.ClearSubstitute();
@@ -195,6 +197,7 @@ internal class MembershipServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Completed).Build())
             .WithMaximalMember(5)
             .Build();
 
@@ -226,7 +229,6 @@ internal class MembershipServiceTests
 
         _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
 
-
         _membershipRepository.GetById(Arg.Any<Guid>()).Returns(membership);
 
         _committeeRepository.GetById(committeeId).Returns(committee);
@@ -236,6 +238,117 @@ internal class MembershipServiceTests
         await _service.CreateMembership(createDto);
 
         await _generalElectionCommitteeService.Received(1).InvalidateMembershipCandidateList(committeeId);
+    }
+
+    [Test]
+    public async Task CreateMembership_InGeneralElection_ShouldSetFederalCouncilProposalToDirty()
+    {
+        var committeeId = Guid.NewGuid();
+        var membershipId = Guid.NewGuid();
+
+        var committee = new CommitteeBuilder()
+            .WithId(committeeId)
+            .WithBeginDate(new DateOnly(1976, 1, 1))
+            .WithEndDate(new DateOnly(2030, 12, 31))
+            .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
+            .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
+            .WithMaximalMember(5)
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithId(membershipId)
+            .WithCommittee(committee)
+            .WithFunction(new FunctionBuilder().Build())
+            .Build();
+
+        var createDto = new MembershipCreateDto
+        {
+            PersonId = Guid.NewGuid(),
+            CommitteeId = committeeId,
+            MaximumEmploymentLevel = 80,
+            BeginDate = DateOnly.FromDateTime(DateTime.Now),
+            EndDate = DateOnly.FromDateTime(DateTime.Now),
+            ElectionTypeId = Guid.NewGuid(),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            MembershipAdditionId = Guid.NewGuid(),
+            JustificationLongerDuty = "JustificationLongerDuty",
+            JustificationShorterDuty = "JustificationShorterDuty",
+            JustificationMemberInFederalDuty = "JustificationMemberInFederalDuty",
+            JustificationMemberInFederalAssembly = "JustificationMemberInFederalAssembly",
+            RequirementsProfile = "RequirementsProfile",
+            Remarks = "remarks",
+            RemarksStatus = "remarksStatus",
+        };
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+
+        _membershipRepository.GetById(Arg.Any<Guid>()).Returns(membership);
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+
+        _membershipRepository.Create(Arg.Any<Membership>()).Returns(membership);
+
+        await _service.CreateMembership(createDto);
+
+        await _generalElectionCommitteeService.Received(1).SetFederalCouncilProposalToDirty(committeeId);
+    }
+
+    [Test]
+    public async Task CreateMembership_InGeneralElectionAndReadyForFederalCouncilProposal_ShouldNotInvalidateCandidateListButMirrorEntries()
+    {
+        var committeeId = Guid.NewGuid();
+        var membershipId = Guid.NewGuid();
+
+        var committee = new CommitteeBuilder()
+            .WithId(committeeId)
+            .WithBeginDate(new DateOnly(1976, 1, 1))
+            .WithEndDate(new DateOnly(2030, 12, 31))
+            .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
+            .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
+            .WithMaximalMember(5)
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithId(membershipId)
+            .WithCommittee(committee)
+            .WithFunction(new FunctionBuilder().Build())
+            .Build();
+
+        var createDto = new MembershipCreateDto
+        {
+            PersonId = Guid.NewGuid(),
+            CommitteeId = committeeId,
+            MaximumEmploymentLevel = 80,
+            BeginDate = DateOnly.FromDateTime(DateTime.Now),
+            EndDate = DateOnly.FromDateTime(DateTime.Now),
+            ElectionTypeId = Guid.NewGuid(),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            MembershipAdditionId = Guid.NewGuid(),
+            JustificationLongerDuty = "JustificationLongerDuty",
+            JustificationShorterDuty = "JustificationShorterDuty",
+            JustificationMemberInFederalDuty = "JustificationMemberInFederalDuty",
+            JustificationMemberInFederalAssembly = "JustificationMemberInFederalAssembly",
+            RequirementsProfile = "RequirementsProfile",
+            Remarks = "remarks",
+            RemarksStatus = "remarksStatus",
+        };
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+
+        _membershipRepository.GetById(Arg.Any<Guid>()).Returns(membership);
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+
+        _membershipRepository.Create(Arg.Any<Membership>()).Returns(membership);
+
+        await _service.CreateMembership(createDto);
+
+        await _generalElectionCommitteeService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(committeeId);
+        await _generalElectionService.Received(1).CreateNewMembershipCandidate(membership, true);
     }
 
     [Test]
@@ -276,6 +389,7 @@ internal class MembershipServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Completed).Build())
             .WithMaximalMember(5)
             .Build();
 
@@ -299,6 +413,44 @@ internal class MembershipServiceTests
     }
 
     [Test]
+    public async Task DeleteMembership_InGeneralElection_SetFederalCouncilProposalToDirty()
+    {
+        _authorizationService.IsAdmin.Returns(true);
+        _authorizationService.IsDepartment.Returns(false);
+
+        var committeeId = Guid.NewGuid();
+        var membershipToDeleteId = Guid.NewGuid();
+
+        var committee = new CommitteeBuilder()
+            .WithId(committeeId)
+            .WithBeginDate(new DateOnly(1976, 1, 1))
+            .WithEndDate(new DateOnly(2030, 12, 31))
+            .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
+            .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
+            .WithMaximalMember(5)
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithId(membershipToDeleteId)
+            .WithCommittee(committee)
+            .WithCommitteeId(committee.Id)
+            .WithFunction(new FunctionBuilder().Build())
+            .Build();
+
+        _membershipRepository.GetByIdForUpdate(membershipToDeleteId).Returns(membership);
+        _membershipRepository.GetById(membershipToDeleteId).Returns(membership);
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+
+        await _service.DeleteMembership(membershipToDeleteId);
+
+        await _generalElectionCommitteeService.Received(1).SetFederalCouncilProposalToDirty(committeeId);
+    }
+
+    [Test]
     public async Task UpdateMembership_InGeneralElection_ShouldInvalidateCandidateList()
     {
         _authorizationService.IsAdmin.Returns(true);
@@ -314,6 +466,65 @@ internal class MembershipServiceTests
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
             .WithMaximalMember(5)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Completed).Build())
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithId(membershipToUpdateId)
+            .WithCommittee(committee)
+            .WithFunction(new FunctionBuilder().Build())
+            .Build();
+
+        var updateDto = new MembershipUpdateDto
+        {
+            Id = membershipToUpdateId,
+            BeginDate = new DateOnly(2024, 1, 1),            
+            CommitteeId = committee.Id,
+            EndDate = new DateOnly(2024, 2, 1),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            ElectionTypeId = Guid.NewGuid(),
+            JustificationLongerDuty = "JustificationLongerDuty",
+            JustificationShorterDuty = "JustificationShorterDuty",
+            JustificationMemberInFederalDuty = "JustificationMemberInFederalDuty",
+            JustificationMemberInFederalAssembly = "JustificationMemberInFederalAssembly",
+            RequirementsProfile = "RequirementsProfile",
+            MembershipAdditionId = Guid.NewGuid(),
+            PersonId = Guid.NewGuid(),
+            InCorrelationWithFederalDuty = true,
+            MaximumEmploymentLevel = 2,
+            RowVersion = 666
+        };
+
+        _membershipRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(membership);
+        _membershipRepository.GetById(updateDto.Id).Returns(membership);
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+
+        await _service.UpdateMembership(updateDto.Id, updateDto);
+
+        await _generalElectionCommitteeService.Received(1).InvalidateMembershipCandidateList(committeeId);
+    }
+
+    [Test]
+    public async Task UpdateMembership_InGeneralElection_ShouldSetFederalCouncilProposalToDirty()
+    {
+        _authorizationService.IsAdmin.Returns(true);
+        _authorizationService.IsDepartment.Returns(false);
+
+        var committeeId = Guid.NewGuid();
+        var membershipToUpdateId = Guid.NewGuid();
+
+        var committee = new CommitteeBuilder()
+            .WithId(committeeId)
+            .WithBeginDate(new DateOnly(1976, 1, 1))
+            .WithEndDate(new DateOnly(2030, 12, 31))
+            .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
+            .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .WithMaximalMember(5)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
             .Build();
 
         var membership = new MembershipBuilder()
@@ -352,7 +563,7 @@ internal class MembershipServiceTests
 
         await _service.UpdateMembership(updateDto.Id, updateDto);
 
-        await _generalElectionCommitteeService.Received(1).InvalidateMembershipCandidateList(committeeId);
+        await _generalElectionCommitteeService.Received(1).SetFederalCouncilProposalToDirty(committeeId);
     }
 
     [Test]
