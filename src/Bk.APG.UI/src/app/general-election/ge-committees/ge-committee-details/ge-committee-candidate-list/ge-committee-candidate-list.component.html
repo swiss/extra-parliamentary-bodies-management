@@ -427,6 +427,16 @@
         }
     </ng-container>
 
+    <ng-container matColumnDef="estimatedTermOfOffice">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.estimatedTermDuration' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.estimatedTermDuration' | translate }}">
+            {{ element.estimatedTermOfOffice }} {{ 'membership.details.years' | translate }}
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell><!-- Not editable for new candidates --></td>
+        }
+    </ng-container>
+
     <ng-container matColumnDef="membershipAddition">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.membershipAddition' | translate }}</th>
         <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.membershipAddition' | translate }}">

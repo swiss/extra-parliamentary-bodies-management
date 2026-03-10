@@ -75,6 +75,7 @@ export type MembershipCandidateColumns =
     | 'beginDate'
     | 'endDate'
     | 'electionType'
+    | 'estimatedTermOfOffice'
     | 'membershipAddition'
     | 'remarks'
     | 'remarksStatus'
@@ -189,6 +190,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
             'beginDate',
             'endDate',
             'electionType',
+            'estimatedTermOfOffice',
             'membershipAddition',
             'remarks',
             'remarksStatus',
