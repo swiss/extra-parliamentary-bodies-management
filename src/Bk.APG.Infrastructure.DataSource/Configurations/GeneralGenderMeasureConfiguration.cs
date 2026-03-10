@@ -10,12 +10,6 @@ public class GeneralGenderMeasureConfiguration : EntityBaseConfiguration<General
         builder.Property(x => x.Description)
             .IsRequired();
 
-        builder.Property(c => c.OgdId)
-            .ValueGeneratedOnAdd();
-
-        builder.HasIndex(c => c.OgdId)
-            .IsUnique();
-
         builder
             .HasOne(x => x.Department)
             .WithOne(d => d.GeneralGenderMeasure)
