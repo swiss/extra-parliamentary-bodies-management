@@ -41,7 +41,7 @@ public class GeneralElectionCommitteeBuilder
     private Guid _termOfOfficeDateId;
     private int _minimalMembers;
     private int _maximalMembers;
-    private int _vacanciesGeneralElection;
+    private int? _vacanciesGeneralElection;
     private readonly bool _additionalAuthorityMembers;
     private readonly string _linkAuthorityWebsite;
     private readonly string _remarksBaseData;
@@ -278,7 +278,7 @@ public class GeneralElectionCommitteeBuilder
         return this;
     }
 
-    public GeneralElectionCommitteeBuilder WithVacanciesGeneralElection(int vacanciesGeneralElection)
+    public GeneralElectionCommitteeBuilder WithVacanciesGeneralElection(int? vacanciesGeneralElection)
     {
         _vacanciesGeneralElection = vacanciesGeneralElection;
         return this;
