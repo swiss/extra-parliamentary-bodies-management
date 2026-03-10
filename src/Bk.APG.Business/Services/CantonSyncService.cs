@@ -27,7 +27,7 @@ public class CantonSyncService : BackgroundService
                 try
                 {
                     using var scope = _serviceProvider.CreateScope();
-                    var masterDataCantonService = scope.ServiceProvider.GetRequiredService<Swiss.FCh.MasterData.Services.ICantonService>();
+                    var masterDataCantonService = scope.ServiceProvider.GetRequiredService<MasterData.Services.ICantonService>();
 
                     _logger.LogDebug("Trying to synchronize cantons...");
                     var cantons = (await masterDataCantonService.GetCantons(stoppingToken)).ToList();
