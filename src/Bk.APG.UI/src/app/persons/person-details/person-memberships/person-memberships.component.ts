@@ -62,12 +62,12 @@ export class PersonMembershipsComponent {
     activeMemberships = computed(() =>
         this.memberships()
             .sort((a, b) => this.compare(a, b, this.currentActiveMembershipsSort()))
-            .filter(membership => membership.isActive)
+            .filter(membership => !!membership.isActive || !!membership.isFuture)
     );
     inactiveMemberships = computed(() =>
         this.memberships()
             .sort((a, b) => this.compare(a, b, this.currentInactiveMembershipsSort()))
-            .filter(membership => !membership.isActive)
+            .filter(membership => !membership.isActive && !membership.isFuture)
     );
 
     tables = [
@@ -92,7 +92,7 @@ export class PersonMembershipsComponent {
     ) {
         this.translateService.onLangChange
             .pipe(
-                startWith({lang: this.translateService.currentLang}),
+                startWith({lang: this.translateService.getCurrentLang()}),
                 distinctUntilChanged((prev, curr) => prev.lang === curr.lang),
                 switchMap(() => this.personsService.getPersonMemberships(this.route.snapshot.params.id)),
                 takeUntilDestroyed()
