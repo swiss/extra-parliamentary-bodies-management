@@ -3161,23 +3161,12 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("character varying(250)")
                         .HasColumnName("modified_by");
 
-                    b.Property<int>("OgdId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("ogd_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OgdId"));
-
                     b.HasKey("Id")
                         .HasName("pk_general_gender_measures");
 
                     b.HasIndex("DepartmentId")
                         .IsUnique()
                         .HasDatabaseName("ix_general_gender_measures_department_id");
-
-                    b.HasIndex("OgdId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_general_gender_measures_ogd_id");
 
                     b.ToTable("general_gender_measures", "data");
                 });
@@ -3218,23 +3207,12 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("character varying(250)")
                         .HasColumnName("modified_by");
 
-                    b.Property<int>("OgdId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("ogd_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OgdId"));
-
                     b.HasKey("Id")
                         .HasName("pk_general_language_measures");
 
                     b.HasIndex("DepartmentId")
                         .IsUnique()
                         .HasDatabaseName("ix_general_language_measures_department_id");
-
-                    b.HasIndex("OgdId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_general_language_measures_ogd_id");
 
                     b.ToTable("general_language_measures", "data");
                 });
