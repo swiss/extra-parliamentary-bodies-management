@@ -11,4 +11,5 @@ public class PersonMembershipDto
     public required string ElectionType { get; init; }
     public bool IsActive { get; init; }
     public bool NeedsAttention { get; init; }
+    public bool IsFuture { get; init; }
 }
