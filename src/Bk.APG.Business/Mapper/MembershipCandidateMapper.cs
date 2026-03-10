@@ -26,7 +26,8 @@ public static class MembershipCandidateMapper
             Remarks = membershipCandidate.Remarks,
             RemarksStatus = membershipCandidate.RemarksStatus,
             NeedsAttention = membershipCandidate.NeedsAttention,
-            IsSelected = membershipCandidate.IsSelected
+            IsSelected = membershipCandidate.IsSelected,
+            EstimatedTermOfOffice = membershipCandidate.EstimatedTermOfOffice,
         };
     }
 
