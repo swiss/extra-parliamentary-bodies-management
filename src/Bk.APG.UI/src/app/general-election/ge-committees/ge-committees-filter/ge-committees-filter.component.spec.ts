@@ -105,7 +105,7 @@ describe('GeCommitteesFilterComponent', () => {
             committeeTypes: null,
             isMarketOrientated: null,
             hasSupervisionDuty: null,
-            status: null,
+            isNew: null,
             vacancies: null,
             statusProposal: null,
         });
@@ -118,7 +118,7 @@ describe('GeCommitteesFilterComponent', () => {
             committeeTypes: null,
             isMarketOrientated: null,
             hasSupervisionDuty: null,
-            status: null,
+            isNew: null,
             vacancies: null,
             statusProposal: null,
         });
@@ -132,6 +132,7 @@ describe('GeCommitteesFilterComponent', () => {
         expect(filterForm.controls.committeeTypes.value).toBeNull();
         expect(filterForm.controls.isMarketOrientated.value).toBeNull();
         expect(filterForm.controls.hasSupervisionDuty.value).toBeNull();
+        expect(filterForm.controls.vacancies.value).toBeNull();
         expect(searchStorageServiceMock.getParams).toHaveBeenCalledTimes(1);
     });
 

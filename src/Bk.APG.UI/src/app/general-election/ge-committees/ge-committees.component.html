@@ -63,17 +63,23 @@
 
     <ng-container matColumnDef="status">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.status.label' | translate }}</th>
-        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.status.label' | translate }}"></td>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.status.label' | translate }}">
+            {{ element.isNew ? ('generalElection.committees.filter.status.new' | translate) : ('generalElection.committees.filter.status.pulled' | translate) }}
+        </td>
     </ng-container>
 
     <ng-container matColumnDef="vacancies">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.vacancies.label' | translate }}</th>
-        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.vacancies.label' | translate }}"></td>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.vacancies.label' | translate }}">
+            {{ element.vacanciesGeneralElection }}
+        </td>
     </ng-container>
 
     <ng-container matColumnDef="statusProposal">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.statusProposal.label' | translate }}</th>
-        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.statusProposal.label' | translate }}"></td>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.statusProposal.label' | translate }}">
+            {{ element.statusProposal ? ('i18n.common.yes' | translate) : ('i18n.common.no' | translate) }}
+        </td>
     </ng-container>
 
     <ng-container matColumnDef="modified">

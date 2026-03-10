@@ -103,12 +103,14 @@ internal class GeneralElectionCommitteeMapperTests
             .WithSupervisionDuty(true)
             .WithMarketOrientated(true)
             .WithVacanciesGeneralElection(2)
+            .WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal)
+            .WithCommittee(new CommitteeBuilder().WithTermOfOfficeDate(null).Build())
             .Build();
 
         var committeeList = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, new CultureInfo("fr"));
 
         Assert.That(committeeList, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(committeeList.Id, Is.EqualTo(committee.Id));
             Assert.That(committeeList.CommitteeId, Is.EqualTo(committee.CommitteeId));
@@ -116,14 +118,29 @@ internal class GeneralElectionCommitteeMapperTests
             Assert.That(committeeList.Department, Is.EqualTo(committee.Department!.TextFr));
             Assert.That(committeeList.Office, Is.EqualTo(committee.Office!.TextFr));
             Assert.That(committeeList.CommitteeType, Is.EqualTo(committee.CommitteeType!.TextFr));
-            Assert.That(committeeList.Status, Is.Empty);
+            Assert.That(committeeList.IsNew, Is.False);
             Assert.That(committeeList.VacanciesGeneralElection, Is.EqualTo(committee.VacanciesGeneralElection));
-            Assert.That(committeeList.StatusProposal, Is.Empty);
             Assert.That(committeeList.IsMarketOrientated, Is.EqualTo(committee.MarketOrientated));
             Assert.That(committeeList.HasSupervisionDuty, Is.EqualTo(committee.SupervisionDuty));
+            Assert.That(committeeList.StatusProposal, Is.True);
             Assert.That(committeeList.Modified, Is.EqualTo(committee.Modified));
             Assert.That(committeeList.ModifiedBy, Is.EqualTo(committee.ModifiedBy));
-        });
+        }
+    }
+
+    [TestCase(2, ExpectedResult = 1)]
+    [TestCase(1, ExpectedResult = 0)]
+    public int MapToGeneralElectionCommitteeList_WithoutVacanciesInGeneralElection_ShouldCalculateByMemberCount(int minimalMember)
+    {
+        var committee = new GeneralElectionCommitteeBuilder()
+            .WithMinimalMember(minimalMember)
+            .WithVacanciesGeneralElection(null)
+            .WithMembershipCandidate(new MembershipCandidateBuilder().WithIsSelected(true).WithIsDeleted(false).Build())
+            .Build();
+
+        var committeeList = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, new CultureInfo("fr"));
+
+        return committeeList.VacanciesGeneralElection;
     }
 
     private static GeneralElectionCommittee GenerateTestData()

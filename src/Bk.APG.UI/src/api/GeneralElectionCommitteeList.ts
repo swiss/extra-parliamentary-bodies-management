@@ -7,7 +7,7 @@ export interface GeneralElectionCommitteeList {
     committeeType: string;
     isMarketOrientated: string;
     hasSupervisionDuty: boolean;
-    status: string;
+    isNew: string;
     vacanciesGeneralElection: number;
     statusProposal: string;
     modified: Date;
