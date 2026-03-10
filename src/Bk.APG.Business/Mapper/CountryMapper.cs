@@ -18,7 +18,7 @@ public static class CountryMapper
         };
     }
 
-    public static Country ToCountry(Swiss.FCh.MasterData.Models.Country country)
+    public static Country ToCountry(MasterData.Models.Country country)
     {
         return new Country
         {
