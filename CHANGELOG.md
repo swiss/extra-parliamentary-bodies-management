@@ -8,6 +8,7 @@
 -   Enable begin date for admins (GEW committee) [BKDO-3088](https://bkdev.atlassian.net/browse/BKDO-3088)
 -   Update institution appointment decision type label [BKDO-3112](https://bkdev.atlassian.net/browse/BKDO-3112)
 -   Update and remove membership addition master data [BKDO-3095](https://bkdev.atlassian.net/browse/BKDO-3095)
+-   Extend GEW committee overview filters [BKDO-2090](https://bkdev.atlassian.net/browse/BKDO-2090)
 
 ## 1.1.1
 
