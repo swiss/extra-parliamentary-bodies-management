@@ -86,6 +86,8 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .Include(item => item.CommitteeType)
             .Include(item => item.TermOfOffice)
             .Include(item => item.MembershipCandidates)
+            .Include(item => item.Committee)
+                .ThenInclude(item => item!.TermOfOfficeDate)
             .FilterGeneralElectionCommittees(filter)
             .AsSingleQuery();
 
@@ -93,7 +95,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .CountAsync();
 
         var items = await query
-            .SortCommittees(sort ?? "description", sortDirection.GetValueOrDefault(SortDirection.Desc), _cultureService.GetCurrentUiCulture())
+            .SortGeneralElectionCommittees(sort ?? "description", sortDirection.GetValueOrDefault(SortDirection.Desc), _cultureService.GetCurrentUiCulture())
             .Skip(paging.PageIndex * paging.PageSize)
             .Take(paging.PageSize)
             .ToListAsync();
@@ -196,6 +198,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .ThenInclude(item => item!.Function)
             .Include(item => item.MembershipCandidates)
             .ThenInclude(item => item!.ElectionType)
+            .Include(item => item.Committee)
             .FilterGeneralElectionCommitteesForExport(filterDto)
         .AsSplitQuery()
             .Select(c => new GeneralElectionCommittee
