@@ -7,5 +7,6 @@ export interface PersonMembership {
     endDate: Date;
     electionType: string;
     isActive: boolean;
+    isFuture: boolean;
     needsAttention: boolean;
 }

@@ -56,7 +56,7 @@ internal class MembershipMapperTests
         var dto = MembershipMapper.ToPersonMembershipDto(membership);
 
         Assert.That(dto, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(dto.Id, Is.EqualTo(membership.Id));
             Assert.That(dto.Committee, Is.EqualTo(membership.Committee!.GetDescription()));
@@ -65,8 +65,9 @@ internal class MembershipMapperTests
             Assert.That(dto.BeginDate, Is.EqualTo(membership.BeginDate));
             Assert.That(dto.EndDate, Is.EqualTo(membership.EndDate));
             Assert.That(dto.ElectionType, Is.EqualTo(membership.ElectionType!.GetText()));
-            Assert.That(dto.IsActive, Is.EqualTo(true));
-        });
+            Assert.That(dto.IsActive, Is.True);
+            Assert.That(dto.IsFuture, Is.EqualTo(membership.IsFuture));
+        }
     }
 
     [Test]

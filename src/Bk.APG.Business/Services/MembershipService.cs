@@ -49,15 +49,15 @@ public class MembershipService : IMembershipService
 
     public async Task<MembershipListDto> GetAllByCommitteeId(Guid committeeId)
     {
-        var memberships = await _membershipRepository.GetAllByCommitteeId(committeeId);
+        var memberships = (await _membershipRepository.GetAllByCommitteeId(committeeId)).ToArray();
         var committee = await _committeeRepository.GetById(committeeId);
 
         var activeMemberships = memberships.Where(m => m.IsActive || m.IsFuture).Select(MembershipMapper.ToCommitteeMemberDto);
-        var inactiveMemberships = memberships.Where(m => !m.IsActive && !m.IsFuture).Select(MembershipMapper.ToCommitteeMemberDto);
+        var inactiveMemberships = memberships.Where(m => m is { IsActive: false, IsFuture: false }).Select(MembershipMapper.ToCommitteeMemberDto);
 
         return new MembershipListDto
         {
-            CommitteeQuotas = committee!.GetQuotas(),
+            CommitteeQuotas = committee.GetQuotas(),
             ActiveMemberships = activeMemberships,
             InactiveMemberships = inactiveMemberships
         };
