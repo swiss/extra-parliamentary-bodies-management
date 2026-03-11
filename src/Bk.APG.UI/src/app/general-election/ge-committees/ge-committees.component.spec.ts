@@ -24,7 +24,7 @@ describe('GeneralElectionCommitteesComponent', () => {
     beforeEach(async () => {
         const routerEventsSubject = new Subject();
         const translateServiceMock = {
-            currentLang: 'en',
+            getCurrentLang: jest.fn(() => 'en'),
             onLangChange: new Subject(),
         };
         routeMock = {};
