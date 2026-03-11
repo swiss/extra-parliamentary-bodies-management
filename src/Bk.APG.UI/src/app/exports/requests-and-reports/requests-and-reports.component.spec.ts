@@ -62,7 +62,7 @@ describe('RequestsAndReportsComponent', () => {
     const languageChangeEmitter = new EventEmitter<LangChangeEvent>();
     const translateServiceMock = {
         onLangChange: languageChangeEmitter,
-        currentLang: 'de',
+        getCurrentLang: jest.fn(() => 'de'),
         instant: jest.fn(),
     };
 

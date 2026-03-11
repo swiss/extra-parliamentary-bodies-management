@@ -53,7 +53,7 @@ export class PersonDataComponent implements OnInit {
 
         if (!this.isObserver) {
             const currentLanguage$ = this.translateService.onLangChange.pipe(
-                startWith({lang: this.translateService.currentLang}),
+                startWith({lang: this.translateService.getCurrentLang()}),
                 map(lang => lang.lang),
                 distinctUntilChanged(),
                 takeUntilDestroyed()
