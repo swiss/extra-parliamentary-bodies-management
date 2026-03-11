@@ -20,7 +20,7 @@ describe('WorklistTaskEditComponent', () => {
     let activatedRouteSpy: Partial<ActivatedRoute>;
 
     const translateServiceMock = {
-        currentLang: 'de',
+        getCurrentLang: jest.fn(() => 'de'),
         use: jest.fn(),
         onLangChange: of({lang: 'en'}),
     };

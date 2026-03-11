@@ -31,7 +31,7 @@ export class OnlinePublicationComponent implements OnDestroy {
     constructor() {
         this.translateService.onLangChange
             .pipe(
-                startWith({lang: this.translateService.currentLang}),
+                startWith({lang: this.translateService.getCurrentLang()}),
                 map(lang => lang.lang),
                 distinctUntilChanged()
             )
