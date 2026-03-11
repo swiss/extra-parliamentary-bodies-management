@@ -709,6 +709,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         var gecommitteeForUpdate = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
         gecommitteeForUpdate.CandidateListStateId = CandidateListState.ReadyForFederalCouncilProposal;
         gecommitteeForUpdate.ReleaseGeneralElection = true;
+        gecommitteeForUpdate.IsFederalCouncilProposalDirty = false;
         gecommitteeForUpdate.Modified = DateTime.UtcNow;
         gecommitteeForUpdate.ModifiedBy = _authorizationService.GetCurrentUserName();
 
@@ -742,7 +743,7 @@ public class MembershipCandidateService : IMembershipCandidateService
     {
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
 
-        var activeMemberships = generalElectionCommittee.CandidateListStateId != CandidateListState.Completed
+        var activeMemberships = generalElectionCommittee.CandidateListStateId != CandidateListState.Completed && generalElectionCommittee.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposal
             ? []
             : generalElectionCommittee.MembershipCandidates
                 .Where(m => m is { IsDeleted: false, IsSelected: true })
