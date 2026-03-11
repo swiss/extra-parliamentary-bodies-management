@@ -30,7 +30,7 @@ describe('PersonInterestsComponent', () => {
     const langChangeSubject = new Subject();
     const translateServiceMock = {
         onLangChange: langChangeSubject.asObservable(),
-        currentLang: 'de',
+        getCurrentLang: jest.fn(() => 'de'),
     };
 
     const masterDataServiceMock = {
