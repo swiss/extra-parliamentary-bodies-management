@@ -108,6 +108,7 @@ public static class PersonMapper
                     Function = m.Function!.GetText(),
                     Id = m.Id,
                     IsActive = m.IsActive,
+                    IsFuture = m.IsFuture,
                     NeedsAttention = m.NeedsAttention
                 }).ToList(),
             Interests = person.Interests
