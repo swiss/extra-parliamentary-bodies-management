@@ -26,7 +26,7 @@ describe('CommitteeMembersComponent', () => {
     const routerMock = {navigate: jest.fn()};
     const activatedRouteMock = {snapshot: {params: {id: '123'}}};
     const translateServiceMock = {
-        currentLang: 'en',
+        getCurrentLang: jest.fn(() => 'en'),
         onLangChange: of({lang: 'en'}),
         instant: jest.fn().mockReturnValue('Bis 10%'),
     };
