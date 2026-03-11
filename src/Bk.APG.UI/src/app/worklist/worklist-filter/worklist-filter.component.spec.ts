@@ -40,7 +40,7 @@ describe('WorklistFilterComponent', () => {
     const langChangeSubject = new Subject<LangChangeEvent>();
 
     const translateServiceMock = {
-        currentLang: 'en',
+        getCurrentLang: jest.fn(() => 'en'),
         onLangChange: langChangeSubject,
         get: jest.fn(),
     };

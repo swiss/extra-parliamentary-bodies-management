@@ -37,7 +37,7 @@ export class PersonOverviewComponent implements OnDestroy {
         protected readonly personDetailsService: PersonDetailsService
     ) {
         const currentLanguage$ = this.translateService.onLangChange.pipe(
-            startWith({lang: this.translateService.currentLang}),
+            startWith({lang: this.translateService.getCurrentLang()}),
             map(lang => lang.lang),
             distinctUntilChanged()
         );
