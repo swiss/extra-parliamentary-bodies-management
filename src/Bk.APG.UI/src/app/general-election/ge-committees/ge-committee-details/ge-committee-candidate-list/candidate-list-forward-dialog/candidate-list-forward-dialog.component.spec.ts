@@ -36,7 +36,7 @@ describe('CandidateListForwardDialogComponent', () => {
             error: jest.fn(),
         } as any;
         const translateServiceMock = {
-            currentLang: 'en',
+            getCurrentLang: jest.fn(() => 'en'),
             onLangChange: new Subject(),
         };
 
