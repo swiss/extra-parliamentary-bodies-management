@@ -40,7 +40,7 @@ describe('PersonDetailsOverviewComponent', () => {
         onLangChangeSubject = new Subject<LangChangeEvent>();
         const translateServiceMock = {
             get: jest.fn(),
-            currentLang: 'de',
+            getCurrentLang: jest.fn(() => 'de'),
             onLangChange: onLangChangeSubject.asObservable(),
         };
 

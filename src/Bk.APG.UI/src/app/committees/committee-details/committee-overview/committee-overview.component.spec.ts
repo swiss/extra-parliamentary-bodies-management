@@ -37,7 +37,7 @@ describe('CommitteeOverviewComponent', () => {
 
         onLangChangeSubject = new Subject<LangChangeEvent>();
         const translateServiceMock = {
-            currentLang: 'de',
+            getCurrentLang: jest.fn(() => 'de'),
             onLangChange: onLangChangeSubject.asObservable(),
             get: jest.fn(),
         };

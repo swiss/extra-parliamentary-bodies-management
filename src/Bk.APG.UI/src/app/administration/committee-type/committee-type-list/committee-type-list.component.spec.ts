@@ -20,7 +20,7 @@ describe('CommitteeTypeListComponent', () => {
         onLangChangeSubject = new Subject();
         const translateServiceMock = {
             onLangChange: onLangChangeSubject.asObservable(),
-            currentLang: 'de',
+            getCurrentLang: jest.fn(() => 'de'),
         };
 
         committeeTypeServiceMock = {
