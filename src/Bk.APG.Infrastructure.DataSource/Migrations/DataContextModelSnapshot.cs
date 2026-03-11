@@ -2951,6 +2951,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("IsFederalCouncilProposalDirty")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_federal_council_proposal_dirty");
+
                     b.Property<bool>("IsValidated")
                         .HasColumnType("boolean")
                         .HasColumnName("is_validated");

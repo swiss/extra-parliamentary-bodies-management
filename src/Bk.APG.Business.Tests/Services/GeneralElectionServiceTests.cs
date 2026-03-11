@@ -259,7 +259,7 @@ public class GeneralElectionServiceTests
         var membership = new MembershipBuilder().WithId(membershipId).Build();
         var membershipCandidate = new MembershipCandidateBuilder()
             .WithMembership(membership)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(true)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsValidated(true).WithCandidateListStateId(CandidateListState.Completed)
             .Build()).Build();
 
         _membershipCandidateRepository.GetByMembershipIdForUpdate(membershipId).Returns(membershipCandidate);
