@@ -213,7 +213,7 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (membershipCandidate != null)
         {
-            if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true)
+            if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true && membershipCandidate.GeneralElectionCommittee?.CandidateListStateId == CandidateListState.Completed)
             {
                 _logger.LogInformation("Membership candidate list already validated, skip mirror entries");
                 return;
@@ -253,7 +253,7 @@ public class GeneralElectionService : IGeneralElectionService
         }
     }
 
-    public async Task CreateNewMembershipCandidate(Membership membership)
+    public async Task CreateNewMembershipCandidate(Membership membership, bool isSelected = false)
     {
         _logger.LogInformation("Create new membership candidate for general election committee {CommitteeId}", membership.CommitteeId);
 
@@ -268,6 +268,7 @@ public class GeneralElectionService : IGeneralElectionService
         if (termOfOfficeDate.BeginDate != newEndDate)
         {
             membershipCandidate.EndDate = newEndDate;
+            membershipCandidate.IsSelected = isSelected;
             await _membershipCandidateRepository.Create(membershipCandidate);
             _logger.LogInformation("New membership candidate created {MembershipCandidateId}", membershipCandidate.Id);
         }
