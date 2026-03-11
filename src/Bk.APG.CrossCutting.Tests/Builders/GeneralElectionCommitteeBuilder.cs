@@ -53,6 +53,7 @@ public class GeneralElectionCommitteeBuilder
     private readonly string? _assignedToRole;
     private bool _isValidated;
     private bool _wasValidatedOnce;
+    private bool _isFederalCouncilProposalDirty;
     private readonly string _selectionProcedure;
     private DateOnly? _officeReadyForProposalDueDate;
     private DateOnly? _secretariatReadyForProposalDueDate;
@@ -111,6 +112,7 @@ public class GeneralElectionCommitteeBuilder
         _assignedToRole = null;
         _isValidated = false;
         _wasValidatedOnce = false;
+        _isFederalCouncilProposalDirty = false;
         _selectionProcedure = _faker.Random.String();
         _rowVersion = _faker.Random.UInt();
         _officeReadyForProposalDueDate = _faker.Date.FutureDateOnly();
@@ -321,6 +323,12 @@ public class GeneralElectionCommitteeBuilder
         return this;
     }
 
+    public GeneralElectionCommitteeBuilder WithIsFederalCouncilProposalDirty(bool isFederalCouncilProposalDirty)
+    {
+        _isFederalCouncilProposalDirty = isFederalCouncilProposalDirty;
+        return this;
+    }
+
     public GeneralElectionCommitteeBuilder WithOfficeReadyForProposalDueDate(DateOnly? officeReadyForProposalDueDate)
     {
         _officeReadyForProposalDueDate = officeReadyForProposalDueDate;
@@ -414,7 +422,8 @@ public class GeneralElectionCommitteeBuilder
             MeasuresGenders = _measuresGenders,
             JustificationLanguages = _justificationLanguages,
             MeasuresLanguages = _measuresLanguages,
-            WasValidatedOnce = _wasValidatedOnce
+            WasValidatedOnce = _wasValidatedOnce,
+            IsFederalCouncilProposalDirty = _isFederalCouncilProposalDirty
         };
     }
 }

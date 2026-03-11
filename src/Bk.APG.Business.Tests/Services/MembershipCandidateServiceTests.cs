@@ -552,6 +552,7 @@ internal class MembershipCandidateServiceTests
             Assert.That(result.AllValidationsPassed, Is.True);
             Assert.That(adminTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
             Assert.That(committeeForUpdate.ReleaseGeneralElection, Is.True);
+            Assert.That(committeeForUpdate.IsFederalCouncilProposalDirty, Is.False);
         }
 
         await _generalElectionCommitteeRepository.Received(2).CommitChanges();
