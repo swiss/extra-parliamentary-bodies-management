@@ -138,6 +138,7 @@ public class MembershipRepository : IMembershipRepository
             .Include(m => m.ElectionOffice)
             .Include(m => m.ElectionType)
             .Include(m => m.Committee)
+                .ThenInclude(c => c!.GeneralElectionCommittees)
             .Include(m => m.Person)
             .FirstOrDefaultAsync(p => p.Id == id);
 
