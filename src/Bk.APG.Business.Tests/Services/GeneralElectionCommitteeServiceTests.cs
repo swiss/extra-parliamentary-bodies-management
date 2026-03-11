@@ -601,7 +601,8 @@ public class GeneralElectionCommitteeServiceTests
             .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
             .Build();
 
-        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.IsValidated = true;
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee);
         _generalElectionCommittee.CandidateListState = candidateListState;
         _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([completedCandidateListTask, activeCandidateListTaskSecretariat]);
@@ -610,8 +611,42 @@ public class GeneralElectionCommitteeServiceTests
 
         using (Assert.EnterMultipleScope())
         {
+            Assert.That(_generalElectionCommittee.IsValidated, Is.False);
             Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
             Assert.That(completedCandidateListTask.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
+        }
+    }
+
+    [Test]
+    public async Task SetFederalCouncilProposalToDirty_WhenCalled_ShouldInvalidateTasks()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var assignmentId = Guid.NewGuid();
+        var currentAssignmentSecretariat = new EiamAssignmentBuilder()
+            .WithId(assignmentId)
+            .WithRole(Role.Secretariat)
+            .Build();
+        var activeCandidateListTaskSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        _generalElectionCommittee.IsValidated = true;
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([activeCandidateListTaskSecretariat]);
+
+        await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_generalElectionCommittee.IsValidated, Is.True);
+            Assert.That(_generalElectionCommittee.IsFederalCouncilProposalDirty, Is.True);
+            Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
         }
     }
 

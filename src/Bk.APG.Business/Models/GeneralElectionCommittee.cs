@@ -56,6 +56,7 @@ public class GeneralElectionCommittee : EntityBase
     public string? LinkHomepageRomansh { get; set; }
     public required bool IsValidated { get; set; }
     public required bool WasValidatedOnce { get; set; }
+    public required bool IsFederalCouncilProposalDirty { get; set; }
     public string? SelectionProcedure { get; set; }
 
     public CandidateListState? CandidateListState { get; set; }
