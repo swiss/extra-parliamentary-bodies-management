@@ -11,7 +11,7 @@ namespace Bk.APG.Business.Tests.Services;
 [TestFixture]
 internal class ElectoralListServiceTests
 {
-    private readonly DocumentService.Client.IDocumentService _documentService = Substitute.For<DocumentService.Client.IDocumentService>();
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly IEiamAssignmentService _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
     private readonly ICommitteeRepository _committeeRepository = Substitute.For<ICommitteeRepository>();
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
