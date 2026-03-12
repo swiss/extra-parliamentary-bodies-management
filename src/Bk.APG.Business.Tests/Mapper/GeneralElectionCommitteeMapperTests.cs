@@ -103,7 +103,7 @@ internal class GeneralElectionCommitteeMapperTests
             .WithSupervisionDuty(true)
             .WithMarketOrientated(true)
             .WithVacanciesGeneralElection(2)
-            .WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal)
+            .WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .WithCommittee(new CommitteeBuilder().WithTermOfOfficeDate(null).Build())
             .Build();
 
