@@ -127,7 +127,7 @@ public static class GeneralElectionCommitteeMapper
             FederalInstitution = generalElectionCommittee.FederalInstitution,
             ExtraParliamentaryCommission = generalElectionCommittee.ExtraParliamentaryCommission,
             IsValidated = generalElectionCommittee.IsValidated,
-            IsReadyForFederalCouncilProposal = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal,
+            IsReadyForFederalCouncilProposalForwarded = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded,
             WasValidatedOnce = generalElectionCommittee.WasValidatedOnce,
             IsFederalCouncilProposalDirty = generalElectionCommittee.IsFederalCouncilProposalDirty,
             SelectionProcedure = generalElectionCommittee.SelectionProcedure,
@@ -197,7 +197,7 @@ public static class GeneralElectionCommitteeMapper
                                        (generalElectionCommittee.MinimalMembers - generalElectionCommittee.ActiveMemberCount > 0
                                            ? generalElectionCommittee.MinimalMembers.GetValueOrDefault() - generalElectionCommittee.ActiveMemberCount
                                            : 0),
-            StatusProposal = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal,
+            StatusProposal = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized,
             IsMarketOrientated = generalElectionCommittee.MarketOrientated,
             HasSupervisionDuty = generalElectionCommittee.SupervisionDuty,
             Modified = generalElectionCommittee.Modified,
