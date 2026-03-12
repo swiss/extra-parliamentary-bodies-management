@@ -6,7 +6,7 @@ using Bk.APG.Business.Repositories;
 using Bk.APG.Common.Resources;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
-using Bk.DocumentService.Client.Models;
+using Swiss.FCh.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
 
 namespace Bk.APG.Business.Services;
@@ -18,7 +18,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly ICultureService _cultureService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
-    private readonly Bk.DocumentService.Client.IDocumentService _documentService;
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ILogger<GeneralElectionCommitteeService> _logger;
 
     public GeneralElectionCommitteeService(
@@ -27,7 +27,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         ICultureService cultureService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
-        Bk.DocumentService.Client.IDocumentService documentService,
+        Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         ILogger<GeneralElectionCommitteeService> logger
     )
     {
@@ -355,7 +355,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return (GenerateFileName(DateTime.Now, BusinessTexts.CandidateList), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetCandidateListData(Guid id, IEnumerable<Guid> membershipCandidateIds)
+    private async Task<IList<IList<Cell>>> GetCandidateListData(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
         var committee = await _generalElectionCommitteeRepository.GetForCandidateListExport(id, membershipCandidateIds);
 
@@ -385,7 +385,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Phone ?? string.Empty }, // Telefon
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Email ?? string.Empty }, // E-Mail
                 new() { Text = string.Join(";", candidate.Person?.Interests?.Where(y => !string.IsNullOrWhiteSpace(y.InterestText)).Select(y => y.InterestText) ?? Enumerable.Empty<string>()) } // Interessenbindungen
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }

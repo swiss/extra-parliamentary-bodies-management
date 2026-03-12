@@ -11,7 +11,7 @@ namespace Bk.APG.Business.Services;
 
 public class ReportService : IReportService
 {
-    private readonly Bk.DocumentService.Client.IDocumentService _documentService;
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly ICultureService _cultureService;
     private readonly IElectoralListService _electoralListService;
@@ -23,7 +23,7 @@ public class ReportService : IReportService
     private readonly ILogger<ReportService> _logger;
 
     public ReportService(
-        Bk.DocumentService.Client.IDocumentService documentService,
+        Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         ICultureService cultureService,
         ITermOfOfficeDateService termOfOfficeDateService,
         IElectoralListService electoralListService,
