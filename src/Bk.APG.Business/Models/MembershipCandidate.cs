@@ -113,7 +113,7 @@ public class MembershipCandidate : EntityBase
             (BeginDate <= lp.StartDate && EndDate >= lp.EndDate));
 
     [NotMapped]
-    public bool HasMembershipValidationIssues => GeneralElectionCommittee!.CandidateListStateId == CandidateListState.Completed &&
+    public bool HasMembershipValidationIssues => GeneralElectionCommittee!.CandidateListStateId == CandidateListState.Validated &&
         (MaximumEmploymentLevelMissing ||
             HasMissingLongerDutyJustification ||
             HasMissingShorterDutyJustification ||

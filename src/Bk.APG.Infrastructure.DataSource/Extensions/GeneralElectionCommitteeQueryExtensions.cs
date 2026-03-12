@@ -134,11 +134,11 @@ public static class GeneralElectionCommitteeQueryExtensions
         {
             if (filterParameter.StatusProposal.Contains(true) && !filterParameter.StatusProposal.Contains(false))
             {
-                query = query.Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal);
+                query = query.Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized);
             }
             else if (filterParameter.StatusProposal.Contains(false) && !filterParameter.StatusProposal.Contains(true))
             {
-                query = query.Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposal);
+                query = query.Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized);
             }
         }
 

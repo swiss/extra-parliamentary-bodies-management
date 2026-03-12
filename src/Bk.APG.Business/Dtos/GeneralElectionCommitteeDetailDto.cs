@@ -44,7 +44,7 @@ public class GeneralElectionCommitteeDetailDto
     public bool IsActive { get; set; }
     public bool? FederalInstitution { get; set; }
     public bool IsValidated { get; set; }
-    public bool IsReadyForFederalCouncilProposal { get; set; }
+    public bool IsReadyForFederalCouncilProposalForwarded { get; set; }
     public bool WasValidatedOnce { get; set; }
     public bool IsFederalCouncilProposalDirty { get; set; }
     public bool CanEdit { get; set; }
