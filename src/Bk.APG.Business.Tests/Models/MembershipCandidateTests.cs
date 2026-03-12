@@ -370,7 +370,7 @@ internal class MembershipCandidateTests
     public void HasMembershipValidationIssues_WhenCompletedAndIssuesExist_ShouldReturnTrue()
     {
         var committee = new GeneralElectionCommitteeBuilder()
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .WithMarketOrientated(true)
             .Build();
 
