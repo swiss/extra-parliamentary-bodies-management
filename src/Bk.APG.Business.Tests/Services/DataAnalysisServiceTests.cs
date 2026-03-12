@@ -3,17 +3,17 @@ using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
 using Bk.APG.Common.Resources;
 using Bk.APG.CrossCutting.Tests.Builders;
-using Bk.DocumentService.Client.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Swiss.FCh.DocumentService.Client.Models;
 
 namespace Bk.APG.Business.Tests.Services;
 
 [TestFixture]
 internal class DataAnalysisServiceTests
 {
-    private DocumentService.Client.IDocumentService _documentService;
+    private Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private IEiamAssignmentService _eiamAssignmentService;
     private ICommitteeRepository _committeeRepository;
     private IPersonRepository _personRepository;
@@ -27,7 +27,7 @@ internal class DataAnalysisServiceTests
     [SetUp]
     public void Setup()
     {
-        _documentService = Substitute.For<DocumentService.Client.IDocumentService>();
+        _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
         _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
         _committeeRepository = Substitute.For<ICommitteeRepository>();
         _personRepository = Substitute.For<IPersonRepository>();
