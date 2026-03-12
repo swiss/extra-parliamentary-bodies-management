@@ -6,9 +6,9 @@ using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
 using Bk.APG.CrossCutting.Tests.Builders;
-using Swiss.FCh.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Swiss.FCh.DocumentService.Client.Models;
 
 namespace Bk.APG.Business.Tests.Services;
 
