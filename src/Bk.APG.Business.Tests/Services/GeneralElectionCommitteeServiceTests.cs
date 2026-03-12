@@ -6,7 +6,7 @@ using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
 using Bk.APG.CrossCutting.Tests.Builders;
-using Bk.DocumentService.Client.Models;
+using Swiss.FCh.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -21,7 +21,7 @@ public class GeneralElectionCommitteeServiceTests
     private readonly ICultureService _cultureService = Substitute.For<ICultureService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
-    private readonly DocumentService.Client.IDocumentService _documentService = Substitute.For<DocumentService.Client.IDocumentService>();
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly ILogger<GeneralElectionCommitteeService> _logger = NullLogger<GeneralElectionCommitteeService>.Instance;
 
     private GeneralElectionCommittee _generalElectionCommittee;

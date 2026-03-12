@@ -9,14 +9,14 @@ namespace Bk.APG.Business.Services;
 
 public class ElectoralListService : IElectoralListService
 {
-    private readonly Bk.DocumentService.Client.IDocumentService _documentService;
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly ILogger<ElectoralListService> _logger;
 
     public ElectoralListService(
-        Bk.DocumentService.Client.IDocumentService documentService,
+        Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         IEiamAssignmentService eiamAssignmentService,
         ICommitteeRepository committeeRepository,
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
