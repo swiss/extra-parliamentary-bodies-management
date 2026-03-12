@@ -213,7 +213,7 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (membershipCandidate != null)
         {
-            if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true && membershipCandidate.GeneralElectionCommittee?.CandidateListStateId == CandidateListState.Completed)
+            if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true && membershipCandidate.GeneralElectionCommittee?.CandidateListStateId == CandidateListState.Validated)
             {
                 _logger.LogInformation("Membership candidate list already validated, skip mirror entries");
                 return;
