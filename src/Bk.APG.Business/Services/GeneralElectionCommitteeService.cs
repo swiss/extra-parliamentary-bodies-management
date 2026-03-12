@@ -6,8 +6,8 @@ using Bk.APG.Business.Repositories;
 using Bk.APG.Common.Resources;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
-using Swiss.FCh.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
+using Swiss.FCh.DocumentService.Client.Models;
 
 namespace Bk.APG.Business.Services;
 
