@@ -197,7 +197,7 @@ internal class MembershipServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Completed).Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build())
             .WithMaximalMember(5)
             .Build();
 
@@ -252,7 +252,7 @@ internal class MembershipServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposalForwarded).Build())
             .WithMaximalMember(5)
             .Build();
 
@@ -307,7 +307,7 @@ internal class MembershipServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposalFinalized).Build())
             .WithMaximalMember(5)
             .Build();
 
@@ -389,7 +389,7 @@ internal class MembershipServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Completed).Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build())
             .WithMaximalMember(5)
             .Build();
 
@@ -427,7 +427,7 @@ internal class MembershipServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposalForwarded).Build())
             .WithMaximalMember(5)
             .Build();
 
@@ -466,7 +466,7 @@ internal class MembershipServiceTests
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
             .WithMaximalMember(5)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Completed).Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build())
             .Build();
 
         var membership = new MembershipBuilder()
@@ -524,7 +524,7 @@ internal class MembershipServiceTests
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
             .WithMaximalMember(5)
-            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposal).Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposalForwarded).Build())
             .Build();
 
         var membership = new MembershipBuilder()
