@@ -71,7 +71,7 @@ public class MembershipCandidateService : IMembershipCandidateService
 
             if (successfulDuplicateCheck)
             {
-                if (generalElectionCommittee.CandidateListStateId != CandidateListState.Completed)
+                if (generalElectionCommittee.CandidateListStateId != CandidateListState.Validated)
                 {
                     await CompleteCandidateList(generalElectionCommittee);
                 }
@@ -103,7 +103,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         var readyForProposalTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
             .Where(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal).ToList();
 
-        if (readyForProposalTasks.Count == 0 && generalElectionCommittee.CandidateListStateId == CandidateListState.Completed)
+        if (readyForProposalTasks.Count == 0 && generalElectionCommittee.CandidateListStateId == CandidateListState.Validated)
         {
             readyForProposalTasks = await CreateReadyForFederalCouncilProposalTasks(generalElectionCommittee);
         }
@@ -344,7 +344,7 @@ public class MembershipCandidateService : IMembershipCandidateService
             candidateListTask.WorklistTaskStateId = WorklistTaskState.Completed;
         }
 
-        generalElectionCommittee.CandidateListStateId = CandidateListState.Completed;
+        generalElectionCommittee.CandidateListStateId = CandidateListState.Validated;
         generalElectionCommittee.IsValidated = true;
         generalElectionCommittee.WasValidatedOnce = true;
     }
@@ -666,6 +666,12 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         activeTask.WorklistTaskStateId = targetStage > currentStage ? WorklistTaskState.Completed : WorklistTaskState.Inactive;
 
+        if (targetStage > currentStage)
+        {
+            generalElectionCommittee.CandidateListStateId = CandidateListState.ReadyForFederalCouncilProposalForwarded;
+            generalElectionCommittee.IsFederalCouncilProposalDirty = false;
+        }
+
         await _generalElectionCommitteeRepository.CommitChanges();
         await _worklistTaskRepository.CommitChanges();
 
@@ -707,7 +713,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         }
 
         var gecommitteeForUpdate = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
-        gecommitteeForUpdate.CandidateListStateId = CandidateListState.ReadyForFederalCouncilProposal;
+        gecommitteeForUpdate.CandidateListStateId = CandidateListState.ReadyForFederalCouncilProposalFinalized;
         gecommitteeForUpdate.ReleaseGeneralElection = true;
         gecommitteeForUpdate.IsFederalCouncilProposalDirty = false;
         gecommitteeForUpdate.Modified = DateTime.UtcNow;
@@ -743,7 +749,9 @@ public class MembershipCandidateService : IMembershipCandidateService
     {
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
 
-        var activeMemberships = generalElectionCommittee.CandidateListStateId != CandidateListState.Completed && generalElectionCommittee.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposal
+        var activeMemberships = generalElectionCommittee.CandidateListStateId != CandidateListState.Validated
+            && generalElectionCommittee.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded
+            && generalElectionCommittee.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized
             ? []
             : generalElectionCommittee.MembershipCandidates
                 .Where(m => m is { IsDeleted: false, IsSelected: true })

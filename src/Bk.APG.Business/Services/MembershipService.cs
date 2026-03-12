@@ -84,7 +84,7 @@ public class MembershipService : IMembershipService
 
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(membershipWithPerson.CommitteeId))
         {
-            if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Completed)
+            if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
                 await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membershipWithPerson.CommitteeId);
             }
@@ -93,7 +93,7 @@ public class MembershipService : IMembershipService
                 await _generalElectionService.CreateNewMembershipCandidate(membershipWithPerson, true);
                 _logger.LogInformation("Created membership candidate for general election for membership id {MembershipId}", newMembership.Id);
 
-                if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal)
+                if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
                 {
                     await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(membershipWithPerson.CommitteeId);
                 }
@@ -522,11 +522,11 @@ public class MembershipService : IMembershipService
 
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(existingEntry.CommitteeId))
         {
-            if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Completed)
+            if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
                 await _generalElectionCommitteeService.InvalidateMembershipCandidateList(existingEntry.CommitteeId);
             }
-            if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal)
+            if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
             {
                 await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(existingEntry.CommitteeId);
             }
@@ -552,11 +552,12 @@ public class MembershipService : IMembershipService
 
         if (isGeneralElectionRunning && membership.IsActive && await IsMembershipForGeneralElectionCommittee(membership.CommitteeId))
         {
-            if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Completed)
+            if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
                 await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membership.CommitteeId);
             }
-            if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal)
+            if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
+
             {
                 await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(membership.CommitteeId);
             }
