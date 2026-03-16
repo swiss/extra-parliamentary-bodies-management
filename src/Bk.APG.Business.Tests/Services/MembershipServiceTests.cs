@@ -20,13 +20,14 @@ internal class MembershipServiceTests
     private readonly IGeneralElectionService _generalElectionService = Substitute.For<IGeneralElectionService>();
     private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService = Substitute.For<IGeneralElectionCommitteeService>();
     private readonly ITermOfOfficeDateService _termOfOfficeDateService = Substitute.For<ITermOfOfficeDateService>();
+    private readonly IMembershipMirrorService _membershipMirrorService = Substitute.For<IMembershipMirrorService>();
     private MembershipService _service = null!;
 
     [SetUp]
     public void Setup()
     {
         _service = new MembershipService(_membershipRepository, _committeeRepository, _authorizationService, _cultureService, _generalElectionService,
-            _generalElectionCommitteeService, _termOfOfficeDateService, _masterDataRepository, NullLogger<MembershipService>.Instance);
+            _generalElectionCommitteeService, _termOfOfficeDateService, _masterDataRepository, _membershipMirrorService, NullLogger<MembershipService>.Instance);
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
     }
 
