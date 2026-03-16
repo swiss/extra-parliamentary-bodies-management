@@ -17,15 +17,15 @@ internal class MembershipServiceTests
     private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
     private readonly ICultureService _cultureService = Substitute.For<ICultureService>();
-    private readonly IGeneralElectionHelperService _generalElectionHelperService = Substitute.For<IGeneralElectionHelperService>();
+    private readonly IGeneralElectionService _generalElectionService = Substitute.For<IGeneralElectionService>();
     private readonly ITermOfOfficeDateService _termOfOfficeDateService = Substitute.For<ITermOfOfficeDateService>();
     private MembershipService _service = null!;
 
     [SetUp]
     public void Setup()
     {
-        _service = new MembershipService(_membershipRepository, _committeeRepository, _authorizationService, _cultureService, _generalElectionHelperService,
-            _termOfOfficeDateService, _masterDataRepository, NullLogger<MembershipService>.Instance);
+        _service = new MembershipService(_membershipRepository, _committeeRepository, _authorizationService, _cultureService,
+            _generalElectionService, _termOfOfficeDateService, _masterDataRepository, NullLogger<MembershipService>.Instance);
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
     }
 
