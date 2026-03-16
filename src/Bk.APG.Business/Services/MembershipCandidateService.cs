@@ -71,7 +71,7 @@ public class MembershipCandidateService : IMembershipCandidateService
 
             if (successfulDuplicateCheck)
             {
-                if (generalElectionCommittee.CandidateListStateId != CandidateListState.Validated)
+                if (generalElectionCommittee.CandidateListStateId != CandidateListState.Validated && generalElectionCommittee.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded)
                 {
                     await CompleteCandidateList(generalElectionCommittee);
                 }
