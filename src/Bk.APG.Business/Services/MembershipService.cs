@@ -14,20 +14,20 @@ public class MembershipService : IMembershipService
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IAuthorizationService _authorizationService;
     private readonly ICultureService _cultureService;
-    private readonly IGeneralElectionHelperService _generalElectionHelperService;
+    private readonly IGeneralElectionService _generalElectionService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly ILogger<MembershipService> _logger;
 
     public MembershipService(IMembershipRepository membershipRepository, ICommitteeRepository committeeRepository, IAuthorizationService authorizationService,
-        ICultureService cultureService, IGeneralElectionHelperService generalElectionHelperService, ITermOfOfficeDateService termOfOfficeDateService,
+        ICultureService cultureService, IGeneralElectionService generalElectionService, ITermOfOfficeDateService termOfOfficeDateService,
         IMasterDataRepository masterDataRepository, ILogger<MembershipService> logger)
     {
         _membershipRepository = membershipRepository;
         _committeeRepository = committeeRepository;
         _authorizationService = authorizationService;
         _cultureService = cultureService;
-        _generalElectionHelperService = generalElectionHelperService;
+        _generalElectionService = generalElectionService;
         _termOfOfficeDateService = termOfOfficeDateService;
         _masterDataRepository = masterDataRepository;
         _logger = logger;
@@ -82,7 +82,7 @@ public class MembershipService : IMembershipService
 
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(membershipWithPerson.CommitteeId))
         {
-            await _generalElectionHelperService.CreateNewMembershipCandidate(membershipWithPerson, userName);
+            await _generalElectionService.CreateNewMembershipCandidate(membershipWithPerson, userName);
             _logger.LogInformation("Created membership candidate for general election for membership id {MembershipId}", newMembership.Id);
         }
 
@@ -508,7 +508,7 @@ public class MembershipService : IMembershipService
 
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(existingEntry.CommitteeId))
         {
-            await _generalElectionHelperService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate);
+            await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate);
             _logger.LogInformation("Mirrored membership changes for general election for membership id {MembershipId}", existingEntry.Id);
         }
 
@@ -531,7 +531,7 @@ public class MembershipService : IMembershipService
         if (isGeneralElectionRunning && membership.IsActive && await IsMembershipForGeneralElectionCommittee(membership.CommitteeId))
         {
             // when an active membership is deleted, a copied candidate is deleted as well!
-            await _generalElectionHelperService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
+            await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
         }
 
         _membershipRepository.Delete(membership);
