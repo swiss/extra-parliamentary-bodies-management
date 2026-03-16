@@ -17,7 +17,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly IAuthorizationService _authorizationService;
     private readonly ICultureService _cultureService;
     private readonly ICommitteeService _committeeService;
-   // private readonly IMembershipService _membershipService;
+    private readonly IMembershipService _membershipService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly Bk.DocumentService.Client.IDocumentService _documentService;
@@ -28,7 +28,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         IAuthorizationService authorizationService,
         ICultureService cultureService,
         ICommitteeService committeeService,
-    //    IMembershipService membershipService,
+        IMembershipService membershipService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
         Bk.DocumentService.Client.IDocumentService documentService,
@@ -39,7 +39,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _authorizationService = authorizationService;
         _cultureService = cultureService;
         _committeeService = committeeService;
-    //    _membershipService = membershipService;
+        _membershipService = membershipService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
         _documentService = documentService;
@@ -331,7 +331,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var mappedCommittee = GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee(committee);
         var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
 
-        await _committeeService.UpdateCommittee(updateCommittee.Id, updateCommittee);
+        await _committeeService.UpdateCommitteeAfterGeneralElection(updateCommittee.Id, updateCommittee, committee.MembershipCandidates.ToList());
 
         //foreach (var candidate in committee.MembershipCandidates)
         //{

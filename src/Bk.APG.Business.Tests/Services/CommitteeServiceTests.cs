@@ -24,6 +24,7 @@ internal class CommitteeServiceTests
     private IMembershipRepository _membershipRepository;
     private IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private IWorklistTaskService _worklistTaskService;
+    private IMembershipService _membershipService;
     private IWorklistTaskRepository _worklistTaskRepository;
     private IEiamAssignmentRepository _eiamAssignmentRepository;
     private CommitteeService _committeeService;
@@ -62,6 +63,7 @@ internal class CommitteeServiceTests
         _membershipRepository = Substitute.For<IMembershipRepository>();
         _termOfOfficeDateService = Substitute.For<ITermOfOfficeDateService>();
         _worklistTaskService = Substitute.For<IWorklistTaskService>();
+        _membershipService = Substitute.For<IMembershipService>();
         _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
         _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
         _eiamAssignmentRepository = Substitute.For<IEiamAssignmentRepository>();
@@ -199,6 +201,7 @@ internal class CommitteeServiceTests
             _eiamAssignmentService,
             _termOfOfficeDateService,
             _worklistTaskService,
+            _membershipService,
             _masterDataRepository,
             _generalMeasureRepository,
             _membershipRepository,

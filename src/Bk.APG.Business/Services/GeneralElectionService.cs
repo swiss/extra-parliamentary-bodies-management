@@ -374,6 +374,11 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
         {
+            nextTermOfOffice.PlannedPublicationDate = null;
+            nextTermOfOffice.IsGeneralElection = false;
+
+            await _termOfOfficeDateService.Update(nextTermOfOffice);
+
             var committees = await _generalElectionCommitteeRepository.GetAll();
 
             var finishedCommittees = committees.Where(c => c.IsValidated).ToList();
@@ -383,10 +388,7 @@ public class GeneralElectionService : IGeneralElectionService
                 await _generalElectionCommitteeService.EndGeneralElectionForCommittee(committee);
             }
 
-            nextTermOfOffice.PlannedPublicationDate = null;
-            nextTermOfOffice.IsGeneralElection = false;
 
-            await _termOfOfficeDateService.Update(nextTermOfOffice);
         }
 
         return true;
