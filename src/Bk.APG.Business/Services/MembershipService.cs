@@ -18,11 +18,12 @@ public class MembershipService : IMembershipService
     private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IMasterDataRepository _masterDataRepository;
+    private readonly IMembershipMirrorService _membershipMirrorService;
     private readonly ILogger<MembershipService> _logger;
 
     public MembershipService(IMembershipRepository membershipRepository, ICommitteeRepository committeeRepository, IAuthorizationService authorizationService,
         ICultureService cultureService, IGeneralElectionService generalElectionService, IGeneralElectionCommitteeService generalElectionCommitteeService, ITermOfOfficeDateService termOfOfficeDateService,
-        IMasterDataRepository masterDataRepository, ILogger<MembershipService> logger)
+        IMasterDataRepository masterDataRepository, IMembershipMirrorService membershipMirrorService, ILogger<MembershipService> logger)
     {
         _membershipRepository = membershipRepository;
         _committeeRepository = committeeRepository;
@@ -32,6 +33,7 @@ public class MembershipService : IMembershipService
         _generalElectionCommitteeService = generalElectionCommitteeService;
         _termOfOfficeDateService = termOfOfficeDateService;
         _masterDataRepository = masterDataRepository;
+        _membershipMirrorService = membershipMirrorService;
         _logger = logger;
     }
 
@@ -530,7 +532,8 @@ public class MembershipService : IMembershipService
             {
                 await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(existingEntry.CommitteeId);
             }
-            await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate);
+            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate);
+
             _logger.LogInformation("Mirrored membership changes for general election for membership id {MembershipId}", existingEntry.Id);
         }
 
@@ -562,7 +565,7 @@ public class MembershipService : IMembershipService
                 await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(membership.CommitteeId);
             }
             // when an active membership is deleted, a copied candidate is deleted as well!
-            await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
+            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
         }
 
         _membershipRepository.Delete(membership);
