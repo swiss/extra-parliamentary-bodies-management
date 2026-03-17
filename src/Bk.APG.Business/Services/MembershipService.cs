@@ -15,21 +15,25 @@ public class MembershipService : IMembershipService
     private readonly IAuthorizationService _authorizationService;
     private readonly ICultureService _cultureService;
     private readonly IGeneralElectionService _generalElectionService;
+    private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IMasterDataRepository _masterDataRepository;
+    private readonly IMembershipMirrorService _membershipMirrorService;
     private readonly ILogger<MembershipService> _logger;
 
     public MembershipService(IMembershipRepository membershipRepository, ICommitteeRepository committeeRepository, IAuthorizationService authorizationService,
-        ICultureService cultureService, IGeneralElectionService generalElectionService, ITermOfOfficeDateService termOfOfficeDateService,
-        IMasterDataRepository masterDataRepository, ILogger<MembershipService> logger)
+        ICultureService cultureService, IGeneralElectionService generalElectionService, IGeneralElectionCommitteeService generalElectionCommitteeService, ITermOfOfficeDateService termOfOfficeDateService,
+        IMasterDataRepository masterDataRepository, IMembershipMirrorService membershipMirrorService, ILogger<MembershipService> logger)
     {
         _membershipRepository = membershipRepository;
         _committeeRepository = committeeRepository;
         _authorizationService = authorizationService;
         _cultureService = cultureService;
         _generalElectionService = generalElectionService;
+        _generalElectionCommitteeService = generalElectionCommitteeService;
         _termOfOfficeDateService = termOfOfficeDateService;
         _masterDataRepository = masterDataRepository;
+        _membershipMirrorService = membershipMirrorService;
         _logger = logger;
     }
 
@@ -47,15 +51,15 @@ public class MembershipService : IMembershipService
 
     public async Task<MembershipListDto> GetAllByCommitteeId(Guid committeeId)
     {
-        var memberships = await _membershipRepository.GetAllByCommitteeId(committeeId);
+        var memberships = (await _membershipRepository.GetAllByCommitteeId(committeeId)).ToArray();
         var committee = await _committeeRepository.GetById(committeeId);
 
         var activeMemberships = memberships.Where(m => m.IsActive || m.IsFuture).Select(MembershipMapper.ToCommitteeMemberDto);
-        var inactiveMemberships = memberships.Where(m => !m.IsActive && !m.IsFuture).Select(MembershipMapper.ToCommitteeMemberDto);
+        var inactiveMemberships = memberships.Where(m => m is { IsActive: false, IsFuture: false }).Select(MembershipMapper.ToCommitteeMemberDto);
 
         return new MembershipListDto
         {
-            CommitteeQuotas = committee!.GetQuotas(),
+            CommitteeQuotas = committee.GetQuotas(),
             ActiveMemberships = activeMemberships,
             InactiveMemberships = inactiveMemberships
         };
@@ -70,8 +74,6 @@ public class MembershipService : IMembershipService
     {
         _logger.LogInformation("Create membership for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
 
-        var userName = _authorizationService.GetCurrentUserName();
-
         var isGeneralElectionRunning = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 
         var membership = MembershipMapper.FromMembershipCreateDto(createDto, _authorizationService.GetCurrentUserName());
@@ -80,10 +82,24 @@ public class MembershipService : IMembershipService
 
         var membershipWithPerson = await _membershipRepository.GetById(newMembership.Id);
 
+        var committee = await _committeeRepository.GetById(membershipWithPerson.CommitteeId);
+
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(membershipWithPerson.CommitteeId))
         {
-            await _generalElectionService.CreateNewMembershipCandidate(membershipWithPerson, userName);
-            _logger.LogInformation("Created membership candidate for general election for membership id {MembershipId}", newMembership.Id);
+            if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
+            {
+                await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membershipWithPerson.CommitteeId);
+            }
+            else
+            {
+                await _generalElectionService.CreateNewMembershipCandidate(membershipWithPerson, true);
+                _logger.LogInformation("Created membership candidate for general election for membership id {MembershipId}", newMembership.Id);
+
+                if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
+                {
+                    await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(membershipWithPerson.CommitteeId);
+                }
+            }
         }
 
         _logger.LogInformation("Created membership with id {MembershipId}", newMembership.Id);
@@ -508,7 +524,16 @@ public class MembershipService : IMembershipService
 
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(existingEntry.CommitteeId))
         {
-            await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate);
+            if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
+            {
+                await _generalElectionCommitteeService.InvalidateMembershipCandidateList(existingEntry.CommitteeId);
+            }
+            if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
+            {
+                await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(existingEntry.CommitteeId);
+            }
+            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate);
+
             _logger.LogInformation("Mirrored membership changes for general election for membership id {MembershipId}", existingEntry.Id);
         }
 
@@ -530,8 +555,17 @@ public class MembershipService : IMembershipService
 
         if (isGeneralElectionRunning && membership.IsActive && await IsMembershipForGeneralElectionCommittee(membership.CommitteeId))
         {
+            if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
+            {
+                await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membership.CommitteeId);
+            }
+            if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
+
+            {
+                await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(membership.CommitteeId);
+            }
             // when an active membership is deleted, a copied candidate is deleted as well!
-            await _generalElectionService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
+            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
         }
 
         _membershipRepository.Delete(membership);
