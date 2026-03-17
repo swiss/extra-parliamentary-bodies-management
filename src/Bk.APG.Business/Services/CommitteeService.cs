@@ -157,13 +157,16 @@ public class CommitteeService : ICommitteeService
         return CommitteeMapper.ToCommitteeJustificationUpdateDto(committee);
     }
 
-    public async Task<CommitteeDetailDto> UpdateCommittee(Guid id, CommitteeUpdateDto updateDto)
+    public async Task<CommitteeDetailDto> UpdateCommittee(Guid id, CommitteeUpdateDto updateDto, bool checkAuthorization)
     {
         _logger.LogInformation("Update committee {CommitteeId}", id);
 
         var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
 
-        await CheckAuthorizationForUpdate(existingCommittee);
+        if (checkAuthorization)
+        {
+            await CheckAuthorizationForUpdate(existingCommittee);
+        }
 
         existingCommittee.BeginDate = updateDto.BeginDate;
         existingCommittee.EndDate = updateDto.EndDate;
@@ -212,8 +215,8 @@ public class CommitteeService : ICommitteeService
 
     public async Task<CommitteeDetailDto> UpdateCommitteeAfterGeneralElection(Guid id, CommitteeUpdateDto updateDto, List<MembershipCandidate> membershipCandidates)
     {
-        var saved = await UpdateCommittee(id, updateDto);
-        var userName = "name";
+        var saved = await UpdateCommittee(id, updateDto, false);
+        var userName = "CommitteeService";
 
         foreach (var candidate in membershipCandidates)
         {
@@ -355,7 +358,7 @@ public class CommitteeService : ICommitteeService
 
         var updatedCommittee = CommitteeMapper.ToCommitteeUpdateDto(newCommittee);
 
-        await UpdateCommittee(newCommittee.Id, updatedCommittee);
+        await UpdateCommittee(newCommittee.Id, updatedCommittee, true);
 
         if (createdCommittee.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && await _termOfOfficeDateService.CheckForRunningGeneralElection())
         {
@@ -660,7 +663,6 @@ public class CommitteeService : ICommitteeService
 
     private async Task CheckAuthorizationForUpdate(Committee committee)
     {
-        // TODO PP, was, wenn der Call vom BackendService gemacht wird?
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
             ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
         {

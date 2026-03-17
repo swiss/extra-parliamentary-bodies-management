@@ -16,13 +16,12 @@ public class GeneralElectionService : IGeneralElectionService
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
-    //private readonly IMembershipService _membershipService;
-    //private readonly ICommitteeService _committeeService;
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IMembershipRepository _membershipRepository;
     private readonly IMembershipCandidateRepository _membershipCandidateRepository;
     private readonly IMembershipCandidateLogMessageRepository _membershipCandidateLogMessageRepository;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly ILogger<GeneralElectionService> _logger;
 
     public GeneralElectionService(
@@ -32,13 +31,12 @@ public class GeneralElectionService : IGeneralElectionService
         IMasterDataRepository masterDataRepository,
         ITermOfOfficeDateService termOfOfficeDateService,
         IGeneralElectionCommitteeService generalElectionCommitteeService,
-    //IMembershipService membershipService,
-    //ICommitteeService committeeService,
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         ICommitteeRepository committeeRepository,
         IMembershipRepository membershipRepository,
         IMembershipCandidateRepository membershipCandidateRepository,
         IMembershipCandidateLogMessageRepository membershipCandidateLogMessageRepository,
+        IWorklistTaskRepository worklistTaskRepository,
         ILogger<GeneralElectionService> logger)
     {
         _authorizationService = authorizationService;
@@ -47,13 +45,12 @@ public class GeneralElectionService : IGeneralElectionService
         _masterDataRepository = masterDataRepository;
         _termOfOfficeDateService = termOfOfficeDateService;
         _generalElectionCommitteeService = generalElectionCommitteeService;
-        //_membershipService = membershipService;
-        //_committeeService = committeeService;
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _committeeRepository = committeeRepository;
         _membershipRepository = membershipRepository;
         _membershipCandidateRepository = membershipCandidateRepository;
         _membershipCandidateLogMessageRepository = membershipCandidateLogMessageRepository;
+        _worklistTaskRepository = worklistTaskRepository;
         _logger = logger;
     }
 
@@ -196,37 +193,6 @@ public class GeneralElectionService : IGeneralElectionService
         return true;
     }
 
-    // TODO PP, to check...
-    public async Task CreateNewMembershipCandidate(Membership membership, string userName)
-    {
-        _logger.LogInformation("Create new membership candidate for general election committee {CommitteeId}", membership.CommitteeId);
-
-        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(membership.CommitteeId);
-        var termOfOfficeDate = generalElectionCommittee.TermOfOfficeDate;
-
-        var membershipCandidate = GeneralElectionMapper.FromMembershipAndPersonToMembershipCandidate(membership, generalElectionCommittee.Id, userName, termOfOfficeDate!.BeginDate, (DateOnly)termOfOfficeDate.EndDate!);
-
-        // Check for maximum duration
-        var newEndDate = await CheckMembershipCandidateSpecialCases(membershipCandidate, generalElectionCommittee, membership.Person!.FederalDuty, (DateOnly)termOfOfficeDate.EndDate!);
-
-        if (termOfOfficeDate.BeginDate != newEndDate)
-        {
-            membershipCandidate.EndDate = newEndDate;
-            await _membershipCandidateRepository.Create(membershipCandidate);
-            _logger.LogInformation("New membership candidate created {MembershipCandidateId}", membershipCandidate.Id);
-        }
-        else
-        {
-            // Here we write the new log table, saying that Member XX has not been transferred to new period
-            var personInfo = $"PersonId {membershipCandidate.PersonId}, {membershipCandidate.GivenName} {membershipCandidate.Surname}, {membershipCandidate.BirthYear}";
-            var errorText = BusinessTexts.GeneralElectionMaximumDurationExceeded + personInfo;
-
-            var dto = MembershipCandidateLogMessageMapper.ToMembershipCandidateLogMessage(generalElectionCommittee.Id, (Guid)membershipCandidate.PersonId!, errorText, userName);
-            await _membershipCandidateLogMessageRepository.Create(dto);
-            _logger.LogInformation("Membership candidate for person {PersonId} not created because maximum duration exceeded", membershipCandidate.PersonId);
-        }
-    }
-
     public async Task UpdateCandidatesFromPerson(Person person)
     {
         _logger.LogInformation("Update candidates from person {PersonId}", person.Id);
@@ -335,7 +301,6 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
         {
-
             nextTermOfOffice.PlannedPublicationDate = worklistTaskCreateDto.DueDate;
             await _termOfOfficeDateService.Update(nextTermOfOffice);
         }
@@ -373,6 +338,8 @@ public class GeneralElectionService : IGeneralElectionService
             {
                 await _generalElectionCommitteeService.EndGeneralElectionForCommittee(committee);
             }
+
+            await _worklistTaskRepository.SetAllWorklistTasksToIsDeleted();
         }
 
         return true;

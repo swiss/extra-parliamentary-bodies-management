@@ -86,6 +86,7 @@ public static class GeneralElectionMapper
             TermOfOfficeId = committee.TermOfOfficeId,
             TermOfOffice = committee.TermOfOffice,
             TermOfOfficeDateId = TermOfOfficeDate.NextGeneralElectionGuid,
+            TermOfOfficeDate = committee.TermOfOfficeDate,
             MinimalMembers = committee.MinimalMembers,
             MaximalMembers = committee.MaximalMembers,
             AdditionalAuthorityMembers = committee.AdditionalAuthorityMembers,
@@ -203,32 +204,6 @@ public static class GeneralElectionMapper
             InCorrelationWithFederalDuty = membershipCandidate.InCorrelationWithFederalDuty,
         };
     }
-
-
-    //public static MembershipUpdateDto FromMembershipCandidateToMembershipUpdateDto(MembershipCandidate membershipCandidate)
-    //{
-    //    return new MembershipUpdateDto
-    //    {
-    //        Id = (Guid)membershipCandidate.MembershipId!,
-    //        CommitteeId = membershipCandidate.GeneralElectionCommittee!.CommitteeId,
-    //        PersonId = membershipCandidate.Person != null ? membershipCandidate.Person.Id : Guid.Empty,
-    //        MaximumEmploymentLevel = membershipCandidate.MaximumEmploymentLevel,
-    //        BeginDate = membershipCandidate.BeginDate,
-    //        EndDate = membershipCandidate.EndDate,
-    //        ElectionTypeId = ElectionType.ReElectionGuid,
-    //        FunctionId = membershipCandidate.FunctionId,
-    //        ElectionOfficeId = membershipCandidate.ElectionOfficeId,
-    //        MembershipAdditionId = membershipCandidate.MembershipAdditionId,
-    //        JustificationLongerDuty = membershipCandidate.JustificationLongerDuty,
-    //        JustificationShorterDuty = membershipCandidate.JustificationShorterDuty,
-    //        JustificationMemberInFederalDuty = membershipCandidate.JustificationMemberInFederalDuty,
-    //        JustificationMemberInFederalAssembly = membershipCandidate.JustificationMemberInFederalAssembly,
-    //        RequirementsProfile = membershipCandidate.RequirementsProfile,
-    //        Remarks = membershipCandidate.Remarks,
-    //        RemarksStatus = membershipCandidate.RemarksStatus,
-    //        InCorrelationWithFederalDuty = membershipCandidate.InCorrelationWithFederalDuty,
-    //    };
-    //}
 
     public static MembershipCandidateMirrorDto ToMembershipCandidateMirrorDto(Membership membership)
     {
