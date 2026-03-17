@@ -50,11 +50,11 @@ public class WorklistTaskController : ControllerBase
         }
         else if (worklistTaskCreateDto.WorklistTaskTypeId == WorklistTaskType.GeneralElectionEnd)
         {
-            var generalElectionResult = await _generalElectionService.PrepareGeneralElection(worklistTaskCreateDto);
+            var generalElectionResult = await _generalElectionService.PrepareEndGeneralElection(worklistTaskCreateDto);
             return Ok(generalElectionResult);
         }
 
-            await _worklistTaskService.CreateWorklistTaskByAdmin(worklistTaskCreateDto);
+        await _worklistTaskService.CreateWorklistTaskByAdmin(worklistTaskCreateDto);
         return Ok();
     }
 
