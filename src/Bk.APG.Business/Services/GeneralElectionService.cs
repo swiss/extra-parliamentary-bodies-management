@@ -158,8 +158,10 @@ public class GeneralElectionService : IGeneralElectionService
             }
 
             var generalElectionWorklistTask = WorklistTaskMapper.CreateGeneralElectionMainWorklistTaskDto(termOfOfficeDateId, dueDate, description);
-
             var parentTask = await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionWorklistTask);
+
+            var generalElectionEndWorklistTask = WorklistTaskMapper.CreateGeneralElectionEndWorklistTaskDto(parentTask.Id, termOfOfficeDateId, dueDate, description);
+            await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionEndWorklistTask);
 
             var departments = await _masterDataRepository.GetDepartments();
             var generalMeasureTaskDueDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(3));
