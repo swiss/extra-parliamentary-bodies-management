@@ -17,7 +17,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly IAuthorizationService _authorizationService;
     private readonly ICultureService _cultureService;
     private readonly ICommitteeService _committeeService;
-    // private readonly IMembershipService _membershipService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
@@ -28,7 +27,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         IAuthorizationService authorizationService,
         ICultureService cultureService,
         ICommitteeService committeeService,
-        // IMembershipService membershipService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
@@ -39,7 +37,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _authorizationService = authorizationService;
         _cultureService = cultureService;
         _committeeService = committeeService;
-        // _membershipService = membershipService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
         _documentService = documentService;
@@ -406,27 +403,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
 
         await _committeeService.UpdateCommitteeAfterGeneralElection(updateCommittee.Id, updateCommittee, committee.MembershipCandidates.ToList());
-
-        //foreach (var candidate in committee.MembershipCandidates)
-        //{
-        //    if (candidate.ElectionTypeId == ElectionType.NewElectionGuid)
-        //    {
-        //        var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
-
-        //        //if (createDto.PersonId == null)
-        //        //{
-        //        //    _logger.LogInformation("General Election transfer from committe {CommitteeId} and member {Membername} {Membersurname} aborted, no person attached!", committee.Id, candidate.Surname, candidate.GivenName );
-        //        //}
-
-        //        await _membershipService.CreateMembership(createDto);
-        //    }
-        //    else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid)
-        //    {
-        //        var currentMembership = await _membershipService.GetMembershipForUpdate((Guid)candidate.MembershipId!);
-
-        //        await _membershipService.UpdateMembership(currentMembership.Id, currentMembership);
-        //    }
-        //}
 
         return true;
     }
