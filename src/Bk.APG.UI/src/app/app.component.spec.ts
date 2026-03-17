@@ -21,7 +21,7 @@ describe('AppComponent', () => {
     let fixture: ComponentFixture<AppComponent>;
 
     const translateServiceMock = {
-        currentLang: 'de',
+        getCurrentLang: jest.fn(() => 'de'),
         use: jest.fn(),
     };
     const isAuthenticated$ = new BehaviorSubject<boolean>(true);

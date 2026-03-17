@@ -46,9 +46,9 @@ describe('GeneralElectionCommitteesService', () => {
                     office: 'office',
                     isMarketOrientated: 'true',
                     hasSupervisionDuty: false,
-                    status: 'status',
+                    isNew: 'true',
                     vacanciesGeneralElection: 1,
-                    statusProposal: 'statusP',
+                    statusProposal: 'true',
                     modified: new Date(2025, 1, 1),
                     modifiedBy: 'test',
                 } as GeneralElectionCommitteeList,
@@ -60,9 +60,9 @@ describe('GeneralElectionCommitteesService', () => {
                     office: 'office',
                     isMarketOrientated: 'true',
                     hasSupervisionDuty: false,
-                    status: 'status',
+                    isNew: 'true',
                     vacanciesGeneralElection: 1,
-                    statusProposal: 'statusP',
+                    statusProposal: 'true',
                     modified: new Date(2025, 1, 1),
                     modifiedBy: 'test',
                 } as GeneralElectionCommitteeList,
@@ -104,9 +104,9 @@ describe('GeneralElectionCommitteesService', () => {
             committeeTypes: ['committeeType1'],
             isMarketOrientated: [true],
             hasSupervisionDuty: [true],
-            status: 'status',
-            vacancies: '1',
-            statusProposal: 'statusP',
+            isNew: [true],
+            vacancies: [true],
+            statusProposal: [true],
         };
 
         const params = service.appendFilter(new HttpParams(), filterParams);
@@ -117,9 +117,9 @@ describe('GeneralElectionCommitteesService', () => {
         expect(params.get('committeeTypeIds')).toEqual(filterParams.committeeTypes![0]);
         expect(params.get('isMarketOrientated')).toEqual(filterParams.isMarketOrientated![0].toString());
         expect(params.get('hasSupervisionDuty')).toEqual(filterParams.hasSupervisionDuty![0].toString());
-        expect(params.get('status')).toEqual(filterParams.status);
-        expect(params.get('vacancies')).toEqual(filterParams.vacancies);
-        expect(params.get('statusProposal')).toEqual(filterParams.statusProposal);
+        expect(params.get('isNew')).toEqual(filterParams.isNew![0].toString());
+        expect(params.get('vacancies')).toEqual(filterParams.vacancies![0].toString());
+        expect(params.get('statusProposal')).toEqual(filterParams.statusProposal![0].toString());
     });
 
     it.each([[undefined], [null]])("should not add any paging params when filter parameter is '%s'", value => {
@@ -139,9 +139,9 @@ describe('GeneralElectionCommitteesService', () => {
                 office: 'office',
                 isMarketOrientated: 'true',
                 hasSupervisionDuty: false,
-                status: 'status',
+                isNew: 'true',
                 vacanciesGeneralElection: 1,
-                statusProposal: 'statusP',
+                statusProposal: 'true',
                 modified: new Date(2025, 1, 1),
                 modifiedBy: 'test',
             } as GeneralElectionCommitteeList,
@@ -153,9 +153,9 @@ describe('GeneralElectionCommitteesService', () => {
                 office: 'office',
                 isMarketOrientated: 'true',
                 hasSupervisionDuty: false,
-                status: 'status',
+                isNew: 'true',
                 vacanciesGeneralElection: 1,
-                statusProposal: 'statusP',
+                statusProposal: 'true',
                 modified: new Date(2025, 1, 1),
                 modifiedBy: 'test',
             } as GeneralElectionCommitteeList,

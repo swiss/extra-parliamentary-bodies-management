@@ -12,7 +12,7 @@ using Bk.APG.CrossCutting.Configuration;
 using Bk.APG.Infrastructure.DataSource;
 using Bk.APG.Infrastructure.DataSource.Repositories;
 using Bk.APG.Infrastructure.Service.Post;
-using Bk.Utils.Converter;
+using Swiss.FCh.Utils.Converter;
 using Configuration = Audit.Core.Configuration;
 
 namespace Bk.APG.Api.Extensions;
@@ -55,9 +55,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthorizationService, AuthorizationService>();
         services.AddScoped<ICommitteeService, CommitteeService>();
         services.AddScoped<IMembershipService, MembershipService>();
+        services.AddScoped<IMembershipMirrorService, MembershipMirrorService>();
         services.AddScoped<IContactPointService, ContactPointService>();
         services.AddScoped<IAppointmentDecisionService, AppointmentDecisionService>();
-        services.AddScoped<IDocumentService, Business.Services.DocumentService>();
+        services.AddScoped<IDocumentService, DocumentService>();
         services.AddScoped<IDataAnalysisService, DataAnalysisService>();
         services.AddScoped<IElectoralListService, ElectoralListService>();
         services.AddScoped<ICommitteeTypeService, CommitteeTypeService>();

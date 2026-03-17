@@ -1,4 +1,3 @@
-<!-- eslint-disable @angular-eslint/template/prefer-self-closing-tags -->
 <form [formGroup]="form" class="ob-grid">
     <!-- Free text search -->
     <div class="ob-span-5">
@@ -80,30 +79,42 @@
             </mat-select>
         </mat-form-field>
     </div>
+
     <!-- Status GEW -->
     <div class="ob-span-2">
         <mat-form-field>
             <mat-label>{{ 'generalElection.committees.filter.status.label' | translate }}</mat-label>
-            <mat-select multiple [formControl]="form.controls.status"></mat-select>
+            <mat-select multiple [formControl]="form.controls.isNew">
+                <mat-option [value]="true">{{ 'generalElection.committees.filter.status.new' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'generalElection.committees.filter.status.pulled' | translate }}</mat-option>
+            </mat-select>
         </mat-form-field>
     </div>
+
     <!-- Vacancies -->
     <div class="ob-span-2">
         <mat-form-field>
             <mat-label>{{ 'generalElection.committees.filter.vacancies.label' | translate }}</mat-label>
-            <mat-select multiple [formControl]="form.controls.status"></mat-select>
+            <mat-select multiple [formControl]="form.controls.vacancies">
+                <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+            </mat-select>
         </mat-form-field>
     </div>
+
     <!-- Status BRA GEW -->
     <div class="ob-span-2">
         <mat-form-field>
             <mat-label>{{ 'generalElection.committees.filter.statusProposal.label' | translate }}</mat-label>
-            <mat-select multiple [formControl]="form.controls.statusProposal"></mat-select>
+            <mat-select multiple [formControl]="form.controls.statusProposal">
+                <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
+            </mat-select>
         </mat-form-field>
     </div>
 
     <div class="ob-span-2 buttons">
-        <apg-help-tooltip text="committee.helpTooltip.tableGeneralElection"></apg-help-tooltip>
+        <apg-help-tooltip text="committee.helpTooltip.tableGeneralElection" />
         <button mat-button obButton="secondary" type="button" (click)="reset()">
             {{ 'committees.filter.reset' | translate }}
         </button>

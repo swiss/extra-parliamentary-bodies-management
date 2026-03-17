@@ -208,16 +208,15 @@ public class CommitteeBuilder
         return this;
     }
 
-    public CommitteeBuilder WithTermOfOfficeDate(TermOfOfficeDate termOfOfficeDate)
+    public CommitteeBuilder WithTermOfOfficeDate(TermOfOfficeDate? termOfOfficeDate)
     {
         _termOfOfficeDate = termOfOfficeDate;
-        _termOfOfficeDateId = termOfOfficeDate.Id;
-        return this;
-    }
 
-    public CommitteeBuilder WithDepartmentId(Guid id)
-    {
-        _departmentId = id;
+        if (termOfOfficeDate is not null)
+        {
+            _termOfOfficeDateId = termOfOfficeDate.Id;
+        }
+
         return this;
     }
 

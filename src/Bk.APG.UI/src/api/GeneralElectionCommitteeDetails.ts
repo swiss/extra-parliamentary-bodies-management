@@ -67,6 +67,9 @@ export interface GeneralElectionCommitteeDetails {
     measuresLanguages?: string;
     generalLanguageMeasure?: string;
     isValidated?: boolean;
+    isReadyForFederalCouncilProposalForwarded?: boolean;
+    wasValidatedOnce?: boolean;
+    isFederalCouncilProposalDirty?: boolean;
     federalInstitution?: boolean;
     selectionProcedure?: string;
     candidateListState?: string;

@@ -71,7 +71,7 @@ export class MasterDataService {
     ) {
         this.translateService.onLangChange
             .pipe(
-                startWith({lang: this.translateService.currentLang}),
+                startWith({lang: this.translateService.getCurrentLang()}),
                 distinctUntilChanged((prev, curr) => prev.lang === curr.lang),
                 switchMap(() => this.getMasterData()),
                 takeUntilDestroyed()

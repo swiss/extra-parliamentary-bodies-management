@@ -13,7 +13,7 @@ describe('MasterDataService', () => {
 
     const translateServiceMock = {
         onLangChange: of({lang: 'en'}),
-        currentLang: 'en',
+        getCurrentLang: jest.fn(() => 'en'),
     } as unknown as jest.Mocked<TranslateService>;
 
     beforeEach(() => {
