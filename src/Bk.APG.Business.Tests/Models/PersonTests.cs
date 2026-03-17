@@ -66,6 +66,7 @@ internal class PersonTests
     [TestCase(CommitteeType.ManagementCommitteeGuidAsString)]
     public void NeedsAttentionInterests_WithInterest_ShouldReturnFalse(string committeeTypeId)
     {
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var person = new PersonBuilder()
             .WithNoInterest(false)
             .WithInterests([
@@ -76,7 +77,8 @@ internal class PersonTests
             ])
             .WithMemberships([
                 new MembershipBuilder()
-                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithBeginDate(today.AddDays(-1))
+                    .WithEndDate(today.AddDays(1))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])
@@ -91,6 +93,7 @@ internal class PersonTests
     [TestCase(CommitteeType.ManagementCommitteeGuidAsString)]
     public void NeedsAttentionInterests_WithEmptyInterest_ShouldReturnTrue(string committeeTypeId)
     {
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var person = new PersonBuilder()
             .WithNoInterest(false)
             .WithInterests([
@@ -101,7 +104,8 @@ internal class PersonTests
             ])
             .WithMemberships([
                 new MembershipBuilder()
-                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithBeginDate(today.AddDays(-1))
+                    .WithEndDate(today.AddDays(1))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])
@@ -116,11 +120,13 @@ internal class PersonTests
     [TestCase(CommitteeType.ManagementCommitteeGuidAsString)]
     public void NeedsAttentionInterests_WithoutInterestAndActiveMembership_ShouldReturnTrue(string committeeTypeId)
     {
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var person = new PersonBuilder()
             .WithNoInterest(false)
             .WithMemberships([
                 new MembershipBuilder()
-                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-5)))
+                    .WithBeginDate(today.AddDays(-5))
+                    .WithEndDate(today.AddDays(5))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])
@@ -135,11 +141,12 @@ internal class PersonTests
     [TestCase(CommitteeType.ManagementCommitteeGuidAsString)]
     public void NeedsAttentionInterests_WithInterestAndInactiveMembership_ShouldReturnTrue(string committeeTypeId)
     {
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var person = new PersonBuilder()
             .WithMemberships([
                 new MembershipBuilder()
-                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-2)))
-                    .WithEndDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithBeginDate(today.AddDays(-2))
+                    .WithEndDate(today.AddDays(-1))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])
@@ -152,10 +159,12 @@ internal class PersonTests
     [Test]
     public void NeedsAttentionInterests_WithOtherCommitteeType_ShouldReturnFalse()
     {
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var person = new PersonBuilder()
             .WithMemberships([
                 new MembershipBuilder()
-                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-1)))
+                    .WithBeginDate(today.AddDays(-1))
+                    .WithEndDate(today.AddDays(1))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(Guid.NewGuid()).Build()).Build()
             ])
@@ -251,13 +260,14 @@ internal class PersonTests
     [TestCase("FBEFEF07-CB51-4F6A-9911-FF1AC997554C", true, false, false)]
     public void NeedsAttentionOccupation_WithOrWithoutOccupation_ShouldReturnExpected(string committeeTypeId, bool hasOccupation, bool hasEmployer, bool expected)
     {
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var person = new PersonBuilder()
             .WithFederalDuty(false)
             .WithNoEmployment(false)
             .WithMemberships([
                 new MembershipBuilder()
-                    .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-3)))
-                    .WithEndDate(DateOnly.FromDateTime(DateTime.Now.AddDays(3)))
+                    .WithBeginDate(today.AddDays(-3))
+                    .WithEndDate(today.AddDays(3))
                     .WithCommittee(new CommitteeBuilder()
                         .WithCommitteeTypeId(new Guid(committeeTypeId)).Build()).Build()
             ])

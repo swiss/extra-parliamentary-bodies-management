@@ -5,6 +5,14 @@
     @if (generalElectionCommittee()?.isCandidateListCompleted && !validated) {
         <ob-alert type="warning">{{ 'candidateList.completedHint' | translate }}</ob-alert>
     }
+
+    @if (!generalElectionCommittee()?.isValidated && generalElectionCommittee()?.wasValidatedOnce) {
+        <ob-alert type="warning">{{ 'committee.generalElection.running.wasValidatedOnce.hint' | translate }}</ob-alert>
+    }
+
+    @if (generalElectionCommittee()?.isReadyForFederalCouncilProposalForwarded && generalElectionCommittee()?.isFederalCouncilProposalDirty) {
+        <ob-alert type="warning">{{ 'committee.generalElection.running.isFederalCouncilProposalDirty.hint' | translate }}</ob-alert>
+    }
 </div>
 
 <div class="validation-errors">
@@ -417,6 +425,16 @@
         <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.electionType' | translate }}</th>
         <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.electionType' | translate }}">
             {{ element.electionType }}
+        </td>
+        @if (isAllowed()) {
+            <td *matFooterCellDef mat-footer-cell><!-- Not editable for new candidates --></td>
+        }
+    </ng-container>
+
+    <ng-container matColumnDef="estimatedTermOfOffice">
+        <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'membership.details.estimatedTermDuration' | translate }}</th>
+        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'membership.details.estimatedTermDuration' | translate }}">
+            {{ element.estimatedTermOfOffice }} {{ 'membership.details.years' | translate }}
         </td>
         @if (isAllowed()) {
             <td *matFooterCellDef mat-footer-cell><!-- Not editable for new candidates --></td>

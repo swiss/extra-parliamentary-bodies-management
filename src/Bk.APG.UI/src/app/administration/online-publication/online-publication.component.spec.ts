@@ -20,7 +20,7 @@ describe('OnlinePublicationComponent', () => {
         triggerPublication: jest.fn().mockReturnValue(of({})),
     };
     const translateServiceMock = {
-        currentLang: 'en',
+        getCurrentLang: jest.fn(() => 'en'),
         onLangChange: new Subject(),
         instant: jest.fn((key: string) => key),
     };
