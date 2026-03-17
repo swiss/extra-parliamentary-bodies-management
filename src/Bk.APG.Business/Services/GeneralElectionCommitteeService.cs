@@ -6,8 +6,8 @@ using Bk.APG.Business.Repositories;
 using Bk.APG.Common.Resources;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
-using Bk.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
+using Swiss.FCh.DocumentService.Client.Models;
 
 namespace Bk.APG.Business.Services;
 
@@ -17,10 +17,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly IAuthorizationService _authorizationService;
     private readonly ICultureService _cultureService;
     private readonly ICommitteeService _committeeService;
-    private readonly IMembershipService _membershipService;
+    // private readonly IMembershipService _membershipService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
-    private readonly Bk.DocumentService.Client.IDocumentService _documentService;
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ILogger<GeneralElectionCommitteeService> _logger;
 
     public GeneralElectionCommitteeService(
@@ -28,10 +28,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         IAuthorizationService authorizationService,
         ICultureService cultureService,
         ICommitteeService committeeService,
-        IMembershipService membershipService,
+        // IMembershipService membershipService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
-        Bk.DocumentService.Client.IDocumentService documentService,
+        Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         ILogger<GeneralElectionCommitteeService> logger
     )
     {
@@ -39,11 +39,85 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _authorizationService = authorizationService;
         _cultureService = cultureService;
         _committeeService = committeeService;
-        _membershipService = membershipService;
+        // _membershipService = membershipService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
         _documentService = documentService;
         _logger = logger;
+    }
+
+    public async Task InvalidateMembershipCandidateList(Guid committeeId)
+    {
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+        generalElectionCommittee.IsValidated = false;
+        generalElectionCommittee.CandidateListStateId = CandidateListState.Draft;
+
+        var taskApproveByDepartment = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).FirstOrDefault(y => y.AssignedTo?.Role == Role.Department
+            && y.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove);
+        var taskListForSecretariat = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).Where(y => y.AssignedTo?.Role == Role.Secretariat
+            && (y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation));
+
+        if (taskApproveByDepartment is not null)
+        {
+            taskApproveByDepartment.WorklistTaskStateId = WorklistTaskState.Active;
+            taskApproveByDepartment.Modified = DateTime.UtcNow;
+            taskApproveByDepartment.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+
+        foreach (var task in taskListForSecretariat)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Inactive;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+
+        // Invalidate BRA Ready tasks
+
+        var taskListForProposalAdminOrDepartmentOrOffice = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).Where(y =>
+           (y.AssignedTo?.Role == Role.Admin || y.AssignedTo?.Role == Role.Department || y.AssignedTo?.Role == Role.Office || y.AssignedTo?.Role == Role.Secretariat)
+           && y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal);
+
+        foreach (var task in taskListForProposalAdminOrDepartmentOrOffice)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Inactive;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+        await _worklistTaskRepository.CommitChanges();
+    }
+
+    public async Task SetFederalCouncilProposalToDirty(Guid committeeId)
+    {
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+        generalElectionCommittee.IsFederalCouncilProposalDirty = true;
+
+        var taskListForProposalSecretariat = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).Where(y => y.WorklistTaskStateId == WorklistTaskState.Completed
+            && (y.AssignedTo?.Role == Role.Secretariat)
+            && y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal);
+
+        foreach (var task in taskListForProposalSecretariat)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Active;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+
+        var taskListForProposalAdminOrDepartmentOrOffice = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).Where(y =>
+            (y.AssignedTo?.Role == Role.Admin || y.AssignedTo?.Role == Role.Department || y.AssignedTo?.Role == Role.Office)
+            && y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal);
+
+        foreach (var task in taskListForProposalAdminOrDepartmentOrOffice)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Inactive;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+        await _worklistTaskRepository.CommitChanges();
     }
 
     public async Task<GeneralElectionCommitteeDetailDto> GetGeneralElectionCommittee(Guid committeeId)
@@ -70,22 +144,22 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var wasGeneralElectionStartedForCommittee = candidateListTasks.Count != 0;
 
         var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id;
-        var isCompleted = generalElectionCommittee.CandidateListStateId == CandidateListState.Completed;
+        var isFederalCouncilProposalForwarded = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded;
         var canValidate = currentEiamAssignment.Role is Role.Department or Role.Admin;
-        var isReadyForProposal = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposal;
+        var isFederalCouncilProposalFinalized = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
         var canForwardReadyForProposal = activeReadyForProposalTask?.AssignedToId == currentEiamAssignment.Id;
-        var canFinalizeReadyForProposal = currentEiamAssignment.Role == Role.Admin && !isReadyForProposal && isCompleted;
+        var canFinalizeReadyForProposal = currentEiamAssignment.Role == Role.Admin && !isFederalCouncilProposalFinalized && isFederalCouncilProposalForwarded;
 
         dto.AssignedTo = activeCandidateListTask?.AssignedTo!.GetText();
         dto.WasGeneralElectionStartedForCommittee = wasGeneralElectionStartedForCommittee;
-        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && !isCompleted;
+        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && !isFederalCouncilProposalForwarded;
         dto.CanValidateCandidateList = wasGeneralElectionStartedForCommittee && canValidate;
         dto.CanForwardCandidateList = wasGeneralElectionStartedForCommittee && canForward;
-        dto.IsCandidateListCompleted = isCompleted;
+        dto.IsCandidateListCompleted = isFederalCouncilProposalForwarded;
         dto.ReadyForProposalAssignedTo = activeReadyForProposalTask?.AssignedTo!.GetText();
         dto.CanForwardReadyForProposal = canForwardReadyForProposal;
         dto.CanFinalizeReadyForProposal = canFinalizeReadyForProposal;
-        dto.IsReadyForProposal = isReadyForProposal;
+        dto.IsReadyForProposal = isFederalCouncilProposalFinalized;
 
         return dto;
     }
@@ -357,7 +431,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return true;
     }
 
-    private async Task<List<List<Cell>>> GetCandidateListData(Guid id, IEnumerable<Guid> membershipCandidateIds)
+    private async Task<IList<IList<Cell>>> GetCandidateListData(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
         var committee = await _generalElectionCommitteeRepository.GetForCandidateListExport(id, membershipCandidateIds);
 
@@ -387,7 +461,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Phone ?? string.Empty }, // Telefon
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Email ?? string.Empty }, // E-Mail
                 new() { Text = string.Join(";", candidate.Person?.Interests?.Where(y => !string.IsNullOrWhiteSpace(y.InterestText)).Select(y => y.InterestText) ?? Enumerable.Empty<string>()) } // Interessenbindungen
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }
