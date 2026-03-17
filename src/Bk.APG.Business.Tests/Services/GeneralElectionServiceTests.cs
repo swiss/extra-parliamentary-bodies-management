@@ -211,7 +211,7 @@ public class GeneralElectionServiceTests
         await _generalElectionCommitteeRepository.Received(1).DeleteAll();
         await _generalElectionCommitteeRepository.Received(2).Create(Arg.Any<GeneralElectionCommittee>());
         await _membershipCandidateRepository.Received(4).Create(Arg.Any<MembershipCandidate>());
-        await _worklistTaskService.Received(1 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
+        await _worklistTaskService.Received(2 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
         await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
             x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck && x.WorklistTaskStateId == WorklistTaskState.Active));
         await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(

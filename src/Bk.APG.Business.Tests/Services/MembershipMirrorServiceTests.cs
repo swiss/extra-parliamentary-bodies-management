@@ -12,6 +12,7 @@ public class MembershipMirrorServiceTests
 {
     private MembershipMirrorService _membershipMirrorService = null!;
     private readonly IMembershipCandidateRepository _membershipCandidateRepository = Substitute.For<IMembershipCandidateRepository>();
+    private readonly IMembershipRepository _membershipRepository = Substitute.For<IMembershipRepository>();
     private readonly ILogger<MembershipMirrorService> _logger = NullLogger<MembershipMirrorService>.Instance;
 
     [SetUp]
@@ -19,6 +20,7 @@ public class MembershipMirrorServiceTests
     {
         _membershipMirrorService = new MembershipMirrorService(
             _membershipCandidateRepository,
+            _membershipRepository,
             _logger);
     }
 
