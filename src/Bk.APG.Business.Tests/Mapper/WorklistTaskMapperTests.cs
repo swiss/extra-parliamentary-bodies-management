@@ -124,6 +124,29 @@ internal class WorklistTaskMapperTests
     }
 
     [Test]
+    public void CreateGeneralElectionEndWorklistTaskDto_WithDto_ShouldReturnResult()
+    {
+        var parentId = Guid.NewGuid();
+        var termOfOfficeDateId = Guid.NewGuid();
+        var dueDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10));
+        const string description = "description";
+
+        var result = WorklistTaskMapper.CreateGeneralElectionEndWorklistTaskDto(parentId, termOfOfficeDateId, dueDate, description);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.AssignedToId, Is.EqualTo(EiamAssignment.AdminId));
+            Assert.That(result.WorklistTaskTypeId, Is.EqualTo(WorklistTaskType.GeneralElectionEnd));
+            Assert.That(result.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
+            Assert.That(result.ParentTaskId, Is.EqualTo(parentId));
+            Assert.That(result.Description, Is.EqualTo(description));
+            Assert.That(result.DueDate, Is.EqualTo(dueDate));
+            Assert.That(result.TermOfOfficeDateId, Is.EqualTo(termOfOfficeDateId));
+        });
+    }
+
+    [Test]
     public void CreateGeneralElectionDepartmentWorklistTaskDto_WithDto_ShouldReturnResult()
     {
         var parentId = Guid.NewGuid();

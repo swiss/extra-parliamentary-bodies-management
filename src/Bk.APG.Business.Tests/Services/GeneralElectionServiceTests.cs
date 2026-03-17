@@ -24,6 +24,7 @@ public class GeneralElectionServiceTests
     private readonly IMembershipRepository _membershipRepository = Substitute.For<IMembershipRepository>();
     private readonly IMembershipCandidateRepository _membershipCandidateRepository = Substitute.For<IMembershipCandidateRepository>();
     private readonly IMembershipCandidateLogMessageRepository _membershipCandidateLogMessageRepository = Substitute.For<IMembershipCandidateLogMessageRepository>();
+    private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly ILogger<GeneralElectionService> _logger = NullLogger<GeneralElectionService>.Instance;
 
     private readonly Guid _zeroGuid = Guid.Empty;
@@ -45,6 +46,7 @@ public class GeneralElectionServiceTests
             _membershipRepository,
             _membershipCandidateRepository,
             _membershipCandidateLogMessageRepository,
+            _worklistTaskRepository,
             _logger);
     }
 
@@ -219,6 +221,35 @@ public class GeneralElectionServiceTests
     }
 
     [Test]
+    public void PrepareEndGeneralElection_WhenNoGeneralElectionIsRunning_ThrowsException()
+    {
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(false);
+
+        var _worklistTask = new WorklistTaskCreateDto() { DueDate = DateOnly.FromDateTime(DateTime.Today), WorklistTaskTypeId = Guid.NewGuid(), WorklistTaskStateId = Guid.NewGuid() };
+
+        Assert.That(async () => await _generalElectionService.PrepareEndGeneralElection(_worklistTask), Throws.Exception.InstanceOf<BusinessValidationException>());
+    }
+
+    [Test]
+    public async Task PrepareEndGeneralElection_WithRecordsInDatabase_CallsServices()
+    {
+        var nextTermOfOfficeDate = new TermOfOfficeDateBuilder().Build();
+        nextTermOfOfficeDate.IsGeneralElection = true;
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+        _termOfOfficeDateService.GetNextTermOfOfficeDate().Returns(nextTermOfOfficeDate);
+        _worklistTaskService.CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>()).Returns(new WorklistTaskBuilder().Build());
+
+        var _worklistTask = new WorklistTaskCreateDto() { DueDate = DateOnly.FromDateTime(DateTime.Today), WorklistTaskTypeId = Guid.NewGuid(), WorklistTaskStateId = Guid.NewGuid() };
+
+        await _generalElectionService.PrepareEndGeneralElection(_worklistTask);
+
+        await _termOfOfficeDateService.Received(1).GetNextTermOfOfficeDate();
+
+        await _termOfOfficeDateService.Received(1).Update(Arg.Any<TermOfOfficeDate>());
+    }
+
+    [Test]
     public async Task CreateNewMembershipCandidate_WhenCalled_ShouldCallCreate()
     {
         var membershipId = Guid.NewGuid();
@@ -233,7 +264,7 @@ public class GeneralElectionServiceTests
         _generalElectionCommitteeRepository.GetByCommitteeId(membership.CommitteeId).Returns(generalElectionCommittee);
         _authorizationService.GetCurrentUserName().Returns("FritzTester");
 
-        await _generalElectionService.CreateNewMembershipCandidate(membership, "username");
+        await _generalElectionService.CreateNewMembershipCandidate(membership);
 
         await _membershipCandidateRepository.Received(1).Create(Arg.Any<MembershipCandidate>());
         await _membershipRepository.Received(0).GetAllMembershipsForCommitteeAndPerson(committeeId, personId);
@@ -267,7 +298,7 @@ public class GeneralElectionServiceTests
         _membershipRepository.GetAllMembershipsForCommitteeAndPerson(committeeId, personId).Returns(oldMemberships);
         _authorizationService.GetCurrentUserName().Returns("FritzTester");
 
-        await _generalElectionService.CreateNewMembershipCandidate(membership, "username");
+        await _generalElectionService.CreateNewMembershipCandidate(membership);
 
         await _membershipCandidateRepository.Received(0).Create(Arg.Any<MembershipCandidate>());
         await _membershipCandidateLogMessageRepository.Received(1).Create(Arg.Any<MembershipCandidateLogMessage>());
@@ -301,7 +332,7 @@ public class GeneralElectionServiceTests
         _membershipRepository.GetAllMembershipsForCommitteeAndPerson(committeeId, personId).Returns(oldMemberships);
         _authorizationService.GetCurrentUserName().Returns("FritzTester");
 
-        await _generalElectionService.CreateNewMembershipCandidate(membership, "username");
+        await _generalElectionService.CreateNewMembershipCandidate(membership);
 
         await _membershipCandidateRepository.Received(1).Create(Arg.Any<MembershipCandidate>());
         await _membershipCandidateLogMessageRepository.Received(0).Create(Arg.Any<MembershipCandidateLogMessage>());
