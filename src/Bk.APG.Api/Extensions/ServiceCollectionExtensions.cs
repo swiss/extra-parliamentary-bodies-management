@@ -55,6 +55,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IAuthorizationService, AuthorizationService>();
         services.AddScoped<ICommitteeService, CommitteeService>();
         services.AddScoped<IMembershipService, MembershipService>();
+        services.AddScoped<IMembershipMirrorService, MembershipMirrorService>();
         services.AddScoped<IContactPointService, ContactPointService>();
         services.AddScoped<IAppointmentDecisionService, AppointmentDecisionService>();
         services.AddScoped<IDocumentService, DocumentService>();
