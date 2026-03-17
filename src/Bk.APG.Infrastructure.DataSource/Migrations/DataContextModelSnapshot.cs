@@ -5373,6 +5373,14 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("old_id");
 
+                    b.Property<DateOnly?>("PlannedPublicationDate")
+                        .HasColumnType("date")
+                        .HasColumnName("planned_publication_date");
+
+                    b.Property<DateTime?>("PublicationDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("publication_date");
+
                     b.Property<int>("Sort")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
@@ -5468,6 +5476,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                     b.Property<Guid?>("GeneralElectionCommitteeId")
                         .HasColumnType("uuid")
                         .HasColumnName("general_election_committee_id");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<Guid?>("MembershipCandidateId")
                         .HasColumnType("uuid")

@@ -151,6 +151,7 @@ public static class GeneralElectionMapper
     {
         return new Membership
         {
+            Id = membershipCandidate.MembershipId != null ? (Guid)membershipCandidate.MembershipId : Guid.Empty,
             PersonId = membershipCandidate.Person != null ? membershipCandidate.Person.Id : Guid.Empty,
             Person = membershipCandidate.Person,
             MaximumEmploymentLevel = membershipCandidate.MaximumEmploymentLevel,
