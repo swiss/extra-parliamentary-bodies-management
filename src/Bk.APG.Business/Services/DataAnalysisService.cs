@@ -2,15 +2,15 @@ using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Common.Resources;
-using Bk.DocumentService.Client.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Swiss.FCh.DocumentService.Client.Models;
 
 namespace Bk.APG.Business.Services;
 
 public class DataAnalysisService : IDataAnalysisService
 {
-    private readonly Bk.DocumentService.Client.IDocumentService _documentService;
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IPersonRepository _personRepository;
@@ -19,7 +19,7 @@ public class DataAnalysisService : IDataAnalysisService
     private readonly IConfiguration _configuration;
 
     public DataAnalysisService(
-        Bk.DocumentService.Client.IDocumentService documentService,
+        Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         IEiamAssignmentService eiamAssignmentService,
         ICommitteeRepository committeeRepository,
         IPersonRepository personRepository,
@@ -127,7 +127,7 @@ public class DataAnalysisService : IDataAnalysisService
         return (GenerateFileName(dataAnalysisDate, BusinessTexts.DataAnalysis_CommitteeType), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetCommitteeTypeData(DateOnly dataAnalysisDate)
+    private async Task<IList<IList<Cell>>> GetCommitteeTypeData(DateOnly dataAnalysisDate)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
@@ -169,7 +169,7 @@ public class DataAnalysisService : IDataAnalysisService
                 PercentageCell(Divide(group.Sum(x => x.FederalAssemblyCount), group.Sum(x => x.ActiveMemberCount))), // % Mitglieder der Bundesversammlung
                 NumberCell(group.Sum(x => x.NotFederalAssemblyCount)), // # Nicht Mitglieder der Bundesversammlung
                 PercentageCell(Divide(group.Sum(x => x.NotFederalAssemblyCount), group.Sum(x => x.ActiveMemberCount))) // % Nicht Mitglieder der Bundesversammlung
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }
@@ -272,7 +272,7 @@ public class DataAnalysisService : IDataAnalysisService
         return (GenerateFileName(dataAnalysisDate, BusinessTexts.DataAnalysis_Committee), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetCommitteeData(DateOnly dataAnalysisDate)
+    private async Task<IList<IList<Cell>>> GetCommitteeData(DateOnly dataAnalysisDate)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
@@ -321,7 +321,7 @@ public class DataAnalysisService : IDataAnalysisService
                 PercentageCell(Divide(committee.FederalAssemblyCount, committee.ActiveMemberCount)), // % Mitglieder der Bundesversammlung
                 NumberCell(committee.NotFederalAssemblyCount), // # Nicht Mitglieder der Bundesversammlung
                 PercentageCell(Divide(committee.NotFederalAssemblyCount, committee.ActiveMemberCount)) // % Nicht Mitglieder der Bundesversammlung
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }
@@ -391,7 +391,7 @@ public class DataAnalysisService : IDataAnalysisService
         return (GenerateFileName(dataAnalysisDate, BusinessTexts.DataAnalysis_Membership), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetMembershipData(DateOnly dataAnalysisDate)
+    private async Task<IList<IList<Cell>>> GetMembershipData(DateOnly dataAnalysisDate)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
@@ -443,7 +443,7 @@ public class DataAnalysisService : IDataAnalysisService
                 DateCell(membership.Committee!.BeginDate),
                 DateCell(membership.Committee!.EndDate),
                 NumberCell(membership.Committee!.Memberships.Count)
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }
@@ -534,7 +534,7 @@ public class DataAnalysisService : IDataAnalysisService
         return (GenerateFileName(dataAnalysisDate, fileName), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetContactPointData(DateOnly dataAnalysisDate, Guid contactPointTypeId)
+    private async Task<IList<IList<Cell>>> GetContactPointData(DateOnly dataAnalysisDate, Guid contactPointTypeId)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
@@ -580,12 +580,12 @@ public class DataAnalysisService : IDataAnalysisService
                 new() { Text = contactPoint.ExtraParliamentaryCommission },
                 new() { Text = contactPoint.SuperVisionDuty },
                 new() { Text = contactPoint.TermOfOffice }
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }
 
-    private async Task<List<List<Cell>>> GetMembershipWithInterestData(DateOnly dataAnalysisDate)
+    private async Task<IList<IList<Cell>>> GetMembershipWithInterestData(DateOnly dataAnalysisDate)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
@@ -646,7 +646,7 @@ public class DataAnalysisService : IDataAnalysisService
                 new() { Text = membership.TermOfOffice },
                 DateCell(membership.BeginDate),
                 DateCell(membership.EndDate),
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }
@@ -693,7 +693,7 @@ public class DataAnalysisService : IDataAnalysisService
         return (GenerateFileName(dataAnalysisDate, BusinessTexts.DataAnalysis_Person), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetPersonData(DateOnly dataAnalysisDate)
+    private async Task<IList<IList<Cell>>> GetPersonData(DateOnly dataAnalysisDate)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
@@ -717,7 +717,7 @@ public class DataAnalysisService : IDataAnalysisService
                     Format = CellFormat.Wrap,
                     Text = string.Join("\n", person.ActiveCommittees.Select(x => x.GetDescription()))
                 }
-            }).ToList();
+            } as IList<Cell>).ToList();
 
         return bodyCells;
     }
@@ -740,11 +740,11 @@ public class DataAnalysisService : IDataAnalysisService
         return (GenerateFileName(dataAnalysisDate, BusinessTexts.DataAnalysis_Region), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetRegionData(DateOnly dataAnalysisDate, Department[] departments)
+    private async Task<IList<IList<Cell>>> GetRegionData(DateOnly dataAnalysisDate, Department[] departments)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
-        var bodyCells = new List<List<Cell>>();
+        var bodyCells = new List<IList<Cell>>();
 
         var cantons = await _masterDataRepository.GetCantons();
         var committees = await _committeeRepository.GetCommitteesForRegionExport(dataAnalysisDate, departmentId, officeId, committeeId);
@@ -875,7 +875,7 @@ public class DataAnalysisService : IDataAnalysisService
         return (GenerateFileName(dataAnalysisDate, BusinessTexts.DataAnalysis_Age), exportStream);
     }
 
-    private async Task<List<List<Cell>>> GetAgeData(DateOnly dataAnalysisDate)
+    private async Task<IList<IList<Cell>>> GetAgeData(DateOnly dataAnalysisDate)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
@@ -919,7 +919,7 @@ public class DataAnalysisService : IDataAnalysisService
                 PercentageCell(Divide(membershipsByAge.Count(x => x.Person!.FederalAssembly), membershipsByAge.Count())), // % Mitglieder der Bundesversammlung
                 NumberCell(membershipsByAge.Count(x => !x.Person!.FederalAssembly)), // # Nicht Mitglieder der Bundesversammlung
                 PercentageCell(Divide(membershipsByAge.Count(x => !x.Person!.FederalAssembly), membershipsByAge.Count()))
-            })
+            } as IList<Cell>)
             .ToList();
 
         return bodyCells;

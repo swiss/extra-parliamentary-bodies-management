@@ -17,7 +17,6 @@ import {MasterDataService} from '@shared/master-data.service';
 import {MembersTooltipContentComponent} from '@shared/members-tooltip-content/members-tooltip-content.component';
 import {debounceTime} from 'rxjs';
 import {AuthService} from '../../../../auth/auth.service';
-import {Role} from '../../../../auth/Role';
 import {ConfigsService} from '../../../../configs.service';
 
 @Component({
@@ -50,10 +49,6 @@ export class GeneralElectionCommitteeDataFormComponent {
 
     committeeForm = this.createForm();
     canEditAll = false;
-    isDepartment = false;
-    isOffice = false;
-    isSecretariat = false;
-    isAdmin = false;
 
     departmentOffices = computed(() => {
         const offices = this.masterDataService.offices();
@@ -79,6 +74,8 @@ export class GeneralElectionCommitteeDataFormComponent {
         () => this.selectedCommitteeTypeId() === this.configsService.frontendConfig.entityIds.committeeType.managementId
     );
 
+    private readonly isAdmin = toSignal(this.authService.isAdmin$);
+
     private readonly selectedCommitteeTypeId = toSignal(this.committeeForm.controls.committeeTypeId.valueChanges);
     private readonly selectedDepartmentId = toSignal(this.committeeForm.controls.departmentId.valueChanges);
     private readonly selectedCommitteeLevelId = toSignal(this.committeeForm.controls.levelId.valueChanges);
@@ -94,13 +91,6 @@ export class GeneralElectionCommitteeDataFormComponent {
         private readonly authService: AuthService,
         private readonly configsService: ConfigsService
     ) {
-        this.authService.roles$.subscribe(roles => {
-            this.isAdmin = roles.includes(Role.Admin);
-            this.isOffice = roles.includes(Role.Office);
-            this.isDepartment = roles.includes(Role.Department);
-            this.isSecretariat = roles.includes(Role.Secretariat);
-        });
-
         const effectRef = effect(() => {
             if (this.committeeModification()?.id) {
                 this.committeeForm.patchValue(this.committeeModification()!);
@@ -120,6 +110,13 @@ export class GeneralElectionCommitteeDataFormComponent {
             if (this.beginDate() !== undefined && this.endDate() !== undefined) {
                 this.committeeForm.controls.beginDate.updateValueAndValidity();
                 this.committeeForm.controls.endDate.updateValueAndValidity();
+            }
+        });
+
+        effect(() => {
+            const isAdmin = this.isAdmin();
+            if (isAdmin) {
+                this.committeeForm.controls.beginDate.enable();
             }
         });
 

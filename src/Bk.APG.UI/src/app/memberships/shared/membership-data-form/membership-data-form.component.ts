@@ -572,13 +572,17 @@ export class MembershipDataFormComponent implements OnInit {
     }
 
     private subscribeToDateRangeChanges() {
+        const isControlValidOrDisabled = (control: AbstractControl) => control.disabled || control.valid;
+
         merge(
             this.membershipForm.controls.beginDate.valueChanges.pipe(map(beginDate => ({beginDate}))),
             this.membershipForm.controls.endDate.valueChanges.pipe(map(endDate => ({endDate})))
         )
             .pipe(
                 debounceTime(300),
-                filter(() => this.membershipForm.controls.endDate.valid && this.membershipForm.controls.beginDate.valid),
+                filter(
+                    () => isControlValidOrDisabled(this.membershipForm.controls.endDate) && isControlValidOrDisabled(this.membershipForm.controls.beginDate)
+                ),
                 filter(() => !this.isValidating),
                 switchMap(() => {
                     this.validationRequest = {

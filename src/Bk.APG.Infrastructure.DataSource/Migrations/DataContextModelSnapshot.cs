@@ -2951,6 +2951,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<bool>("IsFederalCouncilProposalDirty")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_federal_council_proposal_dirty");
+
                     b.Property<bool>("IsValidated")
                         .HasColumnType("boolean")
                         .HasColumnName("is_validated");
@@ -3088,6 +3092,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("vacancies_general_election");
 
+                    b.Property<bool>("WasValidatedOnce")
+                        .HasColumnType("boolean")
+                        .HasColumnName("was_validated_once");
+
                     b.HasKey("Id")
                         .HasName("pk_general_election_committees");
 
@@ -3157,23 +3165,12 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("character varying(250)")
                         .HasColumnName("modified_by");
 
-                    b.Property<int>("OgdId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("ogd_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OgdId"));
-
                     b.HasKey("Id")
                         .HasName("pk_general_gender_measures");
 
                     b.HasIndex("DepartmentId")
                         .IsUnique()
                         .HasDatabaseName("ix_general_gender_measures_department_id");
-
-                    b.HasIndex("OgdId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_general_gender_measures_ogd_id");
 
                     b.ToTable("general_gender_measures", "data");
                 });
@@ -3214,23 +3211,12 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("character varying(250)")
                         .HasColumnName("modified_by");
 
-                    b.Property<int>("OgdId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("ogd_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OgdId"));
-
                     b.HasKey("Id")
                         .HasName("pk_general_language_measures");
 
                     b.HasIndex("DepartmentId")
                         .IsUnique()
                         .HasDatabaseName("ix_general_language_measures_department_id");
-
-                    b.HasIndex("OgdId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_general_language_measures_ogd_id");
 
                     b.ToTable("general_language_measures", "data");
                 });
