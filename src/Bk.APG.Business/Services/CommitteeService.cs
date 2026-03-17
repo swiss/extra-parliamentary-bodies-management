@@ -17,7 +17,7 @@ public class CommitteeService : ICommitteeService
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IWorklistTaskService _worklistTaskService;
-    // private readonly IMembershipService _membershipService;
+    private readonly IMembershipMirrorService _membershipMirrorService;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IMembershipRepository _membershipRepository;
@@ -34,7 +34,7 @@ public class CommitteeService : ICommitteeService
         IEiamAssignmentService eiamAssignmentService,
         ITermOfOfficeDateService termOfOfficeDateService,
         IWorklistTaskService worklistTaskService,
-        // IMembershipService membershipService,
+        IMembershipMirrorService membershipMirrorService,
         IMasterDataRepository masterDataRepository,
         IGeneralMeasureRepository generalMeasureRepository,
         IMembershipRepository membershipRepository,
@@ -50,7 +50,7 @@ public class CommitteeService : ICommitteeService
         _eiamAssignmentService = eiamAssignmentService;
         _termOfOfficeDateService = termOfOfficeDateService;
         _worklistTaskService = worklistTaskService;
-        // _membershipService = membershipService;
+        _membershipMirrorService = membershipMirrorService;
         _masterDataRepository = masterDataRepository;
         _generalMeasureRepository = generalMeasureRepository;
         _membershipRepository = membershipRepository;
@@ -213,28 +213,25 @@ public class CommitteeService : ICommitteeService
     public async Task<CommitteeDetailDto> UpdateCommitteeAfterGeneralElection(Guid id, CommitteeUpdateDto updateDto, List<MembershipCandidate> membershipCandidates)
     {
         var saved = await UpdateCommittee(id, updateDto);
+        var userName = "name";
 
+        foreach (var candidate in membershipCandidates)
+        {
+            if (candidate.ElectionTypeId == ElectionType.NewElectionGuid)
+            {
+                var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
 
-        //foreach (var candidate in membershipCandidates)
-        //{
-        //    if (candidate.ElectionTypeId == ElectionType.NewElectionGuid)
-        //    {
-        //        var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
+                await _membershipMirrorService.CreateNewMembershipFromCandidate(createDto, userName);
+            }
+            else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid && candidate.MembershipId != null)
+            {
+                var mappedCandidate = GeneralElectionMapper.FromMembershipCandidateToMembership(candidate);
 
-        //        //if (createDto.PersonId == null)
-        //        //{
-        //        //    _logger.LogInformation("General Election transfer from committe {CommitteeId} and member {Membername} {Membersurname} aborted, no person attached!", committee.Id, candidate.Surname, candidate.GivenName );
-        //        //}
+                var mappedMembership = MembershipMapper.ToMembershipUpdateDto(mappedCandidate, _cultureService);
 
-        //        await _membershipService.CreateMembership(createDto);
-        //    }
-        //    else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid)
-        //    {
-        //        var currentMembership = await _membershipService.GetMembershipForUpdate((Guid)candidate.MembershipId!);
-
-        //        await _membershipService.UpdateMembership(currentMembership.Id, currentMembership);
-        //    }
-        //}
+                await _membershipMirrorService.UpdateMembershipFromCandidate(mappedMembership.Id, mappedMembership, userName);
+            }
+        }
 
         return saved;
     }
