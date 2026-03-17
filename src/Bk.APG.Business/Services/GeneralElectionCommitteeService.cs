@@ -346,7 +346,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetAllUnfinishedCommittees()
     {
-
         var committees = await _generalElectionCommitteeRepository.GetAll();
 
         var unfinishedCommittees = committees.Where(c => c.IsValidated);

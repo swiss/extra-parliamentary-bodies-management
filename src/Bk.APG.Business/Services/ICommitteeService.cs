@@ -12,7 +12,7 @@ public interface ICommitteeService
     Task<CommitteeDetailDto> GetCommitteeDetail(Guid id);
     Task<CommitteeUpdateDto> GetCommitteeForUpdate(Guid id);
     Task<CommitteeJustificationUpdateDto> GetCommitteeJustificationForUpdate(Guid id);
-    Task<CommitteeDetailDto> UpdateCommittee(Guid id, CommitteeUpdateDto updateDto);
+    Task<CommitteeDetailDto> UpdateCommittee(Guid id, CommitteeUpdateDto updateDto, bool checkAuthorization);
     Task<CommitteeDetailDto> UpdateCommitteeAfterGeneralElection(Guid id, CommitteeUpdateDto updateDto, List<MembershipCandidate> membershipCandidates);
     Task<CommitteeJustificationUpdateDto> UpdateCommitteeJustifications(Guid id, CommitteeJustificationUpdateDto updateDto);
     Task<CommitteeDetailDto> CreateCommittee(CommitteeCreateDto createDto);
