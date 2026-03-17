@@ -35,6 +35,7 @@ internal class MembershipCandidateMapperTests
             Assert.That(dto.RemarksStatus, Is.EqualTo(membership.RemarksStatus));
             Assert.That(dto.NeedsAttention, Is.EqualTo(membership.NeedsAttention));
             Assert.That(dto.IsSelected, Is.EqualTo(membership.IsSelected));
+            Assert.That(dto.EstimatedTermOfOffice, Is.EqualTo(membership.EstimatedTermOfOffice));
         });
     }
 

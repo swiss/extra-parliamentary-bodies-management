@@ -112,9 +112,9 @@ export class GeneralElectionCommitteesFilterComponent {
             committeeTypes: this.fb.control<string[] | null>(null),
             isMarketOrientated: this.fb.control<boolean[] | null>(null),
             hasSupervisionDuty: this.fb.control<boolean[] | null>(null),
-            status: this.fb.control<string | null>(null),
-            vacancies: this.fb.control<string | null>(null),
-            statusProposal: this.fb.control<string | null>(null),
+            isNew: this.fb.control<boolean[] | null>(null),
+            vacancies: this.fb.control<boolean[] | null>(null),
+            statusProposal: this.fb.control<boolean[] | null>(null),
         });
 
         if (params) {

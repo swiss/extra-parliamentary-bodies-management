@@ -19,6 +19,9 @@ public static class GeneralElectionCommitteeMapper
             CommitteeTypeIds = filter?.CommitteeTypeIds,
             IsMarketOrientated = filter?.IsMarketOrientated,
             HasSupervisionDuty = filter?.HasSupervisionDuty,
+            IsNew = filter?.IsNew,
+            Vacancies = filter?.Vacancies,
+            StatusProposal = filter?.StatusProposal,
             CommitteeIds = []
         };
     }
@@ -72,6 +75,8 @@ public static class GeneralElectionCommitteeMapper
             ModifiedBy = currentUserName,
             IsDeleted = false,
             IsValidated = false,
+            WasValidatedOnce = false,
+            IsFederalCouncilProposalDirty = false,
         };
     }
 
@@ -122,6 +127,9 @@ public static class GeneralElectionCommitteeMapper
             FederalInstitution = generalElectionCommittee.FederalInstitution,
             ExtraParliamentaryCommission = generalElectionCommittee.ExtraParliamentaryCommission,
             IsValidated = generalElectionCommittee.IsValidated,
+            IsReadyForFederalCouncilProposalForwarded = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded,
+            WasValidatedOnce = generalElectionCommittee.WasValidatedOnce,
+            IsFederalCouncilProposalDirty = generalElectionCommittee.IsFederalCouncilProposalDirty,
             SelectionProcedure = generalElectionCommittee.SelectionProcedure,
             JustificationsNeedAttention = generalElectionCommittee.JustificationsNeedAttention,
             CanEditSelectionProcedure = generalElectionCommittee.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
@@ -184,9 +192,12 @@ public static class GeneralElectionCommitteeMapper
             Department = generalElectionCommittee.Department!.GetText(cultureInfo),
             Office = generalElectionCommittee.Office!.GetText(cultureInfo),
             CommitteeType = generalElectionCommittee.CommitteeType!.GetText(cultureInfo),
-            Status = string.Empty,
-            VacanciesGeneralElection = generalElectionCommittee.VacanciesGeneralElection,
-            StatusProposal = string.Empty,
+            IsNew = generalElectionCommittee.Committee?.TermOfOfficeDate is not null && DateOnly.FromDateTime(generalElectionCommittee.Committee!.Created) >= generalElectionCommittee.Committee!.TermOfOfficeDate!.BeginDate,
+            VacanciesGeneralElection = generalElectionCommittee.VacanciesGeneralElection ??
+                                       (generalElectionCommittee.MinimalMembers - generalElectionCommittee.ActiveMemberCount > 0
+                                           ? generalElectionCommittee.MinimalMembers.GetValueOrDefault() - generalElectionCommittee.ActiveMemberCount
+                                           : 0),
+            StatusProposal = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized,
             IsMarketOrientated = generalElectionCommittee.MarketOrientated,
             HasSupervisionDuty = generalElectionCommittee.SupervisionDuty,
             Modified = generalElectionCommittee.Modified,

@@ -17,7 +17,7 @@ describe('CommitteesComponent', () => {
 
     beforeEach(async () => {
         const translateServiceMock = {
-            currentLang: 'en',
+            getCurrentLang: jest.fn(() => 'en'),
             onLangChange: new Subject(),
         };
 

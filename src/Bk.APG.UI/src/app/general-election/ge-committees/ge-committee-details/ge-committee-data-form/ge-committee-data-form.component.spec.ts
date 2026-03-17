@@ -22,18 +22,16 @@ import {MembersTooltipContentComponent} from '@shared/members-tooltip-content/me
 import {MockComponents, MockDirectives, MockModule, MockPipe} from 'ng-mocks';
 import {BehaviorSubject} from 'rxjs';
 import {AuthService} from '../../../../auth/auth.service';
-import {Role} from '../../../../auth/Role';
 import {ConfigsService} from '../../../../configs.service';
 import {GeneralElectionCommitteeDataFormComponent} from './ge-committee-data-form.component';
 
 describe('GeneralElectionCommitteeDataFormComponent', () => {
     let component: GeneralElectionCommitteeDataFormComponent;
     let fixture: ComponentFixture<GeneralElectionCommitteeDataFormComponent>;
-    const roles: Role[] = [];
-    const rolesSubject = new BehaviorSubject(roles);
 
+    const isAdmin$ = new BehaviorSubject<boolean>(false);
     const authServiceMock = {
-        roles$: rolesSubject.asObservable(),
+        isAdmin$: isAdmin$.asObservable(),
     };
 
     const masterDataServiceMock = {
@@ -114,6 +112,7 @@ describe('GeneralElectionCommitteeDataFormComponent', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
+        isAdmin$.next(false);
     });
 
     it('should create the component', () => {
@@ -144,7 +143,9 @@ describe('GeneralElectionCommitteeDataFormComponent', () => {
             id: '1',
             departmentId: '',
         } as GeneralElectionCommitteeUpdate);
+
         fixture.detectChanges();
+
         expect(component.committeeForm.controls.departmentId.value).toBe('');
         expect(component.committeeForm.controls.departmentId.disabled).toBe(true);
         expect(component.committeeForm.controls.legalBase.disabled).toBe(true);
@@ -159,12 +160,22 @@ describe('GeneralElectionCommitteeDataFormComponent', () => {
             id: '1',
             departmentId: '11',
         } as GeneralElectionCommitteeUpdate);
+
         fixture.detectChanges();
+
         expect(component.committeeForm.controls.departmentId.value).toBe('11');
         expect(component.committeeForm.controls.descriptionGerman.disabled).toBe(false);
         expect(component.committeeForm.controls.departmentId.disabled).toBe(false);
         expect(component.committeeForm.controls.legalBase.disabled).toBe(false);
         expect(component.canEditAll).toBe(true);
+    });
+
+    it('should enable begin date when admin', () => {
+        isAdmin$.next(true);
+
+        fixture.detectChanges();
+
+        expect(component.committeeForm.controls.beginDate.disabled).toBe(false);
     });
 
     describe('Form Initialization', () => {
