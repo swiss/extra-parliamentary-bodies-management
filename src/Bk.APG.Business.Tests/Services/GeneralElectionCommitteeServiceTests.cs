@@ -61,7 +61,7 @@ public class GeneralElectionCommitteeServiceTests
             _authorizationService,
             _cultureService,
             _committeeService,
-           // _membershipService,
+            // _membershipService,
             _generalMeasureRepository,
             _worklistTaskRepository,
             _documentService,
