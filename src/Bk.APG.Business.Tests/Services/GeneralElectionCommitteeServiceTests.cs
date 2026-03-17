@@ -20,13 +20,14 @@ public class GeneralElectionCommitteeServiceTests
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
     private readonly ICultureService _cultureService = Substitute.For<ICultureService>();
     private readonly ICommitteeService _committeeService = Substitute.For<ICommitteeService>();
-    // private readonly IMembershipService _membershipService = Substitute.For<IMembershipService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly ILogger<GeneralElectionCommitteeService> _logger = NullLogger<GeneralElectionCommitteeService>.Instance;
 
-    private GeneralElectionCommittee _generalElectionCommittee;
+    private readonly List<GeneralElectionCommittee> _generalElectionCommittees = new();
+    private GeneralElectionCommittee _generalElectionCommittee1;
+    private GeneralElectionCommittee _generalElectionCommittee2;
     private Committee _committee;
     private Guid _committeeId;
     private Guid _generalElectionCommitteeId;
@@ -46,7 +47,7 @@ public class GeneralElectionCommitteeServiceTests
 
         _committee = new CommitteeBuilder().WithId(_committeeId).WithDepartment(_department).Build();
 
-        _generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+        _generalElectionCommittee1 = new GeneralElectionCommitteeBuilder()
             .WithId(_generalElectionCommitteeId)
             .WithCommitteeId(_committeeId)
             .WithCommittee(_committee)
@@ -54,14 +55,30 @@ public class GeneralElectionCommitteeServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithMaximalMember(5)
             .WithDepartment(_department)
+            .WithIsValidated(true)
+            .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().Build())
             .Build();
+
+        _generalElectionCommittee2 = new GeneralElectionCommitteeBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCommitteeId(_committeeId)
+            .WithCommittee(_committee)
+            .WithBeginDate(new DateOnly(1976, 1, 1))
+            .WithEndDate(new DateOnly(2030, 12, 31))
+            .WithMaximalMember(5)
+            .WithDepartment(_department)
+            .WithIsValidated(false)
+            .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().Build())
+            .Build();
+
+        _generalElectionCommittees.Add(_generalElectionCommittee1);
+        _generalElectionCommittees.Add(_generalElectionCommittee2);
 
         _generalElectionCommitteeService = new GeneralElectionCommitteeService(
             _generalElectionCommitteeRepository,
             _authorizationService,
             _cultureService,
             _committeeService,
-            // _membershipService,
             _generalMeasureRepository,
             _worklistTaskRepository,
             _documentService,
@@ -74,6 +91,7 @@ public class GeneralElectionCommitteeServiceTests
         _generalElectionCommitteeRepository.ClearSubstitute();
         _authorizationService.ClearSubstitute();
         _cultureService.ClearSubstitute();
+        _committeeService.ClearSubstitute();
         _generalMeasureRepository.ClearSubstitute();
         _worklistTaskRepository.ClearSubstitute();
     }
@@ -147,17 +165,17 @@ public class GeneralElectionCommitteeServiceTests
             .WithWorklistTaskTypeId(WorklistTaskType.CandidateListCreate)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignment)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
 
-        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
-        _generalElectionCommittee.CandidateListState = candidateListState;
-        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
-        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee1.Committee!).Returns(true);
         _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
-        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
-        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([activeCandidateListTask]);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([activeCandidateListTask]);
 
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
 
@@ -180,14 +198,14 @@ public class GeneralElectionCommitteeServiceTests
             .WithRole(Role.Admin)
             .Build();
 
-        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
-        _generalElectionCommittee.CandidateListState = candidateListState;
-        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
-        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee1.Committee!).Returns(true);
         _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
-        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
-        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns(new List<WorklistTask>());
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns(new List<WorklistTask>());
 
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
 
@@ -210,14 +228,14 @@ public class GeneralElectionCommitteeServiceTests
             .WithRole(Role.Department)
             .Build();
 
-        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
-        _generalElectionCommittee.CandidateListState = candidateListState;
-        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
-        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee1.Committee!).Returns(true);
         _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
-        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
-        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([]);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([]);
 
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
 
@@ -242,17 +260,17 @@ public class GeneralElectionCommitteeServiceTests
             .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignment)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
 
-        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
-        _generalElectionCommittee.CandidateListState = candidateListState;
-        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
-        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee1.Committee!).Returns(true);
         _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
-        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
-        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([activeReadyForProposalTask]);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([activeReadyForProposalTask]);
 
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
 
@@ -276,14 +294,14 @@ public class GeneralElectionCommitteeServiceTests
             ExternalId = "admin-external-id",
             Role = Role.Admin
         };
-        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee);
-        _generalElectionCommittee.CandidateListState = candidateListState;
-        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
-        _authorizationService.HasAccessToCommittee(_generalElectionCommittee.Committee!).Returns(true);
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee1.Committee!).Returns(true);
         _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
-        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
-        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([]);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([]);
 
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
 
@@ -305,23 +323,23 @@ public class GeneralElectionCommitteeServiceTests
             .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingJustifications)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .Build();
-        _generalElectionCommitteeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_generalElectionCommittee);
-        _generalElectionCommitteeRepository.GetById(updateDto.Id).Returns(_generalElectionCommittee);
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([missingJustificationTask]);
+        _generalElectionCommitteeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_generalElectionCommittee1);
+        _generalElectionCommitteeRepository.GetById(updateDto.Id).Returns(_generalElectionCommittee1);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([missingJustificationTask]);
 
         await _generalElectionCommitteeService.UpdateGeneralElectionCommitteeJustifications(updateDto.Id, updateDto);
 
         await _generalElectionCommitteeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
-        await _worklistTaskRepository.Received(1).GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id);
+        await _worklistTaskRepository.Received(1).GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id);
         Assert.Multiple(() =>
         {
-            Assert.That(_generalElectionCommittee.JustificationMembers, Is.EqualTo(updateDto.JustificationMembers));
-            Assert.That(_generalElectionCommittee.JustificationGenders, Is.EqualTo(updateDto.JustificationGenders));
-            Assert.That(_generalElectionCommittee.MeasuresGenders, Is.EqualTo(updateDto.MeasuresGenders));
-            Assert.That(_generalElectionCommittee.JustificationLanguages, Is.EqualTo(updateDto.JustificationLanguages));
-            Assert.That(_generalElectionCommittee.MeasuresLanguages, Is.EqualTo(updateDto.MeasuresLanguages));
-            Assert.That(_generalElectionCommittee.SelectionProcedure, Is.EqualTo(updateDto.SelectionProcedure));
+            Assert.That(_generalElectionCommittee1.JustificationMembers, Is.EqualTo(updateDto.JustificationMembers));
+            Assert.That(_generalElectionCommittee1.JustificationGenders, Is.EqualTo(updateDto.JustificationGenders));
+            Assert.That(_generalElectionCommittee1.MeasuresGenders, Is.EqualTo(updateDto.MeasuresGenders));
+            Assert.That(_generalElectionCommittee1.JustificationLanguages, Is.EqualTo(updateDto.JustificationLanguages));
+            Assert.That(_generalElectionCommittee1.MeasuresLanguages, Is.EqualTo(updateDto.MeasuresLanguages));
+            Assert.That(_generalElectionCommittee1.SelectionProcedure, Is.EqualTo(updateDto.SelectionProcedure));
             Assert.That(missingJustificationTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
         });
     }
@@ -337,10 +355,10 @@ public class GeneralElectionCommitteeServiceTests
             .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionMissingJustifications)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .Build();
-        _generalElectionCommitteeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_generalElectionCommittee);
-        _generalElectionCommitteeRepository.GetById(updateDto.Id).Returns(_generalElectionCommittee);
+        _generalElectionCommitteeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_generalElectionCommittee1);
+        _generalElectionCommitteeRepository.GetById(updateDto.Id).Returns(_generalElectionCommittee1);
         _authorizationService.GetDepartment().Returns(_department);
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([missingJustificationTask]);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([missingJustificationTask]);
 
         await _generalElectionCommitteeService.UpdateGeneralElectionCommitteeJustifications(updateDto.Id, updateDto);
 
@@ -348,11 +366,11 @@ public class GeneralElectionCommitteeServiceTests
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
         Assert.Multiple(() =>
         {
-            Assert.That(_generalElectionCommittee.JustificationMembers, Is.EqualTo(updateDto.JustificationMembers));
-            Assert.That(_generalElectionCommittee.JustificationGenders, Is.EqualTo(updateDto.JustificationGenders));
-            Assert.That(_generalElectionCommittee.MeasuresGenders, Is.EqualTo(updateDto.MeasuresGenders));
-            Assert.That(_generalElectionCommittee.JustificationLanguages, Is.EqualTo(updateDto.JustificationLanguages));
-            Assert.That(_generalElectionCommittee.MeasuresLanguages, Is.EqualTo(updateDto.MeasuresLanguages));
+            Assert.That(_generalElectionCommittee1.JustificationMembers, Is.EqualTo(updateDto.JustificationMembers));
+            Assert.That(_generalElectionCommittee1.JustificationGenders, Is.EqualTo(updateDto.JustificationGenders));
+            Assert.That(_generalElectionCommittee1.MeasuresGenders, Is.EqualTo(updateDto.MeasuresGenders));
+            Assert.That(_generalElectionCommittee1.JustificationLanguages, Is.EqualTo(updateDto.JustificationLanguages));
+            Assert.That(_generalElectionCommittee1.MeasuresLanguages, Is.EqualTo(updateDto.MeasuresLanguages));
         });
     }
 
@@ -363,8 +381,8 @@ public class GeneralElectionCommitteeServiceTests
         _authorizationService.IsDepartment.Returns(true);
 
         var updateDto = BuildJustificationUpdateDto();
-        _generalElectionCommitteeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_generalElectionCommittee);
-        _generalElectionCommitteeRepository.GetById(updateDto.Id).Returns(_generalElectionCommittee);
+        _generalElectionCommitteeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_generalElectionCommittee1);
+        _generalElectionCommitteeRepository.GetById(updateDto.Id).Returns(_generalElectionCommittee1);
         _authorizationService.GetDepartment().Returns(new DepartmentBuilder().Build());
 
         Assert.That(async () => await _generalElectionCommitteeService.UpdateGeneralElectionCommitteeJustifications(updateDto.Id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
@@ -380,7 +398,7 @@ public class GeneralElectionCommitteeServiceTests
         var committeeId = Guid.NewGuid();
         var vacancies = 13;
 
-        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(_generalElectionCommittee1);
 
         await _generalElectionCommitteeService.UpdateGeneralElectionCommitteeVacancies(committeeId, vacancies);
 
@@ -388,7 +406,7 @@ public class GeneralElectionCommitteeServiceTests
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
         Assert.Multiple(() =>
         {
-            Assert.That(_generalElectionCommittee.VacanciesGeneralElection, Is.EqualTo(vacancies));
+            Assert.That(_generalElectionCommittee1.VacanciesGeneralElection, Is.EqualTo(vacancies));
         });
     }
 
@@ -401,7 +419,7 @@ public class GeneralElectionCommitteeServiceTests
         var vacancies = 13;
 
         _authorizationService.GetDepartment().Returns(_department);
-        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(_generalElectionCommittee1);
 
         await _generalElectionCommitteeService.UpdateGeneralElectionCommitteeVacancies(committeeId, vacancies);
 
@@ -409,7 +427,7 @@ public class GeneralElectionCommitteeServiceTests
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
         Assert.Multiple(() =>
         {
-            Assert.That(_generalElectionCommittee.VacanciesGeneralElection, Is.EqualTo(vacancies));
+            Assert.That(_generalElectionCommittee1.VacanciesGeneralElection, Is.EqualTo(vacancies));
         });
     }
 
@@ -421,7 +439,7 @@ public class GeneralElectionCommitteeServiceTests
         var committeeId = Guid.NewGuid();
         var vacancies = 13;
 
-        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(_generalElectionCommittee1);
         _authorizationService.GetDepartment().Returns(new DepartmentBuilder().Build());
 
         Assert.That(async () => await _generalElectionCommitteeService.UpdateGeneralElectionCommitteeVacancies(committeeId, vacancies), Throws.Exception.InstanceOf<AuthorizationException>());
@@ -607,44 +625,44 @@ public class GeneralElectionCommitteeServiceTests
             .WithWorklistTaskTypeId(WorklistTaskType.CandidateListApprove)
             .WithWorklistTaskStateId(WorklistTaskState.Completed)
             .WithAssignedTo(currentAssignment)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
         var activeCandidateListTaskSecretariat = new WorklistTaskBuilder()
             .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignmentSecretariat)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
         var activeReadyForProposalTasksForSecretariat = new WorklistTaskBuilder()
             .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignmentSecretariat)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
         var activeReadyForProposalTasksForOffice = new WorklistTaskBuilder()
             .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignmentOffice)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
         var activeReadyForProposalTasksForDepartment = new WorklistTaskBuilder()
             .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignmentDepartment)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
         var activeReadyForProposalTasksForAdmin = new WorklistTaskBuilder()
             .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
             .WithWorklistTaskStateId(WorklistTaskState.Active)
             .WithAssignedTo(currentAssignmentAdmin)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
 
-        _generalElectionCommittee.IsValidated = true;
-        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee);
-        _generalElectionCommittee.CandidateListState = candidateListState;
-        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([
+        _generalElectionCommittee1.IsValidated = true;
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([
             completedCandidateListApprovalTask,
             activeCandidateListTaskSecretariat,
             activeReadyForProposalTasksForSecretariat,
@@ -656,7 +674,7 @@ public class GeneralElectionCommitteeServiceTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(_generalElectionCommittee.IsValidated, Is.False);
+            Assert.That(_generalElectionCommittee1.IsValidated, Is.False);
             Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
             Assert.That(completedCandidateListApprovalTask.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
             Assert.That(activeReadyForProposalTasksForSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
@@ -681,22 +699,44 @@ public class GeneralElectionCommitteeServiceTests
             .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
             .WithWorklistTaskStateId(WorklistTaskState.Completed)
             .WithAssignedTo(currentAssignmentSecretariat)
-            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
             .Build();
-        _generalElectionCommittee.IsValidated = true;
-        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee);
-        _generalElectionCommittee.CandidateListState = candidateListState;
-        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([activeCandidateListTaskSecretariat]);
+        _generalElectionCommittee1.IsValidated = true;
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([activeCandidateListTaskSecretariat]);
 
         await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(_committeeId);
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(_generalElectionCommittee.IsValidated, Is.True);
-            Assert.That(_generalElectionCommittee.IsFederalCouncilProposalDirty, Is.True);
+            Assert.That(_generalElectionCommittee1.IsValidated, Is.True);
+            Assert.That(_generalElectionCommittee1.IsFederalCouncilProposalDirty, Is.True);
             Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
         }
+    }
+
+    [Test]
+    public async Task GetAllUnfinishedCommittees_WhenCalled_ShouldLoadData()
+    {
+        var list = new List<GeneralElectionCommittee>() { _generalElectionCommittee1, _generalElectionCommittee2 };
+
+        _generalElectionCommitteeRepository.GetAll().Returns(list);
+
+        var result = await _generalElectionCommitteeService.GetAllUnfinishedCommittees();
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task EndGeneralElectionForCommittee_WhenCalled_ShouldCallService()
+    {
+        var result = await _generalElectionCommitteeService.EndGeneralElectionForCommittee(_generalElectionCommittee1);
+
+        await _committeeService.Received(1).UpdateCommitteeAfterGeneralElection(Arg.Any<Guid>(), Arg.Any<CommitteeUpdateDto>(), Arg.Any<List<MembershipCandidate>>());
+        Assert.That(result, Is.True);
     }
 
     private static GeneralElectionCommitteeJustificationUpdateDto BuildJustificationUpdateDto()
