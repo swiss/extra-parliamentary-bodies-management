@@ -252,6 +252,8 @@ public class WorklistTaskService : IWorklistTaskService
                 {
                     if (parentTaskOffice.WorklistTaskStateId != WorklistTaskState.Active)
                     {
+                        forwarderId = parentTaskOffice.AssignedToId;
+
                         CreateWorklistTasksForCommitteeBigDepartment(forwardDto, parentTaskOffice, newTasks, committee, forwarderId, currentUserName);
                     }
                 }
