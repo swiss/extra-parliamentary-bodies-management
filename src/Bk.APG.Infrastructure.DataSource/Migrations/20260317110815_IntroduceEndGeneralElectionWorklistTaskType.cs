@@ -18,7 +18,7 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                 columns: new[] { "id", "can_be_created_manually", "created_by", "description_de", "description_fr", "description_it", "description_rm", "modified_by", "old_id", "sort", "text_de", "text_fr", "text_it", "text_rm", "uri" },
                 values: new object[,]
                 {
-                    { WorklistTaskType.GeneralElectionEnd, false, "migration", "", "", "", "", "migration", 0, 14, "GEW_Ende", "FR_GEW_Ende", "IT_GEW_Ende", "RM_GEW_Ende", "https://intranet.apg.admin.ch/vocabulary/task-state-type/16" }
+                    { WorklistTaskType.GeneralElectionEnd, true, "migration", "", "", "", "", "migration", 0, 14, "GEW_Ende", "FR_GEW_Ende", "IT_GEW_Ende", "RM_GEW_Ende", "https://intranet.apg.admin.ch/vocabulary/task-state-type/16" }
                 });
 #pragma warning restore CA1814
         }

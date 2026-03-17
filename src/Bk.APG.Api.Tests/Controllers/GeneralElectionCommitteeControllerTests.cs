@@ -259,4 +259,18 @@ internal class GeneralElectionCommitteeControllerTests
             Assert.That(result.Value, Is.EqualTo(candidate));
         }
     }
+
+    [Test]
+    public async Task CheckCompletionGeneralElection_ShouldCallServiceAndReturnOk()
+    {
+        var list = new Faker<GeneralElectionCommitteeListDto>().Generate(3);
+
+        _generalElectionCommitteeService.GetAllUnfinishedCommittees().Returns(list);
+
+        var result = await _controller.CheckCompletionGeneralElection() as OkObjectResult;
+
+        await _generalElectionCommitteeService.Received(1).GetAllUnfinishedCommittees();
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.StatusCode, Is.EqualTo(200));
+    }
 }
