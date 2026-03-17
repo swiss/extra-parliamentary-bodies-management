@@ -175,7 +175,7 @@ public class GeneralElectionCommitteeController : ControllerBase
 
     [HttpGet]
     [Route("checkCompletion")]
-    public async Task<IActionResult> CheckCompletionGeneralElection(Guid committeeId)
+    public async Task<IActionResult> CheckCompletionGeneralElection()
     {
         var unfinishedCommitteesList = await _generalElectionCommitteeService.GetAllUnfinishedCommittees();
         return Ok(unfinishedCommitteesList);
