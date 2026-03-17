@@ -1,7 +1,20 @@
 # Changelog
 
 ## 1.2.0
+
 -   Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
+-   Fix race condition in committee justification tab [BKDO-3020](https://bkdev.atlassian.net/browse/BKDO-3020)
+-   Fix membership validation issue for disabled date inputs [BKDO-3084](https://bkdev.atlassian.net/browse/BKDO-3084)
+-   Enable begin date for admins (GEW committee) [BKDO-3088](https://bkdev.atlassian.net/browse/BKDO-3088)
+-   Update institution appointment decision type label [BKDO-3112](https://bkdev.atlassian.net/browse/BKDO-3112)
+-   Update and remove membership addition master data [BKDO-3095](https://bkdev.atlassian.net/browse/BKDO-3095)
+-   Extend GEW committee overview filters [BKDO-2090](https://bkdev.atlassian.net/browse/BKDO-2090)
+-   Open sourced NuGet Packages integrated (Swiss.FCh.Utils, Swiss.FCh.MasterData, Swiss.FCh.Monitoring) [BKDO-2859](https://bkdev.atlassian.net/browse/BKDO-2859)
+-   Remove obsolete ogd id from general measures [BKDO-3156](https://bkdev.atlassian.net/browse/BKDO-3156)
+-   Show estimated term of office in candidate list [BKDO-2089](https://bkdev.atlassian.net/browse/BKDO-2089)
+-   Stop copying (mirror) memberships for validated candidate list [BKDO-2060](https://bkdev.atlassian.net/browse/BKDO-2860)
+-   Invalidate candidate list when membership changes after validation [BKDO-2797](https://bkdev.atlassian.net/browse/BKDO-2797)
+-   Set flag and copy (mirror) memberships when memberships change after candidate list is ready for proposal [BKDO-2861](https://bkdev.atlassian.net/browse/BKDO-2861)
 
 ## 1.1.1
 
@@ -20,15 +33,19 @@
 -   Recipient Export added #BKDO-777
 
 ## 1.0.4
+
 -   Fix logic determining when shorter duty justification is needed #BKDO-2730
 
 ## 1.0.3
+
 -   Adapt handling of membership endDate and electionType #BKDO-2700
 
 ## 1.0.2
+
 -   Fixes notifications and overview for contact points #BKDO-2655
 -   Allow worklist task page for observers #BKDO-2627
 -   Add missing translations F/I #BKDO-2625
 
 ## 1.0.1
+
 -   Update contact point validators in frontend #BKDO-2620
