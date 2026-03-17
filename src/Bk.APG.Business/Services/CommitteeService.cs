@@ -17,7 +17,7 @@ public class CommitteeService : ICommitteeService
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IWorklistTaskService _worklistTaskService;
-    private readonly IMembershipService _membershipService;
+    // private readonly IMembershipService _membershipService;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IMembershipRepository _membershipRepository;
@@ -34,7 +34,7 @@ public class CommitteeService : ICommitteeService
         IEiamAssignmentService eiamAssignmentService,
         ITermOfOfficeDateService termOfOfficeDateService,
         IWorklistTaskService worklistTaskService,
-        IMembershipService membershipService,
+        // IMembershipService membershipService,
         IMasterDataRepository masterDataRepository,
         IGeneralMeasureRepository generalMeasureRepository,
         IMembershipRepository membershipRepository,
@@ -50,7 +50,7 @@ public class CommitteeService : ICommitteeService
         _eiamAssignmentService = eiamAssignmentService;
         _termOfOfficeDateService = termOfOfficeDateService;
         _worklistTaskService = worklistTaskService;
-        _membershipService = membershipService;
+        // _membershipService = membershipService;
         _masterDataRepository = masterDataRepository;
         _generalMeasureRepository = generalMeasureRepository;
         _membershipRepository = membershipRepository;
@@ -215,26 +215,26 @@ public class CommitteeService : ICommitteeService
         var saved = await UpdateCommittee(id, updateDto);
 
 
-        foreach (var candidate in membershipCandidates)
-        {
-            if (candidate.ElectionTypeId == ElectionType.NewElectionGuid)
-            {
-                var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
+        //foreach (var candidate in membershipCandidates)
+        //{
+        //    if (candidate.ElectionTypeId == ElectionType.NewElectionGuid)
+        //    {
+        //        var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
 
-                //if (createDto.PersonId == null)
-                //{
-                //    _logger.LogInformation("General Election transfer from committe {CommitteeId} and member {Membername} {Membersurname} aborted, no person attached!", committee.Id, candidate.Surname, candidate.GivenName );
-                //}
+        //        //if (createDto.PersonId == null)
+        //        //{
+        //        //    _logger.LogInformation("General Election transfer from committe {CommitteeId} and member {Membername} {Membersurname} aborted, no person attached!", committee.Id, candidate.Surname, candidate.GivenName );
+        //        //}
 
-                await _membershipService.CreateMembership(createDto);
-            }
-            else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid)
-            {
-                var currentMembership = await _membershipService.GetMembershipForUpdate((Guid)candidate.MembershipId!);
+        //        await _membershipService.CreateMembership(createDto);
+        //    }
+        //    else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid)
+        //    {
+        //        var currentMembership = await _membershipService.GetMembershipForUpdate((Guid)candidate.MembershipId!);
 
-                await _membershipService.UpdateMembership(currentMembership.Id, currentMembership);
-            }
-        }
+        //        await _membershipService.UpdateMembership(currentMembership.Id, currentMembership);
+        //    }
+        //}
 
         return saved;
     }
@@ -372,10 +372,9 @@ public class CommitteeService : ICommitteeService
 
             var currentCommittee = await _committeeRepository.GetById(createdCommittee.Id);
 
-            // TODO PP alle nötigen Task überprüfen auf ausgeführt oder existierend, gross oder kleines Departement spielt eine Rolle
+            // As long as the parent tasks exists, we create the childern. When not, everything will go the official way, and we do nothing.
             if (worklistTasks.Count > 0)
             {
-                // var task = filteredTasksGS.FirstOrDefault();
                 await _worklistTaskService.CreateWorklistTasksForSingleCommittee(currentCommittee, worklistTasks);
             }
         }

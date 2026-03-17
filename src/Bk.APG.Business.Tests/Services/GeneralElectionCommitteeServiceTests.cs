@@ -6,9 +6,9 @@ using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
 using Bk.APG.CrossCutting.Tests.Builders;
-using Bk.DocumentService.Client.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Swiss.FCh.DocumentService.Client.Models;
 
 namespace Bk.APG.Business.Tests.Services;
 
@@ -23,7 +23,7 @@ public class GeneralElectionCommitteeServiceTests
     // private readonly IMembershipService _membershipService = Substitute.For<IMembershipService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
-    private readonly DocumentService.Client.IDocumentService _documentService = Substitute.For<DocumentService.Client.IDocumentService>();
+    private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly ILogger<GeneralElectionCommitteeService> _logger = NullLogger<GeneralElectionCommitteeService>.Instance;
 
     private GeneralElectionCommittee _generalElectionCommittee;
@@ -204,7 +204,7 @@ public class GeneralElectionCommitteeServiceTests
     public async Task GetGeneralElectionCommittee_WithReadyForFederalCouncilProposalState_ShouldSetIsReadyForProposal()
     {
         var candidateListState = new CandidateListStateBuilder()
-            .WithId(CandidateListState.ReadyForFederalCouncilProposal)
+            .WithId(CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .Build();
         var currentAssignment = new EiamAssignmentBuilder()
             .WithRole(Role.Department)
@@ -265,10 +265,10 @@ public class GeneralElectionCommitteeServiceTests
     }
 
     [Test]
-    public async Task GetGeneralElectionCommittee_WithAdminAndNotReadyForProposal_ShouldSetCanFinalizeReadyForProposal()
+    public async Task GetGeneralElectionCommittee_WithAdminAndProposalForwarded_ShouldSetCanFinalizeReadyForProposal()
     {
         var candidateListState = new CandidateListStateBuilder()
-            .WithId(CandidateListState.Completed)
+            .WithId(CandidateListState.ReadyForFederalCouncilProposalForwarded)
             .Build();
         var currentAssignment = new EiamAssignment
         {
@@ -575,6 +575,128 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[18].Text, Is.Empty);
             Assert.That(dataRow[19].Text, Is.Empty);
         });
+    }
+
+    [Test]
+    public async Task InvalidateMembershipCandidateList_WhenCalled_ShouldInvalidateTasks()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var currentAssignment = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Department)
+            .Build();
+        var currentAssignmentSecretariat = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Secretariat)
+            .Build();
+        var currentAssignmentOffice = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Office)
+            .Build();
+        var currentAssignmentDepartment = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Department)
+            .Build();
+        var currentAssignmentAdmin = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Admin)
+            .Build();
+        var completedCandidateListApprovalTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListApprove)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithAssignedTo(currentAssignment)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        var activeCandidateListTaskSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        var activeReadyForProposalTasksForSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        var activeReadyForProposalTasksForOffice = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentOffice)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        var activeReadyForProposalTasksForDepartment = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentDepartment)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        var activeReadyForProposalTasksForAdmin = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentAdmin)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+
+        _generalElectionCommittee.IsValidated = true;
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([
+            completedCandidateListApprovalTask,
+            activeCandidateListTaskSecretariat,
+            activeReadyForProposalTasksForSecretariat,
+            activeReadyForProposalTasksForOffice,
+            activeReadyForProposalTasksForDepartment,
+            activeReadyForProposalTasksForAdmin]);
+
+        await _generalElectionCommitteeService.InvalidateMembershipCandidateList(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_generalElectionCommittee.IsValidated, Is.False);
+            Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(completedCandidateListApprovalTask.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
+            Assert.That(activeReadyForProposalTasksForSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(activeReadyForProposalTasksForOffice.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(activeReadyForProposalTasksForDepartment.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(activeReadyForProposalTasksForAdmin.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+        }
+    }
+
+    [Test]
+    public async Task SetFederalCouncilProposalToDirty_WhenCalled_ShouldInvalidateTasks()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var assignmentId = Guid.NewGuid();
+        var currentAssignmentSecretariat = new EiamAssignmentBuilder()
+            .WithId(assignmentId)
+            .WithRole(Role.Secretariat)
+            .Build();
+        var activeCandidateListTaskSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee.Id)
+            .Build();
+        _generalElectionCommittee.IsValidated = true;
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee);
+        _generalElectionCommittee.CandidateListState = candidateListState;
+        _generalElectionCommittee.CandidateListStateId = candidateListState.Id;
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee.Id).Returns([activeCandidateListTaskSecretariat]);
+
+        await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_generalElectionCommittee.IsValidated, Is.True);
+            Assert.That(_generalElectionCommittee.IsFederalCouncilProposalDirty, Is.True);
+            Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
+        }
     }
 
     private static GeneralElectionCommitteeJustificationUpdateDto BuildJustificationUpdateDto()

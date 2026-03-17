@@ -192,7 +192,7 @@ internal class MembershipCandidateServiceTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(generalElectionCommittee.CandidateListStateId, Is.EqualTo(CandidateListState.Completed));
+            Assert.That(generalElectionCommittee.CandidateListStateId, Is.EqualTo(CandidateListState.Validated));
             Assert.That(worklistTasks.All(t => t.WorklistTaskStateId == WorklistTaskState.Completed), Is.True);
             Assert.That(membershipCandidates[0].IsSelected, Is.True);
             Assert.That(membershipCandidates[1].IsSelected, Is.True);
@@ -517,7 +517,7 @@ internal class MembershipCandidateServiceTests
             .WithCommitteeId(committeeId)
             .WithCommittee(committee)
             .WithDepartment(department)
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .WithMinimalMember(0)
             .WithMaximalMember(10)
             .Build();
@@ -552,6 +552,7 @@ internal class MembershipCandidateServiceTests
             Assert.That(result.AllValidationsPassed, Is.True);
             Assert.That(adminTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
             Assert.That(committeeForUpdate.ReleaseGeneralElection, Is.True);
+            Assert.That(committeeForUpdate.IsFederalCouncilProposalDirty, Is.False);
         }
 
         await _generalElectionCommitteeRepository.Received(2).CommitChanges();
@@ -564,7 +565,7 @@ internal class MembershipCandidateServiceTests
         var committeeId = Guid.NewGuid();
         var committeeForUpdate = new GeneralElectionCommitteeBuilder()
             .WithCommitteeId(committeeId)
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .WithMinimalMember(1)
             .WithMaximalMember(10)
             .Build();
@@ -601,7 +602,7 @@ internal class MembershipCandidateServiceTests
         };
         var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
             .WithMembershipCandidates(membershipCandidates)
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .Build();
         _generalElectionCommitteeRepository.GetByCommitteeId(committeeId).Returns(generalElectionCommittee);
 
@@ -845,7 +846,7 @@ internal class MembershipCandidateServiceTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(generalElectionCommittee.CandidateListStateId, Is.EqualTo(CandidateListState.Completed));
+            Assert.That(generalElectionCommittee.CandidateListStateId, Is.EqualTo(CandidateListState.Validated));
             Assert.That(generalElectionCommittee.IsValidated, Is.True);
         }
     }
@@ -1101,7 +1102,7 @@ internal class MembershipCandidateServiceTests
         var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
             .WithMinimalMember(0)
             .WithMaximalMember(10)
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .WithCommittee(committee)
             .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
             .Build();
@@ -1150,7 +1151,7 @@ internal class MembershipCandidateServiceTests
         var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
             .WithMinimalMember(0)
             .WithMaximalMember(10)
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .WithCommittee(committee)
             .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
             .Build();
@@ -1462,7 +1463,7 @@ internal class MembershipCandidateServiceTests
         var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
             .WithMinimalMember(0)
             .WithMaximalMember(10)
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
             .Build();
 
@@ -1606,7 +1607,7 @@ internal class MembershipCandidateServiceTests
             .WithMaximalMember(10)
             .WithMarketOrientated(true)
             .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .Build();
 
         var person = new PersonBuilder()
@@ -1670,7 +1671,7 @@ internal class MembershipCandidateServiceTests
             .WithMaximalMember(10)
             .WithMarketOrientated(true)
             .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .Build();
 
         var person = new PersonBuilder()
@@ -1728,7 +1729,7 @@ internal class MembershipCandidateServiceTests
             .WithMaximalMember(10)
             .WithMarketOrientated(true)
             .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .Build();
 
         var person = new PersonBuilder()
@@ -1796,7 +1797,7 @@ internal class MembershipCandidateServiceTests
             .WithMaximalMember(10)
             .WithMarketOrientated(false)
             .WithSecretariatReadyForProposalDueDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(30)))
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .Build();
 
         var person = new PersonBuilder()
@@ -1857,7 +1858,7 @@ internal class MembershipCandidateServiceTests
             .WithMinimalMember(0)
             .WithMaximalMember(10)
             .WithMembershipCandidates(new List<MembershipCandidate> { membershipCandidate })
-            .WithCandidateListStateId(CandidateListState.Completed)
+            .WithCandidateListStateId(CandidateListState.Validated)
             .Build();
         membershipCandidate.GeneralElectionCommittee = generalElectionCommittee;
 

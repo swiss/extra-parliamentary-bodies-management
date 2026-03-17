@@ -194,6 +194,7 @@ public class GeneralElectionService : IGeneralElectionService
         return true;
     }
 
+    // TODO PP, to check...
     public async Task CreateNewMembershipCandidate(Membership membership, string userName)
     {
         _logger.LogInformation("Create new membership candidate for general election committee {CommitteeId}", membership.CommitteeId);
@@ -244,59 +245,42 @@ public class GeneralElectionService : IGeneralElectionService
         }
     }
 
-    public async Task MirrorOrDeleteMembershipForGeneralElection(Membership membership, bool deleteCandidate)
+    public async Task CreateNewMembershipCandidate(Membership membership, bool isSelected = false)
     {
-        _logger.LogInformation("Mirror membership {MembershipId} for general election", membership.Id);
+        _logger.LogInformation("Create new membership candidate for general election committee {CommitteeId}", membership.CommitteeId);
 
-        var membershipCandidate = await _membershipCandidateRepository.GetByMembershipIdForUpdate(membership.Id);
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(membership.CommitteeId);
+        var termOfOfficeDate = generalElectionCommittee.TermOfOfficeDate;
 
-        if (membershipCandidate != null)
+        var membershipCandidate = GeneralElectionMapper.FromMembershipAndPersonToMembershipCandidate(membership, generalElectionCommittee.Id, _authorizationService.GetCurrentUserName(), termOfOfficeDate!.BeginDate, (DateOnly)termOfOfficeDate.EndDate!);
+
+        // Check for maximum duration
+        var newEndDate = await CheckMembershipCandidateSpecialCases(membershipCandidate, generalElectionCommittee, membership.Person!.FederalDuty, (DateOnly)termOfOfficeDate.EndDate!);
+
+        if (termOfOfficeDate.BeginDate != newEndDate)
         {
-            if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true)
-            {
-                _logger.LogInformation("Membership candidate list already validated, skip mirror entries");
-                return;
-            }
+            membershipCandidate.EndDate = newEndDate;
+            membershipCandidate.IsSelected = isSelected;
+            await _membershipCandidateRepository.Create(membershipCandidate);
+            _logger.LogInformation("New membership candidate created {MembershipCandidateId}", membershipCandidate.Id);
+        }
+        else
+        {
+            // Here we write the new log table, saying that Member XX has not been transferred to new period
+            var personInfo = $"PersonId {membershipCandidate.PersonId}, {membershipCandidate.GivenName} {membershipCandidate.Surname}, {membershipCandidate.BirthYear}";
+            var errorText = BusinessTexts.GeneralElectionMaximumDurationExceeded + personInfo;
 
-            if (deleteCandidate)
-            {
-                // if the end date has been shortened or the election type is an ending one, we can delete the membershipCandidate
-                await _membershipCandidateRepository.Delete(membershipCandidate);
-                _logger.LogInformation("Membership candidate {MembershipCandidateId} deleted because of end date change in present data", membershipCandidate.Id);
-            }
-            else
-            {
-                var updatedMembership = GeneralElectionMapper.ToMembershipCandidateMirrorDto(membership);
-
-                membershipCandidate.MaximumEmploymentLevel = updatedMembership.MaximumEmploymentLevel;
-                membershipCandidate.ElectionTypeId = updatedMembership.ElectionTypeId;
-                membershipCandidate.FunctionId = updatedMembership.FunctionId;
-                membershipCandidate.ElectionOfficeId = updatedMembership.ElectionOfficeId;
-                membershipCandidate.MembershipAdditionId = updatedMembership.MembershipAdditionId;
-                membershipCandidate.Remarks = updatedMembership.Remarks;
-                membershipCandidate.RemarksStatus = updatedMembership.RemarksStatus;
-                membershipCandidate.InCorrelationWithFederalDuty = updatedMembership.InCorrelationWithFederalDuty;
-                membershipCandidate.Modified = updatedMembership.Modified;
-                membershipCandidate.ModifiedBy = updatedMembership.ModifiedBy;
-                membershipCandidate.InCorrelationWithFederalDuty = membership.InCorrelationWithFederalDuty;
-                membershipCandidate.JustificationLongerDuty = membership.JustificationLongerDuty;
-                membershipCandidate.JustificationShorterDuty = membership.JustificationShorterDuty;
-                membershipCandidate.JustificationMemberInFederalAssembly = membership.JustificationMemberInFederalAssembly;
-                membershipCandidate.JustificationMemberInFederalDuty = membership.JustificationMemberInFederalDuty;
-                membershipCandidate.RequirementsProfile = membership.RequirementsProfile;
-
-                await _membershipCandidateRepository.CommitChanges();
-
-                _logger.LogInformation("Updated membership candidate {MembershipCandidateId} with data from current membership", membershipCandidate.Id);
-            }
+            var dto = MembershipCandidateLogMessageMapper.ToMembershipCandidateLogMessage(generalElectionCommittee.Id, (Guid)membershipCandidate.PersonId!, errorText, _authorizationService.GetCurrentUserName());
+            await _membershipCandidateLogMessageRepository.Create(dto);
+            _logger.LogInformation("Membership candidate for person {PersonId} not created because maximum duration exceeded", membershipCandidate.PersonId);
         }
     }
 
-    public async Task<DateOnly> CheckMembershipCandidateSpecialCases(
-         MembershipCandidate membershipCandidate,
-         GeneralElectionCommittee committee,
-         bool isPersonInFederalDuty,
-         DateOnly termOfOfficeEndDate)
+    private async Task<DateOnly> CheckMembershipCandidateSpecialCases(
+        MembershipCandidate membershipCandidate,
+        GeneralElectionCommittee committee,
+        bool isPersonInFederalDuty,
+        DateOnly termOfOfficeEndDate)
     {
         var correctEndDate = membershipCandidate.EndDate;
 
@@ -387,8 +371,6 @@ public class GeneralElectionService : IGeneralElectionService
             {
                 await _generalElectionCommitteeService.EndGeneralElectionForCommittee(committee);
             }
-
-
         }
 
         return true;

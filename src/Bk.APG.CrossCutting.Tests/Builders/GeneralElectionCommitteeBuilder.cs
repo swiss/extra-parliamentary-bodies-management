@@ -41,7 +41,7 @@ public class GeneralElectionCommitteeBuilder
     private Guid _termOfOfficeDateId;
     private int _minimalMembers;
     private int _maximalMembers;
-    private int _vacanciesGeneralElection;
+    private int? _vacanciesGeneralElection;
     private readonly bool _additionalAuthorityMembers;
     private readonly string _linkAuthorityWebsite;
     private readonly string _remarksBaseData;
@@ -52,6 +52,8 @@ public class GeneralElectionCommitteeBuilder
     private Guid? _candidateListStateId;
     private readonly string? _assignedToRole;
     private bool _isValidated;
+    private bool _wasValidatedOnce;
+    private bool _isFederalCouncilProposalDirty;
     private readonly string _selectionProcedure;
     private DateOnly? _officeReadyForProposalDueDate;
     private DateOnly? _secretariatReadyForProposalDueDate;
@@ -109,6 +111,8 @@ public class GeneralElectionCommitteeBuilder
         _candidateListStateId = null;
         _assignedToRole = null;
         _isValidated = false;
+        _wasValidatedOnce = false;
+        _isFederalCouncilProposalDirty = false;
         _selectionProcedure = _faker.Random.String();
         _rowVersion = _faker.Random.UInt();
         _officeReadyForProposalDueDate = _faker.Date.FutureDateOnly();
@@ -276,7 +280,7 @@ public class GeneralElectionCommitteeBuilder
         return this;
     }
 
-    public GeneralElectionCommitteeBuilder WithVacanciesGeneralElection(int vacanciesGeneralElection)
+    public GeneralElectionCommitteeBuilder WithVacanciesGeneralElection(int? vacanciesGeneralElection)
     {
         _vacanciesGeneralElection = vacanciesGeneralElection;
         return this;
@@ -310,6 +314,18 @@ public class GeneralElectionCommitteeBuilder
     public GeneralElectionCommitteeBuilder WithIsValidated(bool isValidated)
     {
         _isValidated = isValidated;
+        return this;
+    }
+
+    public GeneralElectionCommitteeBuilder WithWasValidatedOnce(bool wasValidatedOnce)
+    {
+        _wasValidatedOnce = wasValidatedOnce;
+        return this;
+    }
+
+    public GeneralElectionCommitteeBuilder WithIsFederalCouncilProposalDirty(bool isFederalCouncilProposalDirty)
+    {
+        _isFederalCouncilProposalDirty = isFederalCouncilProposalDirty;
         return this;
     }
 
@@ -405,7 +421,9 @@ public class GeneralElectionCommitteeBuilder
             JustificationGenders = _justificationGenders,
             MeasuresGenders = _measuresGenders,
             JustificationLanguages = _justificationLanguages,
-            MeasuresLanguages = _measuresLanguages
+            MeasuresLanguages = _measuresLanguages,
+            WasValidatedOnce = _wasValidatedOnce,
+            IsFederalCouncilProposalDirty = _isFederalCouncilProposalDirty
         };
     }
 }

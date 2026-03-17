@@ -30,7 +30,7 @@ describe('PersonMembershipsComponent', () => {
         };
         const translateServiceMock = {
             onLangChange: new EventEmitter<LangChangeEvent>(),
-            currentLang: 'en',
+            getCurrentLang: jest.fn(() => 'en'),
         };
 
         const paramMapSubject = new BehaviorSubject<ParamMap>(convertToParamMap({id: '123'}));

@@ -2,7 +2,10 @@
     <mat-tab label="{{ 'committee.details.overview' | translate }}"><apg-ge-committee-overview /></mat-tab>
 
     <mat-tab>
-        <ng-template mat-tab-label>{{ 'committee.details.data' | translate }}</ng-template>
+        <ng-template mat-tab-label
+            >{{ 'committee.details.data' | translate }}
+            <apg-unsaved-changes-icon toolTip="" [hidden]="!generalElectionCommitteeDetailsService.committeeDetails()?.isFederalCouncilProposalDirty"
+        /></ng-template>
         <apg-ge-committee-data />
     </mat-tab>
 
@@ -12,7 +15,16 @@
     </mat-tab>
 
     <mat-tab>
-        <ng-template mat-tab-label>{{ 'generalElection.committee.details.candidateList' | translate }}</ng-template>
+        <ng-template mat-tab-label
+            >{{ 'generalElection.committee.details.candidateList' | translate }}
+            <apg-unsaved-changes-icon
+                toolTip=""
+                [hidden]="
+                    generalElectionCommitteeDetailsService.committeeDetails()?.isValidated ||
+                    !generalElectionCommitteeDetailsService.committeeDetails()?.wasValidatedOnce
+                "
+            />
+        </ng-template>
         <apg-ge-committee-candidate-list />
     </mat-tab>
 
