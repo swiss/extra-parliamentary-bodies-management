@@ -1,3 +1,4 @@
+using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -8,13 +9,16 @@ namespace Bk.APG.Business.Services;
 public class MembershipMirrorService : IMembershipMirrorService
 {
     private readonly IMembershipCandidateRepository _membershipCandidateRepository;
+    private readonly IMembershipRepository _membershipRepository;
     private readonly ILogger<MembershipMirrorService> _logger;
 
     public MembershipMirrorService(
         IMembershipCandidateRepository membershipCandidateRepository,
+        IMembershipRepository membershipRepository,
         ILogger<MembershipMirrorService> logger)
     {
         _membershipCandidateRepository = membershipCandidateRepository;
+        _membershipRepository = membershipRepository;
         _logger = logger;
     }
 
@@ -64,5 +68,45 @@ public class MembershipMirrorService : IMembershipMirrorService
                 _logger.LogInformation("Updated membership candidate {MembershipCandidateId} with data from current membership", membershipCandidate.Id);
             }
         }
+    }
+
+    public async Task CreateNewMembershipFromCandidate(MembershipCreateDto createDto, string userName)
+    {
+        _logger.LogInformation("Create membership from GE for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
+
+        var membership = MembershipMapper.FromMembershipCreateDto(createDto, userName);
+
+        var newMembership = await _membershipRepository.Create(membership);
+
+        _logger.LogInformation("Created membership from candidate with id {MembershipId}", newMembership.Id);
+    }
+
+    public async Task UpdateMembershipFromCandidate(Guid id, MembershipUpdateDto updateDto, string userName)
+    {
+        _logger.LogInformation("Update membership with id {MembershipId} started.", id);
+
+        var existingEntry = await _membershipRepository.GetByIdForUpdate(id);
+
+        existingEntry.BeginDate = updateDto.BeginDate;
+        existingEntry.PersonId = updateDto.PersonId;
+        existingEntry.MaximumEmploymentLevel = updateDto.MaximumEmploymentLevel;
+        existingEntry.EndDate = updateDto.EndDate;
+        existingEntry.ElectionTypeId = updateDto.ElectionTypeId;
+        existingEntry.FunctionId = updateDto.FunctionId;
+        existingEntry.ElectionOfficeId = updateDto.ElectionOfficeId;
+        existingEntry.MembershipAdditionId = updateDto.MembershipAdditionId;
+        existingEntry.JustificationLongerDuty = updateDto.JustificationLongerDuty;
+        existingEntry.JustificationShorterDuty = updateDto.JustificationShorterDuty;
+        existingEntry.JustificationMemberInFederalDuty = updateDto.JustificationMemberInFederalDuty;
+        existingEntry.JustificationMemberInFederalAssembly = updateDto.JustificationMemberInFederalAssembly;
+        existingEntry.RequirementsProfile = updateDto.RequirementsProfile;
+        existingEntry.Remarks = updateDto.Remarks;
+        existingEntry.RemarksStatus = updateDto.RemarksStatus;
+        existingEntry.InCorrelationWithFederalDuty = updateDto.InCorrelationWithFederalDuty;
+        existingEntry.ModifiedBy = userName;
+        existingEntry.Modified = DateTime.UtcNow;
+
+        await _membershipRepository.CommitChanges();
+        _logger.LogInformation("Updated candidate data to membership with with id {MembershipId}", id);
     }
 }

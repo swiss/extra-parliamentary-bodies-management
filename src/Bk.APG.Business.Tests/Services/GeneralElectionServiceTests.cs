@@ -18,11 +18,13 @@ public class GeneralElectionServiceTests
     private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
     private readonly ITermOfOfficeDateService _termOfOfficeDateService = Substitute.For<ITermOfOfficeDateService>();
     private readonly IEiamAssignmentService _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
+    private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService = Substitute.For<IGeneralElectionCommitteeService>();
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
     private readonly ICommitteeRepository _committeeRepository = Substitute.For<ICommitteeRepository>();
     private readonly IMembershipRepository _membershipRepository = Substitute.For<IMembershipRepository>();
     private readonly IMembershipCandidateRepository _membershipCandidateRepository = Substitute.For<IMembershipCandidateRepository>();
     private readonly IMembershipCandidateLogMessageRepository _membershipCandidateLogMessageRepository = Substitute.For<IMembershipCandidateLogMessageRepository>();
+    private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly ILogger<GeneralElectionService> _logger = NullLogger<GeneralElectionService>.Instance;
 
     private readonly Guid _zeroGuid = Guid.Empty;
@@ -38,11 +40,13 @@ public class GeneralElectionServiceTests
             _eiamAssignmentService,
             _masterDataRepository,
             _termOfOfficeDateService,
+            _generalElectionCommitteeService,
             _generalElectionCommitteeRepository,
             _committeeRepository,
             _membershipRepository,
             _membershipCandidateRepository,
             _membershipCandidateLogMessageRepository,
+            _worklistTaskRepository,
             _logger);
     }
 
@@ -209,11 +213,40 @@ public class GeneralElectionServiceTests
         await _generalElectionCommitteeRepository.Received(1).DeleteAll();
         await _generalElectionCommitteeRepository.Received(2).Create(Arg.Any<GeneralElectionCommittee>());
         await _membershipCandidateRepository.Received(4).Create(Arg.Any<MembershipCandidate>());
-        await _worklistTaskService.Received(1 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
+        await _worklistTaskService.Received(2 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
         await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
             x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck && x.WorklistTaskStateId == WorklistTaskState.Active));
         await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
             x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureValidate && x.WorklistTaskStateId == WorklistTaskState.Inactive));
+    }
+
+    [Test]
+    public void PrepareEndGeneralElection_WhenNoGeneralElectionIsRunning_ThrowsException()
+    {
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(false);
+
+        var _worklistTask = new WorklistTaskCreateDto() { DueDate = DateOnly.FromDateTime(DateTime.Today), WorklistTaskTypeId = Guid.NewGuid(), WorklistTaskStateId = Guid.NewGuid() };
+
+        Assert.That(async () => await _generalElectionService.PrepareEndGeneralElection(_worklistTask), Throws.Exception.InstanceOf<BusinessValidationException>());
+    }
+
+    [Test]
+    public async Task PrepareEndGeneralElection_WithRecordsInDatabase_CallsServices()
+    {
+        var nextTermOfOfficeDate = new TermOfOfficeDateBuilder().Build();
+        nextTermOfOfficeDate.IsGeneralElection = true;
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+        _termOfOfficeDateService.GetNextTermOfOfficeDate().Returns(nextTermOfOfficeDate);
+        _worklistTaskService.CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>()).Returns(new WorklistTaskBuilder().Build());
+
+        var _worklistTask = new WorklistTaskCreateDto() { DueDate = DateOnly.FromDateTime(DateTime.Today), WorklistTaskTypeId = Guid.NewGuid(), WorklistTaskStateId = Guid.NewGuid() };
+
+        await _generalElectionService.PrepareEndGeneralElection(_worklistTask);
+
+        await _termOfOfficeDateService.Received(1).GetNextTermOfOfficeDate();
+
+        await _termOfOfficeDateService.Received(1).Update(Arg.Any<TermOfOfficeDate>());
     }
 
     [Test]

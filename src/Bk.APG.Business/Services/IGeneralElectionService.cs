@@ -10,4 +10,6 @@ public interface IGeneralElectionService
     Task<bool> StartGeneralElection(Guid termOfOfficeDateId, DateOnly termOfOfficeBeginDate, DateOnly termOfOfficeEndDate, DateOnly dueDate, string description);
     Task CreateNewMembershipCandidate(Membership newMembership, bool isSelected = false);
     Task UpdateCandidatesFromPerson(Person person);
+    Task<bool> PrepareEndGeneralElection(WorklistTaskCreateDto worklistTaskCreateDto);
+    Task<bool> EndGeneralElection();
 }
