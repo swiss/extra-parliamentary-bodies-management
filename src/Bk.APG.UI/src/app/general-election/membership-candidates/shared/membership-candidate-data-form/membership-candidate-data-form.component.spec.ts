@@ -64,7 +64,7 @@ describe('MembershipCandidateDataFormComponent', () => {
     });
 
     it('should disable endDate and function when candidate list is completed', () => {
-        component.generalElectionCommittee.set({isCandidateListCompleted: true} as GeneralElectionCommitteeDetails);
+        component.generalElectionCommittee.set({isCandidateListValidated: true} as GeneralElectionCommitteeDetails);
         fixture.detectChanges();
 
         expect(component.membershipCandidateForm.controls.endDate.disabled).toBe(true);
@@ -72,7 +72,7 @@ describe('MembershipCandidateDataFormComponent', () => {
     });
 
     it('should enable endDate and function when candidate list is not completed', () => {
-        component.generalElectionCommittee.set({isCandidateListCompleted: false} as GeneralElectionCommitteeDetails);
+        component.generalElectionCommittee.set({isCandidateListValidated: false} as GeneralElectionCommitteeDetails);
         fixture.detectChanges();
 
         expect(component.membershipCandidateForm.controls.endDate.enabled).toBe(true);
