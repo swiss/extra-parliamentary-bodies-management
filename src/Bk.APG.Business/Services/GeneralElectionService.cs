@@ -15,11 +15,13 @@ public class GeneralElectionService : IGeneralElectionService
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
+    private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IMembershipRepository _membershipRepository;
     private readonly IMembershipCandidateRepository _membershipCandidateRepository;
     private readonly IMembershipCandidateLogMessageRepository _membershipCandidateLogMessageRepository;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly ILogger<GeneralElectionService> _logger;
 
     public GeneralElectionService(
@@ -28,11 +30,13 @@ public class GeneralElectionService : IGeneralElectionService
         IEiamAssignmentService eiamAssignmentService,
         IMasterDataRepository masterDataRepository,
         ITermOfOfficeDateService termOfOfficeDateService,
+        IGeneralElectionCommitteeService generalElectionCommitteeService,
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         ICommitteeRepository committeeRepository,
         IMembershipRepository membershipRepository,
         IMembershipCandidateRepository membershipCandidateRepository,
         IMembershipCandidateLogMessageRepository membershipCandidateLogMessageRepository,
+        IWorklistTaskRepository worklistTaskRepository,
         ILogger<GeneralElectionService> logger)
     {
         _authorizationService = authorizationService;
@@ -40,11 +44,13 @@ public class GeneralElectionService : IGeneralElectionService
         _eiamAssignmentService = eiamAssignmentService;
         _masterDataRepository = masterDataRepository;
         _termOfOfficeDateService = termOfOfficeDateService;
+        _generalElectionCommitteeService = generalElectionCommitteeService;
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _committeeRepository = committeeRepository;
         _membershipRepository = membershipRepository;
         _membershipCandidateRepository = membershipCandidateRepository;
         _membershipCandidateLogMessageRepository = membershipCandidateLogMessageRepository;
+        _worklistTaskRepository = worklistTaskRepository;
         _logger = logger;
     }
 
@@ -149,8 +155,10 @@ public class GeneralElectionService : IGeneralElectionService
             }
 
             var generalElectionWorklistTask = WorklistTaskMapper.CreateGeneralElectionMainWorklistTaskDto(termOfOfficeDateId, dueDate, description);
-
             var parentTask = await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionWorklistTask);
+
+            var generalElectionEndWorklistTask = WorklistTaskMapper.CreateGeneralElectionEndWorklistTaskDto(parentTask.Id, termOfOfficeDateId, dueDate, description);
+            await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionEndWorklistTask);
 
             var departments = await _masterDataRepository.GetDepartments();
             var generalMeasureTaskDueDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(3));
@@ -255,8 +263,6 @@ public class GeneralElectionService : IGeneralElectionService
 
             foreach (var membership in personMemberships)
             {
-                //var  = membership.EndDate.DayNumber - ;
-                //totalDays += timeSpan.Days;
                 totalDays += membership.EndDate.DayNumber - membership.BeginDate.DayNumber;
             }
 
@@ -276,6 +282,67 @@ public class GeneralElectionService : IGeneralElectionService
         }
 
         return correctEndDate;
+    }
+
+    public async Task<bool> PrepareEndGeneralElection(WorklistTaskCreateDto worklistTaskCreateDto)
+    {
+        _logger.LogInformation("Prepare the end of general election started by user {User}", _authorizationService.GetCurrentUserName());
+
+        var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
+
+        if (!running)
+        {
+            const string message = "There is no general election in progress, cannot end the general election! Check the data in TermOfOfficeData table.";
+            _logger.LogError(message);
+            throw new BusinessValidationException(message);
+        }
+
+        var nextTermOfOffice = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
+
+        if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
+        {
+            nextTermOfOffice.PlannedPublicationDate = worklistTaskCreateDto.DueDate;
+            await _termOfOfficeDateService.Update(nextTermOfOffice);
+        }
+
+        return true;
+    }
+
+    public async Task<bool> EndGeneralElection()
+    {
+        _logger.LogInformation("Ending General Election by BackgroundService");
+
+        var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
+
+        if (!running)
+        {
+            const string message = "There is no general election in progress, cannot end the general election! Check the data in TermOfOfficeData table.";
+            _logger.LogError(message);
+            throw new BusinessValidationException(message);
+        }
+
+        var nextTermOfOffice = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
+
+        if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
+        {
+            nextTermOfOffice.PlannedPublicationDate = null;
+            nextTermOfOffice.IsGeneralElection = false;
+
+            await _termOfOfficeDateService.Update(nextTermOfOffice);
+
+            var committees = await _generalElectionCommitteeRepository.GetAll();
+
+            var finishedCommittees = committees.Where(c => c.IsValidated).ToList();
+
+            foreach (var committee in finishedCommittees)
+            {
+                await _generalElectionCommitteeService.EndGeneralElectionForCommittee(committee);
+            }
+
+            await _worklistTaskRepository.SetAllWorklistTasksToIsDeleted();
+        }
+
+        return true;
     }
 
     private static bool CheckMembership(Membership membership, DateOnly termOfOfficeStartDate)

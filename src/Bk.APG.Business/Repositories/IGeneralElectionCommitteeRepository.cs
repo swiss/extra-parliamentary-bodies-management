@@ -11,6 +11,7 @@ public interface IGeneralElectionCommitteeRepository
     Task<PagedResult<GeneralElectionCommittee>> GetAll(PagingParameters paging, GeneralElectionCommitteeFilterParameters filter, string? sort, SortDirection? sortDirection);
     Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId);
     Task<IEnumerable<GeneralElectionCommittee>> GetAllForExport(GeneralElectionCommitteeExportFilterParameters filterDto);
+    Task<IEnumerable<GeneralElectionCommittee>> GetAll();
     Task CommitChanges();
     Task<GeneralElectionCommittee> Create(GeneralElectionCommittee committee);
     Task<IEnumerable<GeneralElectionCommittee>> GetByDepartmentId(Guid departmentId);

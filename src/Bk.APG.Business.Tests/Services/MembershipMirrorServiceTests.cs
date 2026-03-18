@@ -1,3 +1,4 @@
+using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
@@ -12,6 +13,7 @@ public class MembershipMirrorServiceTests
 {
     private MembershipMirrorService _membershipMirrorService = null!;
     private readonly IMembershipCandidateRepository _membershipCandidateRepository = Substitute.For<IMembershipCandidateRepository>();
+    private readonly IMembershipRepository _membershipRepository = Substitute.For<IMembershipRepository>();
     private readonly ILogger<MembershipMirrorService> _logger = NullLogger<MembershipMirrorService>.Instance;
 
     [SetUp]
@@ -19,6 +21,7 @@ public class MembershipMirrorServiceTests
     {
         _membershipMirrorService = new MembershipMirrorService(
             _membershipCandidateRepository,
+            _membershipRepository,
             _logger);
     }
 
@@ -97,5 +100,71 @@ public class MembershipMirrorServiceTests
 
         await _membershipCandidateRepository.Received(1).Delete(membershipCandidate);
         await _membershipCandidateRepository.Received(0).CommitChanges();
+    }
+
+    [Test]
+    public async Task CreateNewMembershipFromCandidate_ShouldCallCreate()
+    {
+        var membership = new MembershipBuilder().Build();
+        _membershipRepository.Create(Arg.Any<Membership>()).Returns(membership);
+
+        var createDto = new MembershipCreateDto
+        {
+            PersonId = Guid.NewGuid(),
+            CommitteeId = Guid.NewGuid(),
+            MaximumEmploymentLevel = 80,
+            BeginDate = DateOnly.FromDateTime(DateTime.Now),
+            EndDate = DateOnly.FromDateTime(DateTime.Now),
+            ElectionTypeId = Guid.NewGuid(),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            MembershipAdditionId = Guid.NewGuid(),
+            JustificationLongerDuty = "JustificationLongerDuty",
+            JustificationShorterDuty = "JustificationShorterDuty",
+            JustificationMemberInFederalDuty = "JustificationMemberInFederalDuty",
+            JustificationMemberInFederalAssembly = "JustificationMemberInFederalAssembly",
+            RequirementsProfile = "RequirementsProfile",
+            Remarks = "remarks",
+            RemarksStatus = "remarksStatus",
+        };
+
+        await _membershipMirrorService.CreateNewMembershipFromCandidate(createDto, "BackgroundService");
+
+        await _membershipRepository.Received(1).Create(Arg.Any<Membership>());
+        await _membershipCandidateRepository.Received(0).CommitChanges();
+    }
+
+    [Test]
+    public async Task UpdateMembershipFromCandidate_ShouldCallUpdate()
+    {
+        var membershipId = Guid.NewGuid();
+        var membership = new MembershipBuilder().WithId(membershipId).Build();
+
+        _membershipRepository.GetByIdForUpdate(Arg.Any<Guid>()).Returns(membership);
+
+        var updateDto = new MembershipUpdateDto
+        {
+            Id = membershipId,
+            PersonId = Guid.NewGuid(),
+            CommitteeId = Guid.NewGuid(),
+            MaximumEmploymentLevel = 80,
+            BeginDate = DateOnly.FromDateTime(DateTime.Now),
+            EndDate = DateOnly.FromDateTime(DateTime.Now),
+            ElectionTypeId = Guid.NewGuid(),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            MembershipAdditionId = Guid.NewGuid(),
+            JustificationLongerDuty = "JustificationLongerDuty",
+            JustificationShorterDuty = "JustificationShorterDuty",
+            JustificationMemberInFederalDuty = "JustificationMemberInFederalDuty",
+            JustificationMemberInFederalAssembly = "JustificationMemberInFederalAssembly",
+            RequirementsProfile = "RequirementsProfile",
+            Remarks = "remarks",
+            RemarksStatus = "remarksStatus",
+            RowVersion = 1,
+        };
+
+        await _membershipMirrorService.UpdateMembershipFromCandidate(membershipId, updateDto, "BackgroundService");
+        await _membershipRepository.Received(1).CommitChanges();
     }
 }

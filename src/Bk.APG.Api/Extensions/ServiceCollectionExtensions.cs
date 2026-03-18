@@ -90,6 +90,7 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<OgdExportBackgroundService>();
         services.AddHostedService<EiamAssignmentBackgroundService>();
         services.AddHostedService<EntityAuditLogCleanupBackgroundService>();
+        services.AddHostedService<EndGeneralElectionBackgroundService>();
     }
 
     internal static void AddEntityAuditLog(this IServiceCollection services, EntityAuditOptions options)
