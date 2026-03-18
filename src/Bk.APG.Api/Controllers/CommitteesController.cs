@@ -74,7 +74,7 @@ public class CommitteesController : ControllerBase
             return BadRequest();
         }
 
-        var committee = await _committeeService.UpdateCommittee(id, updateDto);
+        var committee = await _committeeService.UpdateCommittee(id, updateDto, true);
         return Ok(committee);
     }
 

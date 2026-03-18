@@ -24,6 +24,7 @@ internal class CommitteeServiceTests
     private IMembershipRepository _membershipRepository;
     private IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private IWorklistTaskService _worklistTaskService;
+    private IMembershipMirrorService _membershipMirrorService;
     private IWorklistTaskRepository _worklistTaskRepository;
     private IEiamAssignmentRepository _eiamAssignmentRepository;
     private CommitteeService _committeeService;
@@ -34,6 +35,10 @@ internal class CommitteeServiceTests
     private Membership _membership3;
     private Membership _membership4;
     private Membership _membership5;
+
+    private List<MembershipCandidate> _candidateList;
+    private MembershipCandidate _candidate1;
+    private MembershipCandidate _candidate2;
 
     private EiamAssignment _eiamAssignment;
 
@@ -62,6 +67,7 @@ internal class CommitteeServiceTests
         _membershipRepository = Substitute.For<IMembershipRepository>();
         _termOfOfficeDateService = Substitute.For<ITermOfOfficeDateService>();
         _worklistTaskService = Substitute.For<IWorklistTaskService>();
+        _membershipMirrorService = Substitute.For<IMembershipMirrorService>();
         _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
         _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
         _eiamAssignmentRepository = Substitute.For<IEiamAssignmentRepository>();
@@ -75,6 +81,7 @@ internal class CommitteeServiceTests
         _personId3 = Guid.Parse("FBEFEF07-CB51-4F6A-9911-FF1AC997554C");
 
         _committeeMemberList = [];
+        _candidateList = [];
 
         _person1 = new PersonBuilder()
             .WithId(_personId1)
@@ -172,6 +179,27 @@ internal class CommitteeServiceTests
         _committeeMemberList.Add(_membership4);
         _committeeMemberList.Add(_membership5);
 
+        _candidate1 = new MembershipCandidateBuilder()
+            .WithId(Guid.Parse("3f1c2e1d-9a4b-4d6f-b8c2-5c7a2e9f1a01"))
+            .WithFunction(new FunctionBuilder().Build())
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithBeginDate(new DateOnly(2000, 1, 1))
+            .WithEndDate(new DateOnly(2004, 12, 31))
+            .Build();
+
+        _candidate2 = new MembershipCandidateBuilder()
+            .WithId(Guid.Parse("a7d9c3b4-2f6e-4a91-8c5d-1e3b7f2d9c44"))
+            .WithFunction(new FunctionBuilder().Build())
+            .WithElectionTypeId(ElectionType.ReElectionGuid)
+            .WithPersonId(_personId2)
+            .WithPerson(_person2)
+            .WithBeginDate(new DateOnly(2000, 1, 1))
+            .WithEndDate(new DateOnly(2004, 12, 31))
+            .Build();
+
+        _candidateList.Add(_candidate1);
+        _candidateList.Add(_candidate2);
+
         _eiamAssignment = new EiamAssignmentBuilder().Build();
 
         _eiamAssignmentRepository.Create(Arg.Any<EiamAssignment>()).Returns(_eiamAssignment);
@@ -199,6 +227,7 @@ internal class CommitteeServiceTests
             _eiamAssignmentService,
             _termOfOfficeDateService,
             _worklistTaskService,
+            _membershipMirrorService,
             _masterDataRepository,
             _generalMeasureRepository,
             _membershipRepository,
@@ -218,6 +247,7 @@ internal class CommitteeServiceTests
         _masterDataRepository.ClearSubstitute();
         _generalMeasureRepository.ClearSubstitute();
         _membershipRepository.ClearSubstitute();
+        _membershipMirrorService.ClearSubstitute();
     }
 
     [Test]
@@ -383,7 +413,7 @@ internal class CommitteeServiceTests
         var membershipAddition = new MembershipAdditionBuilder().Build();
         _masterDataRepository.GetById<MembershipAddition>(updateDto.MembershipAdditionsInGeneralElection![0]).Returns(membershipAddition);
 
-        await _committeeService.UpdateCommittee(updateDto.Id, updateDto);
+        await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
 
@@ -432,7 +462,7 @@ internal class CommitteeServiceTests
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
         _authorizationService.GetDepartment().Returns(new DepartmentBuilder().WithId(_committee.DepartmentId).Build());
 
-        await _committeeService.UpdateCommittee(updateDto.Id, updateDto);
+        await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
 
@@ -477,7 +507,7 @@ internal class CommitteeServiceTests
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
         _authorizationService.GetDepartment().Returns(new DepartmentBuilder().Build());
 
-        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
+        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
     }
@@ -496,7 +526,7 @@ internal class CommitteeServiceTests
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
         _authorizationService.IsCommitteeAssigned(_committeeId).Returns(true);
 
-        await _committeeService.UpdateCommittee(updateDto.Id, updateDto);
+        await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
 
@@ -543,7 +573,7 @@ internal class CommitteeServiceTests
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
         _authorizationService.IsCommitteeAssigned(_committeeId).Returns(false);
 
-        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
+        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
     }
@@ -562,7 +592,7 @@ internal class CommitteeServiceTests
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
         _authorizationService.IsCommitteeAssigned(_committeeId).Returns(false);
 
-        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
+        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
     }
@@ -590,7 +620,7 @@ internal class CommitteeServiceTests
         _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(committee);
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
 
-        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
+        Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
     }
@@ -1260,6 +1290,22 @@ internal class CommitteeServiceTests
             Assert.That(result.BeginDate, Is.GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Now)));
             Assert.That(result.DepartmentId, Is.EqualTo(dep.Id));
         });
+    }
+
+    [Test]
+    public async Task UpdateCommitteeAfterGeneralElection_WhenCalled_ShouldUpdatePropertiesAndCommitChanges()
+    {
+        var updateDto = BuildUpdateDto();
+        _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
+        _committeeRepository.GetById(updateDto.Id).Returns(_committee);
+
+        await _committeeService.UpdateCommitteeAfterGeneralElection(updateDto.Id, updateDto, _candidateList);
+
+        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+
+        await _membershipMirrorService.Received(1).CreateNewMembershipFromCandidate(Arg.Any<MembershipCreateDto>(), Arg.Any<string>());
+
+        await _membershipMirrorService.Received(1).UpdateMembershipFromCandidate(Arg.Any<Guid>(), Arg.Any<MembershipUpdateDto>(), Arg.Any<string>());
     }
 
     private static CommitteeUpdateDto BuildUpdateDto()

@@ -51,6 +51,7 @@ public class ContactPointIdConfig
 {
     [Required]
     public required string SecretariatId { get; init; }
+
     [Required]
     public required string DpoId { get; init; }
 }
@@ -65,6 +66,9 @@ public class WorklistTaskTypeOptions
 {
     [Required]
     public required string GeneralElectionStartId { get; init; }
+
+    [Required]
+    public required string GeneralElectionEndId { get; init; }
 }
 
 public class LanguageOptions
