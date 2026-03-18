@@ -12,6 +12,9 @@ public class TermOfOfficeDate : MasterDataBase
     public DateOnly? EndDate { get; set; }
     public bool? IsGeneralElection { get; set; }
 
+    public DateOnly? PlannedPublicationDate { get; set; }
+    public DateTime? PublicationDate { get; set; }
+
     public ICollection<Committee> Committees { get; set; } = new List<Committee>();
     public ICollection<GeneralElectionCommittee> GeneralElectionCommittees { get; set; } = new List<GeneralElectionCommittee>();
 }
