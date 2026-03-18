@@ -1,3 +1,6 @@
+@if (!isReadyForProposalForCurrentRole() && isFederalCouncilProposalDirty()) {
+    <ob-alert type="warning">{{ 'committee.generalElection.running.isFederalCouncilProposalDirty.hint' | translate }}</ob-alert>
+}
 <div class="committee-data-header">
     <div class="header-left">
         <h2>
@@ -15,7 +18,7 @@
         }
     </div>
     <div class="buttons">
-        @if (isReadyForProposal()) {
+        @if (isReadyForProposalFinalized()) {
             <mat-chip class="success">{{ 'generalElection.committee.data.readyForProposal.finalize' | translate }}</mat-chip>
         }
         @if (canForwardReadyForProposal()) {
