@@ -114,6 +114,7 @@ internal class CommitteeServiceTests
             .WithEndDate(new DateOnly(2030, 12, 31))
             .WithMaximalMember(5)
             .WithDepartment(new DepartmentBuilder().Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithIsFederalCouncilProposalDirty(true).Build())
             .Build();
         _committee.MembershipAdditionsInGeneralElection.Add(new MembershipAdditionBuilder().Build());
 
@@ -329,6 +330,35 @@ internal class CommitteeServiceTests
 
         Assert.That(committeeDetail, Is.Not.Null);
         Assert.That(committeeDetail.CanEdit, Is.True);
+    }
+
+    [Test]
+    public async Task GetCommitteeDetail_InGeneralElection_ShouldReturnDtoWithGeneralElectionFields()
+    {
+        var assignmentId = Guid.NewGuid();
+        _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(true);
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+
+        var eiamAssignment = new EiamAssignment() { Id = assignmentId, ExternalId = "111", Role = Role.Department };
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(Task.FromResult(eiamAssignment));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(Arg.Any<Guid>())
+            .Returns(Task.FromResult<IEnumerable<WorklistTask>>(new List<WorklistTask>() {
+                new WorklistTaskBuilder()
+                .WithAssignedTo(eiamAssignment)
+                .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+                .WithWorklistTaskStateId(WorklistTaskState.Completed)
+                .Build()
+        }));
+
+        var committeeDetail = await _committeeService.GetCommitteeDetail(_committee.Id);
+
+        await _committeeRepository.Received(1).GetById(Arg.Any<Guid>());
+
+        Assert.That(committeeDetail, Is.Not.Null);
+        Assert.That(committeeDetail.CanEdit, Is.True);
+        Assert.That(committeeDetail.IsFederalCouncilProposalDirty, Is.True);
+        Assert.That(committeeDetail.IsReadyForProposalForCurrentRole, Is.True);
     }
 
     [Test]
