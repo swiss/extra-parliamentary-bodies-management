@@ -4,7 +4,12 @@
     <mat-tab>
         <ng-template mat-tab-label
             >{{ 'committee.details.data' | translate }}
-            <apg-unsaved-changes-icon toolTip="" [hidden]="!generalElectionCommitteeDetailsService.committeeDetails()?.isFederalCouncilProposalDirty"
+            <apg-unsaved-changes-icon
+                toolTip=""
+                [hidden]="
+                    !generalElectionCommitteeDetailsService.committeeDetails()?.isFederalCouncilProposalDirty ||
+                    generalElectionCommitteeDetailsService.committeeDetails()?.isReadyForProposalForCurrentRole
+                "
         /></ng-template>
         <apg-ge-committee-data />
     </mat-tab>

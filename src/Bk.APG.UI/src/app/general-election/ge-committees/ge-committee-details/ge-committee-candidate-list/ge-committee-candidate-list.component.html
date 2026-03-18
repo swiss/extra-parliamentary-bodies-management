@@ -2,16 +2,14 @@
     <h2>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h2>
     <h4 class="candidate-list-state">{{ generalElectionCommittee()?.candidateListState }}</h4>
 
-    @if (generalElectionCommittee()?.isCandidateListCompleted && !validated) {
-        <ob-alert type="warning">{{ 'candidateList.completedHint' | translate }}</ob-alert>
+    @if (generalElectionCommittee()?.isReadyForProposalForCurrentRole && !this.isAdmin()) {
+        <ob-alert type="warning">{{ 'candidateList.isReadyForProposalHint' | translate }}</ob-alert>
+    } @else if (generalElectionCommittee()?.isCandidateListValidated && !validated && !this.isAdmin() && !this.isDepartment()) {
+        <ob-alert type="warning">{{ 'candidateList.validatedHint' | translate }}</ob-alert>
     }
 
     @if (!generalElectionCommittee()?.isValidated && generalElectionCommittee()?.wasValidatedOnce) {
         <ob-alert type="warning">{{ 'committee.generalElection.running.wasValidatedOnce.hint' | translate }}</ob-alert>
-    }
-
-    @if (generalElectionCommittee()?.isReadyForFederalCouncilProposalForwarded && generalElectionCommittee()?.isFederalCouncilProposalDirty) {
-        <ob-alert type="warning">{{ 'committee.generalElection.running.isFederalCouncilProposalDirty.hint' | translate }}</ob-alert>
     }
 </div>
 

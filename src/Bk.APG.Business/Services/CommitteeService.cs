@@ -137,6 +137,17 @@ public class CommitteeService : ICommitteeService
         var generalLanguageMeasure = await _generalMeasureRepository.GetGeneralLanguageMeasure(committee.DepartmentId);
         dto.GeneralLanguageMeasure = generalLanguageMeasure?.Description;
 
+        if (await _termOfOfficeDateService.CheckForRunningGeneralElection())
+        {
+            var generalElection = committee.GeneralElectionCommittees.FirstOrDefault();
+            if (generalElection is not null)
+            {
+                dto.IsFederalCouncilProposalDirty = committee.GeneralElectionCommittees.FirstOrDefault()?.IsFederalCouncilProposalDirty == true;
+                var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
+                dto.IsReadyForProposalForCurrentRole = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElection.Id)).FirstOrDefault(y => y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && y.AssignedToId == currentEiamAssignment.Id && y.WorklistTaskStateId == WorklistTaskState.Completed) is not null;
+            }
+        }
+
         return dto;
     }
 

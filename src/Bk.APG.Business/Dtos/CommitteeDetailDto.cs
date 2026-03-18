@@ -77,5 +77,9 @@ public class CommitteeDetailDto
     public bool NeedsAttentionMembershipInterestOrOccupation { get; set; }
     public bool FutureGeneralElectionCommittee { get; set; }
 
+    // General Election related fields
+    public bool IsFederalCouncilProposalDirty { get; set; }
+    public bool IsReadyForProposalForCurrentRole { get; set; }
+
     public ICollection<ContactPointDetailDto> ContactPoints { get; set; } = new List<ContactPointDetailDto>();
 }
