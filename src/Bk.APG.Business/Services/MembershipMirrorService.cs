@@ -22,7 +22,7 @@ public class MembershipMirrorService : IMembershipMirrorService
         _logger = logger;
     }
 
-    public async Task MirrorOrDeleteMembershipForGeneralElection(Membership membership, bool deleteCandidate)
+    public async Task MirrorOrDeleteMembershipForGeneralElection(Membership membership, bool deleteCandidate, bool wasMetadataChanged)
     {
         _logger.LogInformation("Mirror membership {MembershipId} for general election", membership.Id);
 
@@ -44,6 +44,12 @@ public class MembershipMirrorService : IMembershipMirrorService
             }
             else
             {
+                if (membershipCandidate.GeneralElectionCommittee?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded && !wasMetadataChanged)
+                {
+                    _logger.LogInformation("No metadata change during 'BRA ready forwarded' state, skip mirror entries");
+                    return;
+                }
+
                 var updatedMembership = GeneralElectionMapper.ToMembershipCandidateMirrorDto(membership);
 
                 membershipCandidate.MaximumEmploymentLevel = updatedMembership.MaximumEmploymentLevel;
@@ -57,11 +63,15 @@ public class MembershipMirrorService : IMembershipMirrorService
                 membershipCandidate.Modified = updatedMembership.Modified;
                 membershipCandidate.ModifiedBy = updatedMembership.ModifiedBy;
                 membershipCandidate.InCorrelationWithFederalDuty = membership.InCorrelationWithFederalDuty;
-                membershipCandidate.JustificationLongerDuty = membership.JustificationLongerDuty;
-                membershipCandidate.JustificationShorterDuty = membership.JustificationShorterDuty;
-                membershipCandidate.JustificationMemberInFederalAssembly = membership.JustificationMemberInFederalAssembly;
-                membershipCandidate.JustificationMemberInFederalDuty = membership.JustificationMemberInFederalDuty;
-                membershipCandidate.RequirementsProfile = membership.RequirementsProfile;
+                if (membershipCandidate.GeneralElectionCommittee?.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded &&
+                    membershipCandidate.GeneralElectionCommittee?.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+                {
+                    membershipCandidate.JustificationLongerDuty = membership.JustificationLongerDuty;
+                    membershipCandidate.JustificationShorterDuty = membership.JustificationShorterDuty;
+                    membershipCandidate.JustificationMemberInFederalAssembly = membership.JustificationMemberInFederalAssembly;
+                    membershipCandidate.JustificationMemberInFederalDuty = membership.JustificationMemberInFederalDuty;
+                    membershipCandidate.RequirementsProfile = membership.RequirementsProfile;
+                }
 
                 await _membershipCandidateRepository.CommitChanges();
 
