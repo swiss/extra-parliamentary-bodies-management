@@ -241,7 +241,7 @@ public class GeneralElectionCommitteeServiceTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.IsReadyForProposal, Is.True);
+            Assert.That(result.IsReadyForProposalFinalized, Is.True);
             Assert.That(result.CanForwardReadyForProposal, Is.False);
             Assert.That(result.CanFinalizeReadyForProposal, Is.False);
         }
@@ -307,7 +307,7 @@ public class GeneralElectionCommitteeServiceTests
 
         using (Assert.EnterMultipleScope())
         {
-            Assert.That(result.IsReadyForProposal, Is.False);
+            Assert.That(result.IsReadyForProposalFinalized, Is.False);
             Assert.That(result.CanForwardReadyForProposal, Is.False);
             Assert.That(result.CanFinalizeReadyForProposal, Is.True);
         }

@@ -7,7 +7,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {GeneralElectionCommitteeUpdate} from '@api/GeneralElectionCommitteeUpdate';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObButtonDirective, ObNotificationService} from '@oblique/oblique';
+import {ObAlertModule, ObButtonDirective, ObNotificationService} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {EntityAuditLogService} from '@shared/entity-audit-log/entity-audit-log.service';
 import {filter, switchMap} from 'rxjs';
@@ -18,7 +18,7 @@ import {ReadyForProposalForwardDialogComponent} from './ready-for-proposal-forwa
 
 @Component({
     selector: 'apg-ge-committee-data',
-    imports: [MatButton, ObButtonDirective, TranslatePipe, GeneralElectionCommitteeDataFormComponent, MatChip],
+    imports: [MatButton, ObButtonDirective, TranslatePipe, GeneralElectionCommitteeDataFormComponent, MatChip, ObAlertModule],
     templateUrl: './ge-committee-data.component.html',
     styleUrl: './ge-committee-data.component.scss',
 })
@@ -29,7 +29,11 @@ export class GeneralElectionCommitteeDataComponent implements OnInit {
     readyForProposalAssignedTo = computed(() => this.generalElectionCommitteeDetailsService.committeeDetails()?.readyForProposalAssignedTo);
     canForwardReadyForProposal = computed(() => this.generalElectionCommitteeDetailsService.committeeDetails()?.canForwardReadyForProposal ?? false);
     canFinalizeReadyForProposal = computed(() => this.generalElectionCommitteeDetailsService.committeeDetails()?.canFinalizeReadyForProposal ?? false);
-    isReadyForProposal = computed(() => this.generalElectionCommitteeDetailsService.committeeDetails()?.isReadyForProposal ?? false);
+    isReadyForProposalForCurrentRole = computed(
+        () => this.generalElectionCommitteeDetailsService.committeeDetails()?.isReadyForProposalForCurrentRole ?? false
+    );
+    isReadyForProposalFinalized = computed(() => this.generalElectionCommitteeDetailsService.committeeDetails()?.isReadyForProposalFinalized ?? false);
+    isFederalCouncilProposalDirty = computed(() => this.generalElectionCommitteeDetailsService.committeeDetails()?.isFederalCouncilProposalDirty ?? false);
     isExtraParliamentaryCommission = false;
 
     private unmodifiedCommittee!: GeneralElectionCommitteeUpdate;
