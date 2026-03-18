@@ -29,6 +29,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
         var isAdmin = _authorizationService.IsAdmin;
         var eiamAssignmentIds = isAdmin ? [] : (await _eiamAssignmentRepository.GetByExternalId(_authorizationService.GetCurrentExternalId())).GetSearchableIds().ToList();
         var query = _dataContext.WorklistTasks
+            .Where(w => !w.IsDeleted)
             .Include(item => item.WorklistTaskType)
             .Include(item => item.WorklistTaskState)
             .Include(item => item.Department)
@@ -65,6 +66,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<WorklistTask> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null)
     {
         var task = await _dataContext.WorklistTasks
+            .Where(w => !w.IsDeleted)
             .Include(x => x.WorklistTaskType)
             .Include(x => x.WorklistTaskState)
             .Include(x => x.Department)
@@ -93,6 +95,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<WorklistTask> GetByIdForForward(Guid id)
     {
         var task = await _dataContext.WorklistTasks
+            .Where(w => !w.IsDeleted)
             .Include(w => w.Department)
             .Include(w => w.Office)
             .Include(w => w.Committee)
@@ -107,7 +110,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<IEnumerable<WorklistTask>> GetByTermOfOfficeDateId(Guid id)
     {
         var worklistTasks = await _dataContext.WorklistTasks
-            .Where(w => w.TermOfOfficeDateId == id)
+            .Where(w => w.TermOfOfficeDateId == id && !w.IsDeleted)
             .ToListAsync();
 
         return worklistTasks;
@@ -123,6 +126,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
                 w.PersonId == personId ||
                 (w.MembershipId.HasValue && membershipIdSet.Contains(w.MembershipId.Value)) ||
                 (w.MembershipCandidateId.HasValue && membershipCandidateIdSet.Contains(w.MembershipCandidateId.Value)))
+            .Where(w => !w.IsDeleted)
             .ToListAsync();
     }
 
@@ -158,7 +162,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<IEnumerable<WorklistTask>> GetAllByGeneralElectionCommitteeId(Guid generalElectionCommitteeId)
     {
         return await _dataContext.WorklistTasks.Include(x => x.AssignedTo)
-            .Where(x => x.GeneralElectionCommitteeId == generalElectionCommitteeId)
+            .Where(x => x.GeneralElectionCommitteeId == generalElectionCommitteeId && !x.IsDeleted)
             .ToListAsync();
     }
 
@@ -172,14 +176,14 @@ public class WorklistTaskRepository : IWorklistTaskRepository
         return await _dataContext.WorklistTasks
             .Include(w => w.ParentTask)
             .Include(w => w.AssignedBy)
-            .Where(x => x.WorklistTaskTypeId == worklistTaskTypeId)
+            .Where(x => x.WorklistTaskTypeId == worklistTaskTypeId && !x.IsDeleted)
             .ToListAsync();
     }
 
     public async Task<List<WorklistTask>> GetAllByPersonId(Guid personId)
     {
         return await _dataContext.WorklistTasks
-            .Where(x => x.PersonId == personId)
+            .Where(x => x.PersonId == personId && !x.IsDeleted)
             .ToListAsync();
     }
 
@@ -196,7 +200,14 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<List<WorklistTask>> GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(Guid departmentId, IEnumerable<Guid> worklistTaskTypeIds)
     {
         return await _dataContext.WorklistTasks
-            .Where(x => x.DepartmentId == departmentId && worklistTaskTypeIds.Contains(x.WorklistTaskTypeId))
+            .Where(x => x.DepartmentId == departmentId && worklistTaskTypeIds.Contains(x.WorklistTaskTypeId) && !x.IsDeleted)
             .ToListAsync();
+    }
+
+    public async Task SetAllWorklistTasksToIsDeleted()
+    {
+        await _dataContext.WorklistTasks
+            .ExecuteUpdateAsync(setters => setters
+            .SetProperty(w => w.IsDeleted, true));
     }
 }
