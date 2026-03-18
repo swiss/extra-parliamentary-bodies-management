@@ -125,11 +125,11 @@ internal class CommitteesControllerTests
     {
         var updateDto = new Faker<CommitteeUpdateDto>().Generate();
         var detailDto = new Faker<CommitteeDetailDto>().Generate();
-        _committeeService.UpdateCommittee(updateDto.Id, updateDto).Returns(detailDto);
+        _committeeService.UpdateCommittee(updateDto.Id, updateDto, true).Returns(detailDto);
 
         var result = await _controller.Update(updateDto.Id, updateDto) as OkObjectResult;
 
-        await _committeeService.Received(1).UpdateCommittee(updateDto.Id, updateDto);
+        await _committeeService.Received(1).UpdateCommittee(updateDto.Id, updateDto, true);
         Assert.That(result, Is.Not.Null);
         Assert.Multiple(() =>
         {
@@ -162,7 +162,7 @@ internal class CommitteesControllerTests
 
         var result = await _controller.Update(Guid.NewGuid(), updateDto);
 
-        await _committeeService.DidNotReceive().UpdateCommittee(Arg.Any<Guid>(), Arg.Any<CommitteeUpdateDto>());
+        await _committeeService.DidNotReceive().UpdateCommittee(Arg.Any<Guid>(), Arg.Any<CommitteeUpdateDto>(), true);
         Assert.That(result, Is.InstanceOf<BadRequestResult>());
     }
 

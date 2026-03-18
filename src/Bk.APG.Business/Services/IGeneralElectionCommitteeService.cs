@@ -1,4 +1,5 @@
 using Bk.APG.Business.Dtos;
+using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 
 namespace Bk.APG.Business.Services;
@@ -16,4 +17,6 @@ public interface IGeneralElectionCommitteeService
     Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds);
     Task InvalidateMembershipCandidateList(Guid committeeId);
     Task SetFederalCouncilProposalToDirty(Guid committeeId);
+    Task<IEnumerable<GeneralElectionCommitteeListDto>> GetAllUnfinishedCommittees();
+    Task<bool> EndGeneralElectionForCommittee(GeneralElectionCommittee committee);
 }

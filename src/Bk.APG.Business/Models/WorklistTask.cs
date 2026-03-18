@@ -33,14 +33,14 @@ public class WorklistTask : EntityBase
     public Person? Person { get; set; }
     public Guid? PersonId { get; set; }
 
-    // If the tasks connects to the GeneralElection view, we will link to these fields
+    // If the tasks connect to the GeneralElection view, we will link to these fields
     public GeneralElectionCommittee? GeneralElectionCommittee { get; set; }
     public Guid? GeneralElectionCommitteeId { get; set; }
     public MembershipCandidate? MembershipCandidate { get; set; }
     public Guid? MembershipCandidateId { get; set; }
     public TermOfOfficeDate? TermOfOfficeDate { get; set; }
     public Guid? TermOfOfficeDateId { get; set; }
-
+    public bool IsDeleted { get; set; }
     public uint RowVersion { get; set; }
 
     [NotMapped]

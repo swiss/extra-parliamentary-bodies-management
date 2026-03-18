@@ -49,6 +49,7 @@ export interface TermOfOfficeIdConfig {
 
 export interface WorklistTaskTypeConfig {
     generalElectionStartId: string;
+    generalElectionEndId: string;
 }
 
 export interface AppointmentDecisionTypeConfig {
