@@ -16,6 +16,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly IAuthorizationService _authorizationService;
     private readonly ICultureService _cultureService;
+    private readonly ICommitteeService _committeeService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
@@ -25,6 +26,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         IAuthorizationService authorizationService,
         ICultureService cultureService,
+        ICommitteeService committeeService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
@@ -34,6 +36,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _authorizationService = authorizationService;
         _cultureService = cultureService;
+        _committeeService = committeeService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
         _documentService = documentService;
@@ -341,6 +344,17 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeUpdateDto(existingCommittee);
     }
 
+    public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetAllUnfinishedCommittees()
+    {
+        var committees = await _generalElectionCommitteeRepository.GetAll();
+
+        var unfinishedCommittees = committees.Where(c => c.IsValidated);
+
+        var list = unfinishedCommittees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
+
+        return list;
+    }
+
     public async Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
         _logger.LogInformation("Generate candidate list export for general election committee {CommitteeId}", id);
@@ -379,6 +393,17 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var exportStream = await _documentService.CreateExcel(spreadsheet);
 
         return (GenerateFileName(DateTime.Now, BusinessTexts.CandidateList), exportStream);
+    }
+
+    public async Task<bool> EndGeneralElectionForCommittee(GeneralElectionCommittee committee)
+    {
+        // Writes back all the changes from General Election to the current data
+        var mappedCommittee = GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee(committee);
+        var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
+
+        await _committeeService.UpdateCommitteeAfterGeneralElection(updateCommittee.Id, updateCommittee, committee.MembershipCandidates.ToList());
+
+        return true;
     }
 
     private async Task<IList<IList<Cell>>> GetCandidateListData(Guid id, IEnumerable<Guid> membershipCandidateIds)

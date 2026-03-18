@@ -107,6 +107,20 @@ public static class WorklistTaskMapper
         };
     }
 
+    public static WorklistTaskCreateDto CreateGeneralElectionEndWorklistTaskDto(Guid parentId, Guid termOfOfficeDateId, DateOnly dueDate, string description)
+    {
+        return new WorklistTaskCreateDto
+        {
+            AssignedToId = EiamAssignment.AdminId,
+            WorklistTaskTypeId = WorklistTaskType.GeneralElectionEnd,
+            WorklistTaskStateId = WorklistTaskState.Active,
+            ParentTaskId = parentId,
+            Description = description,
+            DueDate = dueDate,
+            TermOfOfficeDateId = termOfOfficeDateId
+        };
+    }
+
     public static WorklistTaskCreateDto CreateGeneralElectionDepartmentWorklistTaskDto(Guid parentId, string parentTaskDescription, Guid departmentId, Guid assignedToId, Guid termOfOfficeDateId)
     {
         return new WorklistTaskCreateDto
