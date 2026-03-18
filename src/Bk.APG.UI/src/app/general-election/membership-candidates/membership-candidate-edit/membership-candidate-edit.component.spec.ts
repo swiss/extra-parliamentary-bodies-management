@@ -42,7 +42,7 @@ describe('MembershipCandidateEditComponent', () => {
     beforeEach(async () => {
         membershipCandidateServiceMock.getMembershipCandidateForUpdate.mockReturnValue(of({} as MembershipCandidateUpdate));
         generalElectionCommitteeDetailsServiceMock.generalElectionCommitteeDetails.mockReturnValue(
-            of({committeeId: 'committee-1', isCandidateListCompleted: false} as GeneralElectionCommitteeDetails)
+            of({committeeId: 'committee-1', isCandidateListValidated: false} as GeneralElectionCommitteeDetails)
         );
 
         await TestBed.configureTestingModule({
@@ -69,7 +69,7 @@ describe('MembershipCandidateEditComponent', () => {
     });
 
     it('should navigate back to members tab when candidate list is completed', () => {
-        component.generalElectionCommittee.set({committeeId: 'committee-1', isCandidateListCompleted: true} as GeneralElectionCommitteeDetails);
+        component.generalElectionCommittee.set({committeeId: 'committee-1', isCandidateListValidated: true} as GeneralElectionCommitteeDetails);
 
         component.back();
 
@@ -80,7 +80,7 @@ describe('MembershipCandidateEditComponent', () => {
     });
 
     it('should navigate back to candidate list tab when candidate list is not completed', () => {
-        component.generalElectionCommittee.set({committeeId: 'committee-1', isCandidateListCompleted: false} as GeneralElectionCommitteeDetails);
+        component.generalElectionCommittee.set({committeeId: 'committee-1', isCandidateListValidated: false} as GeneralElectionCommitteeDetails);
 
         component.back();
 
