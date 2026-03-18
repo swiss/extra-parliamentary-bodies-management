@@ -55,7 +55,7 @@ export class MembershipCandidateEditComponent {
                 this.form()?.reset();
                 await this.router.navigate(['general-election', 'committees', this.generalElectionCommittee()!.committeeId], {
                     replaceUrl: true,
-                    queryParams: {tab: this.generalElectionCommittee()?.isCandidateListCompleted ? 'members' : 'candidateList'},
+                    queryParams: {tab: this.generalElectionCommittee()?.isCandidateListValidated ? 'members' : 'candidateList'},
                 });
                 return this.notificationService.success('generalElection.membershipCandidate.saveChanges.success');
             },
@@ -71,7 +71,7 @@ export class MembershipCandidateEditComponent {
     back() {
         void this.router.navigate(['general-election', 'committees', this.generalElectionCommittee()!.committeeId], {
             replaceUrl: true,
-            queryParams: {tab: this.generalElectionCommittee()?.isCandidateListCompleted ? 'members' : 'candidateList'},
+            queryParams: {tab: this.generalElectionCommittee()?.isCandidateListValidated ? 'members' : 'candidateList'},
         });
     }
 }
