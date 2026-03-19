@@ -223,8 +223,8 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
 
     private toggleFormFields() {
         effect(() => {
-            const isCandidateListCompleted = !!this.generalElectionCommittee()?.isCandidateListCompleted;
-            if (isCandidateListCompleted) {
+            const isCandidateListValidated = !!this.generalElectionCommittee()?.isCandidateListValidated;
+            if (isCandidateListValidated) {
                 this.membershipCandidateForm.controls.endDate.disable({emitEvent: false});
                 this.membershipCandidateForm.controls.functionId.disable({emitEvent: false});
             } else {
