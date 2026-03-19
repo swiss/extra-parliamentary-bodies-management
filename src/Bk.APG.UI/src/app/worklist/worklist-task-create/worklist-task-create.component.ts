@@ -4,6 +4,7 @@ import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
 import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
+import {MatDialog} from '@angular/material/dialog';
 import {MatFormField, MatInput, MatInputModule, MatLabel, MatSuffix} from '@angular/material/input';
 import {MatError, MatOption, MatSelect} from '@angular/material/select';
 import {MatCell, MatCellDef, MatColumnDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTableDataSource, MatTableModule} from '@angular/material/table';
@@ -21,17 +22,16 @@ import {
     ObNotificationService,
     ObUnsavedChangesDirective,
 } from '@oblique/oblique';
+import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {conditionalValidator} from '@shared/form-validators/conditional.validator';
 import {MasterDataService} from '@shared/master-data.service';
 import {EiamAssignmentService} from '@shared/services/eiam-assignment.service';
+import {debounceTime} from 'rxjs';
 import {AuthService} from '../../auth/auth.service';
 import {ConfigsService} from '../../configs.service';
 import {GeneralElectionCommitteesService} from '../../general-election/ge-committees/ge-committees.service';
 import {GeneralElectionService} from '../../general-election/general-election.service';
 import {WorklistService} from '../worklist.service';
-import {debounceTime} from 'rxjs';
-import {MatDialog} from '@angular/material/dialog';
-import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 
 @Component({
     selector: 'apg-worklist-task-create',
@@ -90,12 +90,11 @@ export class WorklistTaskCreateComponent implements OnInit {
         protected readonly router: Router,
         protected readonly formBuilder: FormBuilder,
         protected readonly configsService: ConfigsService,
+        protected readonly eiamAssignmentService: EiamAssignmentService,
         private readonly generalElectionService: GeneralElectionService,
         private readonly generalElectionCommitteeService: GeneralElectionCommitteesService,
         private readonly translateService: TranslateService,
         private readonly dialog: MatDialog,
-
-        protected readonly eiamAssignmentService: EiamAssignmentService,
         private readonly authService: AuthService,
         private readonly apiInterceptorEvents: ObHttpApiInterceptorEvents
     ) {
@@ -126,7 +125,6 @@ export class WorklistTaskCreateComponent implements OnInit {
             this.form.markAllAsTouched();
             return;
         }
-
         if (this.isEndGeneralElection && this.dataSource.data.length > 0) {
             const dialogRef = this.dialog.open(ConfirmDialogComponent, {
                 width: '400px',
@@ -135,7 +133,6 @@ export class WorklistTaskCreateComponent implements OnInit {
                     message: this.translateService.instant('worklist.task.endGeneralElection.unfinished.dialogText'),
                 },
             });
-
             dialogRef.afterClosed().subscribe(result => {
                 if (result === true) {
                     this.worklistService.create(this.form.getRawValue() as WorklistTaskCreate).subscribe({
@@ -143,7 +140,6 @@ export class WorklistTaskCreateComponent implements OnInit {
                             this.form.markAsPristine();
                             void this.router.navigate(['/worklist']);
                             this.notificationService.success('worklist.task.create.success');
-
                             if (this.form.value.worklistTaskTypeId === this.configsService.frontendConfig.entityIds.worklistTaskType.generalElectionEndId) {
                                 this.generalElectionService.isGeneralElectionVisible.set(false);
                             }
@@ -154,13 +150,11 @@ export class WorklistTaskCreateComponent implements OnInit {
             });
         } else {
             this.apiInterceptorEvents.deactivateNotificationOnNextAPICalls();
-
             this.worklistService.create(this.form.getRawValue() as WorklistTaskCreate).subscribe({
                 next: () => {
                     this.form.markAsPristine();
                     void this.router.navigate(['/worklist']);
                     this.notificationService.success('worklist.task.create.success');
-
                     if (this.form.value.worklistTaskTypeId === this.configsService.frontendConfig.entityIds.worklistTaskType.generalElectionStartId) {
                         this.generalElectionService.isGeneralElectionVisible.set(true);
                     }

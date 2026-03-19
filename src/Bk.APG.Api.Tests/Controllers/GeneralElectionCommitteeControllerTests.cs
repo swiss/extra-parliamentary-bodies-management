@@ -261,13 +261,13 @@ internal class GeneralElectionCommitteeControllerTests
     }
 
     [Test]
-    public async Task CheckCompletionGeneralElection_ShouldCallServiceAndReturnOk()
+    public async Task CheckUnfinishedCommittees_ShouldCallServiceAndReturnOk()
     {
         var list = new Faker<GeneralElectionCommitteeListDto>().Generate(3);
 
         _generalElectionCommitteeService.GetAllUnfinishedCommittees().Returns(list);
 
-        var result = await _controller.CheckCompletionGeneralElection() as OkObjectResult;
+        var result = await _controller.CheckUnfinishedCommittees() as OkObjectResult;
 
         await _generalElectionCommitteeService.Received(1).GetAllUnfinishedCommittees();
         Assert.That(result, Is.Not.Null);
