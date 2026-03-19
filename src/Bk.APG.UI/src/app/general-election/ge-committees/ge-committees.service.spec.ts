@@ -170,4 +170,47 @@ describe('GeneralElectionCommitteesService', () => {
         expect(req.request.method).toBe('GET');
         req.flush(committeeList);
     });
+
+    it('should get unfinished general election committees list', () => {
+        const committeeList: GeneralElectionCommitteeList[] = [
+            {
+                id: '1',
+                committeeId: '2',
+                committeeType: 'type',
+                description: 'desc',
+                department: 'department',
+                office: 'office',
+                isMarketOrientated: 'true',
+                hasSupervisionDuty: false,
+                isNew: 'true',
+                vacanciesGeneralElection: 1,
+                statusProposal: 'true',
+                modified: new Date(2025, 1, 1),
+                modifiedBy: 'test',
+            } as GeneralElectionCommitteeList,
+            {
+                id: '2',
+                committeeType: 'type',
+                description: 'desc',
+                department: 'department',
+                office: 'office',
+                isMarketOrientated: 'true',
+                hasSupervisionDuty: false,
+                isNew: 'true',
+                vacanciesGeneralElection: 1,
+                statusProposal: 'true',
+                modified: new Date(2025, 1, 1),
+                modifiedBy: 'test',
+            } as GeneralElectionCommitteeList,
+        ];
+
+        service.getUnfinishedGeneralElectionCommitteeList().subscribe(result => {
+            expect(result).toEqual(committeeList);
+        });
+
+        const req = httpMock.expectOne(request => request.url === '/api/general-election/committees/checkUnfinishedCommittees');
+
+        expect(req.request.method).toBe('GET');
+        req.flush(committeeList);
+    });
 });
