@@ -78,4 +78,6 @@ export interface CommitteeDetails {
     generalLanguageMeasure?: string;
     federalInstitution?: boolean;
     futureGeneralElectionCommittee: boolean;
+    isFederalCouncilProposalDirty?: boolean;
+    isReadyForProposalForCurrentRole?: boolean;
 }

@@ -71,7 +71,7 @@ public class MembershipCandidateService : IMembershipCandidateService
 
             if (successfulDuplicateCheck)
             {
-                if (generalElectionCommittee.CandidateListStateId != CandidateListState.Validated && generalElectionCommittee.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded)
+                if (generalElectionCommittee.CandidateListStateId != CandidateListState.Validated)
                 {
                     await CompleteCandidateList(generalElectionCommittee);
                 }
@@ -347,6 +347,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         generalElectionCommittee.CandidateListStateId = CandidateListState.Validated;
         generalElectionCommittee.IsValidated = true;
         generalElectionCommittee.WasValidatedOnce = true;
+        generalElectionCommittee.IsFederalCouncilProposalDirty = false;
     }
 
     private async Task CheckCandidatePersonsAndCreateTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
@@ -669,7 +670,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         if (targetStage > currentStage)
         {
             generalElectionCommittee.CandidateListStateId = CandidateListState.ReadyForFederalCouncilProposalForwarded;
-            generalElectionCommittee.IsFederalCouncilProposalDirty = false;
+        }
+        else if (targetStage == 0)
+        {
+            generalElectionCommittee.CandidateListStateId = CandidateListState.Validated;
         }
 
         await _generalElectionCommitteeRepository.CommitChanges();
