@@ -19,7 +19,10 @@
         </mat-form-field>
 
         @if (form.controls.worklistTaskTypeId.value; as worklistTaskType) {
-            @if (worklistTaskType !== configsService.frontendConfig.entityIds.worklistTaskType.generalElectionStartId) {
+            @if (
+                worklistTaskType !== configsService.frontendConfig.entityIds.worklistTaskType.generalElectionStartId &&
+                worklistTaskType !== configsService.frontendConfig.entityIds.worklistTaskType.generalElectionEndId
+            ) {
                 <mat-form-field obErrorMessages>
                     <mat-label>{{ 'worklist.task.assignedTo' | translate }}</mat-label>
                     <mat-select required [formControl]="form.controls.assignedToId">
@@ -34,6 +37,10 @@
             @if (worklistTaskType === configsService.frontendConfig.entityIds.worklistTaskType.generalElectionStartId) {
                 <ob-alert type="info">{{ 'worklist.task.create.generalElectionStart.dueDateHint' | translate }}</ob-alert>
             }
+            @if (worklistTaskType === configsService.frontendConfig.entityIds.worklistTaskType.generalElectionEndId) {
+                <ob-alert type="info">{{ 'worklist.task.endGeneralElection.hint' | translate }}</ob-alert>
+            }
+
             <mat-form-field obErrorMessages>
                 <mat-label>{{ 'worklist.task.dueDate' | translate }}</mat-label>
                 <input matInput [matDatepicker]="dueDatePicker" [formControl]="form.controls.dueDate" required />
@@ -46,6 +53,23 @@
                 <mat-label>{{ 'worklist.task.description' | translate }}</mat-label>
                 <textarea cdkTextareaAutosize [cdkAutosizeMinRows]="3" [cdkAutosizeMaxRows]="15" matInput [formControl]="form.controls.description"></textarea>
             </mat-form-field>
+            @if (worklistTaskType === configsService.frontendConfig.entityIds.worklistTaskType.generalElectionEndId) {
+                <table [dataSource]="dataSource" class="ob-table" mat-table [hidden]="!isAdmin()">
+                    <ng-container matColumnDef="description">
+                        <th *matHeaderCellDef mat-header-cell>{{ 'worklist.task.endGeneralElection.unfinished.title' | translate }}</th>
+                        <td *matCellDef="let element" mat-cell attr.data-label="{{ 'committees.table.header.description.label' | translate }}">
+                            <a href="{{ baseLinkCommittee }}/{{ element.committeeId }}{{ baseLinkCommitteeSuffix }}" target="_blank">
+                                {{ element.description }}
+                            </a>
+                        </td>
+                    </ng-container>
+                    <tr *matHeaderRowDef="displayedCommitteeColumns" mat-header-row></tr>
+                    <tr *matRowDef="let row; columns: displayedCommitteeColumns" mat-row></tr>
+                    <tr *matNoDataRow>
+                        <td [colSpan]="displayedCommitteeColumns.length">{{ 'committees.table.noEntries' | translate }}</td>
+                    </tr>
+                </table>
+            }
         }
     </fieldset>
 </form>
