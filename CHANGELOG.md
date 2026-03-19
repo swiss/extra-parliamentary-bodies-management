@@ -15,6 +15,8 @@
 -   Stop copying (mirror) memberships for validated candidate list [BKDO-2060](https://bkdev.atlassian.net/browse/BKDO-2860)
 -   Invalidate candidate list when membership changes after validation [BKDO-2797](https://bkdev.atlassian.net/browse/BKDO-2797)
 -   Set flag and copy (mirror) memberships when memberships change after candidate list is ready for proposal [BKDO-2861](https://bkdev.atlassian.net/browse/BKDO-2861)
+-   Introduce ending of the GeneralElection [BKDO-1847](https://bkdev.atlassian.net/browse/BKDO-1847)
+-   Create new committee when GeneralElection is running [BKDO-972](https://bkdev.atlassian.net/browse/BKDO-972)
 
 ## 1.1.1
 
