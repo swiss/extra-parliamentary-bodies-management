@@ -354,10 +354,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetAllUnfinishedCommittees()
     {
         var committees = await _generalElectionCommitteeRepository.GetAll();
-
-        var unfinishedCommittees = committees.Where(c => c.IsValidated);
+        var unfinishedCommittees = committees.Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized);
 
         var list = unfinishedCommittees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
+        list = list.OrderBy(l => l.Description);
 
         return list;
     }
