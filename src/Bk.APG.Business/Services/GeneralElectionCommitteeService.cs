@@ -350,7 +350,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var unfinishedCommittees = committees.Where(c => !c.IsValidated);
 
         var list = unfinishedCommittees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
-        list = list.OrderBy(l => l.Description); 
+        list = list.OrderBy(l => l.Description);
 
         return list;
     }
