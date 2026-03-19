@@ -5,7 +5,7 @@ import {FormBuilder, FormControl, ReactiveFormsModule, Validators} from '@angula
 import {MatButton} from '@angular/material/button';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatDialog} from '@angular/material/dialog';
-import {MatFormField, MatInput, MatInputModule, MatLabel, MatSuffix} from '@angular/material/input';
+import {MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 import {MatError, MatOption, MatSelect} from '@angular/material/select';
 import {MatCell, MatCellDef, MatColumnDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {Router} from '@angular/router';
@@ -53,7 +53,6 @@ import {WorklistService} from '../worklist.service';
         MatTableModule,
         MatHeaderRowDef,
         MatHeaderRow,
-        MatInputModule,
         MatColumnDef,
         MatCellDef,
         MatRowDef,
