@@ -29,7 +29,7 @@ public class GeneralElectionServiceTests
 
     private readonly Guid _zeroGuid = Guid.Empty;
 
-    [SetUp] 
+    [SetUp]
     public void SetUp()
     {
         _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
