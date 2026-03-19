@@ -57,6 +57,7 @@ public class GeneralElectionCommitteeServiceTests
             .WithDepartment(_department)
             .WithIsValidated(true)
             .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().Build())
+            .WithCandidateListStateId(CandidateListState.Draft)
             .Build();
 
         _generalElectionCommittee2 = new GeneralElectionCommitteeBuilder()
@@ -69,6 +70,7 @@ public class GeneralElectionCommitteeServiceTests
             .WithDepartment(_department)
             .WithIsValidated(false)
             .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().Build())
+            .WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .Build();
 
         _generalElectionCommittees.Add(_generalElectionCommittee1);
@@ -728,6 +730,7 @@ public class GeneralElectionCommitteeServiceTests
 
         Assert.That(result, Is.Not.Null);
         Assert.That(result.Count, Is.EqualTo(1));
+        Assert.That(result.First().CommitteeId, Is.EqualTo(_committeeId));
     }
 
     [Test]
