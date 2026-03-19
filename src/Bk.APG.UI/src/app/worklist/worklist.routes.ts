@@ -1,6 +1,7 @@
 import {Routes} from '@angular/router';
 import {ObUnsavedChangesGuard} from '@oblique/oblique';
 import {Role} from '../auth/Role';
+import {GeneralElectionCommitteesService} from '../general-election/ge-committees/ge-committees.service';
 
 export const worklistRoutes: Routes = [
     {path: '', loadComponent: () => import('./worklist.component').then(x => x.WorklistComponent), pathMatch: 'full'},
@@ -11,6 +12,7 @@ export const worklistRoutes: Routes = [
         data: {
             allowedRoles: [Role.Admin],
         },
+        providers: [GeneralElectionCommitteesService],
     },
     {
         path: ':id',
