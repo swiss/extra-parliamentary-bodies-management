@@ -2,15 +2,21 @@
 import {provideHttpClient} from '@angular/common/http';
 import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {FormBuilder} from '@angular/forms';
+import {MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {Router} from '@angular/router';
+import {GeneralElectionCommitteeList} from '@api/GeneralElectionCommitteeList';
 import {WorklistTaskCreate} from '@api/WorklistTaskCreate';
 import {LangChangeEvent, TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {ObNotificationService, ObUnsavedChangesDirective} from '@oblique/oblique';
+import {ObHttpApiInterceptorEvents, ObNotificationService, ObUnsavedChangesDirective} from '@oblique/oblique';
+import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {MasterDataService} from '@shared/master-data.service';
 import {EiamAssignmentService} from '@shared/services/eiam-assignment.service';
 import {MockDirective, MockPipe} from 'ng-mocks';
-import {of, Subject, throwError} from 'rxjs';
+import {BehaviorSubject, of, Subject, throwError} from 'rxjs';
+import {AuthService} from '../../auth/auth.service';
 import {ConfigsService} from '../../configs.service';
+import {GeneralElectionCommitteesService} from '../../general-election/ge-committees/ge-committees.service';
 import {GeneralElectionService} from '../../general-election/general-election.service';
 import {WorklistService} from '../worklist.service';
 import {WorklistTaskCreateComponent} from './worklist-task-create.component';
@@ -23,6 +29,10 @@ describe('WorklistTaskCreateComponent', () => {
     let mockNotificationService: Partial<ObNotificationService>;
     let mockRouter: Partial<Router>;
     let mockEiamAssignmentService: Partial<EiamAssignmentService>;
+    let mockGeneralElectionCommitteesService: Partial<GeneralElectionCommitteesService>;
+    let mockHttpApiInterceptorEvents: Partial<ObHttpApiInterceptorEvents>;
+    let mockAuthService: Partial<AuthService>;
+    let mockDialog: Partial<MatDialog>;
 
     beforeEach(async () => {
         const langChangeSubject = new Subject<LangChangeEvent>();
@@ -31,6 +41,11 @@ describe('WorklistTaskCreateComponent', () => {
             getCurrentLang: jest.fn(() => 'en'),
             onLangChange: langChangeSubject,
             get: jest.fn(),
+            instant: jest.fn((key: string) => key),
+        };
+
+        mockAuthService = {
+            isAdmin$: new BehaviorSubject(true),
         };
 
         mockMasterDataService = {
@@ -46,6 +61,10 @@ describe('WorklistTaskCreateComponent', () => {
             error: jest.fn(),
         };
 
+        mockHttpApiInterceptorEvents = {
+            deactivateNotificationOnNextAPICalls: jest.fn(),
+        };
+
         mockRouter = {
             navigate: jest.fn().mockResolvedValue(true),
         };
@@ -54,10 +73,26 @@ describe('WorklistTaskCreateComponent', () => {
             getAvailableEiamAssignments: jest.fn().mockReturnValue(of([])),
         };
 
+        const dialogAfterClosedSubject = new Subject<boolean>();
+        mockDialog = {
+            open: jest.fn().mockReturnValue({
+                afterClosed: jest.fn().mockReturnValue(dialogAfterClosedSubject.asObservable()),
+            } as Partial<MatDialogRef<ConfirmDialogComponent>>),
+        };
+
+        const committeeList: GeneralElectionCommitteeList[] = [
+            {id: 'id1', description: 'desc1'} as GeneralElectionCommitteeList,
+            {id: 'id2', description: 'desc2'} as GeneralElectionCommitteeList,
+        ];
+
+        mockGeneralElectionCommitteesService = {
+            getUnfinishedGeneralElectionCommitteeList: jest.fn().mockReturnValue(of(committeeList)),
+        };
+
         const configsServiceMock = {
             frontendConfig: {
                 entityIds: {
-                    worklistTaskType: {generalElectionStartId: ''},
+                    worklistTaskType: {generalElectionStartId: '', generalElectionEndId: ''},
                 },
             },
         } as Partial<ConfigsService>;
@@ -65,6 +100,7 @@ describe('WorklistTaskCreateComponent', () => {
         await TestBed.configureTestingModule({
             imports: [WorklistTaskCreateComponent, MockPipe(TranslatePipe), MockDirective(ObUnsavedChangesDirective)],
             providers: [
+                FormBuilder,
                 {provide: MasterDataService, useValue: mockMasterDataService},
                 {provide: WorklistService, useValue: mockWorklistService},
                 {provide: ObNotificationService, useValue: mockNotificationService},
@@ -73,6 +109,10 @@ describe('WorklistTaskCreateComponent', () => {
                 {provide: ConfigsService, useValue: configsServiceMock},
                 {provide: Router, useValue: mockRouter},
                 {provide: EiamAssignmentService, useValue: mockEiamAssignmentService},
+                {provide: AuthService, useValue: mockAuthService},
+                {provide: GeneralElectionCommitteesService, useValue: mockGeneralElectionCommitteesService},
+                {provide: ObHttpApiInterceptorEvents, useValue: mockHttpApiInterceptorEvents},
+                {provide: MatDialog, useValue: mockDialog},
                 provideHttpClient(),
             ],
         }).compileComponents();
