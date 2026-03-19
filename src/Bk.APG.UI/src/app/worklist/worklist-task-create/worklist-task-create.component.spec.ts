@@ -2,20 +2,17 @@
 import {provideHttpClient} from '@angular/common/http';
 import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
-import {MatButtonModule} from '@angular/material/button';
+import {FormBuilder} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatTableModule} from '@angular/material/table';
 import {Router} from '@angular/router';
+import {GeneralElectionCommitteeList} from '@api/GeneralElectionCommitteeList';
 import {WorklistTaskCreate} from '@api/WorklistTaskCreate';
 import {LangChangeEvent, TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObHttpApiInterceptorEvents, ObNotificationService, ObUnsavedChangesDirective} from '@oblique/oblique';
 import {ConfirmDialogComponent} from '@shared/confirm-dialog/confirm-dialog.component';
 import {MasterDataService} from '@shared/master-data.service';
 import {EiamAssignmentService} from '@shared/services/eiam-assignment.service';
-import {MockDirective, MockModule, MockPipe} from 'ng-mocks';
+import {MockDirective, MockPipe} from 'ng-mocks';
 import {BehaviorSubject, of, Subject, throwError} from 'rxjs';
 import {AuthService} from '../../auth/auth.service';
 import {ConfigsService} from '../../configs.service';
@@ -24,7 +21,7 @@ import {GeneralElectionService} from '../../general-election/general-election.se
 import {WorklistService} from '../worklist.service';
 import {WorklistTaskCreateComponent} from './worklist-task-create.component';
 
-xdescribe('WorklistTaskCreateComponent', () => {
+describe('WorklistTaskCreateComponent', () => {
     let component: WorklistTaskCreateComponent;
     let fixture: ComponentFixture<WorklistTaskCreateComponent>;
     let mockMasterDataService: Partial<MasterDataService>;
@@ -83,8 +80,13 @@ xdescribe('WorklistTaskCreateComponent', () => {
             } as Partial<MatDialogRef<ConfirmDialogComponent>>),
         };
 
+        const committeeList: GeneralElectionCommitteeList[] = [
+            {id: 'id1', description: 'desc1'} as GeneralElectionCommitteeList,
+            {id: 'id2', description: 'desc2'} as GeneralElectionCommitteeList,
+        ];
+
         mockGeneralElectionCommitteesService = {
-            getUnfinishedGeneralElectionCommitteeList: jest.fn().mockReturnValue(of([])),
+            getUnfinishedGeneralElectionCommitteeList: jest.fn().mockReturnValue(of(committeeList)),
         };
 
         const configsServiceMock = {
@@ -96,16 +98,7 @@ xdescribe('WorklistTaskCreateComponent', () => {
         } as Partial<ConfigsService>;
 
         await TestBed.configureTestingModule({
-            imports: [
-                WorklistTaskCreateComponent,
-                MockPipe(TranslatePipe),
-                MockModule(ReactiveFormsModule),
-                MockModule(MatFormFieldModule),
-                MockModule(MatTableModule),
-                MockModule(MatInputModule),
-                MockModule(MatButtonModule),
-                MockDirective(ObUnsavedChangesDirective),
-            ],
+            imports: [WorklistTaskCreateComponent, MockPipe(TranslatePipe), MockDirective(ObUnsavedChangesDirective)],
             providers: [
                 FormBuilder,
                 {provide: MasterDataService, useValue: mockMasterDataService},
