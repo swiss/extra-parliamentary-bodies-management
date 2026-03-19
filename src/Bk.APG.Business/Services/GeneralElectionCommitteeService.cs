@@ -141,22 +141,29 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var wasGeneralElectionStartedForCommittee = candidateListTasks.Count != 0;
 
         var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id;
+        var isCandidateListValidatedOrReadyForFederalCouncil = generalElectionCommittee.CandidateListStateId == CandidateListState.Validated
+            || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded
+            || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
         var isFederalCouncilProposalForwarded = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded;
-        var canValidate = currentEiamAssignment.Role is Role.Department or Role.Admin;
+
         var isFederalCouncilProposalFinalized = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
+        var isReadyForProposalForCurrentRole = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded &&
+            generalElectionCommitteeTasks.FirstOrDefault(y => y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && y.AssignedToId == currentEiamAssignment.Id && y.WorklistTaskStateId == WorklistTaskState.Completed) is not null;
+        var canValidate = (currentEiamAssignment.Role == Role.Department && !isReadyForProposalForCurrentRole && !isFederalCouncilProposalFinalized) || currentEiamAssignment.Role == Role.Admin;
         var canForwardReadyForProposal = activeReadyForProposalTask?.AssignedToId == currentEiamAssignment.Id;
         var canFinalizeReadyForProposal = currentEiamAssignment.Role == Role.Admin && !isFederalCouncilProposalFinalized && isFederalCouncilProposalForwarded;
 
         dto.AssignedTo = activeCandidateListTask?.AssignedTo!.GetText();
         dto.WasGeneralElectionStartedForCommittee = wasGeneralElectionStartedForCommittee;
-        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && !isFederalCouncilProposalForwarded;
+        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && !isCandidateListValidatedOrReadyForFederalCouncil;
         dto.CanValidateCandidateList = wasGeneralElectionStartedForCommittee && canValidate;
         dto.CanForwardCandidateList = wasGeneralElectionStartedForCommittee && canForward;
-        dto.IsCandidateListCompleted = isFederalCouncilProposalForwarded;
+        dto.IsCandidateListValidated = isCandidateListValidatedOrReadyForFederalCouncil;
         dto.ReadyForProposalAssignedTo = activeReadyForProposalTask?.AssignedTo!.GetText();
         dto.CanForwardReadyForProposal = canForwardReadyForProposal;
         dto.CanFinalizeReadyForProposal = canFinalizeReadyForProposal;
-        dto.IsReadyForProposal = isFederalCouncilProposalFinalized;
+        dto.IsReadyForProposalForCurrentRole = isReadyForProposalForCurrentRole;
+        dto.IsReadyForProposalFinalized = isFederalCouncilProposalFinalized;
 
         return dto;
     }
