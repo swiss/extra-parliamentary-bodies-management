@@ -302,6 +302,7 @@ public class GeneralElectionService : IGeneralElectionService
         if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
         {
             nextTermOfOffice.PlannedPublicationDate = worklistTaskCreateDto.DueDate;
+            nextTermOfOffice.IsGeneralElection = false;
             await _termOfOfficeDateService.Update(nextTermOfOffice);
         }
 
