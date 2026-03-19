@@ -84,6 +84,8 @@ public class MembershipService : IMembershipService
 
         var committee = await _committeeRepository.GetById(membershipWithPerson.CommitteeId);
 
+        // TODO: Code smell – MembershipService is handling GEW workflow logic.
+        // Extract GEW-related behavior into an application/orchestrator service.
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(membershipWithPerson.CommitteeId))
         {
             if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
@@ -500,6 +502,8 @@ public class MembershipService : IMembershipService
             throw new AuthorizationException("Not permitted to edit the start date of an active membership with this role");
         }
 
+        var wasMetadataChanged = HasMetadataChanged(existingEntry, updateDto);
+
         existingEntry.BeginDate = updateDto.BeginDate;
         existingEntry.PersonId = updateDto.PersonId;
         existingEntry.MaximumEmploymentLevel = updateDto.MaximumEmploymentLevel;
@@ -522,17 +526,21 @@ public class MembershipService : IMembershipService
         await _membershipRepository.CommitChanges();
         _logger.LogInformation("Updated membership with id {MembershipId}", id);
 
+        // TODO: Code smell – MembershipService is handling GEW workflow logic.
+        // Extract GEW-related behavior into an application/orchestrator service.
         if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(existingEntry.CommitteeId))
         {
             if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
                 await _generalElectionCommitteeService.InvalidateMembershipCandidateList(existingEntry.CommitteeId);
             }
-            if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
+
+            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate, wasMetadataChanged);
+
+            if (wasMetadataChanged && existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
             {
                 await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(existingEntry.CommitteeId);
             }
-            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate);
 
             _logger.LogInformation("Mirrored membership changes for general election for membership id {MembershipId}", existingEntry.Id);
         }
@@ -553,6 +561,8 @@ public class MembershipService : IMembershipService
             throw new AuthorizationException($"Not permitted to delete membership id {id} with this role");
         }
 
+        // TODO: Code smell – MembershipService is handling GEW workflow logic.
+        // Extract GEW-related behavior into an application/orchestrator service.
         if (isGeneralElectionRunning && membership.IsActive && await IsMembershipForGeneralElectionCommittee(membership.CommitteeId))
         {
             if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
@@ -560,16 +570,24 @@ public class MembershipService : IMembershipService
                 await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membership.CommitteeId);
             }
             if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
-
             {
                 await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(membership.CommitteeId);
             }
             // when an active membership is deleted, a copied candidate is deleted as well!
-            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(membership, true);
+            await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(membership, true, false);
         }
 
         _membershipRepository.Delete(membership);
         await _membershipRepository.CommitChanges();
+    }
+
+    private static bool HasMetadataChanged(Membership existing, MembershipUpdateDto dto)
+    {
+        return existing.MaximumEmploymentLevel != dto.MaximumEmploymentLevel ||
+               existing.EndDate != dto.EndDate ||
+               existing.ElectionTypeId != dto.ElectionTypeId ||
+               existing.FunctionId != dto.FunctionId ||
+               existing.InCorrelationWithFederalDuty != dto.InCorrelationWithFederalDuty;
     }
 
     private async Task<bool> CanEditMembership(Membership membership)
