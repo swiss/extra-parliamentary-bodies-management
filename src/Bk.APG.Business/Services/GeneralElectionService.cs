@@ -157,9 +157,6 @@ public class GeneralElectionService : IGeneralElectionService
             var generalElectionWorklistTask = WorklistTaskMapper.CreateGeneralElectionMainWorklistTaskDto(termOfOfficeDateId, dueDate, description);
             var parentTask = await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionWorklistTask);
 
-            var generalElectionEndWorklistTask = WorklistTaskMapper.CreateGeneralElectionEndWorklistTaskDto(parentTask.Id, termOfOfficeDateId, dueDate, description);
-            await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionEndWorklistTask);
-
             var departments = await _masterDataRepository.GetDepartments();
             var generalMeasureTaskDueDate = DateOnly.FromDateTime(DateTime.Now.AddMonths(3));
 
@@ -301,9 +298,20 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
         {
+            // we immediately end the GE when the task is executed... 
             nextTermOfOffice.PlannedPublicationDate = worklistTaskCreateDto.DueDate;
             nextTermOfOffice.IsGeneralElection = false;
             await _termOfOfficeDateService.Update(nextTermOfOffice);
+
+            // there is only one of this type..
+            var geStartTasks = await _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart);
+            var parentTask = geStartTasks.FirstOrDefault();
+
+            if (parentTask != null)
+            {
+                var generalElectionEndWorklistTask = WorklistTaskMapper.CreateGeneralElectionEndWorklistTaskDto(parentTask.Id, nextTermOfOffice.Id, worklistTaskCreateDto.DueDate, worklistTaskCreateDto.Description);
+                await _worklistTaskService.CreateWorklistTaskByAdmin(generalElectionEndWorklistTask);
+            }
         }
 
         return true;
