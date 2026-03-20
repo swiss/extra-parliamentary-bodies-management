@@ -93,7 +93,7 @@ public static class WorklistTaskMapper
         };
     }
 
-    public static WorklistTaskCreateDto CreateGeneralElectionMainWorklistTaskDto(Guid termOfOfficeDateId, DateOnly dueDate, string description)
+    public static WorklistTaskCreateDto CreateGeneralElectionMainWorklistTaskDto(Guid termOfOfficeDateId, DateOnly dueDate, string? description)
     {
         return new WorklistTaskCreateDto
         {
@@ -107,7 +107,7 @@ public static class WorklistTaskMapper
         };
     }
 
-    public static WorklistTaskCreateDto CreateGeneralElectionEndWorklistTaskDto(Guid parentId, Guid termOfOfficeDateId, DateOnly dueDate, string description)
+    public static WorklistTaskCreateDto CreateGeneralElectionEndWorklistTaskDto(Guid parentId, Guid termOfOfficeDateId, DateOnly dueDate, string? description)
     {
         return new WorklistTaskCreateDto
         {
