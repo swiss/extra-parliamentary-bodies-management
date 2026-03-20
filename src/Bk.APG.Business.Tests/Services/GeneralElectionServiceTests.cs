@@ -213,7 +213,7 @@ public class GeneralElectionServiceTests
         await _generalElectionCommitteeRepository.Received(1).DeleteAll();
         await _generalElectionCommitteeRepository.Received(2).Create(Arg.Any<GeneralElectionCommittee>());
         await _membershipCandidateRepository.Received(4).Create(Arg.Any<MembershipCandidate>());
-        await _worklistTaskService.Received(2 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
+        await _worklistTaskService.Received(1 + (departments.Count * 3)).CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
         await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
             x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck && x.WorklistTaskStateId == WorklistTaskState.Active));
         await _worklistTaskService.Received(departments.Count).CreateWorklistTaskByAdmin(Arg.Is<WorklistTaskCreateDto>(
@@ -236,9 +236,13 @@ public class GeneralElectionServiceTests
         var nextTermOfOfficeDate = new TermOfOfficeDateBuilder().Build();
         nextTermOfOfficeDate.IsGeneralElection = true;
 
+        var startGeTask = new WorklistTaskBuilder().Build();
+        var taskList = new List<WorklistTask> { startGeTask };
+
         _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
         _termOfOfficeDateService.GetNextTermOfOfficeDate().Returns(nextTermOfOfficeDate);
         _worklistTaskService.CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>()).Returns(new WorklistTaskBuilder().Build());
+        _worklistTaskRepository.GetByWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart).Returns(taskList);
 
         var _worklistTask = new WorklistTaskCreateDto() { DueDate = DateOnly.FromDateTime(DateTime.Today), WorklistTaskTypeId = Guid.NewGuid(), WorklistTaskStateId = Guid.NewGuid() };
 
@@ -247,6 +251,8 @@ public class GeneralElectionServiceTests
         await _termOfOfficeDateService.Received(1).GetNextTermOfOfficeDate();
 
         await _termOfOfficeDateService.Received(1).Update(Arg.Any<TermOfOfficeDate>());
+
+        await _worklistTaskService.Received().CreateWorklistTaskByAdmin(Arg.Any<WorklistTaskCreateDto>());
     }
 
     [Test]
