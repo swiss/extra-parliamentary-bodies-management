@@ -465,4 +465,7 @@
     <data name="GeneralElection_MissingDataProtectionOfficer_TaskDescription" xml:space="preserve">
         <value>FR_Bitte Datenschutzberater/-in nachtragen.</value>
     </data>
+    <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
+        <value>FR_APG_Serienbrief_Gesamt</value>
+    </data>
 </root>
