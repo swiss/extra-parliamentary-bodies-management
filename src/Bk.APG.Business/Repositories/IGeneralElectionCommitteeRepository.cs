@@ -10,7 +10,8 @@ public interface IGeneralElectionCommitteeRepository
     Task<GeneralElectionCommittee> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null);
     Task<PagedResult<GeneralElectionCommittee>> GetAll(PagingParameters paging, GeneralElectionCommitteeFilterParameters filter, string? sort, SortDirection? sortDirection);
     Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId);
-    Task<IEnumerable<GeneralElectionCommittee>> GetAllForExport(GeneralElectionCommitteeExportFilterParameters filterDto);
+    Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetterPreview(GeneralElectionCommitteeExportFilterParameters filterDto, List<Guid> electionTypesIds);
+    Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds);
     Task<IEnumerable<GeneralElectionCommittee>> GetAll();
     Task CommitChanges();
     Task<GeneralElectionCommittee> Create(GeneralElectionCommittee committee);

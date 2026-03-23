@@ -44,6 +44,9 @@
       <None Update="Templates\ElectoralList_FederalCouncil.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\FormLetterGeneralElection.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="Templates\Report_Parliament_French.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
