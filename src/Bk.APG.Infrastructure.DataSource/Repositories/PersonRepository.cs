@@ -184,6 +184,7 @@ public class PersonRepository : IPersonRepository
         return await _dataContext.Persons
             .Include(p => p.Memberships.Where(m => m.Committee!.CommitteeTypeId != CommitteeType.CrossBorderFederalAgenciesCommitteeGuid))
             .Include(p => p.Occupations)
+            .Include(p => p.Gender)
             .Include(p => p.Office)
                 .ThenInclude(o => o!.Department)
             .Where(p => p.Memberships.Any(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && m.EndDate > DateOnly.FromDateTime(DateTime.Today)))
