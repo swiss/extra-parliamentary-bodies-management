@@ -17,7 +17,7 @@
 -   Set flag and copy (mirror) memberships when memberships change after candidate list is ready for proposal [BKDO-2861](https://bkdev.atlassian.net/browse/BKDO-2861)
 -   Introduce ending of the GeneralElection [BKDO-1847](https://bkdev.atlassian.net/browse/BKDO-1847)
 -   Create new committee when GeneralElection is running [BKDO-972](https://bkdev.atlassian.net/browse/BKDO-972)
--   Export male and female occupations text [BKDO-3290](https://bkdev.atlassian.net/browse/BKDO-3290)
+-   Export male and female occupation and function text [BKDO-3290](https://bkdev.atlassian.net/browse/BKDO-3290)
 
 ## 1.1.1
 
