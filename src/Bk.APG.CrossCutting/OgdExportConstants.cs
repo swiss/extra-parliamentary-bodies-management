@@ -38,6 +38,8 @@ public static class OgdExportConstants
     public const string SchemaWebpage = "schema:webpage";
     public const string SchemaInLanguage = "schema:inLanguage";
     public const string SchemaPosition = "schema:position";
+    public const string SchemaGender = "schema:gender";
+    public const string SchemaOccupation = "schema:occupation";
 
     public const string SchemaAnyUri = "http://www.w3.org/2001/XMLSchema#anyURI";
 
