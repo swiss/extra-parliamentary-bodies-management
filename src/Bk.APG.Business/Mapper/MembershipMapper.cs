@@ -147,6 +147,13 @@ public static class MembershipMapper
         {
             dataRow.KeyDimensionLinks.Add(
                 new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasFunction", Uri = $"function:{membership.Function.OgdId}" });
+
+            dataRow.Values.AddRange([
+                new DimensionValue { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasFunction", Object = membership.Person.IsFemale ? membership.Function.TextFemaleDe : membership.Function.TextDe, LanguageTag = OgdExportConstants.LanguageDe },
+                new DimensionValue { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasFunction", Object = membership.Person.IsFemale ? membership.Function.TextFemaleFr : membership.Function.TextFr, LanguageTag = OgdExportConstants.LanguageFr },
+                new DimensionValue { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasFunction", Object = membership.Person.IsFemale ? membership.Function.TextFemaleIt : membership.Function.TextIt, LanguageTag = OgdExportConstants.LanguageIt },
+                new DimensionValue { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasFunction", Object = membership.Person.IsFemale ? membership.Function.TextFemaleRm : membership.Function.TextRm, LanguageTag = OgdExportConstants.LanguageRm }
+            ]);
         }
 
         if (membership.MembershipAddition is not null)
