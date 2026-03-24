@@ -288,6 +288,8 @@ public static class PersonMapper
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaBirthDate, new Literal(person.BirthYear.ToString()))
                 ]);
 
+        dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.SchemaGender, OgdExportConstants.CreateUriLinkForRegisterLdAdminCh(person.IsFemale ? Gender.Female : Gender.Male)));
+
         if (!string.IsNullOrWhiteSpace(person.Title))
         {
             dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaHonorificPrefix, new Literal(person.Title, OgdExportConstants.LanguageDe)));
@@ -296,6 +298,45 @@ public static class PersonMapper
         foreach (var occupation in person.Occupations)
         {
             dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.PersonHasOccupation, $"occupation:{occupation.OgdId}"));
+
+            if (person.IsFemale)
+            {
+                if (!string.IsNullOrWhiteSpace(occupation.TextFemaleDe))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextFemaleDe, OgdExportConstants.LanguageDe)));
+                }
+                if (!string.IsNullOrWhiteSpace(occupation.TextFemaleFr))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextFemaleFr, OgdExportConstants.LanguageFr)));
+                }
+                if (!string.IsNullOrWhiteSpace(occupation.TextFemaleIt))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextFemaleIt, OgdExportConstants.LanguageIt)));
+                }
+                if (!string.IsNullOrWhiteSpace(occupation.TextFemaleRm))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextFemaleRm, OgdExportConstants.LanguageRm)));
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrWhiteSpace(occupation.TextDe))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextDe, OgdExportConstants.LanguageDe)));
+                }
+                if (!string.IsNullOrWhiteSpace(occupation.TextFr))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextFr, OgdExportConstants.LanguageFr)));
+                }
+                if (!string.IsNullOrWhiteSpace(occupation.TextIt))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextIt, OgdExportConstants.LanguageIt)));
+                }
+                if (!string.IsNullOrWhiteSpace(occupation.TextRm))
+                {
+                    dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaOccupation, new Literal(occupation.TextRm, OgdExportConstants.LanguageRm)));
+                }
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(person.Employer))
