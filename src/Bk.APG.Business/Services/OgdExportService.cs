@@ -550,14 +550,14 @@ public class OgdExportService : IOgdExportService
     private async Task<IEnumerable<Triple>> CreateFunctionDimension(Graph graph)
     {
         var functions = await _masterDataRepository.GetFunctions();
-        var functionDimensionItems = functions.Select(MasterDataMapper.ToDimensionItem);
+        var functionDimensionItems = functions.Select(FunctionMapper.ToDimensionItem);
 
         var functionTriples =
             _dimensionService.CreateTriples(
                 functionDimensionItems,
                 graph,
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceFunction}",
-                [new Literal("Funktionen", "de")]);
+                [new Literal("Funktionen", "de"), new Literal("Functions", "fr"), new Literal("Funzioni", "it")]);
 
         return functionTriples;
     }
