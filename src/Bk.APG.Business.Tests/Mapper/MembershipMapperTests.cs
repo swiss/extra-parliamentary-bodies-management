@@ -281,11 +281,8 @@ internal class MembershipMapperTests
             Assert.That(result.ValidFrom, Is.EqualTo(new DateTime(2000, 1, 1)));
             Assert.That(result.ValidTo, Is.EqualTo(new DateTime(2001, 1, 1)));
             Assert.That(result.KeyDimensionLinks, Has.Count.EqualTo(4));
-            Assert.That(result.Values, Has.Count.EqualTo(4));
-        }
+            Assert.That(result.Values, Has.Count.EqualTo(8));
 
-        using (Assert.EnterMultipleScope())
-        {
             Assert.That(result.KeyDimensionLinks[0].Predicate, Is.EqualTo("membership:hasPerson"));
             Assert.That(result.KeyDimensionLinks[0].Uri, Is.EqualTo($"person:{personOgdId}"));
 
@@ -297,25 +294,38 @@ internal class MembershipMapperTests
 
             Assert.That(result.KeyDimensionLinks[3].Predicate, Is.EqualTo("membership:hasFunction"));
             Assert.That(result.KeyDimensionLinks[3].Uri, Is.EqualTo($"function:{membership.Function!.OgdId}"));
-        }
 
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.Values[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[0].Object, Is.EqualTo("de: desc de"));
+            Assert.That(result.Values[0].Predicate, Is.EqualTo("membership:hasFunction"));
+            Assert.That(result.Values[0].Object, Is.EqualTo(membership.Function.TextFemaleDe));
             Assert.That(result.Values[0].LanguageTag, Is.EqualTo("de"));
 
-            Assert.That(result.Values[1].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[1].Object, Is.EqualTo("fr: desc fr"));
+            Assert.That(result.Values[1].Predicate, Is.EqualTo("membership:hasFunction"));
+            Assert.That(result.Values[1].Object, Is.EqualTo(membership.Function.TextFemaleFr));
             Assert.That(result.Values[1].LanguageTag, Is.EqualTo("fr"));
 
-            Assert.That(result.Values[2].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[2].Object, Is.EqualTo("it: desc it"));
+            Assert.That(result.Values[2].Predicate, Is.EqualTo("membership:hasFunction"));
+            Assert.That(result.Values[2].Object, Is.EqualTo(membership.Function.TextFemaleIt));
             Assert.That(result.Values[2].LanguageTag, Is.EqualTo("it"));
 
-            Assert.That(result.Values[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[3].Object, Is.EqualTo("rm: desc rm"));
+            Assert.That(result.Values[3].Predicate, Is.EqualTo("membership:hasFunction"));
+            Assert.That(result.Values[3].Object, Is.EqualTo(membership.Function.TextFemaleRm));
             Assert.That(result.Values[3].LanguageTag, Is.EqualTo("rm"));
+
+            Assert.That(result.Values[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
+            Assert.That(result.Values[4].Object, Is.EqualTo("de: desc de"));
+            Assert.That(result.Values[4].LanguageTag, Is.EqualTo("de"));
+
+            Assert.That(result.Values[5].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
+            Assert.That(result.Values[5].Object, Is.EqualTo("fr: desc fr"));
+            Assert.That(result.Values[5].LanguageTag, Is.EqualTo("fr"));
+
+            Assert.That(result.Values[6].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
+            Assert.That(result.Values[6].Object, Is.EqualTo("it: desc it"));
+            Assert.That(result.Values[6].LanguageTag, Is.EqualTo("it"));
+
+            Assert.That(result.Values[7].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
+            Assert.That(result.Values[7].Object, Is.EqualTo("rm: desc rm"));
+            Assert.That(result.Values[7].LanguageTag, Is.EqualTo("rm"));
         }
     }
 }
