@@ -565,14 +565,14 @@ public class OgdExportService : IOgdExportService
     private async Task<IEnumerable<Triple>> CreateOccupationDimension(Graph graph)
     {
         var occupations = await _masterDataRepository.GetOccupations();
-        var occupationDimensionItems = occupations.Select(MasterDataMapper.ToDimensionItem);
+        var occupationDimensionItems = occupations.Select(OccupationMapper.ToDimensionItem);
 
         var occupationTriples =
             _dimensionService.CreateTriples(
                 occupationDimensionItems,
                 graph,
                 $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceOccupation}",
-                [new Literal("Berufe", "de")]);
+                [new Literal("Berufe", "de"), new Literal("Professions", "fr"), new Literal("Professione", "it")]);
 
         return occupationTriples;
     }

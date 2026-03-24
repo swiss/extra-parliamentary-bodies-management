@@ -379,6 +379,7 @@ internal class PersonMapperTests
                 .WithTitle("Dr.")
                 .WithOccupations(occupations)
                 .WithEmployer("employer")
+                .WithGender(new GenderBuilder().WithUri(Gender.Female).Build())
                 .Build();
 
         var result = PersonMapper.ToDimensionItem(person);
@@ -389,18 +390,15 @@ internal class PersonMapperTests
         {
             Assert.That(result.Key, Is.EqualTo(personOgdId));
             Assert.That(result.Name.Text, Is.EqualTo($"{person.Surname}, {person.GivenName} ({person.BirthYear})"));
-            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(5));
-            Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(2));
-        }
+            Assert.That(result.AdditionalLiteralProperties, Has.Count.EqualTo(13));
+            Assert.That(result.AdditionalUriProperties, Has.Count.EqualTo(3));
 
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(result.AdditionalUriProperties[0].Predicate, Is.EqualTo(OgdExportConstants.PersonHasOccupation));
+            Assert.That(result.AdditionalUriProperties[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaGender));
+            Assert.That(result.AdditionalUriProperties[0].Object, Is.EqualTo("rld:i14y/concept/sex/2"));
+
             Assert.That(result.AdditionalUriProperties[1].Predicate, Is.EqualTo(OgdExportConstants.PersonHasOccupation));
-        }
+            Assert.That(result.AdditionalUriProperties[2].Predicate, Is.EqualTo(OgdExportConstants.PersonHasOccupation));
 
-        using (Assert.EnterMultipleScope())
-        {
             Assert.That(result.AdditionalLiteralProperties[0].Predicate, Is.EqualTo(OgdExportConstants.SchemaGivenName));
             Assert.That(result.AdditionalLiteralProperties[0].Object.Text, Is.EqualTo("givenname"));
 
@@ -413,8 +411,32 @@ internal class PersonMapperTests
             Assert.That(result.AdditionalLiteralProperties[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaHonorificPrefix));
             Assert.That(result.AdditionalLiteralProperties[3].Object.Text, Is.EqualTo("Dr."));
 
-            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaWorksFor));
-            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo("employer"));
+            Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(occupation1.TextFemaleDe));
+
+            Assert.That(result.AdditionalLiteralProperties[5].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[5].Object.Text, Is.EqualTo(occupation1.TextFemaleFr));
+
+            Assert.That(result.AdditionalLiteralProperties[6].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[6].Object.Text, Is.EqualTo(occupation1.TextFemaleIt));
+
+            Assert.That(result.AdditionalLiteralProperties[7].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[7].Object.Text, Is.EqualTo(occupation1.TextFemaleRm));
+
+            Assert.That(result.AdditionalLiteralProperties[8].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[8].Object.Text, Is.EqualTo(occupation2.TextFemaleDe));
+
+            Assert.That(result.AdditionalLiteralProperties[9].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[9].Object.Text, Is.EqualTo(occupation2.TextFemaleFr));
+
+            Assert.That(result.AdditionalLiteralProperties[10].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[10].Object.Text, Is.EqualTo(occupation2.TextFemaleIt));
+
+            Assert.That(result.AdditionalLiteralProperties[11].Predicate, Is.EqualTo(OgdExportConstants.SchemaOccupation));
+            Assert.That(result.AdditionalLiteralProperties[11].Object.Text, Is.EqualTo(occupation2.TextFemaleRm));
+
+            Assert.That(result.AdditionalLiteralProperties[12].Predicate, Is.EqualTo(OgdExportConstants.SchemaWorksFor));
+            Assert.That(result.AdditionalLiteralProperties[12].Object.Text, Is.EqualTo("employer"));
         }
     }
 }
