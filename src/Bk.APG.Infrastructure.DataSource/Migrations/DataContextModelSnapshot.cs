@@ -4239,31 +4239,38 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
                         .HasColumnName("created_by");
 
                     b.Property<string>("DescriptionDe")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
                         .HasColumnName("description_de");
 
                     b.Property<string>("DescriptionFr")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
                         .HasColumnName("description_fr");
 
                     b.Property<string>("DescriptionIt")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
                         .HasColumnName("description_it");
 
                     b.Property<string>("DescriptionRm")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
                         .HasColumnName("description_rm");
 
                     b.Property<bool>("IsDeleted")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
+                        .HasDefaultValue(false)
                         .HasColumnName("is_deleted");
 
                     b.Property<DateTime>("Modified")
@@ -4272,48 +4279,67 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
 
                     b.Property<string>("ModifiedBy")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
                         .HasColumnName("modified_by");
 
                     b.Property<int>("OgdId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasColumnName("ogd_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("OgdId"));
 
                     b.Property<int>("OldId")
                         .HasColumnType("integer")
                         .HasColumnName("old_id");
 
                     b.Property<int>("Sort")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
+                        .HasDefaultValue(0)
                         .HasColumnName("sort");
 
                     b.Property<string>("TextDe")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
                         .HasColumnName("text_de");
 
                     b.Property<string>("TextFr")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
                         .HasColumnName("text_fr");
 
                     b.Property<string>("TextIt")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
                         .HasColumnName("text_it");
 
                     b.Property<string>("TextRm")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
                         .HasColumnName("text_rm");
 
                     b.Property<string>("Uri")
                         .IsRequired()
-                        .HasColumnType("text")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
                         .HasColumnName("uri");
 
                     b.HasKey("Id")
                         .HasName("pk_membership_additions");
+
+                    b.HasIndex("OgdId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_membership_additions_ogd_id");
+
+                    b.HasIndex("Uri")
+                        .IsUnique()
+                        .HasDatabaseName("ix_membership_additions_uri");
 
                     b.ToTable("membership_additions", "data");
                 });
