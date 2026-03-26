@@ -18,6 +18,7 @@
 -   Introduce ending of the GeneralElection [BKDO-1847](https://bkdev.atlassian.net/browse/BKDO-1847)
 -   Create new committee when GeneralElection is running [BKDO-972](https://bkdev.atlassian.net/browse/BKDO-972)
 -   Export male and female occupation and function text [BKDO-3290](https://bkdev.atlassian.net/browse/BKDO-3290)
+-   Cleanup and extend membership additions master data [BKDO-3106](https://bkdev.atlassian.net/browse/BKDO-3106)
 
 ## 1.1.1
 
