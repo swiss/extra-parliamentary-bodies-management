@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -63,7 +64,7 @@ internal class ElectoralListServiceTests
             Assert.That(fileName, Is.Not.Null);
             Assert.That(content, Is.EqualTo(documentStream));
         });
-        Assert.That(fileName, Does.Contain(evaluationDate.ToString("yyyyMMdd")));
+        Assert.That(fileName, Does.Contain(evaluationDate.ToString("yyyyMMdd", CultureInfo.InvariantCulture)));
         Assert.That(fileName, Does.Contain(BusinessTexts.ElectoralList_ElectoralList));
         Assert.That(fileName, Does.Contain(BusinessTexts.ResourceManager.GetString(listType)));
         Assert.That(fileName, Does.EndWith(".docx"));

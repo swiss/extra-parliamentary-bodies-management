@@ -1,3 +1,4 @@
+using AngleSharp.Dom;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Extensions;
 using Bk.APG.Business.Mapper;
@@ -72,6 +73,8 @@ public class MembershipService : IMembershipService
 
     public async Task<MembershipDetailDto> CreateMembership(MembershipCreateDto createDto)
     {
+        ArgumentNullException.ThrowIfNull(createDto);
+
         _logger.LogInformation("Create membership for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
 
         var isGeneralElectionRunning = await _termOfOfficeDateService.CheckForRunningGeneralElection();
@@ -475,6 +478,8 @@ public class MembershipService : IMembershipService
 
     public async Task<MembershipUpdateDto> UpdateMembership(Guid id, MembershipUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update membership with id {MembershipId} started.", id);
 
         var existingEntry = await _membershipRepository.GetByIdForUpdate(id, updateDto.RowVersion);

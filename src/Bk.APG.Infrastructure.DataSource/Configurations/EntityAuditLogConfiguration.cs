@@ -8,6 +8,8 @@ public class EntityAuditLogConfiguration : IEntityTypeConfiguration<EntityAuditL
 {
     public void Configure(EntityTypeBuilder<EntityAuditLog> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.HasKey(e => e.Id);
 
         builder.Property(e => e.Id)

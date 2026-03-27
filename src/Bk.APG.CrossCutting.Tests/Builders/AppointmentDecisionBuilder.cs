@@ -67,6 +67,8 @@ public class AppointmentDecisionBuilder
 
     public AppointmentDecisionBuilder WithCommittee(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         _committeeId = committee.Id;
         _committee = committee;
         return this;
@@ -116,6 +118,8 @@ public class AppointmentDecisionBuilder
 
     public AppointmentDecisionBuilder WithOriginalDocument(DocumentStorage document)
     {
+        ArgumentNullException.ThrowIfNull(document);
+
         _originalDocument = document;
         _originalDocumentId = document.Id;
         return this;
