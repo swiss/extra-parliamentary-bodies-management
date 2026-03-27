@@ -18,6 +18,8 @@ public class UidService : IUidService, IHealthCheck
 
     public UidService(IPublicServices publicService, IMasterDataService masterDataService, IOptions<UidConfiguration> uidConfiguration)
     {
+        ArgumentNullException.ThrowIfNull(uidConfiguration);
+
         _publicService = publicService;
         _masterDataService = masterDataService;
         _uidConfiguration = uidConfiguration.Value;

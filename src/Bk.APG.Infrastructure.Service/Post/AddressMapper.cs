@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Bk.APG.Business.Dtos;
@@ -73,7 +74,7 @@ internal static partial class AddressMapper
 
             if (!string.IsNullOrWhiteSpace(dto.HouseNo))
             {
-                streetString.Append($" {dto.HouseNo}");
+                streetString.Append(CultureInfo.InvariantCulture, $" {dto.HouseNo}");
 
                 if (!string.IsNullOrWhiteSpace(dto.HouseNoAddition))
                 {
@@ -100,7 +101,7 @@ internal static partial class AddressMapper
         CantonDto? canton = null;
         if (!string.IsNullOrWhiteSpace(dto.Canton) && cantons.Any())
         {
-            var found = cantons.FirstOrDefault(item => item.TextDe.Equals(dto.Canton, StringComparison.InvariantCultureIgnoreCase));
+            var found = cantons.FirstOrDefault(item => item.TextDe.Equals(dto.Canton, StringComparison.OrdinalIgnoreCase));
             if (found is not null)
             {
                 canton = CantonMapper.ToCantonDto(found);
@@ -128,7 +129,7 @@ internal static partial class AddressMapper
 
             if (!string.IsNullOrWhiteSpace(dto.HouseNo))
             {
-                streetString.Append($" {dto.HouseNo}");
+                streetString.Append(CultureInfo.InvariantCulture, $" {dto.HouseNo}");
 
                 if (!string.IsNullOrWhiteSpace(dto.HouseNoAddition))
                 {
@@ -155,7 +156,7 @@ internal static partial class AddressMapper
         CantonDto? canton = null;
         if (!string.IsNullOrWhiteSpace(dto.Canton) && cantons.Any())
         {
-            var found = cantons.FirstOrDefault(item => item.TextDe.Equals(dto.Canton, StringComparison.InvariantCultureIgnoreCase));
+            var found = cantons.FirstOrDefault(item => item.TextDe.Equals(dto.Canton, StringComparison.OrdinalIgnoreCase));
             if (found is not null)
             {
                 canton = CantonMapper.ToCantonDto(found);

@@ -11,7 +11,12 @@ public static class CommitteeQueryExtensions
 {
     public static IQueryable<Committee> SortCommittees(this IQueryable<Committee> committees, string sort, SortDirection sortDirection, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(sort);
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
+#pragma warning disable CA1308
         return sort.ToLowerInvariant() switch
+#pragma warning restore CA1308
         {
             "committeeid" => sortDirection == SortDirection.Asc
                 ? committees.OrderBy(c => c.CommitteeNumber)
@@ -75,7 +80,7 @@ public static class CommitteeQueryExtensions
                     || EF.Functions.ILike(y.DescriptionFrench, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionItalian, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionRomansh, $"%{filter}%")
-                    || y.CommitteeNumber.ToString().Contains(filter));
+                    || y.CommitteeNumber.ToString(CultureInfo.InvariantCulture).Contains(filter));
             }
         }
 

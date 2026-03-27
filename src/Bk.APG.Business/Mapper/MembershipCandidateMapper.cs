@@ -7,6 +7,8 @@ public static class MembershipCandidateMapper
 {
     public static MembershipCandidateDetailDto ToMembershipCandidateDetailDto(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         return new MembershipCandidateDetailDto
         {
             Id = membershipCandidate.Id,
@@ -33,6 +35,8 @@ public static class MembershipCandidateMapper
 
     public static MembershipCandidateUpdateDto ToMembershipCandidateUpdateDto(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         return new MembershipCandidateUpdateDto
         {
             Id = membershipCandidate.Id,

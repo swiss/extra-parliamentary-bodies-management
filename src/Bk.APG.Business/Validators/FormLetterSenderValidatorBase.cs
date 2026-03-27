@@ -91,7 +91,10 @@ public abstract class FormLetterSenderValidatorBase<T> : AbstractValidator<T> wh
 
     private void ValidateSignatureFormat(IFormFile signature, ValidationContext<T> context)
     {
+#pragma warning disable CA1308
         var extension = Path.GetExtension(signature.FileName).ToLowerInvariant();
+#pragma warning restore CA1308
+
         if (!_allowedSignatureExtensions.Contains(extension))
         {
             context.AddFailure(

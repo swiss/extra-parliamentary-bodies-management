@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.CrossCutting;
@@ -18,6 +19,8 @@ public class PersonRepository : IPersonRepository
 
     public async Task<PagedResult<Person>> GetAll(PagingParameters paging, PersonFilterParameters? filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var query = _dataContext.Persons
             .Include(item => item.Language)
             .Include(item => item.Office)
@@ -73,6 +76,8 @@ public class PersonRepository : IPersonRepository
 
     public async Task<IEnumerable<Person>> GetByName(string name)
     {
+        ArgumentNullException.ThrowIfNull(name);
+
         var filters = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         var query = GetPersons()
@@ -85,7 +90,7 @@ public class PersonRepository : IPersonRepository
             query = query.Where(y =>
                 EF.Functions.ILike(y.GivenName, likeFilter)
                 || EF.Functions.ILike(y.Surname, likeFilter)
-                || EF.Functions.ILike(y.BirthYear.ToString(), likeFilter));
+                || EF.Functions.ILike(y.BirthYear.ToString(CultureInfo.InvariantCulture), likeFilter));
         }
 
         var persons = await query

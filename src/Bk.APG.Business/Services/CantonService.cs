@@ -23,6 +23,8 @@ public class CantonService : ICantonService
 
     public async Task<Canton> CreateOrUpdate(Canton canton)
     {
+        ArgumentNullException.ThrowIfNull(canton);
+
         var now = DateTime.UtcNow;
 
         var cantonFromDb = await _cantonRepository.GetByUri(canton.Uri);
