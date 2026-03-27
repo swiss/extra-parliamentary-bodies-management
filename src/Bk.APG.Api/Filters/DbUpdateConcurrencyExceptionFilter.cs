@@ -8,6 +8,8 @@ public class DbUpdateConcurrencyExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         if (context.Exception is DbUpdateConcurrencyException)
         {
             context.Result = new ConflictObjectResult(new
