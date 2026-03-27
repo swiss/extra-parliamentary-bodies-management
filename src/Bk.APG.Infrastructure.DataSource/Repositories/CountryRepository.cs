@@ -39,6 +39,9 @@ public class CountryRepository : ICountryRepository
 
     public async Task<Country> Update(Country existing, Country update)
     {
+        ArgumentNullException.ThrowIfNull(existing);
+        ArgumentNullException.ThrowIfNull(update);
+
         existing.Modified = update.Modified;
         existing.ModifiedBy = update.ModifiedBy;
         existing.TextDe = update.TextDe;

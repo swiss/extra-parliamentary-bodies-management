@@ -8,6 +8,8 @@ public static class SalutationMapper
 {
     public static SalutationDto ToSalutationDto(Salutation salutation)
     {
+        ArgumentNullException.ThrowIfNull(salutation);
+
         return new SalutationDto
         {
             Id = salutation.Id,

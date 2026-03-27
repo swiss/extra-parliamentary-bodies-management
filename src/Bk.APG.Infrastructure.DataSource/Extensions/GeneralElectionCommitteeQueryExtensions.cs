@@ -35,6 +35,8 @@ public static class GeneralElectionCommitteeQueryExtensions
 
     public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommittees(this IQueryable<GeneralElectionCommittee> query, GeneralElectionCommitteeFilterParameters filterParameter)
     {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
         if (!string.IsNullOrWhiteSpace(filterParameter.FreeText))
         {
             var filters = filterParameter.FreeText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -152,6 +154,8 @@ public static class GeneralElectionCommitteeQueryExtensions
 
     public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForExport(this IQueryable<GeneralElectionCommittee> query, GeneralElectionCommitteeExportFilterParameters filterParameter)
     {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
         if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
         {
             query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
@@ -187,7 +191,12 @@ public static class GeneralElectionCommitteeQueryExtensions
 
     public static IQueryable<GeneralElectionCommittee> SortGeneralElectionCommittees(this IQueryable<GeneralElectionCommittee> committees, string sort, SortDirection sortDirection, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(sort);
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
+#pragma warning disable CA1308
         return sort.ToLowerInvariant() switch
+#pragma warning restore CA1308
         {
             "description" => committees.SortByProperty(c => c.DescriptionGerman, c => c.DescriptionFrench, c => c.DescriptionItalian, sortDirection, cultureInfo),
             "department" => committees.SortByProperty(c => c.Department!.TextDe, c => c.Department!.TextFr, c => c.Department!.TextIt, sortDirection, cultureInfo),

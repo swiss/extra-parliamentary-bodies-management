@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.Dimension.Model;
@@ -8,6 +9,8 @@ public static class OccupationMapper
 {
     public static DimensionItem ToDimensionItem(Occupation occupation)
     {
+        ArgumentNullException.ThrowIfNull(occupation);
+
         var occupations = new List<AdditionalLiteralProperty>();
 
         if (!string.IsNullOrWhiteSpace(occupation.TextFr))
@@ -45,7 +48,7 @@ public static class OccupationMapper
             occupations.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(occupation.TextFemaleRm, OgdExportConstants.LanguageRm)));
         }
 
-        occupations.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaPosition, new Literal(occupation.Sort.ToString(), new Uri(OgdExportConstants.DataTypeInt))));
+        occupations.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaPosition, new Literal(occupation.Sort.ToString(CultureInfo.InvariantCulture), new Uri(OgdExportConstants.DataTypeInt))));
 
         var dimensionItem =
             new DimensionItem(

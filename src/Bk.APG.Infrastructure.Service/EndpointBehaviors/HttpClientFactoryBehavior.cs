@@ -18,6 +18,8 @@ public class HttpClientFactoryBehavior : IEndpointBehavior
 
     public void AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
     {
+        ArgumentNullException.ThrowIfNull(bindingParameters);
+
         bindingParameters.Add(_messageHandlerFactoryFn);
     }
 
