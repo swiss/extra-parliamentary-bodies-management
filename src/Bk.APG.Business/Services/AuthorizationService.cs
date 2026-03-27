@@ -24,6 +24,8 @@ public class AuthorizationService : IAuthorizationService
         IOptions<AuthorizationOptions> authorizationOptions,
         ILogger<AuthorizationService> logger)
     {
+        ArgumentNullException.ThrowIfNull(authorizationOptions);
+
         _httpContextAccessor = httpContextAccessor;
         _eiamAssignmentRepository = eiamAssignmentRepository;
         _authorizationOptions = authorizationOptions.Value;
@@ -139,6 +141,8 @@ public class AuthorizationService : IAuthorizationService
 
     public async Task<bool> HasAccessToCommittee(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return IsAdmin ||
                (committee.IsActive && ((IsDepartment && committee.DepartmentId == (await GetDepartment())?.Id) ||
                                        ((IsOffice || IsSecretariat) && await IsCommitteeAssigned(committee.Id))));

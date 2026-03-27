@@ -66,6 +66,8 @@ public class InterestBuilder
 
     public InterestBuilder WithPerson(Business.Models.Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         _person = person;
         _personId = person.Id;
         return this;
@@ -91,6 +93,8 @@ public class InterestBuilder
 
     public InterestBuilder WithInterestCommittee(InterestCommittee interestCommittee)
     {
+        ArgumentNullException.ThrowIfNull(interestCommittee);
+
         _interestCommittee = interestCommittee;
         _interestCommitteeId = interestCommittee.Id;
         return this;
@@ -116,6 +120,8 @@ public class InterestBuilder
 
     public InterestBuilder WithInterestFunction(InterestFunction interestFunction)
     {
+        ArgumentNullException.ThrowIfNull(interestFunction);
+
         _interestFunction = interestFunction;
         _interestFunctionId = interestFunction.Id;
         return this;

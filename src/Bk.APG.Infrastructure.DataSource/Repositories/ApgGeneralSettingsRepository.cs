@@ -27,6 +27,9 @@ public class ApgGeneralSettingsRepository : IApgGeneralSettingsRepository
 
     public async Task<ApgGeneralSettings> Update(ApgGeneralSettings existing, ApgGeneralSettings update)
     {
+        ArgumentNullException.ThrowIfNull(update);
+        ArgumentNullException.ThrowIfNull(existing);
+
         _dataContext.ApgGeneralSettings.Update(existing);
 
         existing.Modified = update.Modified;

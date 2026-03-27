@@ -12,6 +12,8 @@ public static class CommitteeMapper
 {
     public static CommitteeListDto ToCommitteeListDto(Committee committee, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return new CommitteeListDto
         {
             Id = committee.Id,
@@ -31,6 +33,8 @@ public static class CommitteeMapper
 
     public static Committee FromCommitteeCreateDto(CommitteeCreateDto createDto, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(createDto);
+
         return new Committee
         {
             BeginDate = createDto.BeginDate,
@@ -70,6 +74,8 @@ public static class CommitteeMapper
 
     public static CommitteeDetailDto ToCommitteeDetailDto(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         var activeMembers = committee.Memberships
             .Where(x => x is { IsActive: true, IsDeleted: false })
             .ToArray();
@@ -175,6 +181,8 @@ public static class CommitteeMapper
 
     public static CommitteeUpdateDto ToCommitteeUpdateDto(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return new CommitteeUpdateDto
         {
             Id = committee.Id,
@@ -229,6 +237,8 @@ public static class CommitteeMapper
 
     public static DimensionItem ToDimensionItem(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         var dimensionItem =
             new DimensionItem(
                 committee.OgdId,
@@ -265,13 +275,17 @@ public static class CommitteeMapper
             dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.CommitteeHasLegalForm, OgdExportConstants.CreateUriLinkForLdAdminCh(committee.LegalForm!.Uri)));
         }
 
-        dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.CommitteeAdditionalAuthorityMembers, new Literal(committee.AdditionalAuthorityMembers.ToString().ToLowerInvariant(), new Uri(OgdExportConstants.DataTypeBoolean))));
+#pragma warning disable CA1308
+        dimensionItem.AdditionalLiteralProperties.Add(new AdditionalLiteralProperty(OgdExportConstants.CommitteeAdditionalAuthorityMembers, new Literal(committee.AdditionalAuthorityMembers.ToString(CultureInfo.InvariantCulture).ToLowerInvariant(), new Uri(OgdExportConstants.DataTypeBoolean))));
+#pragma warning restore CA1308
 
         return dimensionItem;
     }
 
     public static ObservationDataRow ToObservation(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         var dataRow = new ObservationDataRow
         {
             KeyUri = $"{OgdExportConstants.NamespaceCommittee}:{committee.OgdId}"
@@ -330,6 +344,8 @@ public static class CommitteeMapper
 
     public static CommitteeJustificationUpdateDto ToCommitteeJustificationUpdateDto(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return new CommitteeJustificationUpdateDto
         {
             Id = committee.Id,

@@ -8,6 +8,8 @@ public class SalutationConfiguration : MasterDataBaseConfiguration<Salutation>
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<Salutation> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder
             .HasOne(s => s.Gender)
             .WithMany()

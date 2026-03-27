@@ -7,6 +7,8 @@ public class MembershipConfiguration : EntityBaseConfiguration<Membership>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Membership> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(c => c.OgdId)
             .ValueGeneratedOnAdd();
 
