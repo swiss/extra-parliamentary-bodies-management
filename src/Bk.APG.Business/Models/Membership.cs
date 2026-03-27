@@ -36,7 +36,7 @@ public class Membership : EntityBase
     public uint RowVersion { get; set; }
 
     public static readonly Expression<Func<Membership, bool>> IsActiveExpression = m =>
-        (m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && m.EndDate > DateOnly.FromDateTime(DateTime.Now)) ||
+        (m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && m.EndDate >= DateOnly.FromDateTime(DateTime.Now)) ||
         (m.EndDate < DateOnly.FromDateTime(DateTime.Now) && m.ElectionType != null && (m.ElectionType.Uri == ElectionType.NewElection || m.ElectionType.Uri == ElectionType.ReElection));
 
     public static readonly Expression<Func<Membership, bool>> IsFutureExpression = m => m.BeginDate > DateOnly.FromDateTime(DateTime.Now) && m.EndDate > DateOnly.FromDateTime(DateTime.Now);
