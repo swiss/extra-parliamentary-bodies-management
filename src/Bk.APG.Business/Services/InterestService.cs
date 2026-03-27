@@ -35,6 +35,8 @@ public class InterestService : IInterestService
 
     public async Task<IEnumerable<InterestUpdateDto>> UpdateInterests(Guid personId, InterestUpdateDto[] updateDtos)
     {
+        ArgumentNullException.ThrowIfNull(updateDtos);
+
         var returnList = new List<InterestUpdateDto>();
 
         // get all saved interests for this person, to find out, which ones have been deleted

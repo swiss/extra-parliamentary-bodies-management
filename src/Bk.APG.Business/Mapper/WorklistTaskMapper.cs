@@ -8,6 +8,8 @@ public static class WorklistTaskMapper
 {
     public static WorklistTaskDto ToWorklistTaskDto(WorklistTask worklistTask)
     {
+        ArgumentNullException.ThrowIfNull(worklistTask);
+
         return new WorklistTaskDto
         {
             Id = worklistTask.Id,
@@ -55,6 +57,8 @@ public static class WorklistTaskMapper
 
     public static WorklistTask ToWorklistTask(WorklistTaskCreateDto worklistTaskCreateDto, Guid assignedById, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(worklistTaskCreateDto);
+
         return new WorklistTask
         {
             AssignedToId = worklistTaskCreateDto.AssignedToId!.Value,
@@ -81,6 +85,8 @@ public static class WorklistTaskMapper
 
     public static WorklistTaskUpdateDto ToWorklistTaskUpdateDto(WorklistTask worklistTask)
     {
+        ArgumentNullException.ThrowIfNull(worklistTask);
+
         return new WorklistTaskUpdateDto
         {
             Id = worklistTask.Id,

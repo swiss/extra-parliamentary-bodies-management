@@ -7,6 +7,8 @@ public static class FormLetterSenderMapper
 {
     public static FormLetterSenderListDto ToFormLetterSenderListDto(FormLetterSender formLetterSender)
     {
+        ArgumentNullException.ThrowIfNull(formLetterSender);
+
         return new FormLetterSenderListDto
         {
             Id = formLetterSender.Id,
@@ -20,6 +22,8 @@ public static class FormLetterSenderMapper
 
     public static FormLetterSender FromFormLetterSenderCreateDto(FormLetterSenderCreateDto formLetterSenderCreateDto, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(formLetterSenderCreateDto);
+
         return new FormLetterSender
         {
             Description = formLetterSenderCreateDto.Description,
@@ -49,6 +53,8 @@ public static class FormLetterSenderMapper
 
     public static FormLetterSenderUpdateDto ToFormLetterSenderUpdateDto(FormLetterSender formLetterSender, bool canEditDepartment)
     {
+        ArgumentNullException.ThrowIfNull(formLetterSender);
+
         return new FormLetterSenderUpdateDto
         {
             Id = formLetterSender.Id,

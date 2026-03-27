@@ -80,6 +80,8 @@ public class GeneralMeasureService : IGeneralMeasureService
 
     public async Task AddOrUpdateGeneralMeasure(GeneralMeasureUpdateDto generalMeasureUpdate)
     {
+        ArgumentNullException.ThrowIfNull(generalMeasureUpdate);
+
         var userName = _authorizationService.GetCurrentUserName();
 
         var genderMeasure = await _generalMeasureRepository.GetGeneralGenderMeasureForUpdate(generalMeasureUpdate.DepartmentId);

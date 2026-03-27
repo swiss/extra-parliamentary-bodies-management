@@ -7,6 +7,8 @@ public class OfficeConfiguration : MasterDataBaseConfiguration<Office>
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<Office> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(p => p.DepartmentId).IsRequired();
 
         builder

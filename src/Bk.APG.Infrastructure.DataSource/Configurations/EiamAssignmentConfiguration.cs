@@ -8,6 +8,8 @@ public class EiamAssignmentConfiguration : IEntityTypeConfiguration<EiamAssignme
 {
     public void Configure(EntityTypeBuilder<EiamAssignment> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.HasKey(e => e.Id);
 
         builder.HasIndex(e => e.ExternalId).IsUnique();
