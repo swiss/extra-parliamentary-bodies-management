@@ -8,6 +8,8 @@ public static class InterestLegalFormMapper
 {
     public static InterestLegalFormDto ToInterestLegalFormDto(InterestLegalForm interestLegalForm)
     {
+        ArgumentNullException.ThrowIfNull(interestLegalForm);
+
         return new InterestLegalFormDto
         {
             Id = interestLegalForm.Id,

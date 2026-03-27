@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 
 namespace Bk.APG.Common.Utilities;
@@ -11,7 +12,10 @@ public static class SimilaritySearchTransformer
             return value;
         }
 
-        var transformed = value.Trim().ToLower();
+#pragma warning disable CA1308 //changing this would require a data migration
+        var transformed = value.Trim().ToLower(CultureInfo.InvariantCulture);
+#pragma warning restore CA1308
+
         transformed = ReduceSpecialCharacters(transformed);
         transformed = ReduceDifferentTypesOfI(transformed);
         transformed = ReduceDoubleCharacters(transformed);
@@ -162,7 +166,7 @@ public static class SimilaritySearchTransformer
 
         foreach (var special in specialToReducedCharacterMap.Keys)
         {
-            transformed = transformed.Replace(special, specialToReducedCharacterMap[special]);
+            transformed = transformed.Replace(special, specialToReducedCharacterMap[special], StringComparison.InvariantCultureIgnoreCase);
         }
 
         return transformed;

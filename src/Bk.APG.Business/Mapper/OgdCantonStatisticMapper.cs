@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.RawData.Model;
@@ -8,6 +9,8 @@ public static class OgdCantonStatisticMapper
 {
     public static ObservationDataRow ToCantonStatisticObservation(MembershipCantonStatisticDto statisticDto)
     {
+        ArgumentNullException.ThrowIfNull(statisticDto);
+
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeCantonStatistic;
 
         var dataRow = new ObservationDataRow
@@ -50,7 +53,7 @@ public static class OgdCantonStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:cantonCount",
-            Object = statisticDto.CantonCount.ToString(),
+            Object = statisticDto.CantonCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {

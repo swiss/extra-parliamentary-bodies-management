@@ -8,6 +8,8 @@ public static class InterestCommitteeMapper
 {
     public static InterestCommitteeDto ToInterestCommitteeDto(InterestCommittee interestCommittee)
     {
+        ArgumentNullException.ThrowIfNull(interestCommittee);
+
         return new InterestCommitteeDto
         {
             Id = interestCommittee.Id,

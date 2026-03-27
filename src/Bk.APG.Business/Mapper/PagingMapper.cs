@@ -7,6 +7,7 @@ public static class PagingMapper
 {
     public static PagingParameters ToPagingParameters(PagingParametersDto dto)
     {
+        ArgumentNullException.ThrowIfNull(dto);
         ArgumentNullException.ThrowIfNull(dto.PageSize);
         ArgumentNullException.ThrowIfNull(dto.PageIndex);
 

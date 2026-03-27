@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ public static class PersonQueryExtensions
             {
                 query = query.Where(y => EF.Functions.ILike(y.GivenName, $"%{filter}%")
                     || EF.Functions.ILike(y.Surname, $"%{filter}%")
-                    || y.BirthYear.ToString().Contains(filter)
+                    || y.BirthYear.ToString(CultureInfo.InvariantCulture).Contains(filter)
                     || (!string.IsNullOrEmpty(y.CorrespondenceAddress!.City) && EF.Functions.ILike(y.CorrespondenceAddress.City, $"%{filter}%"))
                     || EF.Functions.ILike(y.Id.ToString(), $"%{filter}%"));
             }
@@ -49,7 +50,11 @@ public static class PersonQueryExtensions
 
     public static IQueryable<Person> SortPersons(this IQueryable<Person> query, string sort, SortDirection sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(sort);
+
+#pragma warning disable CA1308
         return sort.ToLowerInvariant() switch
+#pragma warning restore CA1308
         {
             "surname" => sortDirection == SortDirection.Asc
                 ? query.OrderBy(item => item.Surname)

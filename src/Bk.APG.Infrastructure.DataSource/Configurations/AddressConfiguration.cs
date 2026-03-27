@@ -7,6 +7,8 @@ public class AddressConfiguration : EntityBaseConfiguration<Address>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Address> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(a => a.CompanyName)
             .HasMaxLength(150);
 

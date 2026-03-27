@@ -62,6 +62,8 @@ public class CommitteeRepository : ICommitteeRepository
 
     public async Task<IEnumerable<Committee>> GetByDescription(string description)
     {
+        ArgumentNullException.ThrowIfNull(description);
+
         var filters = description.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         var query = GetCommittees().AsNoTracking().Where(Committee.CanCreateMembershipExpression).Where(Committee.IsActiveExpression);
@@ -89,8 +91,10 @@ public class CommitteeRepository : ICommitteeRepository
         _dataContext.Committees.Add(committee);
     }
 
-    public async Task<PagedResult<Committee>> GetAll(PagingParameters paging, CommitteeFilterParameters? filter, string? sort, SortDirection? sortDirection)
+    public async Task<PagedResult<Committee>> GetAll(PagingParameters pagingParameters, CommitteeFilterParameters? filterParameters, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(pagingParameters);
+
         var query = _dataContext.Committees
             .Include(item => item.ContactPoints)
             .Include(item => item.Memberships)
@@ -104,7 +108,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.Memberships)
                 .ThenInclude(m => m.Person)
                     .ThenInclude(p => p!.Interests)
-            .FilterCommittees(filter)
+            .FilterCommittees(filterParameters)
             .AsSingleQuery();
 
         var count = await query
@@ -112,13 +116,13 @@ public class CommitteeRepository : ICommitteeRepository
 
         var items = await query
             .SortCommittees(sort ?? "description", sortDirection.GetValueOrDefault(SortDirection.Desc), _cultureService.GetCurrentUiCulture())
-            .Skip(paging.PageIndex * paging.PageSize)
-            .Take(paging.PageSize)
+            .Skip(pagingParameters.PageIndex * pagingParameters.PageSize)
+            .Take(pagingParameters.PageSize)
             .ToListAsync();
 
         return new PagedResult<Committee>
         {
-            Index = paging.PageIndex,
+            Index = pagingParameters.PageIndex,
             Total = count,
             Items = items
         };

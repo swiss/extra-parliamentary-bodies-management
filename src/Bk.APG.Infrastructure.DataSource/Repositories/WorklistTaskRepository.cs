@@ -26,6 +26,8 @@ public class WorklistTaskRepository : IWorklistTaskRepository
 
     public async Task<PagedResult<WorklistTask>> GetAll(PagingParameters paging, WorklistFilterParameters? filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var isAdmin = _authorizationService.IsAdmin;
         var eiamAssignmentIds = isAdmin ? [] : (await _eiamAssignmentRepository.GetByExternalId(_authorizationService.GetCurrentExternalId())).GetSearchableIds().ToList();
         var query = _dataContext.WorklistTasks
@@ -140,6 +142,8 @@ public class WorklistTaskRepository : IWorklistTaskRepository
 
     public async Task CreateRange(IEnumerable<WorklistTask> worklistTasks)
     {
+        ArgumentNullException.ThrowIfNull(worklistTasks);
+
         foreach (var worklistTask in worklistTasks)
         {
             await _dataContext.WorklistTasks.AddAsync(worklistTask);

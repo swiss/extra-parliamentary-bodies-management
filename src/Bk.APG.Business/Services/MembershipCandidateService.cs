@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Transactions;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Extensions;
@@ -321,14 +322,17 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public static void ValidateCandidateCount(int candidateCount, GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
     {
+        ArgumentNullException.ThrowIfNull(validationResult);
+        ArgumentNullException.ThrowIfNull(generalElectionCommittee);
+
         if (candidateCount < generalElectionCommittee.MinimalMembers)
         {
-            validationResult.Errors.Add(string.Format(BusinessTexts.CandidateListValidationError_MinimumMembers, generalElectionCommittee.MinimalMembers));
+            validationResult.Errors.Add(string.Format(CultureInfo.InvariantCulture, BusinessTexts.CandidateListValidationError_MinimumMembers, generalElectionCommittee.MinimalMembers));
         }
 
         if (generalElectionCommittee.MaximalMembers is not null && generalElectionCommittee.MaximalMembers != 0 && candidateCount > generalElectionCommittee.MaximalMembers)
         {
-            validationResult.Errors.Add(string.Format(BusinessTexts.CandidateListValidationError_MaximumMembers, generalElectionCommittee.MaximalMembers));
+            validationResult.Errors.Add(string.Format(CultureInfo.InvariantCulture, BusinessTexts.CandidateListValidationError_MaximumMembers, generalElectionCommittee.MaximalMembers));
         }
     }
 
@@ -566,6 +570,8 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task ForwardCandidateList(Guid committeeId, CandidateListForwardDto forwardDto)
     {
+        ArgumentNullException.ThrowIfNull(forwardDto);
+
         _logger.LogInformation("Forward candidate list for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
 
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
@@ -645,6 +651,8 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task ForwardReadyForProposal(Guid committeeId, ReadyForProposalForwardDto forwardDto)
     {
+        ArgumentNullException.ThrowIfNull(forwardDto);
+
         _logger.LogInformation("Forward ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
 
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
@@ -734,6 +742,8 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task PartialUpdateMembershipCandidate(Guid id, MembershipCandidatePartialUpdateDto membershipCandidatePartialUpdate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidatePartialUpdate);
+
         _logger.LogInformation("Partial update membership candidate {MembershipCandidateId}", id);
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
@@ -749,9 +759,9 @@ public class MembershipCandidateService : IMembershipCandidateService
         _logger.LogInformation("Partial updated membership candidate {MembershipCandidateId}", id);
     }
 
-    public async Task<MembershipListDto> GetMembers(Guid committeeId)
+    public async Task<MembershipListDto> GetMembers(Guid generalElectionCommitteeId)
     {
-        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(generalElectionCommitteeId);
 
         var activeMemberships = generalElectionCommittee.CandidateListStateId != CandidateListState.Validated
             && generalElectionCommittee.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded
@@ -772,6 +782,8 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task UpdateMembershipCandidate(Guid id, MembershipCandidateUpdateDto membershipCandidateUpdate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidateUpdate);
+
         _logger.LogInformation("Update membership candidate {MembershipCandidateId}", id);
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
@@ -813,6 +825,8 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task<MembershipCandidateDetailDto> CreateMembershipCandidate(MembershipCandidateCreateDto membershipCandidateCreate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidateCreate);
+
         _logger.LogInformation("Create membership candidate for committee {CommitteeId}", membershipCandidateCreate.CommitteeId);
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(membershipCandidateCreate.CommitteeId);

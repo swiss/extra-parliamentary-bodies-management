@@ -7,5 +7,5 @@ public interface IMembershipMirrorService
 {
     Task MirrorOrDeleteMembershipForGeneralElection(Membership membership, bool deleteCandidate, bool wasMetadataChanged);
     Task CreateNewMembershipFromCandidate(MembershipCreateDto createDto, string userName);
-    Task UpdateMembershipFromCandidate(Guid id, MembershipUpdateDto mappedMembership, string userName);
+    Task UpdateMembershipFromCandidate(Guid id, MembershipUpdateDto updateDto, string userName);
 }

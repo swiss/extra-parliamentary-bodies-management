@@ -9,6 +9,8 @@ public static class OgdCommitteeTypeStatisticMapper
 {
     public static ObservationDataRow ToCommitteeTypeStatisticObservation(CommitteeTypeStatisticDto statisticDto)
     {
+        ArgumentNullException.ThrowIfNull(statisticDto);
+
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeTypeStatistic;
         var apkNamespace = OgdExportConstants.NamespaceExtraparliamentaryCommission;
         var nonApkNamespace = OgdExportConstants.NamespaceNonExtraparliamentaryCommission;
@@ -33,7 +35,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -50,7 +52,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdaCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -67,7 +69,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdiCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -84,7 +86,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsEjpdCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -101,7 +103,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsVbsCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -118,7 +120,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsEfdCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -135,7 +137,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsWbfCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -152,7 +154,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-count",
-            Object = statisticDto.ExtraParliamentaryCommissionsUvekCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -169,7 +171,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-count",
-            Object = statisticDto.AuthoritiesCommissionsCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -186,7 +188,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-count",
-            Object = statisticDto.AdministrationCommissionsCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -203,7 +205,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEda}-count",
-            Object = statisticDto.AuthoritiesCommissionsEdaCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsEdaCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -220,7 +222,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEdi}-count",
-            Object = statisticDto.AuthoritiesCommissionsEdiCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsEdiCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -237,7 +239,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEjpd}-count",
-            Object = statisticDto.AuthoritiesCommissionsEjpdCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsEjpdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -254,7 +256,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentVbs}-count",
-            Object = statisticDto.AuthoritiesCommissionsVbsCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsVbsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -271,7 +273,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentEfd}-count",
-            Object = statisticDto.AuthoritiesCommissionsEfdCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsEfdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -288,7 +290,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentWbf}-count",
-            Object = statisticDto.AuthoritiesCommissionsWbfCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsWbfCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -305,7 +307,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-{departmentUvek}-count",
-            Object = statisticDto.AuthoritiesCommissionsUvekCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsUvekCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -322,7 +324,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEda}-count",
-            Object = statisticDto.AdministrationCommissionsEdaCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsEdaCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -339,7 +341,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEdi}-count",
-            Object = statisticDto.AdministrationCommissionsEdiCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsEdiCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -356,7 +358,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEjpd}-count",
-            Object = statisticDto.AdministrationCommissionsEjpdCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsEjpdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -373,7 +375,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentVbs}-count",
-            Object = statisticDto.AdministrationCommissionsVbsCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsVbsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -390,7 +392,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentEfd}-count",
-            Object = statisticDto.AdministrationCommissionsEfdCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsEfdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -407,7 +409,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentWbf}-count",
-            Object = statisticDto.AdministrationCommissionsWbfCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsWbfCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -424,7 +426,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-{departmentUvek}-count",
-            Object = statisticDto.AdministrationCommissionsUvekCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsUvekCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -441,7 +443,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdaFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -458,7 +460,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdiFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -475,7 +477,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -492,7 +494,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsVbsFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -509,7 +511,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEfdFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -526,7 +528,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsWbfFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -543,7 +545,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsUvekFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -560,7 +562,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdaMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -577,7 +579,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdiMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -594,7 +596,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEjpdMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -611,7 +613,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsVbsMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -628,7 +630,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEfdMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -645,7 +647,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsWbfMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -662,7 +664,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsUvekMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -918,7 +920,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-femaleCount",
-            Object = statisticDto.AuthoritiesCommissionsFemaleCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -935,7 +937,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-maleCount",
-            Object = statisticDto.AuthoritiesCommissionsMaleCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -986,7 +988,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-femaleCount",
-            Object = statisticDto.AdministrationCommissionsFemaleCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1003,7 +1005,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-maleCount",
-            Object = statisticDto.AdministrationCommissionsMaleCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1054,7 +1056,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdaGermanCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1071,7 +1073,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdiGermanCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1088,7 +1090,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEjpdGermanCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1105,7 +1107,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsVbsGermanCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1122,7 +1124,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEfdGermanCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1139,7 +1141,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsWbfGermanCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1156,7 +1158,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsUvekGermanCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1292,7 +1294,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdaFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1309,7 +1311,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdiFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1326,7 +1328,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1343,7 +1345,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsVbsFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1360,7 +1362,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEfdFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1377,7 +1379,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsWbfFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1394,7 +1396,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsUvekFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1530,7 +1532,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdaItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1547,7 +1549,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdiItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1564,7 +1566,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEjpdItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1581,7 +1583,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsVbsItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1598,7 +1600,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEfdItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1615,7 +1617,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsWbfItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1632,7 +1634,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsUvekItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1768,7 +1770,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEda}-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdaRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdaRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1785,7 +1787,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEdi}-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEdiRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEdiRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1802,7 +1804,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEjpd}-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEjpdRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEjpdRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1819,7 +1821,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentVbs}-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsVbsRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsVbsRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1836,7 +1838,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentEfd}-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsEfdRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsEfdRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1853,7 +1855,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentWbf}-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsWbfRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsWbfRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -1870,7 +1872,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-{departmentUvek}-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsUvekRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsUvekRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2006,7 +2008,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-germanCount",
-            Object = statisticDto.AuthoritiesCommissionsGermanCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2023,7 +2025,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-frenchCount",
-            Object = statisticDto.AuthoritiesCommissionsFrenchCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2040,7 +2042,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-italianCount",
-            Object = statisticDto.AuthoritiesCommissionsItalianCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2057,7 +2059,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{authoritiesCommissionNamespace}-romanshCount",
-            Object = statisticDto.AuthoritiesCommissionsRomanshCount.ToString(),
+            Object = statisticDto.AuthoritiesCommissionsRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2142,7 +2144,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-germanCount",
-            Object = statisticDto.AdministrationCommissionsGermanCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2159,7 +2161,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-frenchCount",
-            Object = statisticDto.AdministrationCommissionsFrenchCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2176,7 +2178,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-italianCount",
-            Object = statisticDto.AdministrationCommissionsItalianCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2193,7 +2195,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{administrationCommissionNamespace}-romanshCount",
-            Object = statisticDto.AdministrationCommissionsRomanshCount.ToString(),
+            Object = statisticDto.AdministrationCommissionsRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2278,7 +2280,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-total-femaleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsTotalFemaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2295,7 +2297,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-total-maleCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsTotalMaleCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2346,7 +2348,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-total-germanCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2363,7 +2365,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-total-frenchCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2380,7 +2382,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-total-italianCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsTotalItalianCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2397,7 +2399,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{apkNamespace}-total-romanshCount",
-            Object = statisticDto.ExtraParliamentaryCommissionsTotalRomanshCount.ToString(),
+            Object = statisticDto.ExtraParliamentaryCommissionsTotalRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2484,7 +2486,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2501,7 +2503,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdaCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2518,7 +2520,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdiCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2535,7 +2537,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2552,7 +2554,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsVbsCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2569,7 +2571,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEfdCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2586,7 +2588,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsWbfCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2603,7 +2605,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-count",
-            Object = statisticDto.NonExtraParliamentaryCommissionsUvekCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2620,7 +2622,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-count",
-            Object = statisticDto.ManagementCommitteesCount.ToString(),
+            Object = statisticDto.ManagementCommitteesCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2637,7 +2639,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-count",
-            Object = statisticDto.FederalAgenciesCommitteesCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2654,7 +2656,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEda}-count",
-            Object = statisticDto.ManagementCommitteesEdaCount.ToString(),
+            Object = statisticDto.ManagementCommitteesEdaCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2671,7 +2673,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEdi}-count",
-            Object = statisticDto.ManagementCommitteesEdiCount.ToString(),
+            Object = statisticDto.ManagementCommitteesEdiCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2688,7 +2690,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEjpd}-count",
-            Object = statisticDto.ManagementCommitteesEjpdCount.ToString(),
+            Object = statisticDto.ManagementCommitteesEjpdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2705,7 +2707,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentVbs}-count",
-            Object = statisticDto.ManagementCommitteesVbsCount.ToString(),
+            Object = statisticDto.ManagementCommitteesVbsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2722,7 +2724,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentEfd}-count",
-            Object = statisticDto.ManagementCommitteesEfdCount.ToString(),
+            Object = statisticDto.ManagementCommitteesEfdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2739,7 +2741,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentWbf}-count",
-            Object = statisticDto.ManagementCommitteesWbfCount.ToString(),
+            Object = statisticDto.ManagementCommitteesWbfCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2756,7 +2758,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-{departmentUvek}-count",
-            Object = statisticDto.ManagementCommitteesUvekCount.ToString(),
+            Object = statisticDto.ManagementCommitteesUvekCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2773,7 +2775,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEda}-count",
-            Object = statisticDto.FederalAgenciesCommitteesEdaCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesEdaCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2790,7 +2792,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEdi}-count",
-            Object = statisticDto.FederalAgenciesCommitteesEdiCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesEdiCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2807,7 +2809,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEjpd}-count",
-            Object = statisticDto.FederalAgenciesCommitteesEjpdCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesEjpdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2824,7 +2826,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentVbs}-count",
-            Object = statisticDto.FederalAgenciesCommitteesVbsCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesVbsCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2841,7 +2843,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentEfd}-count",
-            Object = statisticDto.FederalAgenciesCommitteesEfdCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesEfdCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2858,7 +2860,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentWbf}-count",
-            Object = statisticDto.FederalAgenciesCommitteesWbfCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesWbfCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2875,7 +2877,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-{departmentUvek}-count",
-            Object = statisticDto.FederalAgenciesCommitteesUvekCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesUvekCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2892,7 +2894,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2909,7 +2911,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2926,7 +2928,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2943,7 +2945,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2960,7 +2962,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2977,7 +2979,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -2994,7 +2996,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3011,7 +3013,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdaMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3028,7 +3030,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdiMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3045,7 +3047,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3062,7 +3064,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsVbsMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3079,7 +3081,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEfdMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3096,7 +3098,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsWbfMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3113,7 +3115,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsUvekMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3368,7 +3370,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-femaleCount",
-            Object = statisticDto.ManagementCommitteesFemaleCount.ToString(),
+            Object = statisticDto.ManagementCommitteesFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3385,7 +3387,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-maleCount",
-            Object = statisticDto.ManagementCommitteesMaleCount.ToString(),
+            Object = statisticDto.ManagementCommitteesMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3436,7 +3438,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-femaleCount",
-            Object = statisticDto.FederalAgenciesCommitteesFemaleCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3453,7 +3455,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-maleCount",
-            Object = statisticDto.FederalAgenciesCommitteesMaleCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3505,7 +3507,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdaGermanCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3522,7 +3524,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdiGermanCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3539,7 +3541,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdGermanCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3556,7 +3558,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsVbsGermanCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3573,7 +3575,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEfdGermanCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3590,7 +3592,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsWbfGermanCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3607,7 +3609,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsUvekGermanCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3743,7 +3745,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3760,7 +3762,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3777,7 +3779,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3794,7 +3796,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3811,7 +3813,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3828,7 +3830,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3845,7 +3847,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3981,7 +3983,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdaItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -3998,7 +4000,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdiItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4015,7 +4017,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4032,7 +4034,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsVbsItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4049,7 +4051,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEfdItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4066,7 +4068,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsWbfItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4083,7 +4085,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsUvekItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4219,7 +4221,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEda}-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdaRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdaRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4236,7 +4238,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEdi}-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEdiRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEdiRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4253,7 +4255,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEjpd}-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEjpdRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4270,7 +4272,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentVbs}-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsVbsRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsVbsRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4287,7 +4289,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentEfd}-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsEfdRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsEfdRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4304,7 +4306,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentWbf}-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsWbfRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsWbfRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4321,7 +4323,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-{departmentUvek}-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsUvekRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsUvekRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4457,7 +4459,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-germanCount",
-            Object = statisticDto.ManagementCommitteesGermanCount.ToString(),
+            Object = statisticDto.ManagementCommitteesGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4474,7 +4476,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-frenchCount",
-            Object = statisticDto.ManagementCommitteesFrenchCount.ToString(),
+            Object = statisticDto.ManagementCommitteesFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4491,7 +4493,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-italianCount",
-            Object = statisticDto.ManagementCommitteesItalianCount.ToString(),
+            Object = statisticDto.ManagementCommitteesItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4508,7 +4510,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{managementCommissionNamespace}-romanshCount",
-            Object = statisticDto.ManagementCommitteesRomanshCount.ToString(),
+            Object = statisticDto.ManagementCommitteesRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4593,7 +4595,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-germanCount",
-            Object = statisticDto.FederalAgenciesCommitteesGermanCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesGermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4610,7 +4612,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-frenchCount",
-            Object = statisticDto.FederalAgenciesCommitteesFrenchCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4627,7 +4629,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-italianCount",
-            Object = statisticDto.FederalAgenciesCommitteesItalianCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4644,7 +4646,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{federalAgenciesCommissionNamespace}-romanshCount",
-            Object = statisticDto.FederalAgenciesCommitteesRomanshCount.ToString(),
+            Object = statisticDto.FederalAgenciesCommitteesRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4729,7 +4731,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-femaleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFemaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4746,7 +4748,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-maleCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsTotalMaleCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalMaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4797,7 +4799,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-germanCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4814,7 +4816,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-frenchCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalFrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4831,7 +4833,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-italianCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsTotalItalianCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -4848,7 +4850,7 @@ public static class OgdCommitteeTypeStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:{nonApkNamespace}-total-romanshCount",
-            Object = statisticDto.NonExtraParliamentaryCommissionsTotalRomanshCount.ToString(),
+            Object = statisticDto.NonExtraParliamentaryCommissionsTotalRomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {

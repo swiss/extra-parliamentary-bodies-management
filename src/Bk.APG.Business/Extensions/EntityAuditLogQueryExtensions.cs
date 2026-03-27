@@ -7,7 +7,11 @@ public static class EntityAuditLogQueryExtensions
 {
     public static IQueryable<EntityAuditLog> SortEntityAuditLogs(this IQueryable<EntityAuditLog> entityAuditLogs, string sort, SortDirection sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(sort);
+
+#pragma warning disable CA1308
         return sort.ToLowerInvariant() switch
+#pragma warning restore CA1308
         {
             "audituser" => sortDirection == SortDirection.Asc
                 ? entityAuditLogs.OrderBy(x => x.AuditUser)
