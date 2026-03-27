@@ -10,6 +10,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             // Remove duplicates (Vertretung der Medizinischen Ethik and Vertretung des Gemeindeverbands)
             migrationBuilder.UpdateData(schema: "data", table: "membership_additions", keyColumn: "id", keyValue: "80ef61f4-2eca-438a-9f30-eb82d71e4431", column: "is_deleted", value: true);
             migrationBuilder.UpdateData(schema: "data", table: "membership_additions", keyColumn: "id", keyValue: "0d70b752-6591-44c6-9cfc-984693b1b8d5", column: "is_deleted", value: true);
