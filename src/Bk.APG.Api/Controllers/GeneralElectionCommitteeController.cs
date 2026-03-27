@@ -30,6 +30,8 @@ public class GeneralElectionCommitteeController : ControllerBase
     [HttpPost("getDuplicateMembershipCandidate")]
     public async Task<ActionResult> GetDuplicateMembershipCandidate([FromBody, Required] MembershipCandidateCreateDto dto)
     {
+        ArgumentNullException.ThrowIfNull(dto);
+
         var result = await _membershipCandidateService.GetDuplicateMembershipCandidateForList(dto.CommitteeId, dto.Surname, dto.GivenName, dto.BirthYear, dto.GenderId, dto.LanguageId);
         return Ok(result);
     }
@@ -79,6 +81,8 @@ public class GeneralElectionCommitteeController : ControllerBase
     [Route("{committeeId:guid}/candidate-list/validate")]
     public async Task<IActionResult> ValidateCandidateList(Guid committeeId, [FromBody] CandidateListValidationRequest candidateListValidationRequest)
     {
+        ArgumentNullException.ThrowIfNull(candidateListValidationRequest);
+
         var result = await _membershipCandidateService.ValidateCandidateList(committeeId, candidateListValidationRequest.SelectedCandidateIds, candidateListValidationRequest.DuplicateCheckConfirmed);
         return Ok(result);
     }
@@ -94,6 +98,8 @@ public class GeneralElectionCommitteeController : ControllerBase
     [HttpGet("list")]
     public async Task<IActionResult> GetGeneralElectionCommitteesGetAll([FromQuery, Required] PagingParametersDto pagingParameters, [FromQuery] GeneralElectionCommitteeFilterParametersDto? filterParameters, [FromQuery] SortParametersDto sortParameters)
     {
+        ArgumentNullException.ThrowIfNull(sortParameters);
+
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommitteeList(pagingParameters, filterParameters, sortParameters.Sort, sortParameters.Direction);
         return Ok(result);
     }
@@ -147,6 +153,8 @@ public class GeneralElectionCommitteeController : ControllerBase
     [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> UpdateJustifications([FromRoute] Guid id, [FromBody, Required] GeneralElectionCommitteeJustificationUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         if (id != updateDto.Id)
         {
             return BadRequest();
@@ -168,6 +176,8 @@ public class GeneralElectionCommitteeController : ControllerBase
     public async Task<ActionResult> GenerateCommitteeTypeExport([FromRoute] Guid id
         , [FromBody] CandidateListExportRequestDto request)
     {
+        ArgumentNullException.ThrowIfNull(request);
+
         var (fileName, content) = await _generalElectionCommitteeService.GenerateCandidateListExport(id, request.MembershipCandidateIds);
 
         return File(content, ExcelMimeType, fileName);
