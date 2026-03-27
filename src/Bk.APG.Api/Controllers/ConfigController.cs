@@ -12,6 +12,8 @@ public class ConfigsController : ControllerBase
 
     public ConfigsController(IOptions<FrontendOptions> frontendOptions)
     {
+        ArgumentNullException.ThrowIfNull(frontendOptions);
+
         _frontendOptions = frontendOptions.Value;
     }
 

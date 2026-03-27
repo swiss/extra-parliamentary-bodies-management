@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.Infrastructure.DataSource;
 using Microsoft.EntityFrameworkCore;
@@ -15,15 +16,15 @@ public class EiamAssignmentBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken ct)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("{BackgroundService} is starting...", nameof(EiamAssignmentBackgroundService));
 
-        while (!ct.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                await ProcessCommitteesAsync(ct);
+                await ProcessCommitteesAsync(stoppingToken);
             }
             catch (OperationCanceledException)
             {
@@ -33,7 +34,7 @@ public class EiamAssignmentBackgroundService : BackgroundService
             {
                 var nextRunTime = DateTime.Today.AddDays(1).AddHours(2);
                 var delay = nextRunTime - DateTime.Now;
-                await Task.Delay(delay, ct);
+                await Task.Delay(delay, stoppingToken);
             }
         }
     }
@@ -64,7 +65,7 @@ public class EiamAssignmentBackgroundService : BackgroundService
                 var eiamAssignment = new EiamAssignment
                 {
                     Id = Guid.NewGuid(),
-                    ExternalId = committee.CommitteeNumber.ToString(),
+                    ExternalId = committee.CommitteeNumber.ToString(CultureInfo.InvariantCulture),
                     Role = Role.Secretariat,
                     CommitteeId = committee.Id,
                     ParentId = committee.Office!.EiamAssignmentId
