@@ -36,6 +36,8 @@ public class CommitteeTypeController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody, Required] CommitteeTypeUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         if (id != updateDto.Id)
         {
             return BadRequest();
