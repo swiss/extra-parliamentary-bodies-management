@@ -201,6 +201,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<PagedResultDto<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeList(PagingParametersDto paging, GeneralElectionCommitteeFilterParametersDto? filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var filterParameters = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeFilterParameters(filter);
 
         if (_authorizationService is { IsAdmin: false, IsObserver: false })
@@ -247,6 +249,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<GeneralElectionCommitteeDetailDto> UpdateGeneralElectionCommittee(Guid committeeId, GeneralElectionCommitteeUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update general election committee {CommitteeId}", committeeId);
 
         var existingCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId, updateDto.RowVersion);
@@ -297,11 +301,13 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeDetailDto(changedGeneralElectionCommittee);
     }
 
-    public async Task<GeneralElectionCommitteeJustificationUpdateDto> UpdateGeneralElectionCommitteeJustifications(Guid id, GeneralElectionCommitteeJustificationUpdateDto updateDto)
+    public async Task<GeneralElectionCommitteeJustificationUpdateDto> UpdateGeneralElectionCommitteeJustifications(Guid committeeId, GeneralElectionCommitteeJustificationUpdateDto updateDto)
     {
-        _logger.LogInformation("Update justifications for general election committee {CommitteeId}", id);
+        ArgumentNullException.ThrowIfNull(updateDto);
 
-        var existingGeneralElectionCommittee = await _generalElectionCommitteeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
+        _logger.LogInformation("Update justifications for general election committee {CommitteeId}", committeeId);
+
+        var existingGeneralElectionCommittee = await _generalElectionCommitteeRepository.GetByIdForUpdate(committeeId, updateDto.RowVersion);
 
         await CheckAuthorizationForUpdate(existingGeneralElectionCommittee.Committee!);
 
@@ -327,7 +333,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         await _generalElectionCommitteeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated justifications for general election committee {CommitteeId}", id);
+        _logger.LogInformation("Updated justifications for general election committee {CommitteeId}", committeeId);
 
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeJustificationUpdateDto(existingGeneralElectionCommittee);
     }
@@ -404,6 +410,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<bool> EndGeneralElectionForCommittee(GeneralElectionCommittee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         // Writes back all the changes from General Election to the current data
         var mappedCommittee = GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee(committee);
         var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
@@ -462,7 +470,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     {
         return new Cell
         {
-            Text = value is not null ? value.Value.ToString("O") : string.Empty,
+            Text = value is not null ? value.Value.ToString("O", CultureInfo.InvariantCulture) : string.Empty,
             FormatType = CellFormatTypes.Date,
             Format = "dd.MM.yyyy"
         };

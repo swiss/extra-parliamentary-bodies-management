@@ -67,6 +67,8 @@ public class FormLetterSenderService : IFormLetterSenderService
 
     public async Task<FormLetterSenderUpdateDto> CreateFormLetterSender(FormLetterSenderCreateDto formLetterSenderCreateDto)
     {
+        ArgumentNullException.ThrowIfNull(formLetterSenderCreateDto);
+
         var currentUserName = _authorizationService.GetCurrentUserName();
 
         var formLetterSender = FormLetterSenderMapper.FromFormLetterSenderCreateDto(formLetterSenderCreateDto, currentUserName);
@@ -115,6 +117,8 @@ public class FormLetterSenderService : IFormLetterSenderService
 
     public async Task<FormLetterSenderUpdateDto> UpdateFormLetterSender(Guid id, FormLetterSenderUpdateDto formLetterSenderUpdateDto)
     {
+        ArgumentNullException.ThrowIfNull(formLetterSenderUpdateDto);
+
         var formLetterSender = await _formLetterSenderRepository.GetByIdForUpdate(id);
 
         if (_authorizationService.IsDepartment)
