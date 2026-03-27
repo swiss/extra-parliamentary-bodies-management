@@ -28,6 +28,8 @@ public class WorklistTaskController : ControllerBase
         [FromQuery] WorklistFilterParametersDto? filterParameters,
         [FromQuery] SortParametersDto sortParameters)
     {
+        ArgumentNullException.ThrowIfNull(sortParameters);
+
         var worklistTasks = await _worklistTaskService.GetWorklistTasks(pagingParameters, filterParameters, sortParameters.Sort, sortParameters.Direction);
         return Ok(worklistTasks);
     }
@@ -43,6 +45,8 @@ public class WorklistTaskController : ControllerBase
     [Authorize(Policy = APGPolicies.RequireAdminRole)]
     public async Task<ActionResult> CreateWorklistTask([FromBody] WorklistTaskCreateDto worklistTaskCreateDto)
     {
+        ArgumentNullException.ThrowIfNull(worklistTaskCreateDto);
+
         if (worklistTaskCreateDto.WorklistTaskTypeId == WorklistTaskType.GeneralElectionStart)
         {
             var generalElectionResult = await _generalElectionService.PrepareGeneralElection(worklistTaskCreateDto);
@@ -61,6 +65,8 @@ public class WorklistTaskController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody, Required] WorklistTaskUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         if (id != updateDto.Id)
         {
             return BadRequest();

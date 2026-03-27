@@ -16,13 +16,13 @@ public class OgdExportBackgroundService : BackgroundService
         _serviceProvider = serviceProvider;
     }
 
-    protected override Task ExecuteAsync(CancellationToken ct)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         return Task.Run(async () =>
         {
             _logger.LogInformation("{BackgroundService} is starting...", nameof(OgdExportBackgroundService));
 
-            while (!ct.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
@@ -37,7 +37,7 @@ public class OgdExportBackgroundService : BackgroundService
                     {
                         var timer = Stopwatch.StartNew();
                         var exportService = scope.ServiceProvider.GetRequiredService<IOgdExportService>();
-                        await exportService.Export(ct);
+                        await exportService.Export(stoppingToken);
                         timer.Stop();
                         _logger.LogInformation("Export to LINDAS finished. Duration: {Duration:g}", timer.Elapsed);
                     }
@@ -55,9 +55,9 @@ public class OgdExportBackgroundService : BackgroundService
                 {
                     var nextRunTime = DateTime.Today.AddDays(1).AddHours(1); //always at 1 a.m.
                     var delay = nextRunTime - DateTime.Now;
-                    await Task.Delay(delay, ct);
+                    await Task.Delay(delay, stoppingToken);
                 }
             }
-        }, ct);
+        }, stoppingToken);
     }
 }
