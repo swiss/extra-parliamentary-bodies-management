@@ -14,14 +14,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="**\Migrations\**\*.cs">
-            <RunAnalyzers>false</RunAnalyzers>
-            <RunAnalyzersDuringBuild>false</RunAnalyzersDuringBuild>
-            <RunAnalyzersDuringLiveAnalysis>false</RunAnalyzersDuringLiveAnalysis>
-        </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Audit.EntityFramework.Core" Version="31.0.2" />
         <PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.22" />
