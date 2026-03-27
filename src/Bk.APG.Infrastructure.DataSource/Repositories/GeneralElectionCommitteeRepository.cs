@@ -79,6 +79,8 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<PagedResult<GeneralElectionCommittee>> GetAll(PagingParameters paging, GeneralElectionCommitteeFilterParameters filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var query = _dataContext.GeneralElectionCommittees
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
@@ -110,6 +112,8 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         // avoid trouble with UTC value from UI. Converting to local time is not allowed, so we add a day to filter value.
         // TODO PP, the filterDate is not even used here
         var filterDate = filterDto.AnalysisDate1 != null ? filterDto.AnalysisDate1.Value.AddDays(1) : DateOnly.FromDateTime(DateTime.Today.AddDays(1));
@@ -279,9 +283,11 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         await _dataContext.SaveChangesAsync();
     }
 
-    public async Task<GeneralElectionCommittee> Create(GeneralElectionCommittee generalElectionCommittee)
+    public async Task<GeneralElectionCommittee> Create(GeneralElectionCommittee committee)
     {
-        var entry = await _dataContext.GeneralElectionCommittees.AddAsync(generalElectionCommittee);
+        ArgumentNullException.ThrowIfNull(committee);
+
+        var entry = await _dataContext.GeneralElectionCommittees.AddAsync(committee);
         await _dataContext.SaveChangesAsync();
 
         return entry.Entity;

@@ -62,9 +62,9 @@ public class MasterDataRepository : IMasterDataRepository
             .ToListAsync();
     }
 
-    public LegalForm? GetLegalFormByLegalFormId(string legalFormId)
+    public LegalForm? GetLegalFormByLegalFormId(string code)
     {
-        return _dataContext.LegalForms.FirstOrDefault(lf => lf.LegalFormId == legalFormId);
+        return _dataContext.LegalForms.FirstOrDefault(lf => lf.LegalFormId == code);
     }
 
     public async Task<IEnumerable<CommitteeLevel>> GetLevels()
@@ -205,6 +205,8 @@ public class MasterDataRepository : IMasterDataRepository
 
     public async Task<IEnumerable<LegislaturePeriod>> GetLegislaturePeriodsByIds(ICollection<Guid> ids)
     {
+        ArgumentNullException.ThrowIfNull(ids);
+
         return ids.Count != 0
             ? await _dataContext.LegislaturePeriods
                 .Where(x => ids.Contains(x.Id))
@@ -259,6 +261,8 @@ public class MasterDataRepository : IMasterDataRepository
 
     public async Task<ICollection<Occupation>> GetOccupationsByIds(ICollection<Guid> ids)
     {
+        ArgumentNullException.ThrowIfNull(ids);
+
         return ids.Count != 0
             ? await _dataContext.Occupations
                 .Where(o => !o.IsDeleted)

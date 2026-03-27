@@ -71,6 +71,8 @@ public class WorklistTaskService : IWorklistTaskService
 
     public async Task<WorklistTask> CreateWorklistTaskByAdmin(WorklistTaskCreateDto worklistTaskCreateDto)
     {
+        ArgumentNullException.ThrowIfNull(worklistTaskCreateDto);
+
         _logger.LogInformation("Create worklist task by admin");
 
         var currentUserName = _authorizationService.GetCurrentUserName();
@@ -98,6 +100,8 @@ public class WorklistTaskService : IWorklistTaskService
 
     public async Task<WorklistTaskUpdateDto> UpdateWorklistTask(Guid id, WorklistTaskUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update worklist task {WorklistTaskId}", id);
 
         var currentUserName = _authorizationService.GetCurrentUserName();
@@ -202,6 +206,8 @@ public class WorklistTaskService : IWorklistTaskService
 
     public async Task CreateWorklistTasksForSingleCommittee(Committee committee, List<WorklistTask> parentTasks)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         var today = DateOnly.FromDateTime(DateTime.Now);
 
         // this is the GeneralElectionDispatch task of the department

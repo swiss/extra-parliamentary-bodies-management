@@ -9,6 +9,8 @@ public static class InterestMapper
 {
     public static InterestUpdateDto ToInterestUpdateDto(Interest interest)
     {
+        ArgumentNullException.ThrowIfNull(interest);
+
         return new InterestUpdateDto
         {
             Id = interest.Id,
@@ -29,6 +31,8 @@ public static class InterestMapper
 
     public static Interest FromInterestUpdateDto(InterestUpdateDto interestUpdateDto)
     {
+        ArgumentNullException.ThrowIfNull(interestUpdateDto);
+
         var interest = new Interest
         {
             Id = interestUpdateDto.Id ?? Guid.NewGuid(),
@@ -80,10 +84,10 @@ public static class InterestMapper
 
         if (interest.LegalForm is not null && !string.IsNullOrWhiteSpace(interest.LegalForm.Uri))
         {
-            if (interest.LegalForm.Uri.Contains(ldUri))
+            if (interest.LegalForm.Uri.Contains(ldUri, StringComparison.InvariantCultureIgnoreCase))
             {
                 //if it is an ld.admin.ch URI, we can export it as a key dimension value, because the URI is known and the namespace is registered
-                dataRow.KeyDimensionLinks.Add(new KeyDimensionLink { Predicate = OgdExportConstants.SchemaLegalName, Uri = $"ld:{interest.LegalForm.Uri.Replace(ldUri, "")}" });
+                dataRow.KeyDimensionLinks.Add(new KeyDimensionLink { Predicate = OgdExportConstants.SchemaLegalName, Uri = $"ld:{interest.LegalForm.Uri.Replace(ldUri, "", StringComparison.InvariantCultureIgnoreCase)}" });
             }
             else
             {

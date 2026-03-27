@@ -8,6 +8,8 @@ public class PersonConfiguration : EntityBaseConfiguration<Person>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Person> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(c => c.OgdId)
             .ValueGeneratedOnAdd();
 

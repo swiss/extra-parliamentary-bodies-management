@@ -34,6 +34,7 @@ public class EiamAssignment
     public ICollection<WorklistTask> ReceivedTasks { get; init; } = new List<WorklistTask>();
     public ICollection<WorklistTask> DistributedTasks { get; init; } = new List<WorklistTask>();
 
+#pragma warning disable CA1024
     public string GetText()
     {
         return Role switch
@@ -46,6 +47,7 @@ public class EiamAssignment
             _ => throw new ArgumentOutOfRangeException()
         } ?? ExternalId;
     }
+#pragma warning restore CA1024
 
     public string GetDescription()
     {

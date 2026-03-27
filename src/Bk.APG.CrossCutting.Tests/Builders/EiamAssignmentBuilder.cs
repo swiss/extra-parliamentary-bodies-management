@@ -48,6 +48,8 @@ public class EiamAssignmentBuilder
 
     public EiamAssignmentBuilder WithCommittee(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         _committee = committee;
         _committeeId = committee.Id;
         return this;

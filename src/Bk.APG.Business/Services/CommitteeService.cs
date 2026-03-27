@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
@@ -170,6 +171,8 @@ public class CommitteeService : ICommitteeService
 
     public async Task<CommitteeDetailDto> UpdateCommittee(Guid id, CommitteeUpdateDto updateDto, bool checkAuthorization)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update committee {CommitteeId}", id);
 
         var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
@@ -226,6 +229,8 @@ public class CommitteeService : ICommitteeService
 
     public async Task<CommitteeDetailDto> UpdateCommitteeAfterGeneralElection(Guid id, CommitteeUpdateDto updateDto, List<MembershipCandidate> membershipCandidates)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidates);
+
         var saved = await UpdateCommittee(id, updateDto, false);
         var userName = "CommitteeService";
 
@@ -282,6 +287,8 @@ public class CommitteeService : ICommitteeService
 
     public async Task<CommitteeJustificationUpdateDto> UpdateCommitteeJustifications(Guid id, CommitteeJustificationUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update justifications for committee {CommitteeId}", id);
 
         var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
@@ -328,6 +335,8 @@ public class CommitteeService : ICommitteeService
 
     public async Task<CommitteeDetailDto> CreateCommittee(CommitteeCreateDto createDto)
     {
+        ArgumentNullException.ThrowIfNull(createDto);
+
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == createDto.DepartmentId)))
         {
             _logger.LogError("User is not allowed to create committee");
@@ -357,7 +366,7 @@ public class CommitteeService : ICommitteeService
         var eiamAssignment = new EiamAssignment
         {
             Id = Guid.NewGuid(),
-            ExternalId = newCommittee.CommitteeNumber.ToString(),
+            ExternalId = newCommittee.CommitteeNumber.ToString(CultureInfo.InvariantCulture),
             Role = Role.Secretariat,
             CommitteeId = newCommittee.Id,
             ParentId = newCommittee.Office!.EiamAssignmentId,
@@ -395,6 +404,8 @@ public class CommitteeService : ICommitteeService
 
     public async Task<CommitteeMembershipValidationResultDto> ValidateCommittee(Guid id, CommitteeMembershipValidationRequestDto validateDto)
     {
+        ArgumentNullException.ThrowIfNull(validateDto);
+
         var result = new CommitteeMembershipValidationResultDto { CommitteeId = validateDto.CommitteeId, PersonId = validateDto.PersonId };
 
         if (validateDto.EndDate != DateOnly.MinValue)

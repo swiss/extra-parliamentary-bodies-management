@@ -8,7 +8,7 @@ public interface IGeneralElectionService
     Task<bool> IsGeneralElectionToggleAvailable();
     Task<bool> PrepareGeneralElection(WorklistTaskCreateDto worklistTaskCreateDto);
     Task<bool> StartGeneralElection(Guid termOfOfficeDateId, DateOnly termOfOfficeBeginDate, DateOnly termOfOfficeEndDate, DateOnly dueDate, string description);
-    Task CreateNewMembershipCandidate(Membership newMembership, bool isSelected = false);
+    Task CreateNewMembershipCandidate(Membership membership, bool isSelected = false);
     Task UpdateCandidatesFromPerson(Person person);
     Task<bool> PrepareEndGeneralElection(WorklistTaskCreateDto worklistTaskCreateDto);
     Task<bool> EndGeneralElection();

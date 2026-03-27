@@ -17,6 +17,8 @@ public class DocumentService : IDocumentService
 
     public DocumentService([FromKeyedServices("apg")] IAmazonS3 s3Client, IOptions<S3Configuration> s3Configuration, ILogger<DocumentService> logger)
     {
+        ArgumentNullException.ThrowIfNull(s3Configuration);
+
         _s3Client = s3Client;
         _s3Configuration = s3Configuration.Value;
         _logger = logger;
