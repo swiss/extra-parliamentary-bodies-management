@@ -10,6 +10,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.Sql(@"UPDATE data.eiam_assignments SET ""role"" = 'Admin' WHERE ""role"" = '0';");
             migrationBuilder.Sql(@"UPDATE data.eiam_assignments SET ""role"" = 'Department' WHERE ""role"" = '1';");
             migrationBuilder.Sql(@"UPDATE data.eiam_assignments SET ""role"" = 'Office' WHERE ""role"" = '2';");
