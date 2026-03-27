@@ -11,6 +11,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
 #pragma warning disable CA1814
             migrationBuilder.InsertData(
                 schema: "data",
@@ -26,6 +28,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.DeleteData(
                 schema: "data",
                 table: "worklist_task_types",
