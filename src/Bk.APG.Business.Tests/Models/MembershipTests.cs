@@ -44,6 +44,7 @@ internal class MembershipTests
     }
 
     [TestCase(-1, 1, null, true)]
+    [TestCase(-1, 0, null, true)]
     [TestCase(1, 2, null, false)]
     [TestCase(-2, -1, null, false)]
     [TestCase(-2, -1, ElectionType.NewElection, true)]
