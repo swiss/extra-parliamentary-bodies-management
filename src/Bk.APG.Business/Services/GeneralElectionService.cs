@@ -80,6 +80,8 @@ public class GeneralElectionService : IGeneralElectionService
 
     public async Task<bool> PrepareGeneralElection(WorklistTaskCreateDto worklistTaskCreateDto)
     {
+        ArgumentNullException.ThrowIfNull(worklistTaskCreateDto);
+
         _logger.LogInformation("Prepare general election started by user {User}", _authorizationService.GetCurrentUserName());
 
         var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
@@ -192,6 +194,8 @@ public class GeneralElectionService : IGeneralElectionService
 
     public async Task UpdateCandidatesFromPerson(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         _logger.LogInformation("Update candidates from person {PersonId}", person.Id);
 
         var candidates = await _membershipCandidateRepository.GetByPersonIdForUpdate(person.Id);
@@ -212,6 +216,8 @@ public class GeneralElectionService : IGeneralElectionService
 
     public async Task CreateNewMembershipCandidate(Membership membership, bool isSelected = false)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         _logger.LogInformation("Create new membership candidate for general election committee {CommitteeId}", membership.CommitteeId);
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(membership.CommitteeId);
@@ -283,6 +289,8 @@ public class GeneralElectionService : IGeneralElectionService
 
     public async Task<bool> PrepareEndGeneralElection(WorklistTaskCreateDto worklistTaskCreateDto)
     {
+        ArgumentNullException.ThrowIfNull(worklistTaskCreateDto);
+
         _logger.LogInformation("Prepare the end of general election started by user {User}", _authorizationService.GetCurrentUserName());
 
         var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
@@ -298,7 +306,7 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
         {
-            // we immediately end the GE when the task is executed... 
+            // we immediately end the GE when the task is executed...
             nextTermOfOffice.PlannedPublicationDate = worklistTaskCreateDto.DueDate;
             nextTermOfOffice.IsGeneralElection = false;
             await _termOfOfficeDateService.Update(nextTermOfOffice);

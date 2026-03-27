@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
@@ -313,8 +314,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[5].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // ExtraParliamentaryCommission
             Assert.That(dataRow[6].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // SupervisionDuty
             Assert.That(dataRow[7].Text, Is.EqualTo(committee.TermOfOffice!.GetText()));
-            Assert.That(dataRow[8].Text, Is.EqualTo(committee.BeginDate.ToString("O")));
-            Assert.That(dataRow[9].Text, Is.EqualTo(committee.EndDate?.ToString("O")));
+            Assert.That(dataRow[8].Text, Is.EqualTo(committee.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[9].Text, Is.EqualTo(committee.EndDate?.ToString("O", CultureInfo.InvariantCulture)));
             Assert.That(dataRow[10].Text, Is.EqualTo("2")); // Active Member Count
             Assert.That(dataRow[11].Text, Is.EqualTo("1")); // Female President Count
             Assert.That(dataRow[12].Text, Is.EqualTo("1")); // Female President Percentage (1/1)
@@ -402,8 +403,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[2].Text, Is.EqualTo(membership.Person!.GivenName));
             Assert.That(dataRow[3].Text, Is.EqualTo(membership.Person!.CorrespondenceAddress!.City));
             Assert.That(dataRow[4].Text, Is.EqualTo(membership.Person!.CorrespondenceAddress!.Canton!.GetText()));
-            Assert.That(dataRow[5].Text, Is.EqualTo(membership.Person!.BirthYear.ToString()));
-            Assert.That(dataRow[6].Text, Is.EqualTo((DateTime.UtcNow.Year - membership.Person!.BirthYear).ToString()));
+            Assert.That(dataRow[5].Text, Is.EqualTo(membership.Person!.BirthYear.ToString(CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[6].Text, Is.EqualTo((DateTime.UtcNow.Year - membership.Person!.BirthYear).ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[7].Text, Is.EqualTo(membership.Person!.Occupation));
             Assert.That(dataRow[8].Text, Is.EqualTo(membership.Person!.Language!.GetText()));
             Assert.That(dataRow[9].Text, Is.EqualTo(membership.Person!.Gender!.GetText()));
@@ -411,11 +412,11 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[11].Text, Is.EqualTo(BusinessTexts.DataAnalysis_FederalDuty_Central)); // Central/Decentralized Duty
             Assert.That(dataRow[12].Text, Is.EqualTo(BusinessTexts.Common_No)); // Federal Assembly
             Assert.That(dataRow[13].Text, Is.EqualTo(membership.Function!.GetText()));
-            Assert.That(dataRow[14].Text, Is.EqualTo(membership.BeginDate.ToString("O")));
-            Assert.That(dataRow[15].Text, Is.EqualTo(membership.EndDate.ToString("O")));
+            Assert.That(dataRow[14].Text, Is.EqualTo(membership.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[15].Text, Is.EqualTo(membership.EndDate.ToString("O", CultureInfo.InvariantCulture)));
             Assert.That(dataRow[16].Text, Is.EqualTo(membership.ElectionType!.GetText()));
             Assert.That(dataRow[17].Text, Is.EqualTo(membership.ElectionOffice!.GetText()));
-            Assert.That(dataRow[18].Text, Is.EqualTo(membership.MaximumEmploymentLevel.GetValueOrDefault().ToString()));
+            Assert.That(dataRow[18].Text, Is.EqualTo(membership.MaximumEmploymentLevel.GetValueOrDefault().ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[19].Text, Is.EqualTo("4"));
             Assert.That(dataRow[20].Text, Is.EqualTo(membership.MembershipAddition!.GetText()));
             Assert.That(dataRow[21].Text, Is.EqualTo(committee.CommitteeType!.GetText()));
@@ -425,8 +426,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[25].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // ExtraParliamentary Commission
             Assert.That(dataRow[26].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // Supervision Duty
             Assert.That(dataRow[27].Text, Is.EqualTo(committee.TermOfOffice!.GetText()));
-            Assert.That(dataRow[28].Text, Is.EqualTo(committee.BeginDate.ToString("O")));
-            Assert.That(dataRow[29].Text, Is.EqualTo(committee.EndDate?.ToString("O")));
+            Assert.That(dataRow[28].Text, Is.EqualTo(committee.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[29].Text, Is.EqualTo(committee.EndDate?.ToString("O", CultureInfo.InvariantCulture)));
             Assert.That(dataRow[30].Text, Is.EqualTo("1"));
         });
 
@@ -502,7 +503,7 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[1].Text, Is.EqualTo(membership.Person!.Surname));
             Assert.That(dataRow[1].Hyperlink, Is.EqualTo($"FooBar/persons/{membership.PersonId}"));
             Assert.That(dataRow[2].Text, Is.EqualTo(membership.Person!.GivenName));
-            Assert.That(dataRow[3].Text, Is.EqualTo(membership.Person!.BirthYear.ToString()));
+            Assert.That(dataRow[3].Text, Is.EqualTo(membership.Person!.BirthYear.ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[4].Text, Is.EqualTo(membership.Person!.Interests.FirstOrDefault()?.Text));
             Assert.That(dataRow[5].Text, Is.EqualTo(membership.Person!.Interests.FirstOrDefault()?.LegalForm!.GetText()));
             Assert.That(dataRow[6].Text, Is.EqualTo(membership.Person!.Interests.FirstOrDefault()?.InterestLegalForm!.GetText()));
@@ -515,8 +516,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[13].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // ExtraParliamentary Commission
             Assert.That(dataRow[14].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // Supervision Duty
             Assert.That(dataRow[15].Text, Is.EqualTo(committee.TermOfOffice!.GetDescription()));
-            Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O")));
-            Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O")));
+            Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O", CultureInfo.InvariantCulture)));
         });
 
         dataRow = capturedSpreadsheet.BodyCells[1];
@@ -526,7 +527,7 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[1].Text, Is.EqualTo(membership.Person!.Surname));
             Assert.That(dataRow[1].Hyperlink, Is.EqualTo($"FooBar/persons/{membership.PersonId}"));
             Assert.That(dataRow[2].Text, Is.EqualTo(membership.Person!.GivenName));
-            Assert.That(dataRow[3].Text, Is.EqualTo(membership.Person!.BirthYear.ToString()));
+            Assert.That(dataRow[3].Text, Is.EqualTo(membership.Person!.BirthYear.ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[4].Text, Is.EqualTo(membership.Person!.Interests.LastOrDefault()?.Text));
             Assert.That(dataRow[5].Text, Is.EqualTo(membership.Person!.Interests.LastOrDefault()?.LegalForm!.GetText()));
             Assert.That(dataRow[6].Text, Is.EqualTo(membership.Person!.Interests.LastOrDefault()?.InterestLegalForm!.GetText()));
@@ -539,8 +540,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[13].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // ExtraParliamentary Commission
             Assert.That(dataRow[14].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // Supervision Duty
             Assert.That(dataRow[15].Text, Is.EqualTo(committee.TermOfOffice!.GetDescription()));
-            Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O")));
-            Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O")));
+            Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O", CultureInfo.InvariantCulture)));
         });
     }
 
@@ -587,7 +588,7 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[1].Text, Is.EqualTo(membership.Person!.Surname));
             Assert.That(dataRow[1].Hyperlink, Is.EqualTo($"FooBar/persons/{membership.PersonId}"));
             Assert.That(dataRow[2].Text, Is.EqualTo(membership.Person!.GivenName));
-            Assert.That(dataRow[3].Text, Is.EqualTo(membership.Person!.BirthYear.ToString()));
+            Assert.That(dataRow[3].Text, Is.EqualTo(membership.Person!.BirthYear.ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[4].Text, Is.EqualTo(string.Empty));
             Assert.That(dataRow[5].Text, Is.EqualTo(string.Empty));
             Assert.That(dataRow[6].Text, Is.EqualTo(string.Empty));
@@ -600,8 +601,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[13].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // ExtraParliamentary Commission
             Assert.That(dataRow[14].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // Supervision Duty
             Assert.That(dataRow[15].Text, Is.EqualTo(committee.TermOfOffice!.GetDescription()));
-            Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O")));
-            Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O")));
+            Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O", CultureInfo.InvariantCulture)));
         });
     }
 
@@ -638,8 +639,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[0].Hyperlink, Is.EqualTo($"FooBar/persons/{person.Id}"));
             Assert.That(dataRow[1].Text, Is.EqualTo(person.GivenName));
             Assert.That(dataRow[2].Text, Is.EqualTo(person.CorrespondenceAddress!.City));
-            Assert.That(dataRow[3].Text, Is.EqualTo(person.BirthYear.ToString()));
-            Assert.That(dataRow[4].Text, Is.EqualTo((DateTime.UtcNow.Year - person.BirthYear).ToString()));
+            Assert.That(dataRow[3].Text, Is.EqualTo(person.BirthYear.ToString(CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[4].Text, Is.EqualTo((DateTime.UtcNow.Year - person.BirthYear).ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[5].Text, Is.EqualTo(person.Language!.GetText()));
             Assert.That(dataRow[6].Text, Is.EqualTo(person.Gender!.GetText()));
             Assert.That(dataRow[7].Text, Is.EqualTo(person.Occupation));
@@ -983,7 +984,7 @@ internal class DataAnalysisServiceTests
         var dataRow = capturedSpreadsheet.BodyCells[0];
         Assert.Multiple(() =>
         {
-            Assert.That(dataRow[0].Text, Is.EqualTo(committee.Memberships.First().Person!.Age.ToString()));
+            Assert.That(dataRow[0].Text, Is.EqualTo(committee.Memberships.First().Person!.Age.ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[1].Text, Is.EqualTo("2")); // Active Member Count
             Assert.That(dataRow[2].Text, Is.EqualTo("1")); // Female President Count
             Assert.That(dataRow[3].Text, Is.EqualTo("1")); // Female President Percentage (1/1)

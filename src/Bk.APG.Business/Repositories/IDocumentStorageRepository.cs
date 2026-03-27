@@ -6,6 +6,6 @@ public interface IDocumentStorageRepository
 {
     void CreateForMigration(DocumentStorage documentStorage);
     Task<DocumentStorage> Create(DocumentStorage documentStorage);
-    Task<DocumentStorage> GetByIdForUpdate(Guid documentStorageRepositoryId);
+    Task<DocumentStorage> GetByIdForUpdate(Guid documentStorageId);
     void Delete(DocumentStorage documentStorage);
 }

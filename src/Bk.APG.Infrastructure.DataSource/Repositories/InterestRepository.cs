@@ -94,6 +94,9 @@ public class InterestRepository : IInterestRepository
 
     public Interest Update(Interest existing, Interest update)
     {
+        ArgumentNullException.ThrowIfNull(existing);
+        ArgumentNullException.ThrowIfNull(update);
+
         existing.Text = update.Text;
         existing.InterestText = update.InterestText;
         existing.InterestLegalFormId = update.InterestLegalFormId;
