@@ -562,10 +562,12 @@ public class GeneralElectionCommitteeServiceTests
                 Arg.Is<IEnumerable<Guid>>(list => list.SequenceEqual(new[] { membershipCandidateId })))
             .Returns(geCommittee);
 
+        var stream = new MemoryStream();
+
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _generalElectionCommitteeService.GenerateCandidateListExport(committeeId, [membershipCandidateId]);
 
@@ -595,6 +597,8 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[18].Text, Is.Empty);
             Assert.That(dataRow[19].Text, Is.Empty);
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
