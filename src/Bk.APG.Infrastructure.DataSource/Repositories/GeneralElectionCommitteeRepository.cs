@@ -110,10 +110,6 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
     {
-        // avoid trouble with UTC value from UI. Converting to local time is not allowed, so we add a day to filter value.
-        // TODO PP, the filterDate is not even used here
-        var filterDate = filterDto.AnalysisDate1 != null ? filterDto.AnalysisDate1.Value.AddDays(1) : DateOnly.FromDateTime(DateTime.Today.AddDays(1));
-
         var committees = await _dataContext.GeneralElectionCommittees
             .Where(x => !filterDto.ReleasedCommittees || x.ReleaseGeneralElection == true)
             .Include(item => item.CommitteeLevel)
