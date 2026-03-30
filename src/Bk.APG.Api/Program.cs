@@ -96,7 +96,6 @@ try
         });
     builder.Services.AddAuthorization(options =>
     {
-        var eiamPolicyBuilder = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme);
         options.AddPolicy(APGPolicies.RequireAllowRole, p => p.RequireRole(authorizationOptions.Allow));
         options.AddPolicy(APGPolicies.RequireObserverRole, p => p.RequireRole(authorizationOptions.Observer));
         options.AddPolicy(APGPolicies.RequireDepartmentRole, p => p.RequireRole(authorizationOptions.Department));
