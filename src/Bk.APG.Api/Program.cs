@@ -11,7 +11,6 @@ using Bk.APG.Infrastructure.Service.UID.Configuration;
 using Bk.APG.Infrastructure.Service.UID.Extensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
