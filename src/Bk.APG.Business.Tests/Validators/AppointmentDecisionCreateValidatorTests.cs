@@ -20,16 +20,22 @@ internal class AppointmentDecisionCreateValidatorTests
     [Test]
     public void Validate_WithValidModel_ShouldNotHaveAnyValidationErrors()
     {
-        var model = BuildValidModel();
+        var stream = new MemoryStream("Hello world!"u8.ToArray());
+
+        var model = BuildValidModel(stream);
 
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
+
+        stream.Dispose();
     }
 
     [Test]
     public void Validate_WithInvalidMaxLength_ShouldAddErrorForFields()
     {
-        var model = BuildValidModel();
+        var stream = new MemoryStream("Hello world!"u8.ToArray());
+
+        var model = BuildValidModel(stream);
         model.Link = new string('a', 252);
         model.Text = new string('a', 2001);
 
@@ -37,6 +43,8 @@ internal class AppointmentDecisionCreateValidatorTests
 
         result.ShouldHaveValidationErrorFor(x => x.Link);
         result.ShouldHaveValidationErrorFor(x => x.Text);
+
+        stream.Dispose();
     }
 
     [Test]
@@ -56,6 +64,8 @@ internal class AppointmentDecisionCreateValidatorTests
         };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.AppointmentDecisionTypeId);
+
+        stream.Dispose();
     }
 
     [Test]
@@ -75,11 +85,12 @@ internal class AppointmentDecisionCreateValidatorTests
         };
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.CommitteeId);
+
+        stream.Dispose();
     }
 
-    private static AppointmentDecisionCreateDto BuildValidModel()
+    private static AppointmentDecisionCreateDto BuildValidModel(MemoryStream stream)
     {
-        var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
 
         return new AppointmentDecisionCreateDto
