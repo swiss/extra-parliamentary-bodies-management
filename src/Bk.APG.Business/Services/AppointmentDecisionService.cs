@@ -84,8 +84,6 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
                     uploadedDocumentIds.Add(documentId);
 
-                    var utcNow = DateTime.UtcNow;
-
                     var documentStorage = DocumentStorageMapper.FromModificationDto(documentDto, documentId, userName);
 
                     SetDocumentReferenceWithLanguage(documentDto.LanguageId, documentDto.IsOriginal, appointmentDecision, documentStorage);
