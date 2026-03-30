@@ -30,7 +30,7 @@ public static class MembershipMapper
             Id = membership.Id,
             Committee = membership.Committee!.GetDescription(),
             Department = membership.Committee!.Department!.GetText(),
-            Function = membership.Function!.GetText(),
+            Function = membership.Person!.IsFemale ? membership.Function!.GetFemaleText() : membership.Function!.GetText(),
             BeginDate = membership.BeginDate,
             EndDate = membership.EndDate,
             ElectionType = membership.ElectionType!.GetText(),
