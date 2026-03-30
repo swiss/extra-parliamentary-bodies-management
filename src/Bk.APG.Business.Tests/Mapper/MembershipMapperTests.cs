@@ -143,8 +143,6 @@ internal class MembershipMapperTests
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
 
         var membership = new MembershipBuilder().Build();
-        var committee = new CommitteeBuilder().Build();
-
         var membershipUpdateDto = MembershipMapper.ToMembershipUpdateDto(membership, _cultureService);
 
         Assert.That(membershipUpdateDto, Is.Not.Null);
