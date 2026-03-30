@@ -12,7 +12,6 @@ internal class CommitteeDetailMapperTests
     public void FromCommitteeCreateDto_ShouldMapCorrectly()
     {
         var createDto = new Faker<CommitteeCreateDto>().Generate();
-        var committeeId = Guid.NewGuid();
 
         var committeeDetail = CommitteeMapper.FromCommitteeCreateDto(createDto, "foo bar");
 
