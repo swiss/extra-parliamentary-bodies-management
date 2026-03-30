@@ -40,8 +40,8 @@ try
 
     var authenticationOptions = builder.Services.AddValidatedOptions<AuthenticationOptions>(builder.Configuration, AuthenticationOptions.SectionKey)
         .Get<AuthenticationOptions>()!;
-    var authorizationOptions = builder.Services.AddValidatedOptions<Bk.APG.CrossCutting.Configuration.AuthorizationOptions>(builder.Configuration, Bk.APG.CrossCutting.Configuration.AuthorizationOptions.SectionKey)
-        .Get<Bk.APG.CrossCutting.Configuration.AuthorizationOptions>()!;
+    var authorizationOptions = builder.Services.AddValidatedOptions<AuthorizationOptions>(builder.Configuration, AuthorizationOptions.SectionKey)
+        .Get<AuthorizationOptions>()!;
     var swaggerOptions = builder.Services
         .AddValidatedOptions<SwaggerOptions>(builder.Configuration, SwaggerOptions.SectionKey)
         .Get<SwaggerOptions>()!;
