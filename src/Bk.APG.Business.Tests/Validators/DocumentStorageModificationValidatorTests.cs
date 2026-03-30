@@ -29,9 +29,6 @@ internal class DocumentStorageModificationValidatorTests
     [Test]
     public void Validate_WithEmptyDescription_ShouldThrowBusinessValidationException()
     {
-        var stream = new MemoryStream("Hello world!"u8.ToArray());
-        IFormFile file = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
-
         var model = new DocumentStorageModificationDto() { Id = Guid.NewGuid(), DisplayName = string.Empty, IsOriginal = true, File = null, LanguageId = new Guid(Language.GermanId) };
 
         var result = _validator.TestValidate(model);

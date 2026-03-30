@@ -126,7 +126,6 @@ public class MembershipService : IMembershipService
     {
         var cantons = await _masterDataRepository.GetCantons();
         var dtos = new List<MembershipCantonStatisticDto>();
-        var currentYear = DateTime.Today.Year;
 
         foreach (var canton in cantons)
         {
