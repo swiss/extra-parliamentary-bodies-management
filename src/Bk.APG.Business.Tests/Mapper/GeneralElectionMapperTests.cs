@@ -139,10 +139,6 @@ internal class GeneralElectionMapperTests
     [Test]
     public void ToMembershipCandidateMirrorDto_ShouldMapCorrectly()
     {
-        var candidateListId = Guid.NewGuid();
-        var termOfOfficeBeginDate = new DateOnly(2028, 1, 1);
-        var termOfOfficeEndDate = new DateOnly(2031, 12, 31);
-
         var membership = new MembershipBuilder()
             .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-3)))
             .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(2)))

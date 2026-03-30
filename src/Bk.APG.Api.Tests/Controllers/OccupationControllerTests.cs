@@ -26,7 +26,6 @@ internal class OccupationControllerTests
     [Test]
     public async Task GetBySearchString_WhenCalled_ShouldCallServiceAndReturnResult()
     {
-        var personId = Guid.NewGuid();
         var response = await _controller.GetBySearchString("clark");
 
         await _occupationService.Received().GetBySearchString("clark");
