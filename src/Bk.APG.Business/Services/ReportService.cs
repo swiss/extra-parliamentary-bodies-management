@@ -66,9 +66,6 @@ public class ReportService : IReportService
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
-        var departments = await _masterDataRepository.GetDepartments();
-        departments = departments.Where(d => d.Uri != Department.BkUri).ToArray();
-
         var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == "fr" ? "APG_Decision_Federal_Council_French" : "APG_Decision_Federal_Council_German";
 
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
@@ -270,8 +267,6 @@ public class ReportService : IReportService
         // there must be a general election running, or this stop the report!
         var geTermOfOfficeDate = await _termOfOfficeDateService.GetGeneralElectionTermOfOfficeDate();
 
-        var committeeTypes = await _masterDataRepository.GetCommitteeTypes();
-
         // present data, needed for one part of the report!
         var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
         var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
@@ -287,12 +282,6 @@ public class ReportService : IReportService
         var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&
                                                                            ((c.BeginDate > geTermOfOfficeDate.BeginDate && c.BeginDate < geTermOfOfficeDate.EndDate) || (c.EndDate < geTermOfOfficeDate.EndDate && c.EndDate > geTermOfOfficeDate.BeginDate))).ToList();
         var disbandedReportCommittees = disbandedCommittees.Select(c => ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto(c)).ToList();
-
-        var extraParliamentaryCommissionsWithFederalDutyMembers = extraParliamentaryCommissions
-            .Count(c => c.Memberships.Any(m => m.Person!.FederalDuty));
-        var extraParliamentaryCommitteesFederalDutyMembers = extraParliamentaryCommissions
-            .SelectMany(c => c.Memberships)
-            .Count(m => m.Person != null && m.Person.FederalDuty);
 
         var marketOrientatedCommissions = geCommitteesWithMembers.Where(c => c.MarketOrientated == true).ToList();
 
