@@ -105,7 +105,7 @@ public static class PersonMapper
                     Committee = m.Committee!.GetDescription(),
                     BeginDate = m.BeginDate,
                     EndDate = m.EndDate,
-                    Function = m.Function!.GetText(),
+                    Function = person.IsFemale ? m.Function!.GetFemaleText() : m.Function!.GetText(),
                     Id = m.Id,
                     IsActive = m.IsActive,
                     IsFuture = m.IsFuture,
