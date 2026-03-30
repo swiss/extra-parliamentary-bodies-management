@@ -439,7 +439,7 @@ internal class AppointmentDecisionServiceTests
         _appointmentDecisionRepository.GetAppointmentDecisionById(Arg.Any<Guid>()).Returns(new AppointmentDecisionBuilder().Build());
         _appointmentDecisionRepository.GetAppointmentDecisionByIdForUpdate(Arg.Any<Guid>()).Returns(appointmentDecisionToUpdate);
 
-        var updated = await _service.UpdateAppointmentDecision(id, appointmentDecisionDto);
+        _ = await _service.UpdateAppointmentDecision(id, appointmentDecisionDto);
 
         Assert.Multiple(() =>
         {
