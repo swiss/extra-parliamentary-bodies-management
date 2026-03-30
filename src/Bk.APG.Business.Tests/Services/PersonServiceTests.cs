@@ -615,6 +615,8 @@ internal class PersonServiceTests
         _masterDataRepository.GetLegislaturePeriodsByIds(Arg.Any<List<Guid>>()).Returns(_personToCreate.LegislaturePeriods);
         _masterDataRepository.GetSalutations().Returns(salutations);
 
+        _ = await _service.CreatePerson(createDto);
+
         _authorizationService.Received(1).GetCurrentUserName();
         await _personRepository.Received(1).Create(
             Arg.Is<Person>(p => p.Created >= DateTime.UtcNow.AddSeconds(-1)
@@ -643,6 +645,8 @@ internal class PersonServiceTests
         _personRepository.GetById(Arg.Any<Guid>()).Returns(createdPerson);
         _masterDataRepository.GetLegislaturePeriodsByIds(Arg.Any<List<Guid>>()).Returns(_personToCreate.LegislaturePeriods);
         _salutationGeneratorService.CreateSalutationTextForPerson(createdPerson.GenderId, createdPerson.CorrespondenceLanguageId, createdPerson.Surname, createdPerson.Title).Returns(salutation);
+
+        _ = await _service.CreatePersonInGeneralElection(membershipCandidate);
 
         _authorizationService.Received(1).GetCurrentUserName();
         await _personRepository.Received(1).Create(
