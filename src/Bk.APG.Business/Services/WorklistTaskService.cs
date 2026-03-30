@@ -61,9 +61,9 @@ public class WorklistTaskService : IWorklistTaskService
     {
         var worklistTask = await _worklistTaskRepository.GetByIdForUpdate(id);
         var dto = WorklistTaskMapper.ToWorklistTaskUpdateDto(worklistTask);
-        var currentExternalId = _authorizationService.GetCurrentExternalId();
-        dto.CanEdit = worklistTask.AssignedBy!.ExternalId == currentExternalId;
-        dto.CanForward = worklistTask.GetCanBeForwarded(currentExternalId);
+        var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
+        dto.CanEdit = worklistTask.AssignedBy!.Id == currentEiamAssignment.Id;
+        dto.CanForward = worklistTask.GetCanBeForwarded(currentEiamAssignment.Id);
         dto.IsBigDepartment = worklistTask.AssignedTo!.Role == Role.Department && (worklistTask.AssignedTo.Department?.IsBigDepartment ?? false);
 
         return dto;
@@ -119,10 +119,10 @@ public class WorklistTaskService : IWorklistTaskService
         _logger.LogInformation("Forward worklist task {WorklistTaskId}", id);
 
         var worklistTask = await _worklistTaskRepository.GetByIdForForward(id);
-        var currentExternalId = _authorizationService.GetCurrentExternalId();
-        if (!worklistTask.GetCanBeForwarded(currentExternalId))
+        var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
+        if (!worklistTask.GetCanBeForwarded(currentEiamAssignment.Id))
         {
-            throw new NotSupportedException($"Worklist task {id} can not be forwarded by external id {currentExternalId}");
+            throw new NotSupportedException($"Worklist task {id} can not be forwarded by external id {currentEiamAssignment.ExternalId}");
         }
 
         if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch)
