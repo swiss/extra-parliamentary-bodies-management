@@ -28,8 +28,6 @@ internal class UidControllerTests
     [Test]
     public async Task GetBySearchString_WhenCalled_ShouldCallServiceAndReturnResult()
     {
-        var personId = Guid.NewGuid();
-
         var interests = new Faker<UidDto>().Generate(10);
 
         _uidService.Search("A").Returns(interests);
