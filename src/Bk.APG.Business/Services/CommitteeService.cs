@@ -672,6 +672,30 @@ public class CommitteeService : ICommitteeService
         return statisticDtos;
     }
 
+    public async Task<IEnumerable<Committee>> GetCommitteesWithRetiredMembers(GeneralElectionCommitteeExportFilterParametersDto? filter, List<Guid> electionTypes)
+    {
+        if (filter != null)
+        {
+            var termOfOffice = await _termOfOfficeDateService.GetCurrentTermOfOfficeDate();
+            var endDate = termOfOffice.EndDate;
+
+            var filterDto = new FormLetterFilterParameters
+            {
+                CorrespondenceLanguageIds = filter.CorrespondenceLanguageIds,
+                DepartmentIds = filter.DepartmentIds,
+                OfficeIds = filter.OfficeIds,
+                CommitteeTypeIds = filter.CommitteeTypeIds,
+                ElectionTypeIds = filter.ElectionTypeIds,
+                EndDateCurrentTermOfOfficeDate = endDate,
+            };
+
+            var committees = await _committeeRepository.GetAllForFormLetter(filterDto, electionTypes);
+            return committees;
+        }
+
+        return new List<Committee>();
+    }
+
     private async Task CheckAuthorizationForUpdate(Committee committee)
     {
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
