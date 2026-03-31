@@ -265,6 +265,78 @@ public class CommitteeRepository : ICommitteeRepository
         return committees;
     }
 
+    public async Task<IEnumerable<Committee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds)
+    {
+        var committees = await _dataContext.Committees
+            .Include(item => item.CommitteeLevel)
+            .Include(item => item.Department)
+            .Include(item => item.Office)
+            .Include(item => item.CommitteeType)
+            .Include(item => item.TermOfOffice)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Gender)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Language)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.CorrespondenceAddress)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Salutation)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item!.Function)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item!.ElectionType)
+            .FilterCommitteesForFormLetter(filterDto, electionTypesIds)
+        .AsSplitQuery()
+            .Select(c => new Committee
+            {
+                Id = c.Id,
+                Modified = c.Modified,
+                ModifiedBy = c.ModifiedBy,
+                Created = c.Created,
+                CreatedBy = c.CreatedBy,
+                BeginDate = c.BeginDate,
+                EndDate = c.EndDate,
+                TermOfOfficeDateId = c.TermOfOfficeDateId,
+                DepartmentId = c.DepartmentId,
+                Department = c.Department,
+                CommitteeTypeId = c.CommitteeTypeId,
+                CommitteeType = c.CommitteeType,
+                OfficeId = c.OfficeId,
+                Office = c.Office,
+                IsDeleted = c.IsDeleted,
+                DescriptionGerman = c.DescriptionGerman,
+                DescriptionFrench = c.DescriptionFrench,
+                DescriptionItalian = c.DescriptionItalian,
+                DescriptionRomansh = c.DescriptionRomansh,
+                JustificationMembers = c.JustificationMembers,
+                JustificationGenders = c.JustificationGenders,
+                JustificationLanguages = c.JustificationLanguages,
+                MeasuresGenders = c.MeasuresGenders,
+                MeasuresLanguages = c.MeasuresLanguages,
+                RemarksBaseData = c.RemarksBaseData,
+                RemarksBaseDataAdmin = c.RemarksBaseDataAdmin,
+                VacanciesGeneralElection = c.VacanciesGeneralElection,
+                // bring only members, which match by language and electiontype
+                Memberships = c.Memberships
+                    .Where(m => m.Person != null && m.EndDate == filterDto.EndDateCurrentTermOfOfficeDate &&
+                        (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
+                         filterDto.CorrespondenceLanguageIds!.Contains(
+                             m.Person.CorrespondenceLanguageId)) &&
+                        (electionTypesIds == null || electionTypesIds.Count == 0 ||
+                         electionTypesIds!.Contains(
+                             m.ElectionTypeId)))
+                    .ToList()
+            })
+            .Where(c => c.Memberships.Count > 0)
+            .ToListAsync();
+
+        return committees;
+    }
+
     public async Task<IEnumerable<Committee>> GetForOgdExport()
     {
         return await _dataContext.Committees
@@ -273,7 +345,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(x => x.CommitteeType)
             .Include(x => x.Department)
             .Include(x => x.Memberships)
-            .Include(x => x.ContactPoints)
+            .Include(x => x.ContactPoints.Where(c => c.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && (c.EndDate == null || c.EndDate >= DateOnly.FromDateTime(DateTime.Today))))
             .Include(x => x.LegalForm)
             .Include(x => x.AppointmentDecisions)
                 .ThenInclude(x => x.OriginalDocument)
