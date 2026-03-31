@@ -77,7 +77,7 @@ public class ReportService : IReportService
 
         var zipStream = new MemoryStream();
 
-        if (reportDto.Memberships != null && filterDto.ExportSingleDocuments == "single")
+        if (reportDto.Memberships != null && filterDto.ExportType == "single")
         {
             var template = "FormLetterGeneralElection";
 
@@ -1317,22 +1317,74 @@ public class ReportService : IReportService
         electionTypeListFuture.Remove(ElectionType.OtherRetirementReasonGuid);
         electionTypeListFuture.Remove(ElectionType.RetirementGuid);
 
-        var currentMonthAndYearGerman = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("de-CH")) ?? "";
-        var currentMonthAndYearFrench = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("fr-CH")) ?? "";
-        var currentMonthAndYearItalian = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("it-CH")) ?? "";
-        var currentMonthAndYearRomansh = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("rm")) ?? "";
-
-        var generalElectionTextGerman = "Gesamterneuerungswahl";
-        var generalElectionTextFrench = "Renouvellement intégral";
-        var generalElectionTextItalian = "Rinnovo integrale";
-        var generalElectionTextRomansh = "Renovaziun totala";
-
         var sender = await _formLetterSenderRepository.GetByIdForUpdate(filterDto.FormLetterSenderId);
 
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
         var currentTermOfOfficeDate = await _termOfOfficeDateService.GetCurrentTermOfOfficeDate();
 
         filterDto.EndDateCurrentTermOfOfficeDate = currentTermOfOfficeDate.EndDate;
+
+        var newAndReElections = await GetNewAndReelectionMemberships(filterDto, electionTypeListFuture, sender);
+
+        var endedMemberships = await GetEndedMemberships(filterDto, electionTypeListPresent, sender);
+
+        var allRecipients = newAndReElections.Concat(endedMemberships).ToList();
+
+        if (sender != null && nextTermOfOfficeDate != null && currentTermOfOfficeDate != null)
+        {
+            var signaturePictureExists = false;
+            var picBase64 = string.Empty;
+
+            if (sender.SignatureFileReference != null)
+            {
+                using var signatureStream = await _documentServiceInternal.GetDocument(sender.SignatureFileReference.DocumentStorageId ?? string.Empty);
+
+                if (signatureStream != null && signatureStream.CanSeek)
+                {
+                    signatureStream.Position = 0;
+                    picBase64 = Convert.ToBase64String(signatureStream.ToArray());
+                    signaturePictureExists = true;
+                }
+            }
+
+            var formLetterReportDto = new FormLetterReportDto
+            {
+                NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy"),
+                NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
+                TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
+                Memberships = allRecipients,
+                HasSignature = signaturePictureExists,
+                SenderSignature = picBase64,
+                SenderOffice = sender.Office?.DescriptionDe,
+                SenderOfficeShort = sender.Office?.TextDe,
+                SenderName = sender.GivenName + " " + sender.Surname,
+                SenderStreet = sender.StreetGerman,
+                SenderZip = sender.Zip,
+                SenderCity = sender.CityGerman,
+                SenderPhone = sender.Phone,
+                SenderEmail = sender.Email,
+                SenderWebsite = sender.Website,
+            };
+
+            return formLetterReportDto;
+        }
+        else
+        {
+            return new FormLetterReportDto();
+        }
+    }
+
+    private async Task<List<FormLetterMembershipReportDto>> GetNewAndReelectionMemberships(FormLetterFilterParameters filterDto, List<Guid> electionTypeListFuture, FormLetterSender sender)
+    {
+        var generalElectionTextGerman = "Gesamterneuerungswahl";
+        var generalElectionTextFrench = "Renouvellement intégral";
+        var generalElectionTextItalian = "Rinnovo integrale";
+        var generalElectionTextRomansh = "Renovaziun totala";
+
+        var currentMonthAndYearGerman = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("de-CH")) ?? "";
+        var currentMonthAndYearFrench = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("fr-CH")) ?? "";
+        var currentMonthAndYearItalian = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("it-CH")) ?? "";
+        var currentMonthAndYearRomansh = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("rm-CH")) ?? "";
 
         var allValidMemberships = await _generalElectionCommitteeRepository.GetAllForFormLetter(filterDto, electionTypeListFuture);
 
@@ -1401,6 +1453,21 @@ public class ReportService : IReportService
             }))
             .ToList();
 
+        return newAndReElections;
+    }
+
+    private async Task<List<FormLetterMembershipReportDto>> GetEndedMemberships(FormLetterFilterParameters filterDto, List<Guid> electionTypeListPresent, FormLetterSender sender)
+    {
+        var generalElectionTextGerman = "Gesamterneuerungswahl";
+        var generalElectionTextFrench = "Renouvellement intégral";
+        var generalElectionTextItalian = "Rinnovo integrale";
+        var generalElectionTextRomansh = "Renovaziun totala";
+
+        var currentMonthAndYearGerman = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("de-CH")) ?? "";
+        var currentMonthAndYearFrench = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("fr-CH")) ?? "";
+        var currentMonthAndYearItalian = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("it-CH")) ?? "";
+        var currentMonthAndYearRomansh = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("rm-CH")) ?? "";
+
         var allEndedMemberships = await _committeeRepository.GetAllForFormLetter(filterDto, electionTypeListPresent);
 
         var endedMemberships = allEndedMemberships
@@ -1468,51 +1535,6 @@ public class ReportService : IReportService
             }))
             .ToList();
 
-        var allRecipients = newAndReElections.Concat(endedMemberships).ToList();
-
-        if (sender != null && nextTermOfOfficeDate != null && currentTermOfOfficeDate != null)
-        {
-            var signatureStream = new MemoryStream();
-            var signaturePictureExists = false;
-            var picBase64 = string.Empty;
-
-            if (sender.SignatureFileReference != null)
-            {
-                signatureStream = await _documentServiceInternal.GetDocument(sender.SignatureFileReference.DocumentStorageId ?? string.Empty);
-
-
-                if (signatureStream != null && signatureStream.CanSeek)
-                {
-                    signatureStream.Position = 0;
-                    picBase64 = Convert.ToBase64String(signatureStream.ToArray());
-                    signaturePictureExists = true;
-                }
-            }
-
-            var formLetterReportDto = new FormLetterReportDto
-            {
-                NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy"),
-                NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
-                TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
-                Memberships = allRecipients,
-                HasSignature = signaturePictureExists,
-                SenderSignature = picBase64,
-                SenderOffice = sender.Office?.DescriptionDe,
-                SenderOfficeShort = sender.Office?.TextDe,
-                SenderName = sender.GivenName + " " + sender.Surname,
-                SenderStreet = sender.StreetGerman,
-                SenderZip = sender.Zip,
-                SenderCity = sender.CityGerman,
-                SenderPhone = sender.Phone,
-                SenderEmail = sender.Email,
-                SenderWebsite = sender.Website,
-            };
-
-            return formLetterReportDto;
-        }
-        else
-        {
-            return new FormLetterReportDto();
-        }
+        return endedMemberships;
     }
 }
