@@ -35,6 +35,9 @@ public class FormLetterSenderRepository : IFormLetterSenderRepository
     {
         var formLetterSender = await _dataContext.FormLetterSenders
             .Include(x => x.SignatureFileReference)
+            .Include(x => x.Department)
+            .Include(x => x.Office)
+            .Include(x => x.SenderFunction)
             .FirstOrDefaultAsync(x => x.Id == id);
         return formLetterSender ?? throw new EntityNotFoundException($"Form letter sender with id {id} was not found.");
     }

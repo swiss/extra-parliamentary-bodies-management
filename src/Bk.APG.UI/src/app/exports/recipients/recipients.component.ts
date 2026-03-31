@@ -1,10 +1,11 @@
 import {CommonModule, NgTemplateOutlet} from '@angular/common';
 import {Component, computed, effect, Inject, signal, DOCUMENT} from '@angular/core';
 import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
-import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton, MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatFormField, MatInputModule} from '@angular/material/input';
+import {MatRadioModule} from '@angular/material/radio';
 import {MatLabel, MatSelectModule} from '@angular/material/select';
 import {MatCell, MatCellDef, MatColumnDef, MatHeaderRow, MatHeaderRowDef, MatRow, MatRowDef, MatTableDataSource, MatTableModule} from '@angular/material/table';
 import {ActivatedRoute} from '@angular/router';
@@ -22,6 +23,8 @@ import {GeneralElectionCommitteesService} from '../../general-election/ge-commit
 import {FormLettersSenderService} from '../form-letters-sender/form-letters-sender.service';
 import {RecipientsService} from './recipients.service';
 
+export type ExportType = 'single' | 'multi';
+
 @Component({
     selector: 'apg-recipients',
     imports: [
@@ -31,6 +34,7 @@ import {RecipientsService} from './recipients.service';
         MatHeaderRowDef,
         MatHeaderRow,
         MatInputModule,
+        MatRadioModule,
         ReactiveFormsModule,
         MatColumnDef,
         MatCellDef,
@@ -51,6 +55,8 @@ import {RecipientsService} from './recipients.service';
 })
 export class RecipientsComponent {
     readonly displayedCommitteeColumns: string[] = ['select', 'description'];
+
+    readonly exportTypes: ExportType[] = ['single', 'multi'];
 
     readonly form = this.setupRequestsAndReportsForm();
     readonly departmentOffices = computed(() => {
@@ -161,7 +167,7 @@ export class RecipientsComponent {
 
             return this.recipientsService.generateReport({
                 ...this.form.getRawValue(),
-                committees: Array.from(this.selectedItems).map(y => y.id),
+                committees: Array.from(this.selectedItems).map(y => y.committeeId),
             });
         }).subscribe({
             next: response => {
@@ -225,7 +231,9 @@ export class RecipientsComponent {
             committeeTypes: this.fb.control<string[] | null>(null),
             correspondenceLanguages: this.fb.control<string[] | null>(null),
             electionTypes: this.fb.control<string[] | null>(null),
-            formLetterSender: this.fb.control<string | null>(null),
+            formLetterSender: this.fb.control<string | null>(null, {validators: [Validators.required]}),
+            exportType: this.fb.control<ExportType | null>('single'),
+            exportFileType: this.fb.control<string | null>('word'),
         });
     }
 }

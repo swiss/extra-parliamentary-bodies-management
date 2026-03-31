@@ -7,4 +7,6 @@ export interface RecipientsFilterForm {
     correspondenceLanguages: FormControl<string[] | null>;
     electionTypes: FormControl<string[] | null>;
     formLetterSender: FormControl<string | null>;
+    exportType: FormControl<string | null>;
+    exportFileType: FormControl<string | null>;
 }

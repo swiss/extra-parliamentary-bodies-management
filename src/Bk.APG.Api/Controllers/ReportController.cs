@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Net.Mime;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -24,5 +25,30 @@ public class ReportController : ControllerBase
         var (fileName, content) = await _reportService.GetReport(filterDto);
 
         return File(content, WordMimeType, fileName);
+    }
+
+    [HttpPost("downloadFormLetter")]
+    public async Task<ActionResult> GenerateReportFormLetter([FromBody, Required] FormLetterFilterParameters filterDto)
+    {
+        if (filterDto.ExportType == "single")
+        {
+            // we export a ZIP File with all documents within
+            var (fileName, zipFile) = await _reportService.CreateFormLetterAsZipFile(filterDto);
+
+            return File(zipFile, MediaTypeNames.Application.Zip, fileName);
+        }
+        else
+        {
+            var (fileName, content) = await _reportService.CreateFormLetterSingleDocument(filterDto);
+
+            if (filterDto.ExportFileType == "word")
+            {
+                return File(content, WordMimeType, fileName);
+            }
+            else
+            {
+                return File(content, MediaTypeNames.Application.Pdf, fileName);
+            }
+        }
     }
 }
