@@ -86,7 +86,7 @@ public class ContactPointRepository : IContactPointRepository
         return _dataContext.ContactPoints
             .AsNoTracking()
             .Include(c => c.ContactPointType)
-            .Where(c => c.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && (c.EndDate == null || c.EndDate > DateOnly.FromDateTime(DateTime.Today)))
+            .Where(c => c.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && (c.EndDate == null || c.EndDate >= DateOnly.FromDateTime(DateTime.Today)))
             .AsEnumerable();
     }
 
