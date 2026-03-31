@@ -51,7 +51,7 @@ describe('RecipientsService', () => {
             correspondenceLanguageIds: ['lang1', 'lang2'],
             electionTypeIds: ['elect1', 'elect2'],
             exportFileType: null,
-            exportSingleDocuments: null,
+            exportType: null,
             formLetterSenderId: 'id',
         };
         expect(httpClientMock.post).toHaveBeenCalledWith(
