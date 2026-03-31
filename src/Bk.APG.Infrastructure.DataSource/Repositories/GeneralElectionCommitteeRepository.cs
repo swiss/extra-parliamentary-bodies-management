@@ -250,6 +250,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .Include(item => item.CommitteeType)
             .Include(item => item.TermOfOffice)
             .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
             .ToListAsync();
     }
 
