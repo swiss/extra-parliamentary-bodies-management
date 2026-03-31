@@ -365,7 +365,7 @@ internal class CommitteeServiceTests
                 .Build()
         }));
 
-        var committeeDetail = await _committeeService.GetCommitteeDetail(_committee.Id);
+        var committeeDetail = await _committeeService.GetCommitteeDetail(_committee.Id, true);
 
         await _committeeRepository.Received(1).GetById(Arg.Any<Guid>());
 
