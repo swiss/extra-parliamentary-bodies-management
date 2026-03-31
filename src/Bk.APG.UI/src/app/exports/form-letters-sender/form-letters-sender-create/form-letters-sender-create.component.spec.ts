@@ -18,6 +18,7 @@ describe('FormLettersSenderCreateComponent', () => {
     let interceptorEventsMock: Partial<ObHttpApiInterceptorEvents>;
     let reloadSubject: BehaviorSubject<void>;
     let markAsTouchedSpy: jest.Mock;
+    let markAsPristineSpy: jest.Mock;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockFormComponentData: any;
@@ -25,6 +26,7 @@ describe('FormLettersSenderCreateComponent', () => {
     beforeEach(async () => {
         reloadSubject = new BehaviorSubject<void>(undefined);
         markAsTouchedSpy = jest.fn();
+        markAsPristineSpy = jest.fn();
 
         mockFormComponentData = {
             senderForm: {
@@ -50,6 +52,7 @@ describe('FormLettersSenderCreateComponent', () => {
                     website: 'https://example.com',
                 }),
                 markAsTouched: markAsTouchedSpy,
+                markAsPristine: markAsPristineSpy,
                 reset: jest.fn(),
             } as unknown as FormGroup,
             signature: undefined,

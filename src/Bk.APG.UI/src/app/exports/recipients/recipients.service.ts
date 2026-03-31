@@ -14,7 +14,6 @@ export class RecipientsService {
     generateReport(filterParameters: RecipientsFilterParameters): Observable<HttpResponse<Blob>> {
         const headers = new HttpHeaders({
             'Content-Type': 'application/json',
-            Accept: RecipientsService.WORD_ACCEPT_HEADER,
         });
 
         const body = {
@@ -22,12 +21,14 @@ export class RecipientsService {
             officeIds: filterParameters?.offices || [],
             committeeTypeIds: filterParameters?.committeeTypes || [],
             committeeIds: filterParameters?.committees || [],
-            correspondenceLanguages: filterParameters.correspondenceLanguages || [],
-            electionTypes: filterParameters.electionTypes || [],
+            correspondenceLanguageIds: filterParameters.correspondenceLanguages || [],
+            electionTypeIds: filterParameters.electionTypes || [],
             formLetterSenderId: filterParameters.formLetterSender || null,
+            exportType: filterParameters.exportType || null,
+            exportFileType: filterParameters.exportFileType || null,
         };
 
-        return this.http.post('/api/Report/download', body, {
+        return this.http.post('/api/Report/downloadFormLetter', body, {
             headers,
             observe: 'response' as const,
             responseType: 'blob' as const,
