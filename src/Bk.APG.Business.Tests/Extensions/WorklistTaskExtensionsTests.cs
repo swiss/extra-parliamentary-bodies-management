@@ -21,29 +21,29 @@ internal class WorklistTaskExtensionsTests
         [Test]
         public void ShouldReturnTrue_WhenAllConditionsAreMet()
         {
-            const string currentExternalId = "user123";
+            var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
-                .WithAssignedTo(new EiamAssignmentBuilder().WithExternalId(currentExternalId).Build())
+                .WithAssignedTo(assignment)
                 .WithWorklistTaskStateId(WorklistTaskState.Active)
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(currentExternalId);
+            var result = _worklistTask.GetCanBeForwarded(assignment.Id);
 
             Assert.That(result, Is.True);
         }
 
         [Test]
-        public void ShouldReturnFalse_WhenAssignedToExternalIdDoesNotMatch()
+        public void ShouldReturnFalse_WhenAssignedToIdDoesNotMatch()
         {
-            const string currentExternalId = "user123";
+            var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
-                .WithAssignedTo(new EiamAssignmentBuilder().WithExternalId("differentUser").Build())
+                .WithAssignedTo(assignment)
                 .WithWorklistTaskStateId(WorklistTaskState.Active)
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(currentExternalId);
+            var result = _worklistTask.GetCanBeForwarded(Guid.NewGuid());
 
             Assert.That(result, Is.False);
         }
@@ -51,14 +51,14 @@ internal class WorklistTaskExtensionsTests
         [Test]
         public void ShouldReturnFalse_WhenWorklistTaskStateIsNotActive()
         {
-            var currentExternalId = "user123";
+            var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
-                .WithAssignedTo(new EiamAssignmentBuilder().WithExternalId(currentExternalId).Build())
+                .WithAssignedTo(assignment)
                 .WithWorklistTaskStateId(WorklistTaskState.Completed)
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(currentExternalId);
+            var result = _worklistTask.GetCanBeForwarded(assignment.Id);
 
             Assert.That(result, Is.False);
         }
@@ -66,14 +66,14 @@ internal class WorklistTaskExtensionsTests
         [Test]
         public void ShouldReturnFalse_WhenWorklistTaskTypeIsNotGeneralElectionDispatch()
         {
-            var currentExternalId = "user123";
+            var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
-                .WithAssignedTo(new EiamAssignmentBuilder().WithExternalId(currentExternalId).Build())
+                .WithAssignedTo(assignment)
                 .WithWorklistTaskStateId(WorklistTaskState.Active)
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(currentExternalId);
+            var result = _worklistTask.GetCanBeForwarded(assignment.Id);
 
             Assert.That(result, Is.False);
         }

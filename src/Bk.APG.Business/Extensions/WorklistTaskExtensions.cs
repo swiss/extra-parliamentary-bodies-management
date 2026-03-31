@@ -4,9 +4,9 @@ namespace Bk.APG.Business.Extensions;
 
 public static class WorklistTaskExtensions
 {
-    public static bool GetCanBeForwarded(this WorklistTask worklistTask, string currentExternalId)
+    public static bool GetCanBeForwarded(this WorklistTask worklistTask, Guid currentEiamAssignmentId)
     {
-        return worklistTask.AssignedTo!.ExternalId == currentExternalId
+        return worklistTask.AssignedTo!.Id == currentEiamAssignmentId
             && worklistTask.WorklistTaskStateId == WorklistTaskState.Active
             && worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch;
     }
