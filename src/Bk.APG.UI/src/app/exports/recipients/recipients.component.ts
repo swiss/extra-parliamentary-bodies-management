@@ -23,6 +23,8 @@ import {GeneralElectionCommitteesService} from '../../general-election/ge-commit
 import {FormLettersSenderService} from '../form-letters-sender/form-letters-sender.service';
 import {RecipientsService} from './recipients.service';
 
+export type ExportType = 'single' | 'multi';
+
 @Component({
     selector: 'apg-recipients',
     imports: [
@@ -53,6 +55,8 @@ import {RecipientsService} from './recipients.service';
 })
 export class RecipientsComponent {
     readonly displayedCommitteeColumns: string[] = ['select', 'description'];
+
+    readonly exportTypes: ExportType[] = ['single', 'multi'];
 
     readonly form = this.setupRequestsAndReportsForm();
     readonly departmentOffices = computed(() => {
@@ -228,7 +232,7 @@ export class RecipientsComponent {
             correspondenceLanguages: this.fb.control<string[] | null>(null),
             electionTypes: this.fb.control<string[] | null>(null),
             formLetterSender: this.fb.control<string | null>(null, {validators: [Validators.required]}),
-            exportSingleDocuments: this.fb.control<string | null>('single'),
+            exportType: this.fb.control<ExportType | null>('single'),
             exportFileType: this.fb.control<string | null>('word'),
         });
     }

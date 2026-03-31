@@ -30,15 +30,12 @@ public class ReportController : ControllerBase
     [HttpPost("downloadFormLetter")]
     public async Task<ActionResult> GenerateReportFormLetter([FromBody, Required] FormLetterFilterParameters filterDto)
     {
-        if (filterDto.ExportSingleDocuments == "single")
+        if (filterDto.ExportType == "single")
         {
             // we export a ZIP File with all documents within
-            Response.ContentType = "application/zip";
-            Response.Headers.Append("Content-Disposition", "attachment; filename=documents.zip");
-
             var (fileName, zipFile) = await _reportService.CreateFormLetterAsZipFile(filterDto);
 
-            return File(zipFile, "application/zip", fileName);
+            return File(zipFile, MediaTypeNames.Application.Zip, fileName);
         }
         else
         {
