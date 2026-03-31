@@ -36,9 +36,11 @@ internal class CommitteeServiceTests
     private Membership _membership4;
     private Membership _membership5;
 
-    private List<MembershipCandidate> _candidateList;
+    private List<MembershipCandidate> _candidateListWithoutPerson;
+    private List<MembershipCandidate> _candidateListWithPerson;
     private MembershipCandidate _candidate1;
     private MembershipCandidate _candidate2;
+    private MembershipCandidate _candidate3;
 
     private EiamAssignment _eiamAssignment;
 
@@ -81,7 +83,8 @@ internal class CommitteeServiceTests
         _personId3 = Guid.Parse("FBEFEF07-CB51-4F6A-9911-FF1AC997554C");
 
         _committeeMemberList = [];
-        _candidateList = [];
+        _candidateListWithoutPerson = [];
+        _candidateListWithPerson = [];
 
         _person1 = new PersonBuilder()
             .WithId(_personId1)
@@ -198,8 +201,19 @@ internal class CommitteeServiceTests
             .WithEndDate(new DateOnly(2004, 12, 31))
             .Build();
 
-        _candidateList.Add(_candidate1);
-        _candidateList.Add(_candidate2);
+        _candidate3 = new MembershipCandidateBuilder()
+            .WithId(Guid.Parse("446c99f7-9ec4-4ac4-969b-22d3db77a627"))
+            .WithFunction(new FunctionBuilder().Build())
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithPersonId(_personId3)
+            .WithPerson(_person3)
+            .WithBeginDate(new DateOnly(2000, 1, 1))
+            .WithEndDate(new DateOnly(2004, 12, 31))
+            .Build();
+
+        _candidateListWithPerson.Add(_candidate2);
+        _candidateListWithPerson.Add(_candidate3);
+        _candidateListWithoutPerson.Add(_candidate1);
 
         _eiamAssignment = new EiamAssignmentBuilder().Build();
 
@@ -539,7 +553,7 @@ internal class CommitteeServiceTests
 
         Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
-        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+        await _committeeRepository.Received(1).GetById(updateDto.Id);
     }
 
     [TestCase(true, false)]
@@ -605,7 +619,7 @@ internal class CommitteeServiceTests
 
         Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
-        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+        await _committeeRepository.Received(1).GetById(updateDto.Id);
     }
 
     [Test]
@@ -624,7 +638,7 @@ internal class CommitteeServiceTests
 
         Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
-        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+        await _committeeRepository.Received(1).GetById(updateDto.Id);
     }
 
     [TestCase(true, false, false, false)]
@@ -652,7 +666,7 @@ internal class CommitteeServiceTests
 
         Assert.That(async () => await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true), Throws.Exception.InstanceOf<AuthorizationException>());
 
-        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+        await _committeeRepository.Received(1).GetById(updateDto.Id);
     }
 
     [Test]
@@ -1329,13 +1343,25 @@ internal class CommitteeServiceTests
         _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
 
-        await _committeeService.UpdateCommitteeAfterGeneralElection(updateDto.Id, updateDto, _candidateList);
+        await _committeeService.UpdateCommitteeAfterGeneralElection(updateDto.Id, updateDto, _candidateListWithPerson);
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
 
         await _membershipMirrorService.Received(1).CreateNewMembershipFromCandidate(Arg.Any<MembershipCreateDto>(), Arg.Any<string>());
 
         await _membershipMirrorService.Received(1).UpdateMembershipFromCandidate(Arg.Any<Guid>(), Arg.Any<MembershipUpdateDto>(), Arg.Any<string>());
+    }
+
+    [Test]
+    public async Task UpdateCommitteeAfterGeneralElection_WhenCalled_ShouldNotCreateMembersWithoutPersonRecord()
+    {
+        var updateDto = BuildUpdateDto();
+        _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
+        _committeeRepository.GetById(updateDto.Id).Returns(_committee);
+
+        await _committeeService.UpdateCommitteeAfterGeneralElection(updateDto.Id, updateDto, _candidateListWithoutPerson);
+
+        await _membershipMirrorService.Received(0).CreateNewMembershipFromCandidate(Arg.Any<MembershipCreateDto>(), Arg.Any<string>());
     }
 
     private static CommitteeUpdateDto BuildUpdateDto()

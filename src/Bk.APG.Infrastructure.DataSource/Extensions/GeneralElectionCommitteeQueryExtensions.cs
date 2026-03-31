@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Linq.Expressions;
+using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Microsoft.EntityFrameworkCore;
@@ -160,6 +161,47 @@ public static class GeneralElectionCommitteeQueryExtensions
         if (filterParameter.ElectionTypeIds is not null && filterParameter.ElectionTypeIds.Any())
         {
             query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.ElectionTypeIds.Contains(m.ElectionTypeId)));
+        }
+
+        if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())
+        {
+            query = query.Where(c => filterParameter.DepartmentIds.Contains(c.DepartmentId));
+        }
+
+        if (filterParameter.OfficeIds is not null && filterParameter.OfficeIds.Any())
+        {
+            query = query.Where(c => filterParameter.OfficeIds.Contains(c.OfficeId));
+        }
+
+        if (filterParameter.CommitteeTypeIds is not null && filterParameter.CommitteeTypeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+        }
+
+        if (filterParameter.CommitteeIds is not null && filterParameter.CommitteeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeIds.Contains(c.CommitteeId));
+        }
+
+        return query;
+    }
+
+    public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForFormLetter(this IQueryable<GeneralElectionCommittee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
+    {
+        if (electionTypeIds != null)
+        {
+            if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())
+            {
+                electionTypeIds = electionTypeIds
+                    .Where(id => filterParameter.ElectionTypeIds.Contains(id))
+                    .ToList();
+            }
+            query = query.Where(c => c.MembershipCandidates.Any(m => electionTypeIds!.Contains(m.ElectionTypeId)));
+        }
+
+        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
         }
 
         if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())

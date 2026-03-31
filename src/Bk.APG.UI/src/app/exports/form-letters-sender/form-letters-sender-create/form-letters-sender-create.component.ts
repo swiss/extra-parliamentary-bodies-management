@@ -47,6 +47,7 @@ export class FormLettersSenderCreateComponent {
         this.formLettersSenderService.createFormLettersSender(senderData).subscribe({
             next: async formLetterSender => {
                 this.form().reset(senderData);
+                this.form().markAsPristine();
                 this.formLettersSenderService.reload$.next();
                 await this.router.navigate(['general-election', 'exports', 'formLettersSenders', formLetterSender.id]);
                 this.notificationService.success('formLetter.sender.create.success');
