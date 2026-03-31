@@ -118,7 +118,7 @@ public class CommitteeService : ICommitteeService
         return await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId);
     }
 
-    public async Task<CommitteeDetailDto> GetCommitteeDetail(Guid id, bool? ignoreGeneralElectionPart = false)
+    public async Task<CommitteeDetailDto> GetCommitteeDetail(Guid id, bool ignoreGeneralElectionPart = false)
     {
         var committee = await _committeeRepository.GetById(id);
         var dto = CommitteeMapper.ToCommitteeDetailDto(committee);
@@ -137,7 +137,7 @@ public class CommitteeService : ICommitteeService
         var generalLanguageMeasure = await _generalMeasureRepository.GetGeneralLanguageMeasure(committee.DepartmentId);
         dto.GeneralLanguageMeasure = generalLanguageMeasure?.Description;
 
-        if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && ignoreGeneralElectionPart == false)
+        if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && ignoreGeneralElectionPart)
         {
             var generalElection = committee.GeneralElectionCommittees.FirstOrDefault();
             if (generalElection is not null)
