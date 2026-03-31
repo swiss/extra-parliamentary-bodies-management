@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.0
+
+-   Add form letter export [BKDO-288](https://bkdev.atlassian.net/browse/BKDO-288)
+-   Show female function text for female person [BKDO-3266](https://bkdev.atlassian.net/browse/BKDO-3266)
+-   Add re-election to conditional end date validation [BKDO-3328](https://bkdev.atlassian.net/browse/BKDO-3328)
+-   Mark membership with end date today still as active [BKDO-3327](https://bkdev.atlassian.net/browse/BKDO-3327)
+-   Add eIAM assignment role validations [BKDO-2574](https://bkdev.atlassian.net/browse/BKDO-2574)
+
 ## 1.2.0
 
 -   Introduce Countries master data and add to address [BKDO-1103](https://bkdev.atlassian.net/browse/BKDO-1103)
