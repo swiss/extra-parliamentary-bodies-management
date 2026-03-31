@@ -24,7 +24,7 @@ export class RecipientsService {
             correspondenceLanguageIds: filterParameters.correspondenceLanguages || [],
             electionTypeIds: filterParameters.electionTypes || [],
             formLetterSenderId: filterParameters.formLetterSender || null,
-            exportSingleDocuments: filterParameters.exportSingleDocuments || null,
+            exportType: filterParameters.exportType || null,
             exportFileType: filterParameters.exportFileType || null,
         };
 
