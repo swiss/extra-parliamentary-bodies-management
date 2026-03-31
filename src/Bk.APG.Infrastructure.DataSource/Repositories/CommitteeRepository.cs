@@ -345,7 +345,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(x => x.CommitteeType)
             .Include(x => x.Department)
             .Include(x => x.Memberships)
-            .Include(x => x.ContactPoints)
+            .Include(x => x.ContactPoints.Where(c => c.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && (c.EndDate == null || c.EndDate >= DateOnly.FromDateTime(DateTime.Today))))
             .Include(x => x.LegalForm)
             .Include(x => x.AppointmentDecisions)
                 .ThenInclude(x => x.OriginalDocument)
