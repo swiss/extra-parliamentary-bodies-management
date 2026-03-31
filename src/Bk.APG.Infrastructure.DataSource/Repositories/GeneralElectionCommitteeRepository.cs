@@ -180,6 +180,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetterPreview(GeneralElectionCommitteeExportFilterParameters filterDto, List<Guid> electionTypesIds)
     {
         var committees = await _dataContext.GeneralElectionCommittees
+            .Where(g => g.IsValidated)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -252,6 +253,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypeIds)
     {
         var committees = await _dataContext.GeneralElectionCommittees
+            .Where(g => g.IsValidated)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -276,7 +278,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .ThenInclude(item => item!.ElectionType)
             .Include(item => item.Committee)
             .FilterGeneralElectionCommitteesForFormLetter(filterDto, electionTypeIds)
-        .AsSplitQuery()
+            .AsSplitQuery()
             .Select(c => new GeneralElectionCommittee
             {
                 Id = c.Id,
