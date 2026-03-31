@@ -9,7 +9,7 @@ public interface ICommitteeService
     Task<PagedResultDto<CommitteeListDto>> GetCommitteeList(PagingParametersDto paging, CommitteeFilterParametersDto? filter, string? sort, SortDirection? sortDirection);
     Task<IEnumerable<CommitteeListDto>> GetCommitteeListForExport(RequestAndReportsFilterParametersDto? filterParameters);
     Task<IEnumerable<Committee>> GetCommitteesForGeneralElection();
-    Task<CommitteeDetailDto> GetCommitteeDetail(Guid id);
+    Task<CommitteeDetailDto> GetCommitteeDetail(Guid id, bool? ignoreGeneralElectionPart = false);
     Task<CommitteeUpdateDto> GetCommitteeForUpdate(Guid id);
     Task<CommitteeJustificationUpdateDto> GetCommitteeJustificationForUpdate(Guid id);
     Task<CommitteeDetailDto> UpdateCommittee(Guid id, CommitteeUpdateDto updateDto, bool checkAuthorization);
