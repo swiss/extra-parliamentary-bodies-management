@@ -321,23 +321,24 @@ public class GeneralElectionService : IGeneralElectionService
     {
         _logger.LogInformation("Ending General Election by BackgroundService");
 
-        var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
+        // var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 
-        if (!running)
-        {
-            const string message = "There is no general election in progress, cannot end the general election! Check the data in TermOfOfficeData table.";
-            _logger.LogError(message);
-            throw new BusinessValidationException(message);
-        }
+        //if (!running)
+        //{
+        //    const string message = "There is no general election in progress, cannot end the general election! Check the data in TermOfOfficeData table.";
+        //    _logger.LogError(message);
+        //    throw new BusinessValidationException(message);
+        //}
 
         var nextTermOfOffice = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
 
-        if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
+        if (nextTermOfOffice != null)
         {
-            nextTermOfOffice.PlannedPublicationDate = null;
-            nextTermOfOffice.IsGeneralElection = false;
+            //nextTermOfOffice.PlannedPublicationDate = null;
+            //nextTermOfOffice.PublicationDate = DateTime.UtcNow;
+            //nextTermOfOffice.IsGeneralElection = false;
 
-            await _termOfOfficeDateService.Update(nextTermOfOffice);
+            //await _termOfOfficeDateService.Update(nextTermOfOffice);
 
             var committees = await _generalElectionCommitteeRepository.GetAll();
 
