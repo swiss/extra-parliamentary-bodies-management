@@ -10,6 +10,6 @@ public class FormLetterFilterParameters
     public IEnumerable<Guid>? ElectionTypeIds { get; set; }
     public Guid FormLetterSenderId { get; set; }
     public DateOnly? EndDateCurrentTermOfOfficeDate { get; set; }
-    public string? ExportSingleDocuments { get; set; }
+    public string? ExportType { get; set; }
     public string? ExportFileType { get; set; }
 }
