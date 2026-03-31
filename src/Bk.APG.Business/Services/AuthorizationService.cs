@@ -3,6 +3,7 @@ using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Configuration;
+using Bk.APG.CrossCutting.Exception;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -75,7 +76,7 @@ public class AuthorizationService : IAuthorizationService
         }
     }
 
-    public string GetCurrentExternalId()
+    private string GetCurrentExternalId()
     {
         return IsAdmin ? "Admin" : ExtractClaim(CustomClaimTypes.ProfiledUnitExtId).Split(@"\")[^1];
     }
@@ -97,9 +98,7 @@ public class AuthorizationService : IAuthorizationService
 
     public async Task<Office?> GetOffice()
     {
-        var externalId = GetCurrentExternalId();
-
-        var eiamAssignment = await _eiamAssignmentRepository.GetByExternalId(externalId);
+        var eiamAssignment = await GetCurrentEiamAssignment();
 
         return eiamAssignment.Office;
     }
@@ -117,16 +116,7 @@ public class AuthorizationService : IAuthorizationService
             return new List<Committee>();
         }
 
-        var externalId = GetCurrentExternalId();
-
-        if (string.IsNullOrWhiteSpace(externalId))
-        {
-            return new List<Committee>();
-        }
-
-        _logger.LogInformation("Get committees for unit ext id {UnitExtId}", externalId);
-
-        var eiamAssignment = await _eiamAssignmentRepository.GetByExternalId(externalId);
+        var eiamAssignment = await GetCurrentEiamAssignment();
 
         return eiamAssignment.Role switch
         {
@@ -140,14 +130,56 @@ public class AuthorizationService : IAuthorizationService
     public async Task<bool> HasAccessToCommittee(Committee committee)
     {
         return IsAdmin ||
-               (committee.IsActive && ((IsDepartment && committee.DepartmentId == (await GetDepartment())?.Id) ||
-                                       ((IsOffice || IsSecretariat) && await IsCommitteeAssigned(committee.Id))));
+            (committee.IsActive && ((IsDepartment && committee.DepartmentId == (await GetDepartment())?.Id) ||
+                ((IsOffice || IsSecretariat) && await IsCommitteeAssigned(committee.Id))));
     }
 
-    public Task<EiamAssignment> GetCurrentEiamAssignment()
+    public async Task<EiamAssignment> GetCurrentEiamAssignment()
     {
         var externalId = GetCurrentExternalId();
-        return _eiamAssignmentRepository.GetByExternalId(externalId);
+        var eiamAssignment = await _eiamAssignmentRepository.GetByExternalId(externalId);
+
+        var currentRole = GetCurrentRole();
+        if (currentRole != null && eiamAssignment.Role != currentRole)
+        {
+            _logger.LogError(
+                "Role mismatch: user has role '{UserRole}' but assignment has role '{AssignmentRole}' for external ID '{ExternalId}'",
+                currentRole, eiamAssignment.Role, externalId);
+            throw new AuthorizationException(
+                $"Role mismatch: user has role '{currentRole}' but assignment has role '{eiamAssignment.Role}' for external ID '{externalId}'");
+        }
+
+        return eiamAssignment;
+    }
+
+    private Role? GetCurrentRole()
+    {
+        if (IsAdmin)
+        {
+            return Role.Admin;
+        }
+
+        if (IsDepartment)
+        {
+            return Role.Department;
+        }
+
+        if (IsOffice)
+        {
+            return Role.Office;
+        }
+
+        if (IsSecretariat)
+        {
+            return Role.Secretariat;
+        }
+
+        if (IsObserver)
+        {
+            return Role.Observer;
+        }
+
+        return null;
     }
 
     private string ExtractClaim(string claimType)
