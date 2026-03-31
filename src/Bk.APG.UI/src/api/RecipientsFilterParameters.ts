@@ -14,6 +14,6 @@ export interface RecipientsFilterParameters {
     correspondenceLanguages?: Language['id'][] | null;
     electionTypes?: ElectionType['id'][] | null;
     formLetterSender?: FormLettersSenderList['id'] | null;
-    exportSingleDocuments?: string | null;
+    exportType?: string | null;
     exportFileType?: string | null;
 }
