@@ -212,10 +212,19 @@ public class CommitteeService : ICommitteeService
 
         existingCommittee.VacanciesGeneralElection = updateDto.VacanciesInGeneralElection;
 
+        // TODO PP, das nur bei laufender GEW aufrufen?
         await UpdateMembershipAdditionsInGeneralElection(updateDto, existingCommittee);
 
         existingCommittee.Modified = DateTime.UtcNow;
-        existingCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+        if (checkAuthorization)
+        {
+            existingCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+        else
+        {
+            existingCommittee.ModifiedBy = "system";
+        }
 
         await _committeeRepository.CommitChanges();
 
@@ -227,7 +236,7 @@ public class CommitteeService : ICommitteeService
     public async Task<CommitteeDetailDto> UpdateCommitteeAfterGeneralElection(Guid id, CommitteeUpdateDto updateDto, List<MembershipCandidate> membershipCandidates)
     {
         var saved = await UpdateCommittee(id, updateDto, false);
-        var userName = "CommitteeService";
+        var userName = "system";
 
         foreach (var candidate in membershipCandidates)
         {
