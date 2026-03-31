@@ -27,7 +27,7 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<PagedResult<WorklistTask>> GetAll(PagingParameters paging, WorklistFilterParameters? filter, string? sort, SortDirection? sortDirection)
     {
         var isAdmin = _authorizationService.IsAdmin;
-        var eiamAssignmentIds = isAdmin ? [] : (await _eiamAssignmentRepository.GetByExternalId(_authorizationService.GetCurrentExternalId())).GetSearchableIds().ToList();
+        var eiamAssignmentIds = isAdmin ? [] : (await _authorizationService.GetCurrentEiamAssignment()).GetSearchableIds().ToList();
         var query = _dataContext.WorklistTasks
             .Where(w => !w.IsDeleted)
             .Include(item => item.WorklistTaskType)
@@ -208,6 +208,6 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     {
         await _dataContext.WorklistTasks
             .ExecuteUpdateAsync(setters => setters
-            .SetProperty(w => w.IsDeleted, true));
+                .SetProperty(w => w.IsDeleted, true));
     }
 }
