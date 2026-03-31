@@ -9,7 +9,6 @@ public interface IAuthorizationService
     bool IsDepartment { get; }
     bool IsOffice { get; }
     bool IsObserver { get; }
-    string GetCurrentExternalId();
     string GetCurrentUserName();
     Task<bool> IsCommitteeAssigned(Guid committeeId);
     Task<Department?> GetDepartment();

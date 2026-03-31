@@ -10,6 +10,7 @@ public static class GeneralElectionMapper
     {
         return new GeneralElectionCommittee
         {
+            Id = committee.Id,
             CommitteeId = committee.Id,
             BeginDate = committee.BeginDate,
             EndDate = committee.EndDate,
@@ -19,8 +20,11 @@ public static class GeneralElectionMapper
             DescriptionRomansh = committee.DescriptionRomansh,
             CommitteeLevelId = committee.CommitteeLevelId,
             OfficeId = committee.OfficeId,
+            Office = committee.Office,
             DepartmentId = committee.DepartmentId,
+            Department = committee.Department,
             CommitteeTypeId = committee.CommitteeTypeId,
+            CommitteeType = committee.CommitteeType,
             ReleaseGeneralElection = committee.ReleaseGeneralElection is not null && (bool)committee.ReleaseGeneralElection,
             FederalLawEstablishment = committee.FederalLawEstablishment,
             SupervisionDuty = committee.SupervisionDuty,

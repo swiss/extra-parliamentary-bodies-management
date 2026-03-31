@@ -20,6 +20,7 @@ describe('FormLettersSenderEditComponent', () => {
     let activatedRouteMock: Partial<ActivatedRoute>;
     let reloadSubject: BehaviorSubject<void>;
     let markAsTouchedSpy: jest.Mock;
+    let markAsPristineSpy: jest.Mock;
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockFormComponentData: any;
@@ -50,6 +51,7 @@ describe('FormLettersSenderEditComponent', () => {
     beforeEach(async () => {
         reloadSubject = new BehaviorSubject<void>(undefined);
         markAsTouchedSpy = jest.fn();
+        markAsPristineSpy = jest.fn();
 
         mockFormComponentData = {
             senderForm: {
@@ -75,6 +77,7 @@ describe('FormLettersSenderEditComponent', () => {
                     website: 'https://example.com',
                 }),
                 markAsTouched: markAsTouchedSpy,
+                markAsPristine: markAsPristineSpy,
             } as unknown as FormGroup,
             signature: undefined,
             signatureFileName: 'signature.png',

@@ -22,6 +22,7 @@ public class GeneralElectionCommitteeServiceTests
     private readonly ICommitteeService _committeeService = Substitute.For<ICommitteeService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+    private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly ILogger<GeneralElectionCommitteeService> _logger = NullLogger<GeneralElectionCommitteeService>.Instance;
 
@@ -83,6 +84,7 @@ public class GeneralElectionCommitteeServiceTests
             _committeeService,
             _generalMeasureRepository,
             _worklistTaskRepository,
+            _masterDataRepository,
             _documentService,
             _logger);
     }

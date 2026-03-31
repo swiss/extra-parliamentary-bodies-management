@@ -1240,6 +1240,15 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to APG_Serienbrief_Gesamt.
+        /// </summary>
+        public static string FormLetterCompleteExport_Filename {
+            get {
+                return ResourceManager.GetString("FormLetterCompleteExport_Filename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Bitte Datenschutzberater/-in nachtragen..
         /// </summary>
         public static string GeneralElection_MissingDataProtectionOfficer_TaskDescription {
