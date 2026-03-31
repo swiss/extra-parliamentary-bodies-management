@@ -244,6 +244,9 @@ public class CommitteeService : ICommitteeService
             {
                 var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
 
+                // we belong to the existing committee
+                createDto.CommitteeId = updateDto.Id;
+
                 if (createDto.PersonId != Guid.Empty)
                 {
                     await _membershipMirrorService.CreateNewMembershipFromCandidate(createDto, userName);
