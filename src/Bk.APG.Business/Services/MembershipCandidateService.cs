@@ -383,14 +383,14 @@ public class MembershipCandidateService : IMembershipCandidateService
             }
             else
             {
-                foreach (var task in personTasks.Where(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests || x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData))
+                foreach (var task in personTasks.Where(x =>
+                             x.WorklistTaskStateId != WorklistTaskState.Completed
+                             && (x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+                                 x.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData)))
                 {
-                    if (task.WorklistTaskStateId != WorklistTaskState.Completed)
-                    {
-                        task.WorklistTaskStateId = WorklistTaskState.Completed;
-                        task.Modified = DateTime.UtcNow;
-                        task.ModifiedBy = "System";
-                    }
+                    task.WorklistTaskStateId = WorklistTaskState.Completed;
+                    task.Modified = DateTime.UtcNow;
+                    task.ModifiedBy = "System";
                 }
             }
         }
