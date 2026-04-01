@@ -79,6 +79,8 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<PagedResult<GeneralElectionCommittee>> GetAll(PagingParameters paging, GeneralElectionCommitteeFilterParameters filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var query = _dataContext.GeneralElectionCommittees
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
@@ -250,7 +252,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         return committees;
     }
 
-    public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypeIds)
+    public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds)
     {
         var committees = await _dataContext.GeneralElectionCommittees
             .Where(g => g.IsValidated)
@@ -277,7 +279,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .Include(item => item.MembershipCandidates)
             .ThenInclude(item => item!.ElectionType)
             .Include(item => item.Committee)
-            .FilterGeneralElectionCommitteesForFormLetter(filterDto, electionTypeIds)
+            .FilterGeneralElectionCommitteesForFormLetter(filterDto, electionTypesIds)
             .AsSplitQuery()
             .Select(c => new GeneralElectionCommittee
             {
@@ -321,8 +323,8 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                         (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
                          filterDto.CorrespondenceLanguageIds!.Contains(
                              m.Person.CorrespondenceLanguageId)) &&
-                        (electionTypeIds == null || electionTypeIds.Count == 0 ||
-                         electionTypeIds!.Contains(
+                        (electionTypesIds == null || electionTypesIds.Count == 0 ||
+                         electionTypesIds!.Contains(
                              m.ElectionTypeId)))
                     .ToList()
             })
