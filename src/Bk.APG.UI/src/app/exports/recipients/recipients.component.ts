@@ -222,6 +222,8 @@ export class RecipientsComponent {
 
     reset() {
         this.form.reset();
+        this.form.controls.exportType.setValue('single');
+        this.form.controls.exportFileType.setValue('word');
     }
 
     private setupRequestsAndReportsForm(): FormGroup<RecipientsFilterForm> {

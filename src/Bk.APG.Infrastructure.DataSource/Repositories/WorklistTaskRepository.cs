@@ -14,14 +14,12 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     private readonly DataContext _dataContext;
     private readonly ICultureService _cultureService;
     private readonly IAuthorizationService _authorizationService;
-    private readonly IEiamAssignmentRepository _eiamAssignmentRepository;
 
-    public WorklistTaskRepository(DataContext dataContext, ICultureService cultureService, IAuthorizationService authorizationService, IEiamAssignmentRepository eiamAssignmentRepository)
+    public WorklistTaskRepository(DataContext dataContext, ICultureService cultureService, IAuthorizationService authorizationService)
     {
         _dataContext = dataContext;
         _cultureService = cultureService;
         _authorizationService = authorizationService;
-        _eiamAssignmentRepository = eiamAssignmentRepository;
     }
 
     public async Task<PagedResult<WorklistTask>> GetAll(PagingParameters paging, WorklistFilterParameters? filter, string? sort, SortDirection? sortDirection)

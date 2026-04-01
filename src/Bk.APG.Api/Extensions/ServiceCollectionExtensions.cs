@@ -130,8 +130,12 @@ public static class ServiceCollectionExtensions
         entity.AuditDate = DateTime.UtcNow;
 
         using var scope = _rootProvider!.CreateScope();
-        var authService = scope.ServiceProvider.GetRequiredService<IAuthorizationService>();
-        entity.AuditUser = authService.GetCurrentUserName();
+
+        entity.AuditUser = (
+            entry.ColumnValues.TryGetValue("modified_by", out var value) && value is not null
+                ? value.ToString()
+                : "system"
+        ) ?? "system";
 
         entity.AuditAction = entry.Action;
         entity.AuditData = entry.Changes is not null
