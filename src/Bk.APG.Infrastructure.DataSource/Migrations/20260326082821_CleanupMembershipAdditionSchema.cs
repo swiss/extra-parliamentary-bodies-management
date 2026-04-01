@@ -11,6 +11,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             // STEP 1: Ensure unique OGD IDs
             migrationBuilder.UpdateData(schema: "data", table: "membership_additions", keyColumn: "id", keyValue: "81da54ba-0dee-477d-8a9a-0859789c5d75", column: "ogd_id", value: 22);
             migrationBuilder.UpdateData(schema: "data", table: "membership_additions", keyColumn: "id", keyValue: "9dcbf649-5237-4060-94ad-fea728e9cd6c", column: "ogd_id", value: 23);
@@ -191,6 +193,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.DropIndex(
                 name: "ix_membership_additions_ogd_id",
                 schema: "data",

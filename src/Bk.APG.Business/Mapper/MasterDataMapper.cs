@@ -10,6 +10,8 @@ public static class MasterDataMapper
 {
     public static T MapToMasterDataDto<T>(MasterDataBase masterData, CultureInfo cultureInfo) where T : MasterDataDtoBase, new()
     {
+        ArgumentNullException.ThrowIfNull(masterData);
+
         return new T
         {
             Id = masterData.Id,
@@ -22,6 +24,8 @@ public static class MasterDataMapper
 
     public static T MapFunctionToMasterDataDto<T>(Function masterData, CultureInfo cultureInfo) where T : FunctionDto, new()
     {
+        ArgumentNullException.ThrowIfNull(masterData);
+
         return new T
         {
             Id = masterData.Id,
@@ -35,6 +39,8 @@ public static class MasterDataMapper
 
     public static T MapWorklistTaskTypeToMasterDataDto<T>(WorklistTaskType masterData, CultureInfo cultureInfo) where T : WorklistTaskTypeDto, new()
     {
+        ArgumentNullException.ThrowIfNull(masterData);
+
         return new T
         {
             Id = masterData.Id,
@@ -48,6 +54,8 @@ public static class MasterDataMapper
 
     public static T MapTermOfOfficeDateToMasterDataDto<T>(TermOfOfficeDate masterData, CultureInfo cultureInfo) where T : TermDateDto, new()
     {
+        ArgumentNullException.ThrowIfNull(masterData);
+
         return new T
         {
             Id = masterData.Id,
@@ -63,6 +71,8 @@ public static class MasterDataMapper
 
     public static LegislaturePeriodDto MapToLegislaturePeriodDto(LegislaturePeriod legislaturePeriod)
     {
+        ArgumentNullException.ThrowIfNull(legislaturePeriod);
+
         return new LegislaturePeriodDto
         {
             ElectionDate = legislaturePeriod.ElectionDate,
@@ -75,6 +85,8 @@ public static class MasterDataMapper
 
     public static CouncilDto MapToCouncilDto(Council council)
     {
+        ArgumentNullException.ThrowIfNull(council);
+
         return new CouncilDto
         {
             Id = council.Id,
@@ -86,6 +98,8 @@ public static class MasterDataMapper
 
     public static DimensionItem ToDimensionItem(MasterDataBase masterDataItem)
     {
+        ArgumentNullException.ThrowIfNull(masterDataItem);
+
         var textAndDescriptions = new List<AdditionalLiteralProperty>();
 
         if (!string.IsNullOrWhiteSpace(masterDataItem.DescriptionDe))
@@ -123,7 +137,7 @@ public static class MasterDataMapper
             textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaName, new Literal(masterDataItem.TextRm, OgdExportConstants.LanguageRm)));
         }
 
-        textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaPosition, new Literal(masterDataItem.Sort.ToString(), new Uri(OgdExportConstants.DataTypeInt))));
+        textAndDescriptions.Add(new AdditionalLiteralProperty(OgdExportConstants.SchemaPosition, new Literal(masterDataItem.Sort.ToString(CultureInfo.InvariantCulture), new Uri(OgdExportConstants.DataTypeInt))));
 
         var dimensionItem =
             new DimensionItem(
@@ -136,6 +150,8 @@ public static class MasterDataMapper
 
     public static DepartmentDto MapToDepartmentDto(Department department)
     {
+        ArgumentNullException.ThrowIfNull(department);
+
         return new DepartmentDto
         {
             Id = department.Id,
@@ -148,6 +164,8 @@ public static class MasterDataMapper
 
     public static OfficeDto MapToOfficeDto(Office office, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(office);
+
         return new OfficeDto
         {
             Id = office.Id,
@@ -161,6 +179,8 @@ public static class MasterDataMapper
 
     public static OccupationDto MapToOccupationDto(Occupation occupation, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(occupation);
+
         return new OccupationDto
         {
             Id = occupation.Id,

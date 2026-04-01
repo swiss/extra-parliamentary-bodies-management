@@ -10,6 +10,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.Sql(@"
                 UPDATE data.legal_forms
                 SET
@@ -29,6 +31,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.Sql(@"
                 UPDATE data.legal_forms
                 SET

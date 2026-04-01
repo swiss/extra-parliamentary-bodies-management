@@ -11,6 +11,8 @@ public static class MembershipMapper
 {
     public static MembershipDetailDto ToMembershipDetailDto(Membership membership)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         return new MembershipDetailDto
         {
             Id = membership.Id,
@@ -25,6 +27,8 @@ public static class MembershipMapper
 
     public static PersonMembershipDto ToPersonMembershipDto(Membership membership)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         return new PersonMembershipDto
         {
             Id = membership.Id,
@@ -42,6 +46,8 @@ public static class MembershipMapper
 
     public static CommitteeMemberDto ToCommitteeMemberDto(Membership membership)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         return new CommitteeMemberDto
         {
             Id = membership.Id,
@@ -64,6 +70,8 @@ public static class MembershipMapper
 
     public static Membership FromMembershipCreateDto(MembershipCreateDto membershipCreateDto, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(membershipCreateDto);
+
         return new Membership
         {
             CommitteeId = membershipCreateDto.CommitteeId,
@@ -94,6 +102,9 @@ public static class MembershipMapper
 
     public static MembershipUpdateDto ToMembershipUpdateDto(Membership membership, ICultureService cultureService)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+        ArgumentNullException.ThrowIfNull(cultureService);
+
         return new MembershipUpdateDto
         {
             Id = membership.Id,
@@ -124,6 +135,8 @@ public static class MembershipMapper
 
     public static ObservationDataRow ToObservation(Membership membership)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         ArgumentNullException.ThrowIfNull(membership.Committee, nameof(membership.Committee));
         ArgumentNullException.ThrowIfNull(membership.Person, nameof(membership.Person));
 

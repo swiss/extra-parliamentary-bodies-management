@@ -7,6 +7,8 @@ public static class ReportMapper
 {
     public static ReportGeneralElectionCommitteeDto FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto(GeneralElectionCommittee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return new ReportGeneralElectionCommitteeDto
         {
             // we want it to be the original CommitteeID!
@@ -56,6 +58,8 @@ public static class ReportMapper
 
     public static ReportGeneralElectionCommitteeDto FromCommitteeToReportGeneralElectionCommitteeDto(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return new ReportGeneralElectionCommitteeDto
         {
             Id = committee.Id,
@@ -105,6 +109,8 @@ public static class ReportMapper
 
     public static ReportGeneralElectionMembershipDto FromMembershipCandidateToReportMembershipDto(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         return new ReportGeneralElectionMembershipDto
         {
             PersonId = membershipCandidate.Person != null ? membershipCandidate.Person.Id : Guid.Empty,
@@ -140,6 +146,8 @@ public static class ReportMapper
 
     public static ReportGeneralElectionMembershipDto FromMembershipToReportMembershipDto(Membership membership)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         return new ReportGeneralElectionMembershipDto
         {
             PersonId = membership.Person != null ? membership.Person.Id : Guid.Empty,

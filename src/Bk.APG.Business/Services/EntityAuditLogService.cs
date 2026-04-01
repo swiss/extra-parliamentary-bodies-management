@@ -35,6 +35,8 @@ public class EntityAuditLogService : IEntityAuditLogService
 
     public async Task<PagedResult<EntityAuditLogDto>> GetAuditLogsForEntity(string entityId, string entityType, IEnumerable<string> relatedEntityIds, PagingParametersDto paging, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(entityType);
+
         var pagingParameters = PagingMapper.ToPagingParameters(paging);
         var entityAuditLogs = await _entityAuditLogRepository.GetEntityAuditLogs(entityId, relatedEntityIds.Where(x => !string.IsNullOrWhiteSpace(x)), pagingParameters, sort, sortDirection);
 
@@ -47,7 +49,7 @@ public class EntityAuditLogService : IEntityAuditLogService
             await ResolveForeignKeys(entityAuditLogDto);
         }
 
-        if (entityType.Equals(nameof(Person), StringComparison.InvariantCultureIgnoreCase))
+        if (entityType.Equals(nameof(Person), StringComparison.OrdinalIgnoreCase))
         {
             await MaskAddressData(entityId, entityAuditLogDtos);
         }

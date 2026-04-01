@@ -118,6 +118,8 @@ public class OfficeBuilder
 
     public OfficeBuilder WithDepartment(Department department)
     {
+        ArgumentNullException.ThrowIfNull(department);
+
         _department = department;
         _departmentId = department.Id;
         return this;

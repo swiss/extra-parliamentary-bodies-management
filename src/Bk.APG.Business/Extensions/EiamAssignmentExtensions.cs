@@ -6,6 +6,8 @@ public static class EiamAssignmentExtensions
 {
     public static IEnumerable<Guid> GetSearchableIds(this EiamAssignment eiamAssignment)
     {
+        ArgumentNullException.ThrowIfNull(eiamAssignment);
+
         var searchableIds = new List<Guid> { eiamAssignment.Id };
 
         switch (eiamAssignment.Role)
@@ -29,6 +31,8 @@ public static class EiamAssignmentExtensions
 
     public static IEnumerable<EiamAssignment> GetAssignableIds(this EiamAssignment eiamAssignment)
     {
+        ArgumentNullException.ThrowIfNull(eiamAssignment);
+
         var assignableIds = new List<EiamAssignment>();
 
         if (eiamAssignment.Parent is not null)
@@ -43,6 +47,8 @@ public static class EiamAssignmentExtensions
 
     public static IEnumerable<EiamAssignment> GetAssignmentsForCandidateListForward(this EiamAssignment eiamAssignment, Guid committeeId)
     {
+        ArgumentNullException.ThrowIfNull(eiamAssignment);
+
         var assignableIds = new List<EiamAssignment>();
         switch (eiamAssignment.Role)
         {
@@ -71,6 +77,8 @@ public static class EiamAssignmentExtensions
 
     public static IEnumerable<EiamAssignment> GetAssignmentsForReadyForProposalForward(this EiamAssignment eiamAssignment, Guid committeeId)
     {
+        ArgumentNullException.ThrowIfNull(eiamAssignment);
+
         var assignableIds = new List<EiamAssignment>();
         switch (eiamAssignment.Role)
         {
