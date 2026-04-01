@@ -64,6 +64,24 @@
             </mat-select>
         </mat-form-field>
 
+        <mat-radio-group formControlName="exportType">
+            <mat-radio-button value="single">
+                {{ 'recipients.filter.singleDocuments.label' | translate }}
+            </mat-radio-button>
+            <mat-radio-button value="multiple">
+                {{ 'recipients.filter.multipleDocuments.label' | translate }}
+            </mat-radio-button>
+        </mat-radio-group>
+
+        <mat-radio-group formControlName="exportFileType">
+            <mat-radio-button value="word">
+                {{ 'recipients.filter.word.label' | translate }}
+            </mat-radio-button>
+            <mat-radio-button value="pdf">
+                {{ 'recipients.filter.pdf.label' | translate }}
+            </mat-radio-button>
+        </mat-radio-group>
+
         <div class="buttons">
             <button (click)="reset()" [disabled]="!form.dirty" mat-button obButton="secondary" type="button">{{ 'common.reset' | translate }}</button>
             <button mat-button obButton="primary" type="button" [disabled]="!form.valid" (click)="generateReport()">

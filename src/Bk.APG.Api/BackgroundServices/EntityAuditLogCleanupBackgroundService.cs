@@ -14,15 +14,15 @@ public class EntityAuditLogCleanupBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("{BackgroundService} is starting...", nameof(EntityAuditLogCleanupBackgroundService));
 
-        while (!cancellationToken.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                await CleanupEntityAuditLog(cancellationToken);
+                await CleanupEntityAuditLog(stoppingToken);
             }
             catch (OperationCanceledException)
             {
@@ -32,7 +32,7 @@ public class EntityAuditLogCleanupBackgroundService : BackgroundService
             {
                 var nextRunTime = DateTime.Today.AddDays(1).AddHours(3);
                 var delay = nextRunTime - DateTime.Now;
-                await Task.Delay(delay, cancellationToken);
+                await Task.Delay(delay, stoppingToken);
             }
         }
     }
