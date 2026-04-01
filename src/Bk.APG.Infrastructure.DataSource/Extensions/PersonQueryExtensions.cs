@@ -1,4 +1,3 @@
-using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Microsoft.EntityFrameworkCore;

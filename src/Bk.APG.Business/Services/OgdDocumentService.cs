@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Text.Json;
 using Amazon.S3;
 using Amazon.S3.Model;
