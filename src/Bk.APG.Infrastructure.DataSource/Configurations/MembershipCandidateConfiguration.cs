@@ -7,6 +7,8 @@ public class MembershipCandidateConfiguration : EntityBaseConfiguration<Membersh
 {
     protected override void ConfigureEntity(EntityTypeBuilder<MembershipCandidate> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(m => m.Surname)
             .IsRequired()
             .HasMaxLength(150);

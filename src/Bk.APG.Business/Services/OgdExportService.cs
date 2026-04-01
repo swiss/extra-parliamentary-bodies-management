@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Connections;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
@@ -56,6 +57,11 @@ public class OgdExportService : IOgdExportService
         IOgdDocumentService ogdDocumentService,
         IOptions<OgdS3Configuration> ogdS3Options)
     {
+        ArgumentNullException.ThrowIfNull(sparqlClientFactory);
+        ArgumentNullException.ThrowIfNull(sparqlOptions);
+        ArgumentNullException.ThrowIfNull(targetsOptions);
+        ArgumentNullException.ThrowIfNull(ogdS3Options);
+
         _storageProviders = sparqlClientFactory.GetStorageProviders();
         _dimensionService = dimensionService;
         _membershipService = membershipService;
@@ -778,7 +784,7 @@ public class OgdExportService : IOgdExportService
             new(
                 graph.CreateUriNode(uri),
                 graph.CreateUriNode(OgdExportConstants.SchemaDateModified),
-                graph.CreateLiteralNode(DateTime.Now.ToString("yyyy-MM-dd"), UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
+                graph.CreateLiteralNode(DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), UriFactory.Create(XmlSpecsHelper.XmlSchemaDataTypeDate))),
             new(
                 graph.CreateUriNode(uri),
                 graph.CreateUriNode(OgdExportConstants.SchemaName),

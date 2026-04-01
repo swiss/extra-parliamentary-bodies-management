@@ -173,6 +173,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithCommitteeLevel(CommitteeLevel committeeLevel)
     {
+        ArgumentNullException.ThrowIfNull(committeeLevel);
+
         _committeeLevel = committeeLevel;
         _committeeLevelId = committeeLevel.Id;
         return this;
@@ -186,6 +188,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithCommitteeType(CommitteeType committeeType)
     {
+        ArgumentNullException.ThrowIfNull(committeeType);
+
         _committeeType = committeeType;
         _committeeTypeId = committeeType.Id;
         return this;
@@ -199,6 +203,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithTermOfOffice(TermOfOffice termOfOffice)
     {
+        ArgumentNullException.ThrowIfNull(termOfOffice);
+
         _termOfOffice = termOfOffice;
         _termOfOfficeId = termOfOffice.Id;
         return this;
@@ -212,6 +218,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithTermOfOfficeDate(TermOfOfficeDate termOfOfficeDate)
     {
+        ArgumentNullException.ThrowIfNull(termOfOfficeDate);
+
         _termOfOfficeDate = termOfOfficeDate;
         _termOfOfficeDateId = termOfOfficeDate.Id;
         return this;
@@ -225,6 +233,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithDepartment(Department department)
     {
+        ArgumentNullException.ThrowIfNull(department);
+
         _department = department;
         _departmentId = department.Id;
         return this;
@@ -238,6 +248,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithCommittee(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         _committee = committee;
         _committeeId = committee.Id;
         return this;
@@ -251,6 +263,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithOffice(Office office)
     {
+        ArgumentNullException.ThrowIfNull(office);
+
         _office = office;
         _officeId = office.Id;
         return this;
@@ -288,6 +302,8 @@ public class GeneralElectionCommitteeBuilder
 
     public GeneralElectionCommitteeBuilder WithCandidateListState(CandidateListState candidateListState)
     {
+        ArgumentNullException.ThrowIfNull(candidateListState);
+
         _candidateListState = candidateListState;
         _candidateListStateId = candidateListState.Id;
         return this;

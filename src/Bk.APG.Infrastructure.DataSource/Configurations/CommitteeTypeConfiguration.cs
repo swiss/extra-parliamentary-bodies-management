@@ -7,6 +7,8 @@ public class CommitteeTypeConfiguration : MasterDataBaseConfiguration<CommitteeT
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<CommitteeType> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(p => p.RowVersion).IsRowVersion();
     }
 }

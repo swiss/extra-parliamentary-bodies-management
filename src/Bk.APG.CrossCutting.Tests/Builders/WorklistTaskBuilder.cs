@@ -71,6 +71,8 @@ public class WorklistTaskBuilder
 
     public WorklistTaskBuilder WithParentWorklistTask(WorklistTask parentTask)
     {
+        ArgumentNullException.ThrowIfNull(parentTask);
+
         _parentTask = parentTask;
         _parentTaskId = parentTask.Id;
         return this;
@@ -84,6 +86,8 @@ public class WorklistTaskBuilder
 
     public WorklistTaskBuilder WithWorklistTaskType(WorklistTaskType worklistTaskType)
     {
+        ArgumentNullException.ThrowIfNull(worklistTaskType);
+
         _worklistTaskType = worklistTaskType;
         _worklistTaskTypeId = worklistTaskType.Id;
         return this;
@@ -115,6 +119,8 @@ public class WorklistTaskBuilder
 
     public WorklistTaskBuilder WithGeneralElectionCommittee(GeneralElectionCommittee generalElectionCommittee)
     {
+        ArgumentNullException.ThrowIfNull(generalElectionCommittee);
+
         _generalElectionCommittee = generalElectionCommittee;
         _generalElectionCommitteeId = generalElectionCommittee.Id;
         return this;
@@ -128,6 +134,8 @@ public class WorklistTaskBuilder
 
     public WorklistTaskBuilder WithAssignedTo(EiamAssignment assignedTo)
     {
+        ArgumentNullException.ThrowIfNull(assignedTo);
+
         _assignedTo = assignedTo;
         _assignedToId = assignedTo.Id;
         return this;
@@ -135,6 +143,8 @@ public class WorklistTaskBuilder
 
     public WorklistTaskBuilder WithDepartment(Department department)
     {
+        ArgumentNullException.ThrowIfNull(department);
+
         _department = department;
         _departmentId = department.Id;
         return this;
@@ -142,6 +152,8 @@ public class WorklistTaskBuilder
 
     public WorklistTaskBuilder WithOffice(Office office)
     {
+        ArgumentNullException.ThrowIfNull(office);
+
         _office = office;
         _officeId = office.Id;
         return this;

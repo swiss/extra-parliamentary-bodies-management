@@ -7,6 +7,8 @@ public static class AddressMapper
 {
     public static AddressDetailsDto ToAddressDetailDto(Address address, Guid activeAddressId, bool maskAddress)
     {
+        ArgumentNullException.ThrowIfNull(address);
+
         return new AddressDetailsDto
         {
             Id = address.Id,
@@ -26,6 +28,8 @@ public static class AddressMapper
 
     public static AddressUpdateDto ToAddressUpdateDto(Address address, Guid activeAddressId)
     {
+        ArgumentNullException.ThrowIfNull(address);
+
         return new AddressUpdateDto
         {
             Id = address.Id,
@@ -45,6 +49,8 @@ public static class AddressMapper
 
     public static Address FromAddressUpdateDto(AddressUpdateDto addressUpdateDto)
     {
+        ArgumentNullException.ThrowIfNull(addressUpdateDto);
+
         var address = new Address
         {
             Id = addressUpdateDto.Id ?? Guid.NewGuid(),

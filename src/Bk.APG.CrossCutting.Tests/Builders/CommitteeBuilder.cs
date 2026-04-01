@@ -177,6 +177,8 @@ public class CommitteeBuilder
 
     public CommitteeBuilder WithCommitteeLevel(CommitteeLevel committeeLevel)
     {
+        ArgumentNullException.ThrowIfNull(committeeLevel);
+
         _committeeLevel = committeeLevel;
         _committeeLevelId = committeeLevel.Id;
         return this;
@@ -190,6 +192,8 @@ public class CommitteeBuilder
 
     public CommitteeBuilder WithCommitteeType(CommitteeType committeeType)
     {
+        ArgumentNullException.ThrowIfNull(committeeType);
+
         _committeeType = committeeType;
         _committeeTypeId = committeeType.Id;
         return this;
@@ -203,6 +207,8 @@ public class CommitteeBuilder
 
     public CommitteeBuilder WithTermOfOffice(TermOfOffice termOfOffice)
     {
+        ArgumentNullException.ThrowIfNull(termOfOffice);
+
         _termOfOffice = termOfOffice;
         _termOfOfficeId = termOfOffice.Id;
         return this;
@@ -222,6 +228,8 @@ public class CommitteeBuilder
 
     public CommitteeBuilder WithDepartment(Department department)
     {
+        ArgumentNullException.ThrowIfNull(department);
+
         _department = department;
         _departmentId = department.Id;
         return this;
@@ -235,6 +243,8 @@ public class CommitteeBuilder
 
     public CommitteeBuilder WithOffice(Office office)
     {
+        ArgumentNullException.ThrowIfNull(office);
+
         _office = office;
         _officeId = office.Id;
         return this;

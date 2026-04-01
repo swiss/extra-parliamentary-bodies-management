@@ -7,6 +7,8 @@ public class GeneralGenderMeasureConfiguration : EntityBaseConfiguration<General
 {
     protected override void ConfigureEntity(EntityTypeBuilder<GeneralGenderMeasure> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(x => x.Description)
             .IsRequired();
 

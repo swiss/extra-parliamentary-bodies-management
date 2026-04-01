@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting.Tests.Builders;
 
@@ -89,8 +90,8 @@ internal class MembershipTests
                     .WithTermOfOfficeId(new Guid(termOfOfficeIdAsStringId))
                     .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().WithEndDate(new DateOnly(2027, 12, 31)).Build())
                     .Build())
-            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(startDate)))
-            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(startDate, CultureInfo.InvariantCulture)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate, CultureInfo.InvariantCulture)))
             .Build();
 
         Assert.That(membership.JustificationShorterDutyNeeded, Is.EqualTo(expected));
@@ -112,8 +113,8 @@ internal class MembershipTests
                     .WithTermOfOfficeId(new Guid(TermOfOffice.Period4YearsInGeneralElectionGuidAsString))
                     .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().WithEndDate(new DateOnly(2027, 12, 31)).Build())
                     .Build())
-            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(beginDate)))
-            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(beginDate, CultureInfo.InvariantCulture)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate, CultureInfo.InvariantCulture)))
             .Build();
 
         Assert.That(membership.JustificationShorterDutyNeeded, Is.EqualTo(expected));
@@ -140,8 +141,8 @@ internal class MembershipTests
                     .WithItalianDescription("IT")
                     .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
                     .Build())
-            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(beginDate)))
-            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Parse(beginDate, CultureInfo.InvariantCulture)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate, CultureInfo.InvariantCulture)))
             .Build();
 
         Assert.That(membership.JustificationLongerDutyNeeded, Is.EqualTo(expected));
@@ -372,7 +373,7 @@ internal class MembershipTests
                     .Build())
             .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Male).Build()).Build())
             .WithBeginDate(DateOnly.FromDateTime(new DateTime(2027, 1, 1)))
-            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Parse(endDate, CultureInfo.InvariantCulture)))
             .WithJustificationShorterDuty(justificationShorterDuty)
             .Build();
 

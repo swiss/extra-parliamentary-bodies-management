@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.RawData.Model;
@@ -8,12 +9,14 @@ public static class OgdFunctionStatisticMapper
 {
     public static ObservationDataRow ToFunctionStatisticObservation(MembershipFunctionStatisticDto statisticDto)
     {
+        ArgumentNullException.ThrowIfNull(statisticDto);
+
         var ogdId = "TOTAL";
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeFunctionStatistic;
 
         if (statisticDto.FunctionOgdId != 0)
         {
-            ogdId = statisticDto.FunctionOgdId.ToString();
+            ogdId = statisticDto.FunctionOgdId.ToString(CultureInfo.InvariantCulture);
         }
 
         var dataRow = new ObservationDataRow
@@ -55,7 +58,7 @@ public static class OgdFunctionStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:functionCount",
-            Object = statisticDto.FunctionCount.ToString(),
+            Object = statisticDto.FunctionCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {

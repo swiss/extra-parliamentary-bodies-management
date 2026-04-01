@@ -7,6 +7,8 @@ public class LegalFormConfiguration : MasterDataBaseConfiguration<LegalForm>
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<LegalForm> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(l => l.LegalFormId)
             .IsRequired()
             .HasMaxLength(10);

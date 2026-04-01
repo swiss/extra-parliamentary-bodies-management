@@ -8,6 +8,8 @@ public static class GenderMapper
 {
     public static GenderDto ToGenderDto(Gender gender)
     {
+        ArgumentNullException.ThrowIfNull(gender);
+
         return new GenderDto
         {
             Id = gender.Id,

@@ -261,7 +261,9 @@ internal class CommitteeMapperTests
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result.AdditionalLiteralProperties[4].Predicate, Is.EqualTo(OgdExportConstants.CommitteeAdditionalAuthorityMembers));
-            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(committee.AdditionalAuthorityMembers.ToString().ToLowerInvariant()));
+#pragma warning disable CA1308
+            Assert.That(result.AdditionalLiteralProperties[4].Object.Text, Is.EqualTo(committee.AdditionalAuthorityMembers.ToString(CultureInfo.InvariantCulture).ToLowerInvariant()));
+#pragma warning restore CA1308
             Assert.That(result.AdditionalLiteralProperties[4].Object.DataType, Is.EqualTo(new Uri(OgdExportConstants.DataTypeBoolean)));
         }
     }
