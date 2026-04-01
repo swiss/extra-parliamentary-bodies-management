@@ -30,6 +30,8 @@ public class ReportController : ControllerBase
     [HttpPost("downloadFormLetter")]
     public async Task<ActionResult> GenerateReportFormLetter([FromBody, Required] FormLetterFilterParameters filterDto)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         if (filterDto.ExportType == "single")
         {
             // we export a ZIP File with all documents within
