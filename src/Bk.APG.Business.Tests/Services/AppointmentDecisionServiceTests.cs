@@ -129,6 +129,8 @@ internal class AppointmentDecisionServiceTests
         };
 
         Assert.That(async () => await _service.CreateAppointmentDecision(createDto), Throws.Exception.InstanceOf<BusinessValidationException>());
+
+        stream.Dispose();
     }
 
     [Test]
@@ -287,6 +289,8 @@ internal class AppointmentDecisionServiceTests
         };
 
         Assert.That(async () => await _service.UpdateAppointmentDecision(id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
+
+        stream.Dispose();
     }
 
     [Test]
@@ -308,6 +312,8 @@ internal class AppointmentDecisionServiceTests
         };
 
         Assert.That(async () => await _service.UpdateAppointmentDecision(id, updateDto), Throws.Exception.InstanceOf<BusinessValidationException>());
+
+        stream.Dispose();
     }
 
     [Test]
@@ -439,7 +445,7 @@ internal class AppointmentDecisionServiceTests
         _appointmentDecisionRepository.GetAppointmentDecisionById(Arg.Any<Guid>()).Returns(new AppointmentDecisionBuilder().Build());
         _appointmentDecisionRepository.GetAppointmentDecisionByIdForUpdate(Arg.Any<Guid>()).Returns(appointmentDecisionToUpdate);
 
-        var updated = await _service.UpdateAppointmentDecision(id, appointmentDecisionDto);
+        _ = await _service.UpdateAppointmentDecision(id, appointmentDecisionDto);
 
         Assert.Multiple(() =>
         {

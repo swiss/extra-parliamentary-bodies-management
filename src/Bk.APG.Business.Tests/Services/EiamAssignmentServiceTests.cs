@@ -1,5 +1,4 @@
 using Bk.APG.Business.Models;
-using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting.Tests.Builders;
 
@@ -9,7 +8,6 @@ namespace Bk.APG.Business.Tests.Services;
 public class EiamAssignmentServiceTests
 {
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
-    private readonly IEiamAssignmentRepository _eiamAssignmentRepository = Substitute.For<IEiamAssignmentRepository>();
 
     private EiamAssignmentService _service = null!;
 
@@ -18,7 +16,7 @@ public class EiamAssignmentServiceTests
     [SetUp]
     public void SetUp()
     {
-        _service = new EiamAssignmentService(_authorizationService, _eiamAssignmentRepository);
+        _service = new EiamAssignmentService(_authorizationService);
     }
 
     [TearDown]
@@ -380,8 +378,7 @@ public class EiamAssignmentServiceTests
             DepartmentId = eiamId
         };
 
-        _authorizationService.GetCurrentExternalId().Returns("1234");
-        _eiamAssignmentRepository.GetByExternalId("1234").Returns(eiamAssignment);
+        _authorizationService.GetCurrentEiamAssignment().Returns(eiamAssignment);
 
         var (departmentId, officeId, committeeId) = await _service.GetPermittedIds();
 
@@ -409,8 +406,7 @@ public class EiamAssignmentServiceTests
             OfficeId = eiamId
         };
 
-        _authorizationService.GetCurrentExternalId().Returns("1234");
-        _eiamAssignmentRepository.GetByExternalId("1234").Returns(eiamAssignment);
+        _authorizationService.GetCurrentEiamAssignment().Returns(eiamAssignment);
 
         var (departmentId, officeId, committeeId) = await _service.GetPermittedIds();
 
@@ -438,8 +434,7 @@ public class EiamAssignmentServiceTests
             CommitteeId = eiamId
         };
 
-        _authorizationService.GetCurrentExternalId().Returns("1234");
-        _eiamAssignmentRepository.GetByExternalId("1234").Returns(eiamAssignment);
+        _authorizationService.GetCurrentEiamAssignment().Returns(eiamAssignment);
 
         var (departmentId, officeId, committeeId) = await _service.GetPermittedIds();
 
