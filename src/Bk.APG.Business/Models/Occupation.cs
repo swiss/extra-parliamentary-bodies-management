@@ -13,6 +13,8 @@ public class Occupation : MasterDataBase
 
     public string GetFemaleText(CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
         return cultureInfo.TwoLetterISOLanguageName switch
         {
             Language.German => TextFemaleDe,

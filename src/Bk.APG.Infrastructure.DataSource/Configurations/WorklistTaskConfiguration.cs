@@ -7,6 +7,8 @@ public class WorklistTaskConfiguration : EntityBaseConfiguration<WorklistTask>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<WorklistTask> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(p => p.DueDate)
             .IsRequired();
 

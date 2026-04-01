@@ -11,7 +11,12 @@ public static class CommitteeQueryExtensions
 {
     public static IQueryable<Committee> SortCommittees(this IQueryable<Committee> committees, string sort, SortDirection sortDirection, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(sort);
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
+#pragma warning disable CA1308
         return sort.ToLowerInvariant() switch
+#pragma warning restore CA1308
         {
             "committeeid" => sortDirection == SortDirection.Asc
                 ? committees.OrderBy(c => c.CommitteeNumber)
@@ -71,11 +76,13 @@ public static class CommitteeQueryExtensions
 
             foreach (var filter in filters)
             {
+#pragma warning disable CA1305 //Culture does not work in EF queries
                 query = query.Where(y => EF.Functions.ILike(y.DescriptionGerman, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionFrench, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionItalian, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionRomansh, $"%{filter}%")
                     || y.CommitteeNumber.ToString().Contains(filter));
+#pragma warning restore CA1305
             }
         }
 
@@ -270,6 +277,8 @@ public static class CommitteeQueryExtensions
 
     public static IQueryable<Committee> FilterCommitteesForFormLetter(this IQueryable<Committee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
     {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
         if (electionTypeIds != null)
         {
             if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())
