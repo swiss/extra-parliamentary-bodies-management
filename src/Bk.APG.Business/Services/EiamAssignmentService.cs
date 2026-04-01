@@ -1,19 +1,16 @@
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Extensions;
 using Bk.APG.Business.Mapper;
-using Bk.APG.Business.Repositories;
 
 namespace Bk.APG.Business.Services;
 
 public class EiamAssignmentService : IEiamAssignmentService
 {
     private readonly IAuthorizationService _authorizationService;
-    private readonly IEiamAssignmentRepository _eiamAssignmentRepository;
 
-    public EiamAssignmentService(IAuthorizationService authorizationService, IEiamAssignmentRepository eiamAssignmentRepository)
+    public EiamAssignmentService(IAuthorizationService authorizationService)
     {
         _authorizationService = authorizationService;
-        _eiamAssignmentRepository = eiamAssignmentRepository;
     }
 
     public async Task<IEnumerable<EiamAssignmentDto>> GetAvailableAssignments()
@@ -56,7 +53,7 @@ public class EiamAssignmentService : IEiamAssignmentService
 
         if (!showAllData)
         {
-            var eiamAssignment = await _eiamAssignmentRepository.GetByExternalId(_authorizationService.GetCurrentExternalId());
+            var eiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
             departmentId = showDepartmentData && eiamAssignment.DepartmentId != null ? (Guid)eiamAssignment.DepartmentId : departmentId;
             officeId = showOfficeData && eiamAssignment.OfficeId != null ? (Guid)eiamAssignment.OfficeId : officeId;
             committeeId = showSecretariatData && eiamAssignment.CommitteeId != null ? (Guid)eiamAssignment.CommitteeId : committeeId;

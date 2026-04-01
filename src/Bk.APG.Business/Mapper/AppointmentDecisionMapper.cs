@@ -8,6 +8,8 @@ public static class AppointmentDecisionMapper
 {
     public static AppointmentDecisionListDto ToAppointmentDecisionListDto(AppointmentDecision appointmentDecision, string exeBrcLink)
     {
+        ArgumentNullException.ThrowIfNull(appointmentDecision);
+
         return new AppointmentDecisionListDto
         {
             Id = appointmentDecision.Id,
@@ -46,6 +48,8 @@ public static class AppointmentDecisionMapper
 
     public static AppointmentDecision FromAppointmentDecisionCreateDto(AppointmentDecisionCreateDto dto, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(dto);
+
         var utcNow = DateTime.UtcNow;
 
         return new AppointmentDecision
@@ -65,6 +69,8 @@ public static class AppointmentDecisionMapper
 
     public static AppointmentDecisionUpdateDto ToAppointmentDecisionUpdateDto(AppointmentDecision appointmentDecision, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(appointmentDecision);
+
         var updateDto = new AppointmentDecisionUpdateDto
         {
             Id = appointmentDecision.Id,

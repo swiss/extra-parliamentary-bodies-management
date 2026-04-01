@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -787,18 +788,18 @@ internal class PersonServiceTests
 
         var personsFromRepositoryRange = persons.Where(y => Math.Abs(y.BirthYear - birthYear) <= birthYearRange);
         var personsFromRepositoryDigitChangeAllowed = persons.Where(y => Math.Abs(y.BirthYear - birthYear) <= birthYearRange
-                                                                         || (y.BirthYear.ToString().Substring(0, 2) == birthYear.ToString().Substring(0, 2) && y.BirthYear.ToString()[3] == birthYear.ToString()[2] && y.BirthYear.ToString()[2] == birthYear.ToString()[3]));
+                                                                         || (y.BirthYear.ToString(CultureInfo.InvariantCulture).Substring(0, 2) == birthYear.ToString(CultureInfo.InvariantCulture).Substring(0, 2) && y.BirthYear.ToString(CultureInfo.InvariantCulture)[3] == birthYear.ToString(CultureInfo.InvariantCulture)[2] && y.BirthYear.ToString(CultureInfo.InvariantCulture)[2] == birthYear.ToString(CultureInfo.InvariantCulture)[3]));
 
         _personRepository.GetPersonsByBirthYear(Arg.Any<int>(), Arg.Any<int>())
             .Returns(personsFromRepositoryRange, personsFromRepositoryDigitChangeAllowed);
 
         var personDetails = (await _service.GetSimilarPersons(surname, givenName, birthYear, birthYearRange))!.ToList();
-        var birthYearWithLastDigitsExchanged = birthYear.ToString().Substring(0, 2) + birthYear.ToString()[3] + birthYear.ToString()[2];
+        var birthYearWithLastDigitsExchanged = birthYear.ToString(CultureInfo.InvariantCulture).Substring(0, 2) + birthYear.ToString(CultureInfo.InvariantCulture)[3] + birthYear.ToString(CultureInfo.InvariantCulture)[2];
 
         Assert.That(personDetails, Is.Not.Null);
         Assert.That(personDetails, Has.Count.EqualTo(expectedCount));
         await _personRepository.Received(1).GetPersonsByBirthYear(Arg.Is(birthYear), birthYearRange);
-        await _personRepository.Received(1).GetPersonsByBirthYear(Arg.Is(Convert.ToInt32(birthYearWithLastDigitsExchanged)), 0);
+        await _personRepository.Received(1).GetPersonsByBirthYear(Arg.Is(Convert.ToInt32(birthYearWithLastDigitsExchanged, CultureInfo.InvariantCulture)), 0);
     }
 
     [Test]

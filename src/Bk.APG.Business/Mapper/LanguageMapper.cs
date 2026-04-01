@@ -8,6 +8,8 @@ public static class LanguageMapper
 {
     public static LanguageDto ToLanguageDto(Language language)
     {
+        ArgumentNullException.ThrowIfNull(language);
+
         var currentUiCulture = CultureInfo.CurrentUICulture;
         return new LanguageDto
         {

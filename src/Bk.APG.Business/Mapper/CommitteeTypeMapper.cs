@@ -8,6 +8,8 @@ public static class CommitteeTypeMapper
 {
     public static CommitteeTypeListDto ToCommitteeTypeListDto(CommitteeType committeeType, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(committeeType);
+
         return new CommitteeTypeListDto
         {
             Id = committeeType.Id,
@@ -28,6 +30,8 @@ public static class CommitteeTypeMapper
 
     public static CommitteeTypeUpdateDto ToCommitteeTypeUpdateDto(CommitteeType committeeType, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(committeeType);
+
         return new CommitteeTypeUpdateDto
         {
             Id = committeeType.Id,

@@ -7,6 +7,8 @@ public class DocumentStorageConfiguration : EntityBaseConfiguration<DocumentStor
 {
     protected override void ConfigureEntity(EntityTypeBuilder<DocumentStorage> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(a => a.DocumentName)
             .HasMaxLength(500);
 
