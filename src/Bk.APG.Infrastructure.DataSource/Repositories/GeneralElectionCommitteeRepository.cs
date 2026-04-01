@@ -79,8 +79,6 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<PagedResult<GeneralElectionCommittee>> GetAll(PagingParameters paging, GeneralElectionCommitteeFilterParameters filter, string? sort, SortDirection? sortDirection)
     {
-        ArgumentNullException.ThrowIfNull(paging);
-
         var query = _dataContext.GeneralElectionCommittees
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
@@ -112,12 +110,6 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
     {
-        ArgumentNullException.ThrowIfNull(filterDto);
-
-        // avoid trouble with UTC value from UI. Converting to local time is not allowed, so we add a day to filter value.
-        // TODO PP, the filterDate is not even used here
-        var filterDate = filterDto.AnalysisDate1 != null ? filterDto.AnalysisDate1.Value.AddDays(1) : DateOnly.FromDateTime(DateTime.Today.AddDays(1));
-
         var committees = await _dataContext.GeneralElectionCommittees
             .Where(x => !filterDto.ReleasedCommittees || x.ReleaseGeneralElection == true)
             .Include(item => item.CommitteeLevel)
@@ -185,9 +177,10 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         return committees;
     }
 
-    public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForExport(GeneralElectionCommitteeExportFilterParameters filterDto)
+    public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetterPreview(GeneralElectionCommitteeExportFilterParameters filterDto, List<Guid> electionTypesIds)
     {
         var committees = await _dataContext.GeneralElectionCommittees
+            .Where(g => g.IsValidated)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -242,7 +235,96 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 SelectionProcedure = c.SelectionProcedure,
                 CandidateListStateId = c.CandidateListStateId,
                 AssignedToRole = c.AssignedToRole,
-                MembershipCandidates = c.MembershipCandidates.ToList()
+                MembershipCandidates = c.MembershipCandidates
+                    .Where(m => m.Person != null &&
+                        (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
+                         filterDto.CorrespondenceLanguageIds!.Contains(
+                             m.Person.CorrespondenceLanguageId)) &&
+                        (electionTypesIds == null || electionTypesIds.Count == 0 ||
+                         electionTypesIds!.Contains(
+                             m.ElectionTypeId)))
+                    .ToList()
+            })
+            .ToListAsync();
+
+        return committees;
+    }
+
+    public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypeIds)
+    {
+        var committees = await _dataContext.GeneralElectionCommittees
+            .Where(g => g.IsValidated)
+            .Include(item => item.CommitteeLevel)
+            .Include(item => item.Department)
+            .Include(item => item.Office)
+            .Include(item => item.CommitteeType)
+            .Include(item => item.TermOfOffice)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Gender)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Language)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.CorrespondenceAddress)
+            .ThenInclude(item => item!.Country)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Salutation)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item!.Function)
+            .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item!.ElectionType)
+            .Include(item => item.Committee)
+            .FilterGeneralElectionCommitteesForFormLetter(filterDto, electionTypeIds)
+            .AsSplitQuery()
+            .Select(c => new GeneralElectionCommittee
+            {
+                Id = c.Id,
+                Modified = c.Modified,
+                ModifiedBy = c.ModifiedBy,
+                Created = c.Created,
+                CreatedBy = c.CreatedBy,
+                BeginDate = c.BeginDate,
+                EndDate = c.EndDate,
+                TermOfOfficeDateId = c.TermOfOfficeDateId,
+                CommitteeId = c.CommitteeId,
+                DepartmentId = c.DepartmentId,
+                Department = c.Department,
+                CommitteeTypeId = c.CommitteeTypeId,
+                CommitteeType = c.CommitteeType,
+                OfficeId = c.OfficeId,
+                Office = c.Office,
+                IsDeleted = c.IsDeleted,
+                DescriptionGerman = c.DescriptionGerman,
+                DescriptionFrench = c.DescriptionFrench,
+                DescriptionItalian = c.DescriptionItalian,
+                DescriptionRomansh = c.DescriptionRomansh,
+                JustificationMembers = c.JustificationMembers,
+                JustificationGenders = c.JustificationGenders,
+                JustificationLanguages = c.JustificationLanguages,
+                MeasuresGenders = c.MeasuresGenders,
+                MeasuresLanguages = c.MeasuresLanguages,
+                RemarksBaseData = c.RemarksBaseData,
+                RemarksBaseDataAdmin = c.RemarksBaseDataAdmin,
+                IsValidated = c.IsValidated,
+                WasValidatedOnce = c.WasValidatedOnce,
+                IsFederalCouncilProposalDirty = c.IsFederalCouncilProposalDirty,
+                VacanciesGeneralElection = c.VacanciesGeneralElection,
+                SelectionProcedure = c.SelectionProcedure,
+                CandidateListStateId = c.CandidateListStateId,
+                AssignedToRole = c.AssignedToRole,
+                // bring only candidates, which match by language and electiontype
+                MembershipCandidates = c.MembershipCandidates
+                    .Where(m => m.Person != null &&
+                        (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
+                         filterDto.CorrespondenceLanguageIds!.Contains(
+                             m.Person.CorrespondenceLanguageId)) &&
+                        (electionTypeIds == null || electionTypeIds.Count == 0 ||
+                         electionTypeIds!.Contains(
+                             m.ElectionTypeId)))
+                    .ToList()
             })
             .ToListAsync();
 
@@ -258,6 +340,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .Include(item => item.CommitteeType)
             .Include(item => item.TermOfOffice)
             .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
             .ToListAsync();
     }
 
@@ -283,11 +366,9 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         await _dataContext.SaveChangesAsync();
     }
 
-    public async Task<GeneralElectionCommittee> Create(GeneralElectionCommittee committee)
+    public async Task<GeneralElectionCommittee> Create(GeneralElectionCommittee generalElectionCommittee)
     {
-        ArgumentNullException.ThrowIfNull(committee);
-
-        var entry = await _dataContext.GeneralElectionCommittees.AddAsync(committee);
+        var entry = await _dataContext.GeneralElectionCommittees.AddAsync(generalElectionCommittee);
         await _dataContext.SaveChangesAsync();
 
         return entry.Entity;

@@ -47,8 +47,8 @@ internal class MembershipServiceTests
         var personId = Guid.NewGuid();
         var memberships = new List<Membership>
         {
-            new MembershipBuilder().WithCommittee(new CommitteeBuilder().Build()).Build(),
-            new MembershipBuilder().WithCommittee(new CommitteeBuilder().Build()).Build(),
+            new MembershipBuilder().WithPerson(new PersonBuilder().Build()).WithCommittee(new CommitteeBuilder().Build()).Build(),
+            new MembershipBuilder().WithPerson(new PersonBuilder().Build()).WithCommittee(new CommitteeBuilder().Build()).Build(),
         };
 
         _membershipRepository.GetAllByPersonId(personId).Returns(memberships);
@@ -646,8 +646,6 @@ internal class MembershipServiceTests
             .WithCommittee(new CommitteeBuilder().Build())
             .Build();
 
-        var committee = new CommitteeBuilder().Build();
-
         var updateDto = new MembershipUpdateDto
         {
             Id = membershipToUpdateId,
@@ -688,8 +686,6 @@ internal class MembershipServiceTests
             .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-100)))
             .Build();
 
-        var committee = new CommitteeBuilder().Build();
-
         var updateDto = new MembershipUpdateDto
         {
             Id = membershipToUpdateId,
@@ -724,7 +720,6 @@ internal class MembershipServiceTests
         _authorizationService.IsDepartment.Returns(true);
 
         var membershipToUpdateId = Guid.NewGuid();
-        var notPermittedDepartmentId = Guid.NewGuid();
         var permittedDepartmentId = Guid.NewGuid();
 
         var department = new DepartmentBuilder().WithId(permittedDepartmentId).Build();
@@ -733,8 +728,6 @@ internal class MembershipServiceTests
             .WithId(membershipToUpdateId)
             .WithEndDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-100)))
             .Build();
-
-        var committee = new CommitteeBuilder().Build();
 
         var updateDto = new MembershipUpdateDto
         {

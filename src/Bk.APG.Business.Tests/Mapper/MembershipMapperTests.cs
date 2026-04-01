@@ -45,11 +45,15 @@ internal class MembershipMapperTests
     [Test]
     public void ToPersonMembershipDto_WithModel_ShouldMapToDto()
     {
+        var person = new PersonBuilder()
+            .WithId(Guid.Parse("9df96395-bd65-4235-a4fa-fb87689df11f"))
+            .WithGender(new GenderBuilder().WithUri(Gender.Female).Build())
+            .Build();
         var membership = new MembershipBuilder()
             .WithId(Guid.Parse("8697753c-f57a-4805-b1e9-bb1e546f4101"))
             .WithBeginDate(DateOnly.FromDateTime(DateTime.Now.AddDays(-10)))
-            .WithFunction(new FunctionBuilder().Build())
-            .WithPersonId(Guid.Parse("9df96395-bd65-4235-a4fa-fb87689df11f"))
+            .WithFunction(new FunctionBuilder().WithGermanFemaleText("Tätschmeisterin").Build())
+            .WithPerson(person)
             .WithCommittee(new CommitteeBuilder().WithGermanDescription("Gremium de la Gremium").Build())
             .Build();
 
@@ -61,7 +65,7 @@ internal class MembershipMapperTests
             Assert.That(dto.Id, Is.EqualTo(membership.Id));
             Assert.That(dto.Committee, Is.EqualTo(membership.Committee!.GetDescription()));
             Assert.That(dto.Department, Is.EqualTo(membership.Committee.Department!.GetText()));
-            Assert.That(dto.Function, Is.EqualTo(membership.Function!.GetText()));
+            Assert.That(dto.Function, Is.EqualTo(membership.Function!.GetFemaleText()));
             Assert.That(dto.BeginDate, Is.EqualTo(membership.BeginDate));
             Assert.That(dto.EndDate, Is.EqualTo(membership.EndDate));
             Assert.That(dto.ElectionType, Is.EqualTo(membership.ElectionType!.GetText()));
@@ -143,8 +147,6 @@ internal class MembershipMapperTests
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
 
         var membership = new MembershipBuilder().Build();
-        var committee = new CommitteeBuilder().Build();
-
         var membershipUpdateDto = MembershipMapper.ToMembershipUpdateDto(membership, _cultureService);
 
         Assert.That(membershipUpdateDto, Is.Not.Null);
