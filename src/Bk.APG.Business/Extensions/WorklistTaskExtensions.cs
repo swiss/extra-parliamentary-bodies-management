@@ -4,19 +4,15 @@ namespace Bk.APG.Business.Extensions;
 
 public static class WorklistTaskExtensions
 {
-    public static bool GetCanBeForwarded(this WorklistTask worklistTask, string currentExternalId)
+    public static bool GetCanBeForwarded(this WorklistTask worklistTask, Guid currentEiamAssignmentId)
     {
-        ArgumentNullException.ThrowIfNull(worklistTask);
-
-        return worklistTask.AssignedTo!.ExternalId == currentExternalId
+        return worklistTask.AssignedTo!.Id == currentEiamAssignmentId
             && worklistTask.WorklistTaskStateId == WorklistTaskState.Active
             && worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch;
     }
 
     public static string GetSection(this WorklistTask worklistTask)
     {
-        ArgumentNullException.ThrowIfNull(worklistTask);
-
         var section = string.Empty;
 
         if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData ||
@@ -31,8 +27,6 @@ public static class WorklistTaskExtensions
 
     public static string? GetNavigationUrl(this WorklistTask worklistTask)
     {
-        ArgumentNullException.ThrowIfNull(worklistTask);
-
         string? navigationUrl = null;
 
         if (worklistTask.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate ||

@@ -62,6 +62,7 @@ export class FormLettersSenderEditComponent {
         this.formLettersSenderService.updateFormLettersSender(senderData).subscribe({
             next: async () => {
                 this.formLettersSenderService.reload$.next();
+                this.form().markAsPristine();
                 await this.router.navigate([]);
                 this.notificationService.success('formLetter.sender.update.success');
             },
