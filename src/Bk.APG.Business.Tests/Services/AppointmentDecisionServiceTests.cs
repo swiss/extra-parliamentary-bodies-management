@@ -90,7 +90,7 @@ internal class AppointmentDecisionServiceTests
     [Test]
     public void CreateAppointmentDecision_WithoutPermission_ShouldThrowAuthorizationException()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         IFormFile file = new FormFile(stream, 0, stream.Length, "id_from_form", "fileName");
         _authorizationService.IsAdmin.Returns(false);
         _authorizationService.IsDepartment.Returns(false);
@@ -197,7 +197,7 @@ internal class AppointmentDecisionServiceTests
     [Test]
     public async Task CreateAppointmentDecision_WithErrorDuringUpload_ShouldRemoveUploadedFiles()
     {
-        var stream = new MemoryStream("Hello world!"u8.ToArray());
+        using var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file1 = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
 
         _documentService.UploadDocument(Arg.Any<byte[]>()).Returns(_ => "id", x => throw new TimeoutException());
@@ -230,7 +230,7 @@ internal class AppointmentDecisionServiceTests
     [TestCase(false, false, false, true)]
     public async Task CreateAppointmentDecision_ShouldCallRepository(bool isAdmin, bool isDepartment, bool isOffice, bool isSecretariat)
     {
-        var stream = new MemoryStream("Hello world!"u8.ToArray());
+        using var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file1 = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
         _authorizationService.IsAdmin.Returns(isAdmin);
         _authorizationService.IsDepartment.Returns(isDepartment);
@@ -381,7 +381,7 @@ internal class AppointmentDecisionServiceTests
     public async Task UpdateAppointmentDecision_WithErrorDuringUpload_ShouldRemoveUploadedFiles()
     {
         var id = Guid.NewGuid();
-        var stream = new MemoryStream("Hello world!"u8.ToArray());
+        using var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file1 = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
 
         _documentService.UploadDocument(Arg.Any<byte[]>()).Returns(_ => "id", x => throw new TimeoutException());
@@ -416,7 +416,7 @@ internal class AppointmentDecisionServiceTests
     public async Task UpdateAppointmentDecision_ShouldCallRepository(bool isAdmin, bool isDepartment, bool isOffice, bool isSecretariat)
     {
         var id = Guid.NewGuid();
-        var stream = new MemoryStream("Hello world!"u8.ToArray());
+        using var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file1 = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
         _authorizationService.IsAdmin.Returns(isAdmin);
         _authorizationService.IsDepartment.Returns(isDepartment);
