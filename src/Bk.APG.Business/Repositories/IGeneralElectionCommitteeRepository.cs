@@ -14,7 +14,7 @@ public interface IGeneralElectionCommitteeRepository
     Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds);
     Task<IEnumerable<GeneralElectionCommittee>> GetAll();
     Task CommitChanges();
-    Task<GeneralElectionCommittee> Create(GeneralElectionCommittee committee);
+    Task<GeneralElectionCommittee> Create(GeneralElectionCommittee generalElectionCommittee);
     Task<IEnumerable<GeneralElectionCommittee>> GetByDepartmentId(Guid departmentId);
     Task<IEnumerable<GeneralElectionCommittee>> GetByOfficeId(Guid officeId);
     Task<GeneralElectionCommittee> GetByCommitteeId(Guid committeeId);

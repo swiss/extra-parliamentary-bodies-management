@@ -134,7 +134,9 @@ public static class OgdExportConstants
 
     public static string CreateUriLinkForLdAdminCh(string uri)
     {
-        var subPath = uri.Replace(LdAdminChLink, "");
+        ArgumentNullException.ThrowIfNull(uri);
+
+        var subPath = uri.Replace(LdAdminChLink, "", StringComparison.InvariantCultureIgnoreCase);
         var ldAdminReference = $"{NamespaceLd}:{subPath}";
 
         return ldAdminReference;
@@ -142,7 +144,9 @@ public static class OgdExportConstants
 
     public static string CreateUriLinkForRegisterLdAdminCh(string uri)
     {
-        var subPath = uri.Replace(RegisterLdAdminChLink, "");
+        ArgumentNullException.ThrowIfNull(uri);
+
+        var subPath = uri.Replace(RegisterLdAdminChLink, "", StringComparison.InvariantCultureIgnoreCase);
         var ldAdminReference = $"{NamespaceRld}:{subPath}";
 
         return ldAdminReference;

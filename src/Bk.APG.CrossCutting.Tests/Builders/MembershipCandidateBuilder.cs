@@ -98,6 +98,8 @@ public class MembershipCandidateBuilder
 
     public MembershipCandidateBuilder WithMembership(Membership membership)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         _membership = membership;
         _membershipId = membership.Id;
         return this;
@@ -111,6 +113,8 @@ public class MembershipCandidateBuilder
 
     public MembershipCandidateBuilder WithLanguage(Language language)
     {
+        ArgumentNullException.ThrowIfNull(language);
+
         _language = language;
         _languageId = language.Id;
         return this;
@@ -124,6 +128,8 @@ public class MembershipCandidateBuilder
 
     public MembershipCandidateBuilder WithGender(Gender gender)
     {
+        ArgumentNullException.ThrowIfNull(gender);
+
         _gender = gender;
         _genderId = gender.Id;
         return this;
@@ -137,6 +143,8 @@ public class MembershipCandidateBuilder
 
     public MembershipCandidateBuilder WithPerson(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         _person = person;
         _personId = person.Id;
         return this;
@@ -162,6 +170,8 @@ public class MembershipCandidateBuilder
 
     public MembershipCandidateBuilder WithFunction(Function function)
     {
+        ArgumentNullException.ThrowIfNull(function);
+
         _function = function;
         _functionId = function.Id;
         return this;
@@ -212,6 +222,8 @@ public class MembershipCandidateBuilder
 
     public MembershipCandidateBuilder WithGeneralElectionCommittee(GeneralElectionCommittee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         _generalElectionCommittee = committee;
         _generalElectionCommitteeId = committee.Id;
         return this;
