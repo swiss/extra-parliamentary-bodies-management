@@ -76,11 +76,13 @@ public static class CommitteeQueryExtensions
 
             foreach (var filter in filters)
             {
+#pragma warning disable CA1305 //Culture does not work in EF queries
                 query = query.Where(y => EF.Functions.ILike(y.DescriptionGerman, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionFrench, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionItalian, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionRomansh, $"%{filter}%")
-                    || y.CommitteeNumber.ToString(CultureInfo.InvariantCulture).Contains(filter));
+                    || y.CommitteeNumber.ToString().Contains(filter));
+#pragma warning restore CA1305
             }
         }
 
