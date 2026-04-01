@@ -20,11 +20,13 @@ public static class PersonQueryExtensions
 
             foreach (var filter in filters)
             {
+#pragma warning disable CA1305 //culture does not work in EF queries
                 query = query.Where(y => EF.Functions.ILike(y.GivenName, $"%{filter}%")
                     || EF.Functions.ILike(y.Surname, $"%{filter}%")
-                    || y.BirthYear.ToString(CultureInfo.InvariantCulture).Contains(filter)
+                    || y.BirthYear.ToString().Contains(filter)
                     || (!string.IsNullOrEmpty(y.CorrespondenceAddress!.City) && EF.Functions.ILike(y.CorrespondenceAddress.City, $"%{filter}%"))
                     || EF.Functions.ILike(y.Id.ToString(), $"%{filter}%"));
+#pragma warning restore CA1305
             }
         }
 
