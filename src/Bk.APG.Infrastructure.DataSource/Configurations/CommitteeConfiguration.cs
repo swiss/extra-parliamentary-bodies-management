@@ -8,6 +8,8 @@ public class CommitteeConfiguration : EntityBaseConfiguration<Committee>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Committee> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(c => c.CommitteeNumber)
             .ValueGeneratedOnAdd();
 

@@ -7,6 +7,8 @@ public class FormLetterSenderConfiguration : EntityBaseConfiguration<FormLetterS
 {
     protected override void ConfigureEntity(EntityTypeBuilder<FormLetterSender> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(x => x.Description)
             .IsRequired()
             .HasMaxLength(150);

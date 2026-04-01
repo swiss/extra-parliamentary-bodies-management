@@ -44,6 +44,8 @@ public class CommitteeTypeService : ICommitteeTypeService
 
     public async Task<CommitteeTypeUpdateDto> UpdateCommitteeType(Guid id, CommitteeTypeUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update committee type {CommitteeTypeId}", id);
 
         var existingCommitteeType = await _committeeTypeRepository.GetByIdForUpdate(id, updateDto.RowVersion);

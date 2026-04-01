@@ -8,6 +8,8 @@ public class OccupationConfiguration : MasterDataBaseConfiguration<Occupation>
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<Occupation> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(e => e.TextFemaleDe).IsRequired().HasMaxLength(250);
         builder.Property(e => e.TextFemaleFr).IsRequired().HasMaxLength(250);
         builder.Property(e => e.TextFemaleIt).IsRequired().HasMaxLength(250);

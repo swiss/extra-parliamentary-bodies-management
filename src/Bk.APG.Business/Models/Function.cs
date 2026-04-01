@@ -24,6 +24,8 @@ public class Function : MasterDataBase
 
     public string GetFemaleText(CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
         return cultureInfo.TwoLetterISOLanguageName switch
         {
             Language.German => TextFemaleDe,

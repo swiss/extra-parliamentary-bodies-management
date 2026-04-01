@@ -108,6 +108,8 @@ public class PersonBuilder
 
     public PersonBuilder WithLanguage(Language language)
     {
+        ArgumentNullException.ThrowIfNull(language);
+
         _language = language;
         _languageId = language.Id;
         return this;
@@ -115,6 +117,8 @@ public class PersonBuilder
 
     public PersonBuilder WithCorrespondenceLanguage(Language language)
     {
+        ArgumentNullException.ThrowIfNull(language);
+
         _correspondenceLanguage = language;
         _correspondenceLanguageId = language.Id;
         return this;
@@ -134,6 +138,8 @@ public class PersonBuilder
 
     public PersonBuilder WithGender(Gender gender)
     {
+        ArgumentNullException.ThrowIfNull(gender);
+
         _gender = gender;
         _genderId = gender.Id;
         return this;
@@ -159,6 +165,8 @@ public class PersonBuilder
 
     public PersonBuilder WithOfficeAddress(Address address)
     {
+        ArgumentNullException.ThrowIfNull(address);
+
         _officeAddress = address;
         _officeAddressId = address.Id;
         return this;
@@ -166,6 +174,8 @@ public class PersonBuilder
 
     public PersonBuilder WithPrivateAddress(Address address)
     {
+        ArgumentNullException.ThrowIfNull(address);
+
         _privateAddress = address;
         _privateAddressId = address.Id;
         return this;
@@ -173,6 +183,8 @@ public class PersonBuilder
 
     public PersonBuilder WithCorrespondenceAddress(Address address)
     {
+        ArgumentNullException.ThrowIfNull(address);
+
         _correspondenceAddress = address;
         _correspondenceAddressId = address.Id;
         return this;
@@ -253,6 +265,8 @@ public class PersonBuilder
 
     public PersonBuilder WithOffice(Office office)
     {
+        ArgumentNullException.ThrowIfNull(office);
+
         _office = office;
         _officeId = office.Id;
         return this;

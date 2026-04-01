@@ -11,6 +11,8 @@ public class SparqlClientFactory : ISparqlClientFactory
 
     public SparqlClientFactory(IOptions<SparqlTargetsOptions> targetsOptions)
     {
+        ArgumentNullException.ThrowIfNull(targetsOptions);
+
         _targetsOptions = targetsOptions.Value;
     }
 

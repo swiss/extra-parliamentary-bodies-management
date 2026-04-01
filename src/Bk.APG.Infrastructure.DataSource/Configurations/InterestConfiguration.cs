@@ -7,6 +7,8 @@ public class InterestConfiguration : EntityBaseConfiguration<Interest>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<Interest> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(c => c.OgdId)
             .ValueGeneratedOnAdd();
 

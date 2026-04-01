@@ -7,6 +7,8 @@ public static class GeneralElectionCommitteeExtensions
 {
     public static CommitteeQuotasDto GetQuotas(this GeneralElectionCommittee generalElectionCommittee)
     {
+        ArgumentNullException.ThrowIfNull(generalElectionCommittee);
+
         var committeeType = generalElectionCommittee.CommitteeType!;
         var isPercentageBased = committeeType.GermanThresholdPercentage is not null;
 

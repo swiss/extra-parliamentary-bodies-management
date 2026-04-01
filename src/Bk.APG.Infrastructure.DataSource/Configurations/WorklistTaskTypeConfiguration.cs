@@ -9,6 +9,8 @@ public class WorklistTaskTypeConfiguration : MasterDataBaseConfiguration<Worklis
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<WorklistTaskType> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(lp => lp.Created).HasDefaultValueSql("now()")
             .ValueGeneratedOnAdd()
             .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
