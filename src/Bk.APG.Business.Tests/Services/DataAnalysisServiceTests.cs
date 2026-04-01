@@ -71,9 +71,12 @@ internal class DataAnalysisServiceTests
             .Returns(committees);
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateCommitteeTypeExport(dataAnalysisDate);
 
@@ -93,6 +96,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[9].Text, Is.EqualTo("2")); // Man Count
             Assert.That(dataRow[10].Text, Is.EqualTo("0.3333333333333333333333333333")); // Man Percentage
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -109,10 +114,12 @@ internal class DataAnalysisServiceTests
             .GetCommitteesForExport(dataAnalysisDate, _zeroGuid, _zeroGuid, _zeroGuid)
             .Returns(committees);
 
+        var stream = new MemoryStream();
+
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateCommitteeTypeExport(dataAnalysisDate);
 
@@ -129,6 +136,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[14].Text, Is.EqualTo("0")); // French Percentage
             Assert.That(dataRow[16].Text, Is.EqualTo("0")); // Romansh Percentage
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -200,10 +209,12 @@ internal class DataAnalysisServiceTests
             .GetCommitteesForExport(dataAnalysisDate, _zeroGuid, _zeroGuid, _zeroGuid)
             .Returns(committees);
 
+        var stream = new MemoryStream();
+
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateCommitteeTypeExport(dataAnalysisDate);
 
@@ -248,6 +259,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[29].Text, Is.EqualTo("2")); // Not Federal Assembly Count
             Assert.That(dataRow[30].Text, Is.EqualTo("0.5")); // Not Federal Assembly Percentage - 2/4 = 50%
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -293,10 +306,12 @@ internal class DataAnalysisServiceTests
 
         _configuration["FrontendUrl"].Returns("FooBar");
 
+        var stream = new MemoryStream();
+
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateCommitteeExport(dataAnalysisDate);
 
@@ -350,6 +365,8 @@ internal class DataAnalysisServiceTests
         var tableOptions = capturedSpreadsheet.TableOptions;
         Assert.That(tableOptions, Is.Not.Null);
         Assert.That(tableOptions.TableRange, Is.EqualTo("A1:AM2"));
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -385,10 +402,12 @@ internal class DataAnalysisServiceTests
 
         _configuration["FrontendUrl"].Returns("FooBar");
 
+        var stream = new MemoryStream();
+
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateMembershipExport(dataAnalysisDate);
 
@@ -434,6 +453,8 @@ internal class DataAnalysisServiceTests
         var tableOptions = capturedSpreadsheet.TableOptions;
         Assert.That(tableOptions, Is.Not.Null);
         Assert.That(tableOptions.TableRange, Is.EqualTo("A1:AE2"));
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -487,10 +508,12 @@ internal class DataAnalysisServiceTests
 
         _configuration["FrontendUrl"].Returns("FooBar");
 
+        var stream = new MemoryStream();
+
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateMembershipInterestExport(dataAnalysisDate);
 
@@ -543,6 +566,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
             Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O", CultureInfo.InvariantCulture)));
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -573,9 +598,12 @@ internal class DataAnalysisServiceTests
         _configuration["FrontendUrl"].Returns("FooBar");
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateMembershipInterestExport(dataAnalysisDate);
 
@@ -604,6 +632,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[16].Text, Is.EqualTo(committee.BeginDate.ToString("O", CultureInfo.InvariantCulture)));
             Assert.That(dataRow[17].Text, Is.EqualTo(committee.EndDate?.ToString("O", CultureInfo.InvariantCulture)));
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -624,9 +654,12 @@ internal class DataAnalysisServiceTests
         _configuration["FrontendUrl"].Returns("FooBar");
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GeneratePersonExport(dataAnalysisDate);
 
@@ -652,6 +685,8 @@ internal class DataAnalysisServiceTests
         var tableOptions = capturedSpreadsheet.TableOptions;
         Assert.That(tableOptions, Is.Not.Null);
         Assert.That(tableOptions.TableRange, Is.EqualTo("A1:K2"));
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -708,9 +743,12 @@ internal class DataAnalysisServiceTests
         _configuration["FrontendUrl"].Returns("FooBar");
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateContactPointExport(dataAnalysisDate, contactPointTypeId);
 
@@ -751,6 +789,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[11].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // Supervision Duty
             Assert.That(dataRow[12].Text, Is.EqualTo(committee.TermOfOffice!.GetDescription()));
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -790,9 +830,12 @@ internal class DataAnalysisServiceTests
         _configuration["FrontendUrl"].Returns("FooBar");
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateContactPointExport(dataAnalysisDate, contactPointTypeId);
 
@@ -815,6 +858,8 @@ internal class DataAnalysisServiceTests
             Assert.That(dataRow[11].Text, Is.EqualTo(BusinessTexts.Common_Yes)); // Supervision Duty
             Assert.That(dataRow[12].Text, Is.EqualTo(committee.TermOfOffice!.GetDescription()));
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
@@ -857,9 +902,12 @@ internal class DataAnalysisServiceTests
         _committeeRepository.GetCommitteesForRegionExport(dataAnalysisDate, _zeroGuid, _zeroGuid, _zeroGuid).Returns(committees);
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateRegionExport(dataAnalysisDate);
 
@@ -888,6 +936,8 @@ internal class DataAnalysisServiceTests
             Assert.That(totalRow[1].Text, Is.EqualTo("2"));
             Assert.That(totalRow[2].Text, Is.EqualTo("4"));
         });
+
+        await stream.DisposeAsync();
     }
 
     private static Membership CreateActiveMembership(Canton canton)
@@ -973,9 +1023,12 @@ internal class DataAnalysisServiceTests
             .Returns([committee]);
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _service.GenerateAgeExport(dataAnalysisDate);
 
@@ -1019,5 +1072,7 @@ internal class DataAnalysisServiceTests
         var tableOptions = capturedSpreadsheet.TableOptions;
         Assert.That(tableOptions, Is.Not.Null);
         Assert.That(tableOptions.TableRange, Is.EqualTo("A1:AD2"));
+
+        await stream.DisposeAsync();
     }
 }
