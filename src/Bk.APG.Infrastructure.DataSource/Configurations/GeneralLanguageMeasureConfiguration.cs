@@ -7,6 +7,8 @@ public class GeneralLanguageMeasureConfiguration : EntityBaseConfiguration<Gener
 {
     protected override void ConfigureEntity(EntityTypeBuilder<GeneralLanguageMeasure> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(x => x.Description)
             .IsRequired();
 

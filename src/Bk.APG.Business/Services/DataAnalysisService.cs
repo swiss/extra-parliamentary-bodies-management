@@ -777,7 +777,7 @@ public class DataAnalysisService : IDataAnalysisService
 
         for (var i = 0; i < departments.Length; i++)
         {
-            var total = bodyCells.Sum(x => x[i + 1].Text is not null ? int.Parse(x[i + 1].Text!) : 0);
+            var total = bodyCells.Sum(x => x[i + 1].Text is not null ? int.Parse(x[i + 1].Text!, CultureInfo.InvariantCulture) : 0);
             totalRow.Add(NumberCell(total));
         }
 
@@ -939,7 +939,7 @@ public class DataAnalysisService : IDataAnalysisService
     {
         return new Cell
         {
-            Text = value is not null ? value.Value.ToString("O") : string.Empty,
+            Text = value is not null ? value.Value.ToString("O", CultureInfo.InvariantCulture) : string.Empty,
             FormatType = CellFormatTypes.Date,
             Format = "dd.MM.yyyy"
         };

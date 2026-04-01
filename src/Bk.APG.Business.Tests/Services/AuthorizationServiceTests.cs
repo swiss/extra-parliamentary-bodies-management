@@ -4,6 +4,7 @@ using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Configuration;
+using Bk.APG.CrossCutting.Exception;
 using Bk.APG.CrossCutting.Tests.Builders;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -368,7 +369,7 @@ internal class AuthorizationServiceTests
     [TestCase(@"test\\1234", "1234")]
     [TestCase(@"test\1234", "1234")]
     [TestCase("1234", "1234")]
-    public void GetCurrentExternalId_WhenClaimExists_ReturnsLastPartOfClaim(string claimValue, string expected)
+    public async Task GetCurrentEiamAssignment_WhenClaimExists_ResolvesExternalIdFromClaim(string claimValue, string expectedExternalId)
     {
         var httpContext = new DefaultHttpContext();
         var identity = new ClaimsIdentity(
@@ -379,15 +380,23 @@ internal class AuthorizationServiceTests
         ]);
         httpContext.User.AddIdentity(identity);
 
+        var eiamAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = expectedExternalId,
+            Role = Role.Department
+        };
+
+        _eiamAssignmentRepository.GetByExternalId(expectedExternalId).Returns(eiamAssignment);
         _httpContextAccessorMock.HttpContext.Returns(httpContext);
 
-        var actual = _authorizationService.GetCurrentExternalId();
+        var actual = await _authorizationService.GetCurrentEiamAssignment();
 
-        Assert.That(actual, Is.EqualTo(expected));
+        Assert.That(actual.ExternalId, Is.EqualTo(expectedExternalId));
     }
 
     [Test]
-    public void GetCurrentExternalId_WhenUserIsAdmin_ReturnsAdmin()
+    public async Task GetCurrentEiamAssignment_WhenUserIsAdmin_ResolvesAdminExternalId()
     {
         var httpContext = new DefaultHttpContext();
         var identity = new ClaimsIdentity(
@@ -397,15 +406,23 @@ internal class AuthorizationServiceTests
         ]);
         httpContext.User.AddIdentity(identity);
 
+        var eiamAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "Admin",
+            Role = Role.Admin
+        };
+
+        _eiamAssignmentRepository.GetByExternalId("Admin").Returns(eiamAssignment);
         _httpContextAccessorMock.HttpContext.Returns(httpContext);
 
-        var actual = _authorizationService.GetCurrentExternalId();
+        var actual = await _authorizationService.GetCurrentEiamAssignment();
 
-        Assert.That(actual, Is.EqualTo("Admin"));
+        Assert.That(actual.ExternalId, Is.EqualTo("Admin"));
     }
 
     [Test]
-    public void GetCurrentExternalId_WhenNoClaimExists_ThrowsInvalidOperationException()
+    public void GetCurrentEiamAssignment_WhenNoClaimExists_ThrowsInvalidOperationException()
     {
         var httpContext = new DefaultHttpContext();
         var identity = new ClaimsIdentity(
@@ -417,6 +434,31 @@ internal class AuthorizationServiceTests
 
         _httpContextAccessorMock.HttpContext.Returns(httpContext);
 
-        Assert.That(() => _authorizationService.GetCurrentExternalId(), Throws.InstanceOf<InvalidOperationException>());
+        Assert.That(async () => await _authorizationService.GetCurrentEiamAssignment(), Throws.InstanceOf<InvalidOperationException>());
+    }
+
+    [Test]
+    public void GetCurrentEiamAssignment_WhenRoleMismatch_ThrowsAuthorizationException()
+    {
+        var httpContext = new DefaultHttpContext();
+        var identity = new ClaimsIdentity(
+        [
+            new Claim(CustomClaimTypes.ProfiledUnitExtId, "1234"),
+            new Claim(ClaimTypes.Role, _authorizationOptions.Secretariat),
+            new Claim(ClaimTypes.Role, _authorizationOptions.Allow)
+        ]);
+        httpContext.User.AddIdentity(identity);
+
+        var eiamAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "1234",
+            Role = Role.Department
+        };
+
+        _eiamAssignmentRepository.GetByExternalId("1234").Returns(eiamAssignment);
+        _httpContextAccessorMock.HttpContext.Returns(httpContext);
+
+        Assert.That(async () => await _authorizationService.GetCurrentEiamAssignment(), Throws.InstanceOf<AuthorizationException>());
     }
 }

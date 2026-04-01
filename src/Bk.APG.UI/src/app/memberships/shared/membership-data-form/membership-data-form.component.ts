@@ -518,7 +518,13 @@ export class MembershipDataFormComponent implements OnInit {
             endDate: new FormControl<Date | undefined>(undefined, {nonNullable: true}),
             electionTypeId: new FormControl(this.configsService.frontendConfig.entityIds.electionType.newElectionId, {
                 nonNullable: true,
-                validators: [Validators.required, conditionalStatusEndDateValidator([this.configsService.frontendConfig.entityIds.electionType.newElectionId])],
+                validators: [
+                    Validators.required,
+                    conditionalStatusEndDateValidator([
+                        this.configsService.frontendConfig.entityIds.electionType.newElectionId,
+                        this.configsService.frontendConfig.entityIds.electionType.reElectionId,
+                    ]),
+                ],
             }),
             functionId: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
             electionOfficeId: new FormControl('', {nonNullable: true, validators: [Validators.required]}),

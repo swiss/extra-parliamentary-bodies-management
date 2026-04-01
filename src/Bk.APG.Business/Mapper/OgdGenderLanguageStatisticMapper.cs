@@ -9,6 +9,8 @@ public static class OgdGenderLanguageStatisticMapper
 {
     public static ObservationDataRow ToGenderLanguageStatisticObservation(MembershipGenderLanguageStatisticDto statisticDto)
     {
+        ArgumentNullException.ThrowIfNull(statisticDto);
+
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeGenderLanguageStatistic;
         var committeeType = OgdExportConstants.NamespaceCommitteeType;
 
@@ -84,7 +86,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:totalCount",
-            Object = statisticDto.Count.ToString(),
+            Object = statisticDto.Count.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -101,7 +103,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:femaleCount",
-            Object = statisticDto.FemaleCount.ToString(),
+            Object = statisticDto.FemaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -135,7 +137,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:maleCount",
-            Object = statisticDto.MaleCount.ToString(),
+            Object = statisticDto.MaleCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -169,7 +171,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:germanCount",
-            Object = statisticDto.GermanCount.ToString(),
+            Object = statisticDto.GermanCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -203,7 +205,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:frenchCount",
-            Object = statisticDto.FrenchCount.ToString(),
+            Object = statisticDto.FrenchCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -237,7 +239,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:italianCount",
-            Object = statisticDto.ItalianCount.ToString(),
+            Object = statisticDto.ItalianCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -271,7 +273,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:romanshCount",
-            Object = statisticDto.RomanshCount.ToString(),
+            Object = statisticDto.RomanshCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -305,7 +307,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:federalDutyCount",
-            Object = statisticDto.FederalDutyCount.ToString(),
+            Object = statisticDto.FederalDutyCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -322,7 +324,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:federalAssemblyCount",
-            Object = statisticDto.FederalAssemblyCount.ToString(),
+            Object = statisticDto.FederalAssemblyCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -339,7 +341,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:upTo30Count",
-            Object = statisticDto.UpTo30Count.ToString(),
+            Object = statisticDto.UpTo30Count.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -373,7 +375,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:from31to40Count",
-            Object = statisticDto.From31To40Count.ToString(),
+            Object = statisticDto.From31To40Count.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -407,7 +409,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:from41to50Count",
-            Object = statisticDto.From41To50Count.ToString(),
+            Object = statisticDto.From41To50Count.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -441,7 +443,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:from51to60Count",
-            Object = statisticDto.From51To60Count.ToString(),
+            Object = statisticDto.From51To60Count.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -475,7 +477,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:from61to70Count",
-            Object = statisticDto.From61To70Count.ToString(),
+            Object = statisticDto.From61To70Count.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
@@ -509,7 +511,7 @@ public static class OgdGenderLanguageStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:over70Count",
-            Object = statisticDto.Over70Count.ToString(),
+            Object = statisticDto.Over70Count.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {

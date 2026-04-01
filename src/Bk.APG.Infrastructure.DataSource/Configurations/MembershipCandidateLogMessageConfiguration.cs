@@ -7,6 +7,8 @@ public class MembershipCandidateLogMessageConfiguration : EntityBaseConfiguratio
 {
     protected override void ConfigureEntity(EntityTypeBuilder<MembershipCandidateLogMessage> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(p => p.LogMessage)
                     .IsRequired()
                     .HasMaxLength(2000);

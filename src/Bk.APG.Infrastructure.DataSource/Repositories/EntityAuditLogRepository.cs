@@ -17,6 +17,8 @@ public class EntityAuditLogRepository : IEntityAuditLogRepository
 
     public async Task<PagedResult<EntityAuditLog>> GetEntityAuditLogs(string entityId, IEnumerable<string> relatedEntityIds, PagingParameters paging, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         // Build a dynamic SQL query that searches for the entityId or any related entity IDs in the entity_snapshot JSON
         // Using PostgreSQL's ::text casting to convert JSON to text and LIKE to search for IDs anywhere in the JSON
         var allEntityIds = new[] { entityId }.Concat(relatedEntityIds).ToArray();

@@ -19,6 +19,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly ICommitteeService _committeeService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
+    private readonly IMasterDataRepository _masterDataRepository;
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ILogger<GeneralElectionCommitteeService> _logger;
 
@@ -29,6 +30,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         ICommitteeService committeeService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
+        IMasterDataRepository masterDataRepository,
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         ILogger<GeneralElectionCommitteeService> logger
     )
@@ -39,6 +41,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _committeeService = committeeService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
+        _masterDataRepository = masterDataRepository;
         _documentService = documentService;
         _logger = logger;
     }
@@ -178,6 +181,20 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeListForRecipientExport(GeneralElectionCommitteeExportFilterParametersDto? filter)
     {
         var filterParameters = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeExportFilterParameters(filter);
+        var allElectionTypes = await _masterDataRepository.GetElectionTypes();
+
+        var electionTypeList = allElectionTypes.Select(e => e.Id).ToList();
+        electionTypeList.Remove(ElectionType.MembershipEndedBecauseOfDeathGuid);
+        electionTypeList.Remove(ElectionType.PermanentGuid);
+
+        var electionTypeListPresent = electionTypeList.ToList();
+        electionTypeListPresent.Remove(ElectionType.NewElectionGuid);
+        electionTypeListPresent.Remove(ElectionType.ReElectionGuid);
+
+        var electionTypeListFuture = electionTypeList.ToList();
+        electionTypeListFuture.Remove(ElectionType.MaximumMembershipDurationGuid);
+        electionTypeListFuture.Remove(ElectionType.OtherRetirementReasonGuid);
+        electionTypeListFuture.Remove(ElectionType.RetirementGuid);
 
         if (_authorizationService is { IsAdmin: false, IsObserver: false })
         {
@@ -192,15 +209,34 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             filterParameters.CommitteeIds = committeeIds;
         }
 
-        var committees = await _generalElectionCommitteeRepository.GetAllForExport(filterParameters);
+        var committees = await _generalElectionCommitteeRepository.GetAllForFormLetterPreview(filterParameters, electionTypeListFuture);
 
-        var list = committees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
+        var allCommittees = committees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture())).ToList();
 
-        return list;
+        // here we have to select the present committees as well, when filterDto ElectionType contains one of the 3 retire types or none are selected at all..
+        if (filterParameters.ElectionTypeIds == null || (filterParameters.ElectionTypeIds != null && (filterParameters.ElectionTypeIds.Contains(ElectionType.MaximumMembershipDurationGuid) ||
+            filterParameters.ElectionTypeIds.Contains(ElectionType.RetirementGuid) || filterParameters.ElectionTypeIds.Contains(ElectionType.OtherRetirementReasonGuid))))
+        {
+            var currentCommittees = await _committeeService.GetCommitteesWithRetiredMembers(filter, electionTypeListPresent);
+
+            var existingCommittees = currentCommittees.Select(c => GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(c, "pp"));
+
+            var presentCommittees = existingCommittees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
+
+            var existingNames = new HashSet<string>(allCommittees.Select(x => x.Description));
+
+            var itemsToAdd = presentCommittees.Where(x => !existingNames.Contains(x.Description));
+
+            allCommittees.AddRange(itemsToAdd);
+        }
+
+        return allCommittees;
     }
 
     public async Task<PagedResultDto<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeList(PagingParametersDto paging, GeneralElectionCommitteeFilterParametersDto? filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var filterParameters = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeFilterParameters(filter);
 
         if (_authorizationService is { IsAdmin: false, IsObserver: false })
@@ -247,6 +283,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<GeneralElectionCommitteeDetailDto> UpdateGeneralElectionCommittee(Guid committeeId, GeneralElectionCommitteeUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update general election committee {CommitteeId}", committeeId);
 
         var existingCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId, updateDto.RowVersion);
@@ -297,11 +335,13 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeDetailDto(changedGeneralElectionCommittee);
     }
 
-    public async Task<GeneralElectionCommitteeJustificationUpdateDto> UpdateGeneralElectionCommitteeJustifications(Guid id, GeneralElectionCommitteeJustificationUpdateDto updateDto)
+    public async Task<GeneralElectionCommitteeJustificationUpdateDto> UpdateGeneralElectionCommitteeJustifications(Guid committeeId, GeneralElectionCommitteeJustificationUpdateDto updateDto)
     {
-        _logger.LogInformation("Update justifications for general election committee {CommitteeId}", id);
+        ArgumentNullException.ThrowIfNull(updateDto);
 
-        var existingGeneralElectionCommittee = await _generalElectionCommitteeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
+        _logger.LogInformation("Update justifications for general election committee {CommitteeId}", committeeId);
+
+        var existingGeneralElectionCommittee = await _generalElectionCommitteeRepository.GetByIdForUpdate(committeeId, updateDto.RowVersion);
 
         await CheckAuthorizationForUpdate(existingGeneralElectionCommittee.Committee!);
 
@@ -327,7 +367,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         await _generalElectionCommitteeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated justifications for general election committee {CommitteeId}", id);
+        _logger.LogInformation("Updated justifications for general election committee {CommitteeId}", committeeId);
 
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeJustificationUpdateDto(existingGeneralElectionCommittee);
     }
@@ -404,6 +444,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<bool> EndGeneralElectionForCommittee(GeneralElectionCommittee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         // Writes back all the changes from General Election to the current data
         var mappedCommittee = GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee(committee);
         var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
@@ -462,7 +504,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     {
         return new Cell
         {
-            Text = value is not null ? value.Value.ToString("O") : string.Empty,
+            Text = value is not null ? value.Value.ToString("O", CultureInfo.InvariantCulture) : string.Empty,
             FormatType = CellFormatTypes.Date,
             Format = "dd.MM.yyyy"
         };

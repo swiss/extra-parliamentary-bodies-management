@@ -9,6 +9,8 @@ public class CandidateListStateConfiguration : MasterDataBaseConfiguration<Candi
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<CandidateListState> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(lp => lp.Created).HasDefaultValueSql("now()")
             .ValueGeneratedOnAdd()
             .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);

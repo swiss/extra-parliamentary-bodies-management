@@ -7,6 +7,8 @@ public class GeneralElectionCommitteeConfiguration : EntityBaseConfiguration<Gen
 {
     protected override void ConfigureEntity(EntityTypeBuilder<GeneralElectionCommittee> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(c => c.DescriptionGerman)
             .IsRequired()
             .HasMaxLength(500);

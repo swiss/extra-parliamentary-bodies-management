@@ -47,8 +47,8 @@ internal class MembershipServiceTests
         var personId = Guid.NewGuid();
         var memberships = new List<Membership>
         {
-            new MembershipBuilder().WithCommittee(new CommitteeBuilder().Build()).Build(),
-            new MembershipBuilder().WithCommittee(new CommitteeBuilder().Build()).Build(),
+            new MembershipBuilder().WithPerson(new PersonBuilder().Build()).WithCommittee(new CommitteeBuilder().Build()).Build(),
+            new MembershipBuilder().WithPerson(new PersonBuilder().Build()).WithCommittee(new CommitteeBuilder().Build()).Build(),
         };
 
         _membershipRepository.GetAllByPersonId(personId).Returns(memberships);

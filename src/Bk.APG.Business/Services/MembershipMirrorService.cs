@@ -24,6 +24,8 @@ public class MembershipMirrorService : IMembershipMirrorService
 
     public async Task MirrorOrDeleteMembershipForGeneralElection(Membership membership, bool deleteCandidate, bool wasMetadataChanged)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         _logger.LogInformation("Mirror membership {MembershipId} for general election", membership.Id);
 
         var membershipCandidate = await _membershipCandidateRepository.GetByMembershipIdForUpdate(membership.Id);
@@ -82,6 +84,8 @@ public class MembershipMirrorService : IMembershipMirrorService
 
     public async Task CreateNewMembershipFromCandidate(MembershipCreateDto createDto, string userName)
     {
+        ArgumentNullException.ThrowIfNull(createDto);
+
         _logger.LogInformation("Create membership from GE for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
 
         var membership = MembershipMapper.FromMembershipCreateDto(createDto, userName);
@@ -93,11 +97,13 @@ public class MembershipMirrorService : IMembershipMirrorService
 
     public async Task UpdateMembershipFromCandidate(Guid id, MembershipUpdateDto updateDto, string userName)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update membership with id {MembershipId} started.", id);
 
         var existingEntry = await _membershipRepository.GetByIdForUpdate(id);
 
-        existingEntry.BeginDate = updateDto.BeginDate;
+        // As the candidates are updated, we should NOT reset the BeginDate here, as we overwrite the original value!
         existingEntry.PersonId = updateDto.PersonId;
         existingEntry.MaximumEmploymentLevel = updateDto.MaximumEmploymentLevel;
         existingEntry.EndDate = updateDto.EndDate;

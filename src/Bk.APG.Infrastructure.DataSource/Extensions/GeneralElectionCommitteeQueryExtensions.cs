@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Linq.Expressions;
+using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,8 @@ public static class GeneralElectionCommitteeQueryExtensions
 
     public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommittees(this IQueryable<GeneralElectionCommittee> query, GeneralElectionCommitteeFilterParameters filterParameter)
     {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
         if (!string.IsNullOrWhiteSpace(filterParameter.FreeText))
         {
             var filters = filterParameter.FreeText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -152,6 +155,8 @@ public static class GeneralElectionCommitteeQueryExtensions
 
     public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForExport(this IQueryable<GeneralElectionCommittee> query, GeneralElectionCommitteeExportFilterParameters filterParameter)
     {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
         if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
         {
             query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
@@ -185,9 +190,57 @@ public static class GeneralElectionCommitteeQueryExtensions
         return query;
     }
 
+    public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForFormLetter(this IQueryable<GeneralElectionCommittee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
+    {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
+        if (electionTypeIds != null)
+        {
+            if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())
+            {
+                electionTypeIds = electionTypeIds
+                    .Where(id => filterParameter.ElectionTypeIds.Contains(id))
+                    .ToList();
+            }
+            query = query.Where(c => c.MembershipCandidates.Any(m => electionTypeIds!.Contains(m.ElectionTypeId)));
+        }
+
+        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
+        }
+
+        if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())
+        {
+            query = query.Where(c => filterParameter.DepartmentIds.Contains(c.DepartmentId));
+        }
+
+        if (filterParameter.OfficeIds is not null && filterParameter.OfficeIds.Any())
+        {
+            query = query.Where(c => filterParameter.OfficeIds.Contains(c.OfficeId));
+        }
+
+        if (filterParameter.CommitteeTypeIds is not null && filterParameter.CommitteeTypeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+        }
+
+        if (filterParameter.CommitteeIds is not null && filterParameter.CommitteeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeIds.Contains(c.CommitteeId));
+        }
+
+        return query;
+    }
+
     public static IQueryable<GeneralElectionCommittee> SortGeneralElectionCommittees(this IQueryable<GeneralElectionCommittee> committees, string sort, SortDirection sortDirection, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(sort);
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
+#pragma warning disable CA1308
         return sort.ToLowerInvariant() switch
+#pragma warning restore CA1308
         {
             "description" => committees.SortByProperty(c => c.DescriptionGerman, c => c.DescriptionFrench, c => c.DescriptionItalian, sortDirection, cultureInfo),
             "department" => committees.SortByProperty(c => c.Department!.TextDe, c => c.Department!.TextFr, c => c.Department!.TextIt, sortDirection, cultureInfo),
