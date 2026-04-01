@@ -11,6 +11,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.Sql($@"UPDATE data.eiam_assignments SET parent_id = '{EiamAssignment.AdminId}' WHERE ""role"" = 'Department';");
         }
 

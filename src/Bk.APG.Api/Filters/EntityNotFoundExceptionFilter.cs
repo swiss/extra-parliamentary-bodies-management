@@ -7,6 +7,8 @@ public class EntityNotFoundExceptionFilter : IExceptionFilter
 {
     public void OnException(ExceptionContext context)
     {
+        ArgumentNullException.ThrowIfNull(context);
+
         if (context.Exception is EntityNotFoundException)
         {
             context.HttpContext.Response.StatusCode = 404;

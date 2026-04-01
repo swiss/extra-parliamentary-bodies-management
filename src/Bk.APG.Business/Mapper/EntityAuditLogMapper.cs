@@ -9,6 +9,8 @@ public static class EntityAuditLogMapper
 {
     public static EntityAuditLogDto MapToDto(EntityAuditLog entityAuditLog)
     {
+        ArgumentNullException.ThrowIfNull(entityAuditLog);
+
         var auditDataBefore = new List<EntityAuditLogDataDto>();
         var auditDataAfter = new List<EntityAuditLogDataDto>();
 
@@ -94,6 +96,8 @@ public static class EntityAuditLogMapper
         return null;
     }
 
+
+#pragma warning disable CA1812 //the class is instatiated via serialization
     private class AuditChange
     {
         [JsonPropertyName("columnName")]
@@ -105,4 +109,5 @@ public static class EntityAuditLogMapper
         [JsonPropertyName("newValue")]
         public object? NewValue { get; init; }
     }
+#pragma warning restore CA1812
 }

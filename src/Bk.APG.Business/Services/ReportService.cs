@@ -55,6 +55,8 @@ public class ReportService : IReportService
 
     public async Task<(string fileName, Stream content)> GetReport(ReportFilterParametersDto filterDto)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         _logger.LogInformation("Generate report of type {ReportType}", filterDto.DocumentType);
 
         return filterDto.DocumentType switch
@@ -71,6 +73,8 @@ public class ReportService : IReportService
 
     public async Task<(string fileName, Stream content)> CreateFormLetterAsZipFile(FormLetterFilterParameters filterDto)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         _logger.LogInformation("Generate form letter report");
 
         var reportDto = await FillFormLetterDto(filterDto);
@@ -125,6 +129,8 @@ public class ReportService : IReportService
 
     public async Task<(string fileName, Stream content)> CreateFormLetterSingleDocument(FormLetterFilterParameters filterDto)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         var template = "FormLetterGeneralElection";
 
         var reportDto = await FillFormLetterDto(filterDto);
@@ -421,7 +427,7 @@ public class ReportService : IReportService
 
         var appendixReportDto = new AppendixFederalCouncilDto
         {
-            TermOfOfficeDateRange = geTermOfOfficeDate.BeginDate.Year.ToString() + " - " + geTermOfOfficeDate.EndDate?.Year.ToString(),
+            TermOfOfficeDateRange = geTermOfOfficeDate.BeginDate.Year + " - " + geTermOfOfficeDate.EndDate?.Year,
             NumberOfMembers = geCommitteesWithMembers.Sum(c => c.ActiveMemberCount),
             NumberOfCommittees = geCommitteesWithMembers.Count,
             NumberOfExtraParliamentaryCommissions = extraParliamentaryCommissions.Count,
@@ -569,7 +575,7 @@ public class ReportService : IReportService
                 if (type == ReportCommitteeType.SelectionProcedure)
                 {
                     var cleanSelectionProcedure = committee.SelectionProcedure != null ? Regex.Replace(committee.SelectionProcedure.ToString(), "<.*?>", string.Empty) : string.Empty;
-                    freeText = string.Format(BusinessTexts.Report_SelectionProcedure, cleanSelectionProcedure);
+                    freeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_SelectionProcedure, cleanSelectionProcedure);
                 }
                 else if (type == ReportCommitteeType.Vacancies)
                 {
@@ -580,7 +586,7 @@ public class ReportService : IReportService
                 }
                 else
                 {
-                    freeText = termOfOfficeDate != null && committee.EndDate < termOfOfficeDate.EndDate && committee.EndDate > termOfOfficeDate.BeginDate ? string.Format(BusinessTexts.Report_EndDateInPast, committee.EndDate.Value.ToShortDateString()) : termOfOfficeDate != null && committee.BeginDate > termOfOfficeDate.BeginDate && committee.BeginDate < termOfOfficeDate.EndDate ? string.Format(BusinessTexts.Report_BeginDateInFuture, committee.BeginDate.ToShortDateString()) : string.Empty;
+                    freeText = termOfOfficeDate != null && committee.EndDate < termOfOfficeDate.EndDate && committee.EndDate > termOfOfficeDate.BeginDate ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_EndDateInPast, committee.EndDate.Value.ToShortDateString()) : termOfOfficeDate != null && committee.BeginDate > termOfOfficeDate.BeginDate && committee.BeginDate < termOfOfficeDate.EndDate ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_BeginDateInFuture, committee.BeginDate.ToShortDateString()) : string.Empty;
                 }
 
                 if (!onlyAddWhenData || membershipCount > 0)
@@ -1010,7 +1016,7 @@ public class ReportService : IReportService
                 GivenName = membership.Person!.GivenName,
                 Type = ReportMembershipType.ShorterDuty,
                 Justification = membership.JustificationShorterDuty,
-                FreeText = string.Format(BusinessTexts.Report_ShorterDutyText, membership.BeginDate.ToShortDateString(), membership.EndDate.ToShortDateString())
+                FreeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_ShorterDutyText, membership.BeginDate.ToShortDateString(), membership.EndDate.ToShortDateString())
             });
         }
         else if (type == ReportMembershipType.FederalAssembly)
@@ -1338,9 +1344,9 @@ public class ReportService : IReportService
 
             var formLetterReportDto = new FormLetterReportDto
             {
-                NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy"),
-                NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
-                TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
+                NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
+                NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
+                TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
                 Memberships = allRecipients,
                 HasSignature = signaturePictureExists,
                 SenderSignature = picBase64,

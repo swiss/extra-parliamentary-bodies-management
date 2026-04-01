@@ -155,7 +155,9 @@ public static class ServiceCollectionExtensions
 
     private static void AddS3Storage(this IServiceCollection services, string key, string endpoint, string accessKey, string secretAccessKey)
     {
-        var s3Url = !endpoint.StartsWith("http")
+        ArgumentNullException.ThrowIfNull(endpoint);
+
+        var s3Url = !endpoint.StartsWith("http", StringComparison.InvariantCultureIgnoreCase)
             ? $"https://{endpoint}"
             : endpoint;
 

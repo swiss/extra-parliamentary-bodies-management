@@ -86,6 +86,8 @@ public class MembershipBuilder
 
     public MembershipBuilder WithPerson(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         _person = person;
         _personId = person.Id;
         return this;
@@ -99,6 +101,8 @@ public class MembershipBuilder
 
     public MembershipBuilder WithFunction(Function function)
     {
+        ArgumentNullException.ThrowIfNull(function);
+
         _function = function;
         _functionId = function.Id;
         return this;
@@ -217,6 +221,8 @@ public class MembershipBuilder
 
     public MembershipBuilder WithCommittee(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         _committee = committee;
         _committeeId = committee.Id;
         return this;
@@ -224,6 +230,8 @@ public class MembershipBuilder
 
     public MembershipBuilder WithMembershipAddition(MembershipAddition membershipAddition)
     {
+        ArgumentNullException.ThrowIfNull(membershipAddition);
+
         _membershipAddition = membershipAddition;
         _membershipAdditionId = membershipAddition.Id;
         return this;
@@ -231,6 +239,8 @@ public class MembershipBuilder
 
     public MembershipBuilder WithElectionOffice(ElectionOffice electionOffice)
     {
+        ArgumentNullException.ThrowIfNull(electionOffice);
+
         _electionOffice = electionOffice;
         _electionOfficeId = electionOffice.Id;
         return this;
@@ -250,6 +260,8 @@ public class MembershipBuilder
 
     public MembershipBuilder WithElectionType(ElectionType electionType)
     {
+        ArgumentNullException.ThrowIfNull(electionType);
+
         _electionType = electionType;
         _electionTypeId = electionType.Id;
         return this;

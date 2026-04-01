@@ -52,6 +52,8 @@ public class MembershipCandidateLogMessageBuilder
 
     public MembershipCandidateLogMessageBuilder WithPerson(Business.Models.Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         _person = person;
         _personId = person.Id;
         return this;
@@ -65,6 +67,8 @@ public class MembershipCandidateLogMessageBuilder
 
     public MembershipCandidateLogMessageBuilder WithGeneralElectionCommittee(GeneralElectionCommittee generalElectionCommittee)
     {
+        ArgumentNullException.ThrowIfNull(generalElectionCommittee);
+
         _generalElectionCommittee = generalElectionCommittee;
         _generalElectionCommitteeId = generalElectionCommittee.Id;
         return this;

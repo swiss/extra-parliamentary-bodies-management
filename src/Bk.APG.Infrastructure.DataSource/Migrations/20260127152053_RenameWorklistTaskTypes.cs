@@ -11,6 +11,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.Sql(@$"
                 UPDATE data.worklist_task_types SET text_de = 'GEW Start' WHERE id = '{WorklistTaskType.GeneralElectionStart}';
                 UPDATE data.worklist_task_types SET text_de = 'GEW Start weiterleiten' WHERE id = '{WorklistTaskType.GeneralElectionDispatch}';

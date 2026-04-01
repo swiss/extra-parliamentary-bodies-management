@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -366,12 +367,12 @@ internal class ContactPointServiceTests
 
         var updateDto = GetContactPointUpdateDtoForDuplicateCheck();
 
-        var begin = DateOnly.Parse(beginDate);
+        var begin = DateOnly.Parse(beginDate, CultureInfo.InvariantCulture);
         updateDto.BeginDate = begin;
 
         if (endDate is not null)
         {
-            var end = DateOnly.Parse(endDate);
+            var end = DateOnly.Parse(endDate, CultureInfo.InvariantCulture);
             updateDto.EndDate = end;
         }
         else
@@ -393,12 +394,12 @@ internal class ContactPointServiceTests
         // The daterange of the existing record is 01.01.2025 - 31.12.2027. All dates not touching this range, are valid!
         var updateDto = GetContactPointUpdateDtoForDuplicateCheck();
 
-        var begin = DateOnly.Parse(beginDate);
+        var begin = DateOnly.Parse(beginDate, CultureInfo.InvariantCulture);
         updateDto.BeginDate = begin;
 
         if (endDate is not null)
         {
-            var end = DateOnly.Parse(endDate);
+            var end = DateOnly.Parse(endDate, CultureInfo.InvariantCulture);
             updateDto.EndDate = end;
         }
         else

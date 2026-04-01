@@ -12,6 +12,7 @@ public static class PersonMapper
 {
     public static PersonListDto ToPersonListDto(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
         ArgumentNullException.ThrowIfNull(person.Language);
         ArgumentNullException.ThrowIfNull(person.Memberships);
 
@@ -31,6 +32,8 @@ public static class PersonMapper
 
     public static PersonMinimalDto ToPersonMinimalDto(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         return new PersonMinimalDto
         {
             Id = person.Id,
@@ -57,6 +60,8 @@ public static class PersonMapper
 
     public static PersonDetailDto ToPersonDetailDto(Person person, bool maskAddress)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         ArgumentNullException.ThrowIfNull(person.Language);
         ArgumentNullException.ThrowIfNull(person.CorrespondenceLanguage);
         ArgumentNullException.ThrowIfNull(person.Gender);
@@ -152,6 +157,8 @@ public static class PersonMapper
 
     public static PersonUpdateDto ToPersonUpdateDto(Person person, bool maskAddress, bool canDelete)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         var isMissingJustificationFederalAssembly =
             person.Memberships.Any(m => m.JustificationMemberInFederalAssemblyNeeded && string.IsNullOrWhiteSpace(m.JustificationMemberInFederalDuty) &&
                                         person.LegislaturePeriods.Any(lp => (m.BeginDate >= lp.StartDate && m.EndDate <= lp.EndDate) ||
@@ -203,6 +210,7 @@ public static class PersonMapper
 
     public static Person FromPersonCreateDto(PersonCreateDto personCreateDto)
     {
+        ArgumentNullException.ThrowIfNull(personCreateDto);
         ArgumentNullException.ThrowIfNull(personCreateDto.Surname);
         ArgumentNullException.ThrowIfNull(personCreateDto.GivenName);
         ArgumentNullException.ThrowIfNull(personCreateDto.BirthYear);
@@ -249,6 +257,8 @@ public static class PersonMapper
 
     public static Person FromMembershipCandidate(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         ArgumentNullException.ThrowIfNull(membershipCandidate.Surname);
         ArgumentNullException.ThrowIfNull(membershipCandidate.GivenName);
         ArgumentNullException.ThrowIfNull(membershipCandidate.BirthYear);
@@ -278,6 +288,8 @@ public static class PersonMapper
 
     public static DimensionItem ToDimensionItem(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         var dimensionItem =
             new DimensionItem(
                 person.OgdId,
@@ -285,7 +297,7 @@ public static class PersonMapper
                 [
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaGivenName, new Literal(person.GivenName)),
                     new AdditionalLiteralProperty(OgdExportConstants.SchemaFamilyName, new Literal(person.Surname)),
-                    new AdditionalLiteralProperty(OgdExportConstants.SchemaBirthDate, new Literal(person.BirthYear.ToString()))
+                    new AdditionalLiteralProperty(OgdExportConstants.SchemaBirthDate, new Literal(person.BirthYear.ToString(CultureInfo.InvariantCulture)))
                 ]);
 
         dimensionItem.AdditionalUriProperties.Add(new AdditionalUriProperty(OgdExportConstants.SchemaGender, OgdExportConstants.CreateUriLinkForRegisterLdAdminCh(person.IsFemale ? Gender.Female : Gender.Male)));
@@ -358,6 +370,8 @@ public static class PersonMapper
 
     public static ObservationDataRow ToObservation(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         var dataRow = new ObservationDataRow
         {
             KeyUri = $"{OgdExportConstants.NamespacePerson}:{person.OgdId}"

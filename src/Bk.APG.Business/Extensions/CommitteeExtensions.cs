@@ -7,6 +7,8 @@ public static class CommitteeExtensions
 {
     public static CommitteeQuotasDto GetQuotas(this Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         var committeeType = committee.CommitteeType!;
         var isPercentageBased = committeeType.GermanThresholdPercentage is not null;
 

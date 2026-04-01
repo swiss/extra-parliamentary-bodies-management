@@ -8,6 +8,8 @@ public static class InterestFunctionMapper
 {
     public static InterestFunctionDto ToInterestFunctionDto(InterestFunction interestFunction)
     {
+        ArgumentNullException.ThrowIfNull(interestFunction);
+
         return new InterestFunctionDto
         {
             Id = interestFunction.Id,

@@ -8,6 +8,8 @@ public static class GeneralElectionMapper
 {
     public static GeneralElectionCommittee FromCommitteeToGeneralElectionCommittee(Committee committee, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return new GeneralElectionCommittee
         {
             Id = committee.Id,
@@ -61,6 +63,8 @@ public static class GeneralElectionMapper
 
     public static Committee FromGeneralElectionCommitteeToCommittee(GeneralElectionCommittee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         return new Committee
         {
             // we want it to be the original CommitteeID!
@@ -113,6 +117,8 @@ public static class GeneralElectionMapper
 
     public static MembershipCandidate FromMembershipAndPersonToMembershipCandidate(Membership membership, Guid generalElectionCommitteeId, string currentUserName, DateOnly termOfOfficeStartDate, DateOnly termOfOfficeEndDate)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         ArgumentNullException.ThrowIfNull(membership.Person);
         ArgumentNullException.ThrowIfNull(membership.Person.Surname);
         ArgumentNullException.ThrowIfNull(membership.Person.GivenName);
@@ -158,6 +164,8 @@ public static class GeneralElectionMapper
 
     public static Membership FromMembershipCandidateToMembership(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         return new Membership
         {
             Id = membershipCandidate.MembershipId != null ? (Guid)membershipCandidate.MembershipId : Guid.Empty,
@@ -192,6 +200,8 @@ public static class GeneralElectionMapper
 
     public static MembershipCreateDto FromMembershipCandidateToMembershipCreateDto(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         return new MembershipCreateDto
         {
             PersonId = membershipCandidate.Person != null ? membershipCandidate.Person.Id : Guid.Empty,
@@ -215,6 +225,8 @@ public static class GeneralElectionMapper
 
     public static MembershipCandidateMirrorDto ToMembershipCandidateMirrorDto(Membership membership)
     {
+        ArgumentNullException.ThrowIfNull(membership);
+
         return new MembershipCandidateMirrorDto
         {
             MaximumEmploymentLevel = membership.MaximumEmploymentLevel,
@@ -235,6 +247,8 @@ public static class GeneralElectionMapper
 
     public static CommitteeMemberDto ToCommitteeMemberDto(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         return new CommitteeMemberDto
         {
             Id = membershipCandidate.Id,
