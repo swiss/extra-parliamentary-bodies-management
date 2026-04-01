@@ -39,6 +39,8 @@ public class MembershipCandidateController : ControllerBase
     [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<IActionResult> UpdateMembershipCandidate([FromRoute] Guid id, [FromBody, Required] MembershipCandidateUpdateDto membershipCandidateUpdate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidateUpdate);
+
         if (membershipCandidateUpdate.PersonId is null && (string.IsNullOrWhiteSpace(membershipCandidateUpdate.GivenName)
                                                            || string.IsNullOrWhiteSpace(membershipCandidateUpdate.Surname)
                                                            || membershipCandidateUpdate.GenderId is null

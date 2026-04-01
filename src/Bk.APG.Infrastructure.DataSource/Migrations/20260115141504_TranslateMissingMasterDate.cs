@@ -10,6 +10,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.Sql(@$"
                 update data.membership_additions set text_fr = 'Représentant des employeurs', text_it = 'Rappresentanza dei datori di lavoro' where id = '0142f21e-4036-4a59-be34-c35664886bb1';
                 update data.membership_additions set text_fr = 'Représentant des travailleurs', text_it = 'Rappresentanza dei lavoratori' where id = 'd7e3d087-0cac-4442-937b-4d19b66a4c2e';

@@ -8,6 +8,8 @@ public static class CantonMapper
 {
     public static CantonDto ToCantonDto(Canton canton)
     {
+        ArgumentNullException.ThrowIfNull(canton);
+
         var currentUiCulture = CultureInfo.CurrentUICulture;
         return new CantonDto
         {
@@ -20,6 +22,8 @@ public static class CantonMapper
 
     public static Canton ToCanton(Swiss.FCh.MasterData.Models.Canton canton)
     {
+        ArgumentNullException.ThrowIfNull(canton);
+
         return new Canton
         {
             Created = default,

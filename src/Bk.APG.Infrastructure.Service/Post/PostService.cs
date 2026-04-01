@@ -22,6 +22,8 @@ public class PostService : IPostService, IHealthCheck
 
     public PostService(IOptions<PostConfiguration> postOptions, IHttpClientFactory httpClientFactory, ICantonRepository cantonRepository)
     {
+        ArgumentNullException.ThrowIfNull(postOptions);
+
         _httpClientFactory = httpClientFactory;
         _cantonRepository = cantonRepository;
         _postConfiguration = postOptions.Value;
@@ -48,6 +50,8 @@ public class PostService : IPostService, IHealthCheck
 
     public async Task<IEnumerable<AddressDto>> Search(AddressSearchDto search)
     {
+        ArgumentNullException.ThrowIfNull(search);
+
         var client = CreateHttpClient();
 
         var dto = AddressMapper.ToAutoCompleteDto(search);
@@ -68,6 +72,8 @@ public class PostService : IPostService, IHealthCheck
 
     public async Task<Business.Dtos.AddressVerificationResultDto> Verify(AddressSearchDto search)
     {
+        ArgumentNullException.ThrowIfNull(search);
+
         var client = CreateHttpClient();
 
         var uriBuilder = new UriBuilder($"{_postConfiguration.Uri}/buildingverification4");

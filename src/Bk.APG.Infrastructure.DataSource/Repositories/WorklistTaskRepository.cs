@@ -14,20 +14,20 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     private readonly DataContext _dataContext;
     private readonly ICultureService _cultureService;
     private readonly IAuthorizationService _authorizationService;
-    private readonly IEiamAssignmentRepository _eiamAssignmentRepository;
 
-    public WorklistTaskRepository(DataContext dataContext, ICultureService cultureService, IAuthorizationService authorizationService, IEiamAssignmentRepository eiamAssignmentRepository)
+    public WorklistTaskRepository(DataContext dataContext, ICultureService cultureService, IAuthorizationService authorizationService)
     {
         _dataContext = dataContext;
         _cultureService = cultureService;
         _authorizationService = authorizationService;
-        _eiamAssignmentRepository = eiamAssignmentRepository;
     }
 
     public async Task<PagedResult<WorklistTask>> GetAll(PagingParameters paging, WorklistFilterParameters? filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var isAdmin = _authorizationService.IsAdmin;
-        var eiamAssignmentIds = isAdmin ? [] : (await _eiamAssignmentRepository.GetByExternalId(_authorizationService.GetCurrentExternalId())).GetSearchableIds().ToList();
+        var eiamAssignmentIds = isAdmin ? [] : (await _authorizationService.GetCurrentEiamAssignment()).GetSearchableIds().ToList();
         var query = _dataContext.WorklistTasks
             .Where(w => !w.IsDeleted)
             .Include(item => item.WorklistTaskType)
@@ -140,6 +140,8 @@ public class WorklistTaskRepository : IWorklistTaskRepository
 
     public async Task CreateRange(IEnumerable<WorklistTask> worklistTasks)
     {
+        ArgumentNullException.ThrowIfNull(worklistTasks);
+
         foreach (var worklistTask in worklistTasks)
         {
             await _dataContext.WorklistTasks.AddAsync(worklistTask);
@@ -208,6 +210,6 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     {
         await _dataContext.WorklistTasks
             .ExecuteUpdateAsync(setters => setters
-            .SetProperty(w => w.IsDeleted, true));
+                .SetProperty(w => w.IsDeleted, true));
     }
 }

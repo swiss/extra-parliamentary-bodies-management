@@ -86,6 +86,8 @@ public class ContactPointBuilder
 
     public ContactPointBuilder WithCommittee(Committee committee)
     {
+        ArgumentNullException.ThrowIfNull(committee);
+
         _committee = committee;
         _committeeId = committee.Id;
         return this;
@@ -111,6 +113,8 @@ public class ContactPointBuilder
 
     public ContactPointBuilder WithContactPointType(ContactPointType contactPointType)
     {
+        ArgumentNullException.ThrowIfNull(contactPointType);
+
         _contactPointType = contactPointType;
         _contactPointTypeId = contactPointType.Id;
         return this;
@@ -118,6 +122,8 @@ public class ContactPointBuilder
 
     public ContactPointBuilder WithLanguage(Language language)
     {
+        ArgumentNullException.ThrowIfNull(language);
+
         _language = language;
         _languageId = language.Id;
         return this;
@@ -131,6 +137,8 @@ public class ContactPointBuilder
 
     public ContactPointBuilder WithGender(Gender gender)
     {
+        ArgumentNullException.ThrowIfNull(gender);
+
         _gender = gender;
         _genderId = gender.Id;
         return this;

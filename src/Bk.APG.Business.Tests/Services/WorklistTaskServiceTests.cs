@@ -119,6 +119,7 @@ internal class WorklistTaskServiceTests
         var worklistTask = new WorklistTaskBuilder().Build();
         var id = Guid.NewGuid();
         _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
+        _authorizationService.GetCurrentEiamAssignment().Returns(worklistTask.AssignedTo!);
 
         var result = await _service.GetWorklistTaskForUpdate(id);
 
@@ -181,7 +182,7 @@ internal class WorklistTaskServiceTests
         };
 
         _worklistTaskRepository.GetByIdForForward(worklistTask.Id).Returns(worklistTask);
-        _authorizationService.GetCurrentExternalId().Returns(worklistTask.AssignedTo!.ExternalId);
+        _authorizationService.GetCurrentEiamAssignment().Returns(worklistTask.AssignedTo!);
         _committeeRepository.GetForGeneralElectionByDepartmentId(worklistTask.DepartmentId!.Value).Returns(committees);
         _authorizationService.GetCurrentUserName().Returns("testUser");
 
@@ -216,13 +217,13 @@ internal class WorklistTaskServiceTests
         };
 
         _worklistTaskRepository.GetByIdForForward(worklistTask.Id).Returns(worklistTask);
-        _authorizationService.GetCurrentExternalId().Returns(worklistTask.AssignedTo!.ExternalId);
+        _authorizationService.GetCurrentEiamAssignment().Returns(worklistTask.AssignedTo!);
         _authorizationService.GetCurrentUserName().Returns("testUser");
         await _service.ForwardWorklistTask(worklistTask.Id, forwardDto);
 
         await _worklistTaskRepository.Received(1).CreateRange(Arg.Is<List<WorklistTask>>(x => x.Count == 1));
         await _worklistTaskRepository.Received(1).Update(Arg.Is<WorklistTask>(x => x.WorklistTaskStateId == WorklistTaskState.Completed));
-        await _generalElectionCommitteeRepository.Received(1).GetByDepartmentId(worklistTask.AssignedTo.DepartmentId!.Value);
+        await _generalElectionCommitteeRepository.Received(1).GetByDepartmentId(worklistTask.AssignedTo!.DepartmentId!.Value);
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
     }
 
@@ -253,7 +254,7 @@ internal class WorklistTaskServiceTests
         };
 
         _worklistTaskRepository.GetByIdForForward(worklistTask.Id).Returns(worklistTask);
-        _authorizationService.GetCurrentExternalId().Returns(worklistTask.AssignedTo!.ExternalId);
+        _authorizationService.GetCurrentEiamAssignment().Returns(worklistTask.AssignedTo!);
         _committeeRepository.GetForGeneralElectionByOfficeId(Arg.Any<Guid>()).Returns(committees);
         _authorizationService.GetCurrentUserName().Returns("testUser");
 
@@ -274,7 +275,7 @@ internal class WorklistTaskServiceTests
         var forwardDto = new Faker<WorklistTaskForwardDto>().Generate();
 
         _worklistTaskRepository.GetByIdForForward(worklistTask.Id).Returns(worklistTask);
-        _authorizationService.GetCurrentExternalId().Returns(worklistTask.AssignedTo!.ExternalId);
+        _authorizationService.GetCurrentEiamAssignment().Returns(worklistTask.AssignedTo!);
 
         Assert.ThrowsAsync<NotSupportedException>(async () => await _service.ForwardWorklistTask(worklistTask.Id, forwardDto));
     }
@@ -288,7 +289,7 @@ internal class WorklistTaskServiceTests
         var forwardDto = new Faker<WorklistTaskForwardDto>().Generate();
 
         _worklistTaskRepository.GetByIdForForward(worklistTask.Id).Returns(worklistTask);
-        _authorizationService.GetCurrentExternalId().Returns("externalId");
+        _authorizationService.GetCurrentEiamAssignment().Returns(new EiamAssignment { Id = Guid.NewGuid(), ExternalId = "other", Role = Role.Department });
 
         Assert.ThrowsAsync<NotSupportedException>(async () => await _service.ForwardWorklistTask(worklistTask.Id, forwardDto));
     }

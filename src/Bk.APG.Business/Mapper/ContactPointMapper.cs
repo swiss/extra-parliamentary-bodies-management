@@ -7,6 +7,8 @@ public static class ContactPointMapper
 {
     public static ContactPointDetailDto ToContactPointDetailDto(ContactPoint contactPoint)
     {
+        ArgumentNullException.ThrowIfNull(contactPoint);
+
         return new ContactPointDetailDto
         {
             Id = contactPoint.Id,
@@ -36,6 +38,8 @@ public static class ContactPointMapper
 
     public static ContactPointCreateDto FromContactPointUpdateToCreateDto(ContactPointUpdateDto contactPointUpdate)
     {
+        ArgumentNullException.ThrowIfNull(contactPointUpdate);
+
         return new ContactPointCreateDto
         {
             CommitteeId = contactPointUpdate.CommitteeId,
@@ -65,6 +69,8 @@ public static class ContactPointMapper
 
     public static ContactPoint FromContactPointCreateDto(ContactPointCreateDto contactPointCreate)
     {
+        ArgumentNullException.ThrowIfNull(contactPointCreate);
+
         return new ContactPoint
         {
             CommitteeId = contactPointCreate.CommitteeId,
@@ -96,6 +102,8 @@ public static class ContactPointMapper
 
     public static ContactPointUpdateDto ToContactPointUpdateDto(ContactPoint contactPoint)
     {
+        ArgumentNullException.ThrowIfNull(contactPoint);
+
         return new ContactPointUpdateDto
         {
             Id = contactPoint.Id,
@@ -128,6 +136,8 @@ public static class ContactPointMapper
 
     public static ContactPoint FromContactPointUpdateDto(ContactPointUpdateDto contactPointUpdateDto)
     {
+        ArgumentNullException.ThrowIfNull(contactPointUpdateDto);
+
         return new ContactPoint
         {
             Id = contactPointUpdateDto.Id,
@@ -161,6 +171,8 @@ public static class ContactPointMapper
 
     public static ContactPointCreateDto ToContactPointCreateDto(ContactPoint contactPoint)
     {
+        ArgumentNullException.ThrowIfNull(contactPoint);
+
         return new ContactPointCreateDto
         {
             CommitteeId = contactPoint.CommitteeId,
@@ -190,6 +202,8 @@ public static class ContactPointMapper
 
     public static ContactPointListDto ToContactPointListDto(ContactPoint contactPoint)
     {
+        ArgumentNullException.ThrowIfNull(contactPoint);
+
         return new ContactPointListDto
         {
             Id = contactPoint.Id,
