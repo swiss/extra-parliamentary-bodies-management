@@ -139,7 +139,7 @@ public class ReportService : IReportService
         {
             await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", reportDto, "formLetter");
 
-            using var stream = new MemoryStream();
+            var stream = new MemoryStream();
             await documentStream.CopyToAsync(stream);
             stream.Position = 0;
 
@@ -149,7 +149,7 @@ public class ReportService : IReportService
         {
             await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{template}.docx", reportDto, "formLetter");
 
-            using var stream = new MemoryStream();
+            var stream = new MemoryStream();
             await documentStream.CopyToAsync(stream);
             stream.Position = 0;
 
