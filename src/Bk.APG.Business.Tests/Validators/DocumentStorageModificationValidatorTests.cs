@@ -20,7 +20,9 @@ internal class DocumentStorageModificationValidatorTests
     [Test]
     public void Validate_WithValidModel_ShouldNotHaveAnyValidationErrors()
     {
-        var model = BuildValidModel();
+        using var stream = new MemoryStream("Hello world!"u8.ToArray());
+
+        var model = BuildValidModel(stream);
 
         var result = _validator.TestValidate(model);
         result.ShouldNotHaveAnyValidationErrors();
@@ -29,15 +31,14 @@ internal class DocumentStorageModificationValidatorTests
     [Test]
     public void Validate_WithEmptyDescription_ShouldThrowBusinessValidationException()
     {
-        var model = new DocumentStorageModificationDto() { Id = Guid.NewGuid(), DisplayName = string.Empty, IsOriginal = true, File = null, LanguageId = new Guid(Language.GermanId) };
+        var model = new DocumentStorageModificationDto { Id = Guid.NewGuid(), DisplayName = string.Empty, IsOriginal = true, File = null, LanguageId = new Guid(Language.GermanId) };
 
         var result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.DisplayName);
     }
 
-    private static DocumentStorageModificationDto BuildValidModel()
+    private static DocumentStorageModificationDto BuildValidModel(Stream stream)
     {
-        var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
 
         return new DocumentStorageModificationDto

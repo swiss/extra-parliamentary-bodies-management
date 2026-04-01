@@ -74,9 +74,9 @@ public class MasterDataService : IMasterDataService
         return legalForms.Select(LegalFormMapper.ToLegalFormDto).OrderBy(lf => lf.Text);
     }
 
-    public string GetLegalFormTextByLegalFormId(string code)
+    public string GetLegalFormTextByLegalFormId(string legalFormId)
     {
-        var legalForm = _masterDataRepository.GetLegalFormByLegalFormId(code);
+        var legalForm = _masterDataRepository.GetLegalFormByLegalFormId(legalFormId);
 
         return legalForm == null ? string.Empty : legalForm.GetText();
     }
@@ -171,6 +171,8 @@ public class MasterDataService : IMasterDataService
 
     public async Task<IEnumerable<OfficeDto>> GetOfficesByName(string officeName)
     {
+        ArgumentNullException.ThrowIfNull(officeName);
+
         var officeNameUpperCase = officeName.ToUpperInvariant();
 
         var offices = await _masterDataRepository.GetOffices();
@@ -187,6 +189,8 @@ public class MasterDataService : IMasterDataService
 
     public async Task<IEnumerable<OccupationDto>> GetOccupationsByName(string occupation)
     {
+        ArgumentNullException.ThrowIfNull(occupation);
+
         var occupationUpperCase = occupation.ToUpperInvariant();
 
         var occupations = await _masterDataRepository.GetOccupations();

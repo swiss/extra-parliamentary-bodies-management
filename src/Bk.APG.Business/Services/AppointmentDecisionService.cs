@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
@@ -26,6 +27,9 @@ public class AppointmentDecisionService : IAppointmentDecisionService
         IAuthorizationService authorizationService,
         IDocumentStorageRepository documentStorageRepository)
     {
+        ArgumentNullException.ThrowIfNull(appointmentDecisionRepository);
+        ArgumentNullException.ThrowIfNull(appointmentDecisionOptions);
+
         _appointmentDecisionRepository = appointmentDecisionRepository;
         _documentService = documentService;
         _logger = logger;
@@ -61,6 +65,8 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
     public async Task<AppointmentDecisionListDto> CreateAppointmentDecision(AppointmentDecisionCreateDto createDto)
     {
+        ArgumentNullException.ThrowIfNull(createDto);
+
         CheckAuthorization();
 
         ValidateAppointmentDecisionModificationDto(createDto);
@@ -111,6 +117,8 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
     public async Task<AppointmentDecisionListDto> UpdateAppointmentDecision(Guid id, AppointmentDecisionUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update appointment decision {AppointmentDecisionId}", id);
 
         CheckAuthorization();
@@ -291,7 +299,9 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
     private static void SetDocumentReferenceWithLanguage(Guid languageId, bool isOriginal, AppointmentDecision appointmentDecision, DocumentStorage documentStorage)
     {
-        switch (languageId.ToString().ToLower())
+#pragma warning disable CA1308 //changing this would require a data migration
+        switch (languageId.ToString().ToLower(CultureInfo.InvariantCulture))
+#pragma warning restore CA1308
         {
             case Language.GermanId:
                 appointmentDecision.FileReferenceGerman = documentStorage;

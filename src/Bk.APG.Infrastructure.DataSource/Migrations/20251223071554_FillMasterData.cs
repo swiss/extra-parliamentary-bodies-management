@@ -60,6 +60,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.Sql(@$"
 
             INSERT INTO data.departments (""sort"", ""text_de"", ""text_fr"", ""text_it"", ""text_rm"", ""description_de"", ""description_fr"", ""description_it"", ""description_rm"", ""uri"", ""created"", ""created_by"", ""modified"", ""modified_by"", ""is_deleted"", ""id"", ""old_id"", ""eiam_assignment_id"", ""is_big_department"")

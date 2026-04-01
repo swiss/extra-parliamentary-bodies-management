@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
@@ -406,7 +407,7 @@ internal class PersonMapperTests
             Assert.That(result.AdditionalLiteralProperties[1].Object.Text, Is.EqualTo("surname"));
 
             Assert.That(result.AdditionalLiteralProperties[2].Predicate, Is.EqualTo(OgdExportConstants.SchemaBirthDate));
-            Assert.That(result.AdditionalLiteralProperties[2].Object.Text, Is.EqualTo(person.BirthYear.ToString()));
+            Assert.That(result.AdditionalLiteralProperties[2].Object.Text, Is.EqualTo(person.BirthYear.ToString(CultureInfo.InvariantCulture)));
 
             Assert.That(result.AdditionalLiteralProperties[3].Predicate, Is.EqualTo(OgdExportConstants.SchemaHonorificPrefix));
             Assert.That(result.AdditionalLiteralProperties[3].Object.Text, Is.EqualTo("Dr."));

@@ -14,13 +14,13 @@ public class EndGeneralElectionBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    protected override Task ExecuteAsync(CancellationToken ct)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         return Task.Run(async () =>
         {
             _logger.LogInformation("{BackgroundService} is starting...", nameof(EndGeneralElectionBackgroundService));
 
-            while (!ct.IsCancellationRequested)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
@@ -54,9 +54,9 @@ public class EndGeneralElectionBackgroundService : BackgroundService
                 {
                     var nextRunTime = DateTime.Today.AddDays(1).AddHours(1); //always at 1 a.m.
                     var delay = nextRunTime - DateTime.Now;
-                    await Task.Delay(delay, ct);
+                    await Task.Delay(delay, stoppingToken);
                 }
             }
-        }, ct);
+        }, stoppingToken);
     }
 }

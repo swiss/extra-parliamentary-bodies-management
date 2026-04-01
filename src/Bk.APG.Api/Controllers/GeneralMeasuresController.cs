@@ -32,6 +32,8 @@ public class GeneralMeasuresController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> UpdateGeneralMeasure([FromBody] GeneralMeasureUpdateDto generalMeasureUpdate)
     {
+        ArgumentNullException.ThrowIfNull(generalMeasureUpdate);
+
         if (_authorizationService.IsDepartment)
         {
             var department = await _authorizationService.GetDepartment();
@@ -49,6 +51,8 @@ public class GeneralMeasuresController : ControllerBase
     [HttpPost("{departmentId:guid}/forward")]
     public async Task<IActionResult> Forward(Guid departmentId, [FromBody] GeneralMeasureForwardDto forwardDto)
     {
+        ArgumentNullException.ThrowIfNull(forwardDto);
+
         if (forwardDto.ForwardToAdmin)
         {
             if (!_authorizationService.IsDepartment)

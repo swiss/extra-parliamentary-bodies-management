@@ -23,6 +23,8 @@ public class CountryService : ICountryService
 
     public async Task<Country> CreateOrUpdate(Country country)
     {
+        ArgumentNullException.ThrowIfNull(country);
+
         var now = DateTime.UtcNow;
 
         var countryFromDb = await _countryRepository.GetByUri(country.Uri);

@@ -41,6 +41,8 @@ public static class GeneralElectionCommitteeMapper
 
     public static GeneralElectionCommittee FromGeneralElectionCommitteeCreateDto(GeneralElectionCommitteeCreateDto createDto, string currentUserName)
     {
+        ArgumentNullException.ThrowIfNull(createDto);
+
         return new GeneralElectionCommittee
         {
             BeginDate = createDto.BeginDate,
@@ -82,6 +84,8 @@ public static class GeneralElectionCommitteeMapper
 
     public static GeneralElectionCommitteeDetailDto ToGeneralElectionCommitteeDetailDto(GeneralElectionCommittee generalElectionCommittee)
     {
+        ArgumentNullException.ThrowIfNull(generalElectionCommittee);
+
         var committeeDetailDto = new GeneralElectionCommitteeDetailDto
         {
             Id = generalElectionCommittee.Id,
@@ -144,6 +148,8 @@ public static class GeneralElectionCommitteeMapper
 
     public static GeneralElectionCommitteeUpdateDto ToGeneralElectionCommitteeUpdateDto(GeneralElectionCommittee generalElectionCommitteeUpdate)
     {
+        ArgumentNullException.ThrowIfNull(generalElectionCommitteeUpdate);
+
         return new GeneralElectionCommitteeUpdateDto
         {
             Id = generalElectionCommitteeUpdate.Id,
@@ -184,6 +190,8 @@ public static class GeneralElectionCommitteeMapper
 
     public static GeneralElectionCommitteeListDto ToGeneralElectionCommitteeListDto(GeneralElectionCommittee generalElectionCommittee, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(generalElectionCommittee);
+
         return new GeneralElectionCommitteeListDto
         {
             Id = generalElectionCommittee.Id,
@@ -207,6 +215,8 @@ public static class GeneralElectionCommitteeMapper
 
     public static GeneralElectionCommitteeJustificationUpdateDto ToGeneralElectionCommitteeJustificationUpdateDto(GeneralElectionCommittee generalElectionCommittee)
     {
+        ArgumentNullException.ThrowIfNull(generalElectionCommittee);
+
         return new GeneralElectionCommitteeJustificationUpdateDto
         {
             Id = generalElectionCommittee.Id,

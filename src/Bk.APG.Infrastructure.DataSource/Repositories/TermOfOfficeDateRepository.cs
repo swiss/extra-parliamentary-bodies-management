@@ -35,6 +35,9 @@ public class TermOfOfficeDateRepository : ITermOfOfficeDateRepository
 
     public async Task<TermOfOfficeDate> Update(TermOfOfficeDate existing, TermOfOfficeDate update)
     {
+        ArgumentNullException.ThrowIfNull(existing);
+        ArgumentNullException.ThrowIfNull(update);
+
         existing.Modified = update.Modified;
         existing.ModifiedBy = update.ModifiedBy;
         existing.TextDe = update.TextDe;

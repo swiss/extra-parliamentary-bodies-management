@@ -11,6 +11,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.DropIndex(
                 name: "ix_general_language_measures_ogd_id",
                 schema: "data",
@@ -35,6 +37,8 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            ArgumentNullException.ThrowIfNull(migrationBuilder);
+
             migrationBuilder.AddColumn<int>(
                 name: "ogd_id",
                 schema: "data",

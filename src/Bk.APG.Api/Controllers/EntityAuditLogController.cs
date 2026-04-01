@@ -22,6 +22,8 @@ public class EntityAuditLogController : ControllerBase
     [HttpGet("{entityId}")]
     public async Task<ActionResult> GetAuditLogsForEntity(string entityId, [FromQuery] string entityType, [FromQuery] IEnumerable<string> relatedEntityIds, [FromQuery, Required] PagingParametersDto pagingParameters, [FromQuery] SortParametersDto sortParameters)
     {
+        ArgumentNullException.ThrowIfNull(sortParameters);
+
         var auditLogs = await _entityAuditLogService.GetAuditLogsForEntity(entityId, entityType, relatedEntityIds, pagingParameters, sortParameters.Sort, sortParameters.Direction);
         return Ok(auditLogs);
     }

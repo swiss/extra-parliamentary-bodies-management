@@ -8,6 +8,8 @@ public static class LegalFormMapper
 {
     public static LegalFormDto ToLegalFormDto(LegalForm legalForm)
     {
+        ArgumentNullException.ThrowIfNull(legalForm);
+
         return new LegalFormDto
         {
             Id = legalForm.Id,

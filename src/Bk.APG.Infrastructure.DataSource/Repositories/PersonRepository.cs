@@ -18,6 +18,8 @@ public class PersonRepository : IPersonRepository
 
     public async Task<PagedResult<Person>> GetAll(PagingParameters paging, PersonFilterParameters? filter, string? sort, SortDirection? sortDirection)
     {
+        ArgumentNullException.ThrowIfNull(paging);
+
         var query = _dataContext.Persons
             .Include(item => item.Language)
             .Include(item => item.Office)
@@ -73,6 +75,8 @@ public class PersonRepository : IPersonRepository
 
     public async Task<IEnumerable<Person>> GetByName(string name)
     {
+        ArgumentNullException.ThrowIfNull(name);
+
         var filters = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         var query = GetPersons()
@@ -82,10 +86,13 @@ public class PersonRepository : IPersonRepository
         {
             var likeFilter = $"%{filter}%";
 
+#pragma warning disable CA1305 //ToString(CultureInfo.InvariantCulture) can not be translated to an SQL query by EF
             query = query.Where(y =>
                 EF.Functions.ILike(y.GivenName, likeFilter)
                 || EF.Functions.ILike(y.Surname, likeFilter)
                 || EF.Functions.ILike(y.BirthYear.ToString(), likeFilter));
+#pragma warning restore CA1305
+
         }
 
         var persons = await query
