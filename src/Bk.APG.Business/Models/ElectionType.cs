@@ -30,6 +30,10 @@ public class ElectionType : MasterDataBase
     public const string OtherRetirementReasonGuidAsString = "e2149808-c317-4ebf-b60c-287e162342b2";
     public static readonly Guid OtherRetirementReasonGuid = Guid.Parse(OtherRetirementReasonGuidAsString);
 
+    // Permanent
+    public const string PermanentGuidAsString = "c0201343-ee84-441c-8993-85abcd69535c";
+    public static readonly Guid PermanentGuid = Guid.Parse(PermanentGuidAsString);
+
     public ICollection<Membership> Memberships { get; set; } = new List<Membership>();
     public ICollection<MembershipCandidate> MembershipCandidates { get; set; } = new List<MembershipCandidate>();
 }

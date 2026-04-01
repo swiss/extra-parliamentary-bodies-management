@@ -39,6 +39,9 @@ public class CantonRepository : ICantonRepository
 
     public async Task<Canton> Update(Canton existing, Canton update)
     {
+        ArgumentNullException.ThrowIfNull(existing);
+        ArgumentNullException.ThrowIfNull(update);
+
         _dataContext.Cantons.Update(existing);
 
         existing.Modified = update.Modified;

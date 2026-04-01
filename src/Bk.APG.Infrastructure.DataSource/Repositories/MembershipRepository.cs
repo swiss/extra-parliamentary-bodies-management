@@ -26,6 +26,7 @@ public class MembershipRepository : IMembershipRepository
             .Include(m => m.Committee!.Department)
             .Include(m => m.Committee!.CommitteeType)
             .Include(m => m.Person!.Interests)
+            .Include(m => m.Person!.Gender)
             .Include(m => m.Function)
             .Include(m => m.ElectionType)
             .Include(m => m.MembershipAddition)
