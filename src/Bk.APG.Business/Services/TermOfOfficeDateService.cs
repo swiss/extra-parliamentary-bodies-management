@@ -50,6 +50,8 @@ public class TermOfOfficeDateService : ITermOfOfficeDateService
 
     public async Task<TermOfOfficeDate> Update(TermOfOfficeDate termOfOfficeDate)
     {
+        ArgumentNullException.ThrowIfNull(termOfOfficeDate);
+
         var termOfOfficeDateFromDb = await _termOfOfficeDateRepository.GetById(termOfOfficeDate.Id);
 
         var updatedTermOfOfficeDate = await _termOfOfficeDateRepository.Update(termOfOfficeDateFromDb, termOfOfficeDate);

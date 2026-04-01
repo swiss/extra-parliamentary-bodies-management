@@ -52,9 +52,9 @@ public class ContactPointService : IContactPointService
         return ContactPointMapper.ToContactPointDetailDto(contactPoint);
     }
 
-    public async Task<ContactPointUpdateDto> GetByIdForUpdate(Guid id)
+    public async Task<ContactPointUpdateDto> GetByIdForUpdate(Guid contactPointId)
     {
-        var contactPoint = await _contactPointRepository.GetByIdForUpdate(id);
+        var contactPoint = await _contactPointRepository.GetByIdForUpdate(contactPointId);
         return ContactPointMapper.ToContactPointUpdateDto(contactPoint);
     }
 
@@ -75,6 +75,8 @@ public class ContactPointService : IContactPointService
 
     public async Task<ContactPointDetailDto> Create(ContactPointCreateDto createDto)
     {
+        ArgumentNullException.ThrowIfNull(createDto);
+
         createDto.ContactPointTypeId = await _masterDataService.GetContactPointGuidFromContactPointUri(createDto.ContactPointTypeUri);
 
         var mappedContactPoint = ContactPointMapper.FromContactPointCreateDto(createDto);
@@ -101,6 +103,8 @@ public class ContactPointService : IContactPointService
 
     public async Task Update(Guid id, ContactPointUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update contact point {ContactPointId}", id);
 
         updateDto.ContactPointTypeId = await _masterDataService.GetContactPointGuidFromContactPointUri(updateDto.ContactPointTypeUri);
