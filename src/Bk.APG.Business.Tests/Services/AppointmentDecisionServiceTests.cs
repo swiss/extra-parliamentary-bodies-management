@@ -114,7 +114,7 @@ internal class AppointmentDecisionServiceTests
     [Test]
     public void CreateAppointmentDecision_ForInstitutionWithoutOriginalDocument_ShouldThrowBusinessValidationException()
     {
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         IFormFile file = new FormFile(stream, 0, stream.Length, "id_from_form", "fileName");
 
         var createDto = new AppointmentDecisionCreateDto
@@ -129,8 +129,6 @@ internal class AppointmentDecisionServiceTests
         };
 
         Assert.That(async () => await _service.CreateAppointmentDecision(createDto), Throws.Exception.InstanceOf<BusinessValidationException>());
-
-        stream.Dispose();
     }
 
     [Test]
@@ -270,7 +268,7 @@ internal class AppointmentDecisionServiceTests
     public void UpdateAppointmentDecision_WithoutPermission_ShouldThrowAuthorizationException()
     {
         var id = Guid.NewGuid();
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         IFormFile file = new FormFile(stream, 0, stream.Length, "id_from_form", "fileName");
         _authorizationService.IsAdmin.Returns(false);
         _authorizationService.IsDepartment.Returns(false);
@@ -289,15 +287,13 @@ internal class AppointmentDecisionServiceTests
         };
 
         Assert.That(async () => await _service.UpdateAppointmentDecision(id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
-
-        stream.Dispose();
     }
 
     [Test]
     public void UpdateAppointmentDecision_ForInstitutionWithoutOriginalDocument_ShouldThrowBusinessValidationException()
     {
         var id = Guid.NewGuid();
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
         IFormFile file = new FormFile(stream, 0, stream.Length, "id_from_form", "fileName");
 
         var updateDto = new AppointmentDecisionUpdateDto
@@ -312,8 +308,6 @@ internal class AppointmentDecisionServiceTests
         };
 
         Assert.That(async () => await _service.UpdateAppointmentDecision(id, updateDto), Throws.Exception.InstanceOf<BusinessValidationException>());
-
-        stream.Dispose();
     }
 
     [Test]
