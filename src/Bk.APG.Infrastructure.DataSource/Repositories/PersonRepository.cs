@@ -87,10 +87,13 @@ public class PersonRepository : IPersonRepository
         {
             var likeFilter = $"%{filter}%";
 
+#pragma warning disable CA1305 //ToString(CultureInfo.InvariantCulture) can not be translated to an SQL query by EF
             query = query.Where(y =>
                 EF.Functions.ILike(y.GivenName, likeFilter)
                 || EF.Functions.ILike(y.Surname, likeFilter)
-                || EF.Functions.ILike(y.BirthYear.ToString(CultureInfo.InvariantCulture), likeFilter));
+                || EF.Functions.ILike(y.BirthYear.ToString(), likeFilter));
+#pragma warning restore CA1305
+
         }
 
         var persons = await query
