@@ -7,7 +7,7 @@ namespace Bk.APG.Business.Services;
 public interface IGeneralElectionCommitteeService
 {
     Task<GeneralElectionCommitteeDetailDto> GetGeneralElectionCommittee(Guid committeeId);
-    Task<GeneralElectionCommitteeJustificationUpdateDto> GetGeneralElectionCommitteeJustificationForUpdate(Guid id);
+    Task<GeneralElectionCommitteeJustificationUpdateDto> GetGeneralElectionCommitteeJustificationForUpdate(Guid committeeId);
     Task<PagedResultDto<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeList(PagingParametersDto paging, GeneralElectionCommitteeFilterParametersDto? filter, string? sort, SortDirection? sortDirection);
     Task<IEnumerable<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeListForRecipientExport(GeneralElectionCommitteeExportFilterParametersDto? filter);
     Task<GeneralElectionCommitteeUpdateDto> GetGeneralElectionCommitteeForUpdate(Guid committeeId);

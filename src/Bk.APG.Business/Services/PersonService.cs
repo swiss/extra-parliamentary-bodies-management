@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
@@ -97,15 +98,17 @@ public class PersonService : IPersonService
         return PersonMapper.ToPersonUpdateDto(person, ShouldMaskAddress(person), canDelete);
     }
 
-    public async Task<PersonDetailDto> CreatePerson(PersonCreateDto createDto)
+    public async Task<PersonDetailDto> CreatePerson(PersonCreateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Create person");
 
-        var mappedPerson = PersonMapper.FromPersonCreateDto(createDto);
+        var mappedPerson = PersonMapper.FromPersonCreateDto(updateDto);
         var currentUserName = _authorizationService.GetCurrentUserName();
 
-        mappedPerson.LegislaturePeriods = (await _masterDataRepository.GetLegislaturePeriodsByIds(createDto.LegislaturePeriodIds)).ToList();
-        mappedPerson.Occupations = await _masterDataRepository.GetOccupationsByIds(createDto.Occupations.Select(o => o.Id).ToList());
+        mappedPerson.LegislaturePeriods = (await _masterDataRepository.GetLegislaturePeriodsByIds(updateDto.LegislaturePeriodIds)).ToList();
+        mappedPerson.Occupations = await _masterDataRepository.GetOccupationsByIds(updateDto.Occupations.Select(o => o.Id).ToList());
 
         mappedPerson.CreatedBy = currentUserName;
         mappedPerson.Created = DateTime.UtcNow;
@@ -138,6 +141,8 @@ public class PersonService : IPersonService
 
     public async Task<Person> CreatePersonInGeneralElection(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         _logger.LogInformation("Create person for membership candidate {MembershipCandidateId}", membershipCandidate.Id);
 
         var mappedPerson = PersonMapper.FromMembershipCandidate(membershipCandidate);
@@ -158,6 +163,8 @@ public class PersonService : IPersonService
 
     public async Task<PersonUpdateDto> UpdatePerson(Guid id, PersonUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         _logger.LogInformation("Update person {PersonId}", id);
 
         var existingEntry = await _personRepository.GetByIdForUpdate(id, updateDto.RowVersion);
@@ -377,10 +384,10 @@ public class PersonService : IPersonService
         var surnameReduced = SimilaritySearchTransformer.Reduce(surname);
         var givenNameReduced = SimilaritySearchTransformer.Reduce(givenName);
 
-        if (birthYear.ToString()[2] != birthYear.ToString()[3])
+        if (birthYear.ToString(CultureInfo.InvariantCulture)[2] != birthYear.ToString(CultureInfo.InvariantCulture)[3])
         {
-            var birthYearWithLastDigitsExchanged = birthYear.ToString().Substring(0, 2) + birthYear.ToString()[3] + birthYear.ToString()[2];
-            var personsWithSimilarBirthYear = await _personRepository.GetPersonsByBirthYear(Convert.ToInt32(birthYearWithLastDigitsExchanged), 0);
+            var birthYearWithLastDigitsExchanged = birthYear.ToString(CultureInfo.InvariantCulture).Substring(0, 2) + birthYear.ToString(CultureInfo.InvariantCulture)[3] + birthYear.ToString(CultureInfo.InvariantCulture)[2];
+            var personsWithSimilarBirthYear = await _personRepository.GetPersonsByBirthYear(Convert.ToInt32(birthYearWithLastDigitsExchanged, CultureInfo.InvariantCulture), 0);
 
             personsInBirthYearRange.AddRange(personsWithSimilarBirthYear.Where(pNew => !personsInBirthYearRange.Select(p => p.Id).Contains(pNew.Id)));
         }
@@ -404,6 +411,8 @@ public class PersonService : IPersonService
 
     public async Task<CandidateListDuplicateCheckResultDto> GetDuplicatePersonForGeneralElection(MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         const int birthYearRange = 5;
 
         var similarPersons = await GetSimilarPersons(membershipCandidate.Surname, membershipCandidate.GivenName, membershipCandidate.BirthYear, birthYearRange);
@@ -437,7 +446,7 @@ public class PersonService : IPersonService
             }
             else
             {
-                if (person.BirthYear == Convert.ToInt32(membershipCandidate.BirthYear.ToString()[..2] + membershipCandidate.BirthYear.ToString()[3] + membershipCandidate.BirthYear.ToString()[2]) ||
+                if (person.BirthYear == Convert.ToInt32(membershipCandidate.BirthYear.ToString(CultureInfo.InvariantCulture)[..2] + membershipCandidate.BirthYear.ToString(CultureInfo.InvariantCulture)[3] + membershipCandidate.BirthYear.ToString(CultureInfo.InvariantCulture)[2], CultureInfo.InvariantCulture) ||
                     (NamesAreEqual(person.Surname, membershipCandidate.Surname) && NamesAreEqual(person.GivenName, membershipCandidate.GivenName) &&
                         person.GenderId == membershipCandidate.GenderId && Math.Abs(person.BirthYear - membershipCandidate.BirthYear) <= birthYearRange))
                 {
@@ -477,12 +486,12 @@ public class PersonService : IPersonService
         return PersonMapper.ToPersonDetailDto(person, maskAddress);
     }
 
-    internal static bool NamesAreEqual(string a, string b)
+    internal static bool NamesAreEqual(string? a, string? b)
     {
         return string.Equals(
             a?.Trim(),
             b?.Trim(),
-            StringComparison.CurrentCultureIgnoreCase);
+            StringComparison.OrdinalIgnoreCase);
     }
 
     private async Task<bool> CanCurrentUserDeletePerson(Person person, IEnumerable<MembershipCandidate>? membershipCandidates = null)
@@ -503,6 +512,8 @@ public class PersonService : IPersonService
 
     public bool ShouldMaskAddress(Person person)
     {
+        ArgumentNullException.ThrowIfNull(person);
+
         if (_authorizationService.IsAdmin)
         {
             return false;

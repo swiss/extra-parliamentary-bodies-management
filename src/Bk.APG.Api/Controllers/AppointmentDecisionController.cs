@@ -48,6 +48,8 @@ public class AppointmentDecisionController : ControllerBase
     [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> UpdateAppointmentDecision([FromRoute] Guid id, [FromForm, Required] AppointmentDecisionUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         if (id != updateDto.Id)
         {
             return BadRequest();
