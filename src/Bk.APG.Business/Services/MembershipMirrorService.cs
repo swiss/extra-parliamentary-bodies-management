@@ -97,7 +97,7 @@ public class MembershipMirrorService : IMembershipMirrorService
 
         var existingEntry = await _membershipRepository.GetByIdForUpdate(id);
 
-        existingEntry.BeginDate = updateDto.BeginDate;
+        // As the candidates are updated, we should NOT reset the BeginDate here, as we overwrite the original value!
         existingEntry.PersonId = updateDto.PersonId;
         existingEntry.MaximumEmploymentLevel = updateDto.MaximumEmploymentLevel;
         existingEntry.EndDate = updateDto.EndDate;
