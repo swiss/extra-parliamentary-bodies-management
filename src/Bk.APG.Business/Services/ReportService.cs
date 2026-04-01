@@ -73,6 +73,8 @@ public class ReportService : IReportService
 
     public async Task<(string fileName, Stream content)> CreateFormLetterAsZipFile(FormLetterFilterParameters filterDto)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         _logger.LogInformation("Generate form letter report");
 
         var reportDto = await FillFormLetterDto(filterDto);
@@ -127,6 +129,8 @@ public class ReportService : IReportService
 
     public async Task<(string fileName, Stream content)> CreateFormLetterSingleDocument(FormLetterFilterParameters filterDto)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         var template = "FormLetterGeneralElection";
 
         var reportDto = await FillFormLetterDto(filterDto);
@@ -1340,9 +1344,9 @@ public class ReportService : IReportService
 
             var formLetterReportDto = new FormLetterReportDto
             {
-                NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy"),
-                NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
-                TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy") ?? "",
+                NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
+                NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
+                TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
                 Memberships = allRecipients,
                 HasSignature = signaturePictureExists,
                 SenderSignature = picBase64,
