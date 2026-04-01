@@ -13,9 +13,9 @@ public class MembershipCandidateLogMessageRepository : IMembershipCandidateLogMe
         _dataContext = dataContext;
     }
 
-    public async Task<MembershipCandidateLogMessage> Create(MembershipCandidateLogMessage membershipCandidateLogMessage)
+    public async Task<MembershipCandidateLogMessage> Create(MembershipCandidateLogMessage logMessage)
     {
-        var entry = await _dataContext.MembershipCandidateLogMessages.AddAsync(membershipCandidateLogMessage);
+        var entry = await _dataContext.MembershipCandidateLogMessages.AddAsync(logMessage);
         await _dataContext.SaveChangesAsync();
         return entry.Entity;
     }

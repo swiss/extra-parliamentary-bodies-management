@@ -26,6 +26,8 @@ public class MasterDataBase : EntityBase
 
     public string GetText(CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
         return cultureInfo.TwoLetterISOLanguageName switch
         {
             Language.German => TextDe,
@@ -42,6 +44,8 @@ public class MasterDataBase : EntityBase
 
     public string GetDescription(CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
         return cultureInfo.TwoLetterISOLanguageName switch
         {
             Language.German => DescriptionDe,

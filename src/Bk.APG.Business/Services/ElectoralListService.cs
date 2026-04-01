@@ -32,6 +32,8 @@ public class ElectoralListService : IElectoralListService
 
     public async Task<(string fileName, Stream content)> GenerateDocument(ReportFilterParametersDto filterDto, string listType)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         _logger.LogInformation("Generating electoral list document of type {ListType}", listType);
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 

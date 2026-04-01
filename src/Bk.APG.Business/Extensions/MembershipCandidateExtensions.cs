@@ -6,6 +6,8 @@ public static class MembershipCandidateExtensions
 {
     public static string GetEmploymentLevel(this MembershipCandidate membershipCandidate)
     {
+        ArgumentNullException.ThrowIfNull(membershipCandidate);
+
         return membershipCandidate.MaximumEmploymentLevel is null ? "0%" : $"{membershipCandidate.MaximumEmploymentLevel}%";
     }
 }

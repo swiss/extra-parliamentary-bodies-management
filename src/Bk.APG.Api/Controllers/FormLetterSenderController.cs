@@ -54,6 +54,8 @@ public class FormLetterSenderController : ControllerBase
     [HttpPut("{id:guid}")]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromForm, Required] FormLetterSenderUpdateDto formLetterSenderUpdateDto)
     {
+        ArgumentNullException.ThrowIfNull(formLetterSenderUpdateDto);
+
         if (formLetterSenderUpdateDto.Id != id)
         {
             return BadRequest();

@@ -8,6 +8,8 @@ public static class CountryMapper
 {
     public static CountryDto ToCountryDto(Country country)
     {
+        ArgumentNullException.ThrowIfNull(country);
+
         var currentUiCulture = CultureInfo.CurrentUICulture;
         return new CountryDto
         {
@@ -20,6 +22,8 @@ public static class CountryMapper
 
     public static Country ToCountry(Swiss.FCh.MasterData.Models.Country country)
     {
+        ArgumentNullException.ThrowIfNull(country);
+
         return new Country
         {
             Created = default,

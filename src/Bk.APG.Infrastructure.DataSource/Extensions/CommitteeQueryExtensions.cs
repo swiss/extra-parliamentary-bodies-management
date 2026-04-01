@@ -11,7 +11,12 @@ public static class CommitteeQueryExtensions
 {
     public static IQueryable<Committee> SortCommittees(this IQueryable<Committee> committees, string sort, SortDirection sortDirection, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(sort);
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
+#pragma warning disable CA1308
         return sort.ToLowerInvariant() switch
+#pragma warning restore CA1308
         {
             "committeeid" => sortDirection == SortDirection.Asc
                 ? committees.OrderBy(c => c.CommitteeNumber)
@@ -71,11 +76,13 @@ public static class CommitteeQueryExtensions
 
             foreach (var filter in filters)
             {
+#pragma warning disable CA1305 //Culture does not work in EF queries
                 query = query.Where(y => EF.Functions.ILike(y.DescriptionGerman, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionFrench, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionItalian, $"%{filter}%")
                     || EF.Functions.ILike(y.DescriptionRomansh, $"%{filter}%")
                     || y.CommitteeNumber.ToString().Contains(filter));
+#pragma warning restore CA1305
             }
         }
 
@@ -263,6 +270,53 @@ public static class CommitteeQueryExtensions
         if (committeeId != Guid.Empty)
         {
             query = query.Where(c => c.Id == committeeId);
+        }
+
+        return query;
+    }
+
+    public static IQueryable<Committee> FilterCommitteesForFormLetter(this IQueryable<Committee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
+    {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
+        if (electionTypeIds != null)
+        {
+            if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())
+            {
+                electionTypeIds = electionTypeIds
+                    .Where(id => filterParameter.ElectionTypeIds.Contains(id))
+                    .ToList();
+            }
+
+            query = query.Where(c => c.Memberships.Any(m => electionTypeIds!.Contains(m.ElectionTypeId)));
+        }
+
+        // here, only memberships, ending exactly at the end of the term of office are relevant.
+        query = query.Where(c => c.Memberships.Any(m => m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate));
+
+        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
+        {
+            query = query.Where(c => c.Memberships.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
+        }
+
+        if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())
+        {
+            query = query.Where(c => filterParameter.DepartmentIds.Contains(c.DepartmentId));
+        }
+
+        if (filterParameter.OfficeIds is not null && filterParameter.OfficeIds.Any())
+        {
+            query = query.Where(c => filterParameter.OfficeIds.Contains(c.OfficeId));
+        }
+
+        if (filterParameter.CommitteeTypeIds is not null && filterParameter.CommitteeTypeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+        }
+
+        if (filterParameter.CommitteeIds is not null && filterParameter.CommitteeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeIds.Contains(c.Id));
         }
 
         return query;

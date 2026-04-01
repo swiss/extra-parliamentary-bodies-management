@@ -24,6 +24,8 @@ public class CommitteesController : ControllerBase
     [HttpGet("list")]
     public async Task<ActionResult> GetAll([FromQuery, Required] PagingParametersDto pagingParameters, [FromQuery] CommitteeFilterParametersDto? filterParameters, [FromQuery] SortParametersDto sortParameters)
     {
+        ArgumentNullException.ThrowIfNull(sortParameters);
+
         var committees = await _committeeService.GetCommitteeList(pagingParameters, filterParameters, sortParameters.Sort, sortParameters.Direction);
         return Ok(committees);
     }
@@ -69,6 +71,8 @@ public class CommitteesController : ControllerBase
     [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody, Required] CommitteeUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         if (id != updateDto.Id)
         {
             return BadRequest();
@@ -82,6 +86,8 @@ public class CommitteesController : ControllerBase
     [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> UpdateJustifications([FromRoute] Guid id, [FromBody, Required] CommitteeJustificationUpdateDto updateDto)
     {
+        ArgumentNullException.ThrowIfNull(updateDto);
+
         if (id != updateDto.Id)
         {
             return BadRequest();

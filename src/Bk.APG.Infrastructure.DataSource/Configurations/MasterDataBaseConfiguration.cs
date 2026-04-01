@@ -8,6 +8,8 @@ public abstract class MasterDataBaseConfiguration<T> : IEntityTypeConfiguration<
 {
     public void Configure(EntityTypeBuilder<T> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.HasKey(e => e.Id);
         builder.Property(e => e.Id).ValueGeneratedOnAdd();
 

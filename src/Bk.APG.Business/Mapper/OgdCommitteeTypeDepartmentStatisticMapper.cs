@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.CrossCutting;
 using Swiss.FCh.Cube.RawData.Model;
@@ -8,6 +9,8 @@ public static class OgdCommitteeTypeDepartmentStatisticMapper
 {
     public static ObservationDataRow ToCommitteeTypeDepartmentStatisticObservation(CommitteeTypeDepartmentStatisticDto statisticDto)
     {
+        ArgumentNullException.ThrowIfNull(statisticDto);
+
         var ogdNamespace = OgdExportConstants.NamespaceCommitteeTypeDepartmentStatistic;
 
         var dataRow = new ObservationDataRow
@@ -71,7 +74,7 @@ public static class OgdCommitteeTypeDepartmentStatisticMapper
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:committeeCount",
-            Object = statisticDto.CommitteeCount.ToString(),
+            Object = statisticDto.CommitteeCount.ToString(CultureInfo.InvariantCulture),
             DataTypeUri = OgdExportConstants.DataTypeInt,
             ShapePropertyMetadata = new ShapePropertyMetadata
             {
