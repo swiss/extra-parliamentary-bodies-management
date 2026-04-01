@@ -272,4 +272,49 @@ public static class CommitteeQueryExtensions
 
         return query;
     }
+
+    public static IQueryable<Committee> FilterCommitteesForFormLetter(this IQueryable<Committee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
+    {
+        if (electionTypeIds != null)
+        {
+            if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())
+            {
+                electionTypeIds = electionTypeIds
+                    .Where(id => filterParameter.ElectionTypeIds.Contains(id))
+                    .ToList();
+            }
+
+            query = query.Where(c => c.Memberships.Any(m => electionTypeIds!.Contains(m.ElectionTypeId)));
+        }
+
+        // here, only memberships, ending exactly at the end of the term of office are relevant.
+        query = query.Where(c => c.Memberships.Any(m => m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate));
+
+        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
+        {
+            query = query.Where(c => c.Memberships.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
+        }
+
+        if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())
+        {
+            query = query.Where(c => filterParameter.DepartmentIds.Contains(c.DepartmentId));
+        }
+
+        if (filterParameter.OfficeIds is not null && filterParameter.OfficeIds.Any())
+        {
+            query = query.Where(c => filterParameter.OfficeIds.Contains(c.OfficeId));
+        }
+
+        if (filterParameter.CommitteeTypeIds is not null && filterParameter.CommitteeTypeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeTypeIds.Contains(c.CommitteeTypeId));
+        }
+
+        if (filterParameter.CommitteeIds is not null && filterParameter.CommitteeIds.Any())
+        {
+            query = query.Where(c => filterParameter.CommitteeIds.Contains(c.Id));
+        }
+
+        return query;
+    }
 }

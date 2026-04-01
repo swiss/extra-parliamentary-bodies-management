@@ -22,6 +22,7 @@ public class GeneralElectionCommitteeServiceTests
     private readonly ICommitteeService _committeeService = Substitute.For<ICommitteeService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+    private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly ILogger<GeneralElectionCommitteeService> _logger = NullLogger<GeneralElectionCommitteeService>.Instance;
 
@@ -83,6 +84,7 @@ public class GeneralElectionCommitteeServiceTests
             _committeeService,
             _generalMeasureRepository,
             _worklistTaskRepository,
+            _masterDataRepository,
             _documentService,
             _logger);
     }
@@ -562,10 +564,12 @@ public class GeneralElectionCommitteeServiceTests
                 Arg.Is<IEnumerable<Guid>>(list => list.SequenceEqual(new[] { membershipCandidateId })))
             .Returns(geCommittee);
 
+        var stream = new MemoryStream();
+
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _generalElectionCommitteeService.GenerateCandidateListExport(committeeId, [membershipCandidateId]);
 
@@ -595,6 +599,8 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[18].Text, Is.Empty);
             Assert.That(dataRow[19].Text, Is.Empty);
         });
+
+        await stream.DisposeAsync();
     }
 
     [Test]
