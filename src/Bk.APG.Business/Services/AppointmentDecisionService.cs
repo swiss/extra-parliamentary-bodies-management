@@ -90,8 +90,6 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
                     uploadedDocumentIds.Add(documentId);
 
-                    var utcNow = DateTime.UtcNow;
-
                     var documentStorage = DocumentStorageMapper.FromModificationDto(documentDto, documentId, userName);
 
                     SetDocumentReferenceWithLanguage(documentDto.LanguageId, documentDto.IsOriginal, appointmentDecision, documentStorage);
@@ -352,12 +350,10 @@ public class AppointmentDecisionService : IAppointmentDecisionService
             }
         }
 
-        if (appointmentDecisionModificationDto.Documents is not null)
+        if (appointmentDecisionModificationDto.Documents is not null &&
+            appointmentDecisionModificationDto.Documents.Any(d => d.Id is null && d.File is null))
         {
-            if (appointmentDecisionModificationDto.Documents.Any(d => d.Id is null && d.File is null))
-            {
-                throw new BusinessValidationException("Missing File stream for a new documentDto");
-            }
+            throw new BusinessValidationException("Missing File stream for a new documentDto");
         }
     }
 

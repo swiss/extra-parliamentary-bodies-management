@@ -32,8 +32,7 @@ public class EndGeneralElectionBackgroundService : BackgroundService
                     var termOfOfficeDate = await termOfOfficeDateService.GetNextTermOfOfficeDate();
 
                     // Make sure, this can only happen once! Publication must be planned, due, and not yet published and GE has to be running!
-                    if (termOfOfficeDate != null && termOfOfficeDate.PlannedPublicationDate <= DateOnly.FromDateTime(DateTime.Today) && termOfOfficeDate.PublicationDate is null &&
-                        termOfOfficeDate.IsGeneralElection == true)
+                    if (termOfOfficeDate != null && termOfOfficeDate.PlannedPublicationDate < DateOnly.FromDateTime(DateTime.Today) && termOfOfficeDate.PublicationDate is null)
                     {
                         var timer = Stopwatch.StartNew();
                         var generalElectionService = scope.ServiceProvider.GetRequiredService<IGeneralElectionService>();
