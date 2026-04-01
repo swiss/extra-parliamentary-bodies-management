@@ -275,6 +275,8 @@ public static class CommitteeQueryExtensions
 
     public static IQueryable<Committee> FilterCommitteesForFormLetter(this IQueryable<Committee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
     {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
         if (electionTypeIds != null)
         {
             if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())

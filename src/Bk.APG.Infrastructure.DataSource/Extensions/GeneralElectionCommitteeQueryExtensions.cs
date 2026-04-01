@@ -192,6 +192,8 @@ public static class GeneralElectionCommitteeQueryExtensions
 
     public static IQueryable<GeneralElectionCommittee> FilterGeneralElectionCommitteesForFormLetter(this IQueryable<GeneralElectionCommittee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
     {
+        ArgumentNullException.ThrowIfNull(filterParameter);
+
         if (electionTypeIds != null)
         {
             if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())
