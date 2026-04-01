@@ -298,7 +298,7 @@ public class GeneralElectionService : IGeneralElectionService
 
         if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
         {
-            // we immediately end the GE when the task is executed... 
+            // we immediately end the GE when the task is executed...
             nextTermOfOffice.PlannedPublicationDate = worklistTaskCreateDto.DueDate;
             nextTermOfOffice.IsGeneralElection = false;
             await _termOfOfficeDateService.Update(nextTermOfOffice);
@@ -321,20 +321,12 @@ public class GeneralElectionService : IGeneralElectionService
     {
         _logger.LogInformation("Ending General Election by BackgroundService");
 
-        var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
-
-        if (!running)
-        {
-            const string message = "There is no general election in progress, cannot end the general election! Check the data in TermOfOfficeData table.";
-            _logger.LogError(message);
-            throw new BusinessValidationException(message);
-        }
-
         var nextTermOfOffice = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
 
-        if (nextTermOfOffice != null && nextTermOfOffice.IsGeneralElection == true)
+        if (nextTermOfOffice != null)
         {
             nextTermOfOffice.PlannedPublicationDate = null;
+            nextTermOfOffice.PublicationDate = DateTime.UtcNow;
             nextTermOfOffice.IsGeneralElection = false;
 
             await _termOfOfficeDateService.Update(nextTermOfOffice);
@@ -345,6 +337,9 @@ public class GeneralElectionService : IGeneralElectionService
 
             foreach (var committee in finishedCommittees)
             {
+                // we only want to transfer the ones, which are selected
+                committee.MembershipCandidates = committee.MembershipCandidates.Where(m => m.IsSelected && m.PersonId != null).ToList();
+
                 await _generalElectionCommitteeService.EndGeneralElectionForCommittee(committee);
             }
 

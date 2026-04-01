@@ -118,7 +118,7 @@ public class CommitteeService : ICommitteeService
         return await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId);
     }
 
-    public async Task<CommitteeDetailDto> GetCommitteeDetail(Guid id)
+    public async Task<CommitteeDetailDto> GetCommitteeDetail(Guid id, bool ignoreGeneralElectionPart = false)
     {
         var committee = await _committeeRepository.GetById(id);
         var dto = CommitteeMapper.ToCommitteeDetailDto(committee);
@@ -137,7 +137,7 @@ public class CommitteeService : ICommitteeService
         var generalLanguageMeasure = await _generalMeasureRepository.GetGeneralLanguageMeasure(committee.DepartmentId);
         dto.GeneralLanguageMeasure = generalLanguageMeasure?.Description;
 
-        if (await _termOfOfficeDateService.CheckForRunningGeneralElection())
+        if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && ignoreGeneralElectionPart)
         {
             var generalElection = committee.GeneralElectionCommittees.FirstOrDefault();
             if (generalElection is not null)
@@ -172,12 +172,13 @@ public class CommitteeService : ICommitteeService
     {
         _logger.LogInformation("Update committee {CommitteeId}", id);
 
-        var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
-
         if (checkAuthorization)
         {
-            await CheckAuthorizationForUpdate(existingCommittee);
+            var committee = await _committeeRepository.GetById(id);
+            await CheckAuthorizationForUpdate(committee);
         }
+
+        var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion > 0 ? updateDto.RowVersion : null);
 
         existingCommittee.BeginDate = updateDto.BeginDate;
         existingCommittee.EndDate = updateDto.EndDate;
@@ -215,19 +216,27 @@ public class CommitteeService : ICommitteeService
         await UpdateMembershipAdditionsInGeneralElection(updateDto, existingCommittee);
 
         existingCommittee.Modified = DateTime.UtcNow;
-        existingCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+        if (checkAuthorization)
+        {
+            existingCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+        else
+        {
+            existingCommittee.ModifiedBy = "system";
+        }
 
         await _committeeRepository.CommitChanges();
 
         _logger.LogInformation("Updated committee {CommitteeId}", id);
 
-        return await GetCommitteeDetail(id);
+        return await GetCommitteeDetail(id, true);
     }
 
     public async Task<CommitteeDetailDto> UpdateCommitteeAfterGeneralElection(Guid id, CommitteeUpdateDto updateDto, List<MembershipCandidate> membershipCandidates)
     {
         var saved = await UpdateCommittee(id, updateDto, false);
-        var userName = "CommitteeService";
+        var userName = "system";
 
         foreach (var candidate in membershipCandidates)
         {
@@ -235,7 +244,17 @@ public class CommitteeService : ICommitteeService
             {
                 var createDto = GeneralElectionMapper.FromMembershipCandidateToMembershipCreateDto(candidate);
 
-                await _membershipMirrorService.CreateNewMembershipFromCandidate(createDto, userName);
+                // we belong to the existing committee
+                createDto.CommitteeId = updateDto.Id;
+
+                if (createDto.PersonId != Guid.Empty)
+                {
+                    await _membershipMirrorService.CreateNewMembershipFromCandidate(createDto, userName);
+                }
+                else
+                {
+                    _logger.LogInformation("No person attached to candidate, could not create member!");
+                }
             }
             else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid && candidate.MembershipId != null)
             {

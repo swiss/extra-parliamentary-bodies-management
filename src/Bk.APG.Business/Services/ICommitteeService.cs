@@ -10,7 +10,7 @@ public interface ICommitteeService
     Task<IEnumerable<CommitteeListDto>> GetCommitteeListForExport(RequestAndReportsFilterParametersDto? filterParameters);
     Task<IEnumerable<Committee>> GetCommitteesForGeneralElection();
     Task<IEnumerable<Committee>> GetCommitteesWithRetiredMembers(GeneralElectionCommitteeExportFilterParametersDto? filter, List<Guid> electionTypeIds);
-    Task<CommitteeDetailDto> GetCommitteeDetail(Guid id);
+    Task<CommitteeDetailDto> GetCommitteeDetail(Guid id, bool ignoreGeneralElectionPart = false);
     Task<CommitteeUpdateDto> GetCommitteeForUpdate(Guid id);
     Task<CommitteeJustificationUpdateDto> GetCommitteeJustificationForUpdate(Guid id);
     Task<CommitteeDetailDto> UpdateCommittee(Guid id, CommitteeUpdateDto updateDto, bool checkAuthorization);
