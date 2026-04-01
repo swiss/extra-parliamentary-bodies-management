@@ -7,6 +7,8 @@ public class AppointmentDecisionConfiguration : EntityBaseConfiguration<Appointm
 {
     protected override void ConfigureEntity(EntityTypeBuilder<AppointmentDecision> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(cp => cp.OgdId)
             .ValueGeneratedOnAdd();
 

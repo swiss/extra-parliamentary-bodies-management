@@ -7,6 +7,8 @@ public class ContactPointConfiguration : EntityBaseConfiguration<ContactPoint>
 {
     protected override void ConfigureEntity(EntityTypeBuilder<ContactPoint> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(cp => cp.OgdId)
             .ValueGeneratedOnAdd();
 

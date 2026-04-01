@@ -9,6 +9,8 @@ public class LegislaturePeriodConfiguration : MasterDataBaseConfiguration<Legisl
 {
     protected override void ConfigureMasterData(EntityTypeBuilder<LegislaturePeriod> builder)
     {
+        ArgumentNullException.ThrowIfNull(builder);
+
         builder.Property(lp => lp.Created).HasDefaultValueSql("now()")
             .ValueGeneratedOnAdd()
             .Metadata.SetBeforeSaveBehavior(PropertySaveBehavior.Ignore);
