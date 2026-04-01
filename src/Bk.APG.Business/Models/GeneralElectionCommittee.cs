@@ -79,6 +79,8 @@ public class GeneralElectionCommittee : EntityBase
 
     public string GetDescription(CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
         return cultureInfo.TwoLetterISOLanguageName switch
         {
             Language.German => DescriptionGerman,

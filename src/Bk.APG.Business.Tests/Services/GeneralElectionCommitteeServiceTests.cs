@@ -498,9 +498,12 @@ public class GeneralElectionCommitteeServiceTests
             .Returns(geCommittee);
 
         Spreadsheet? capturedSpreadsheet = null;
+
+        using var stream = new MemoryStream();
+
         _documentService
             .CreateExcel(Arg.Do<Spreadsheet>(spreadsheet => capturedSpreadsheet = spreadsheet), Arg.Any<SpreadsheetOptions?>())
-            .Returns(new MemoryStream());
+            .Returns(stream);
 
         await _generalElectionCommitteeService.GenerateCandidateListExport(committeeId, [membershipCandidateId]);
 
@@ -514,13 +517,13 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[2].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Title));
             Assert.That(dataRow[3].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Surname));
             Assert.That(dataRow[4].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.GivenName));
-            Assert.That(dataRow[5].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.BirthYear.ToString()));
+            Assert.That(dataRow[5].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.BirthYear.ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[6].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Gender!.GetText()));
             Assert.That(dataRow[7].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.Language!.GetText()));
             Assert.That(dataRow[8].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().RemarksStatus));
             Assert.That(dataRow[9].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Function!.GetText()));
-            Assert.That(dataRow[10].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().BeginDate.ToString("yyyy-MM-dd")));
-            Assert.That(dataRow[11].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().EndDate.ToString("yyyy-MM-dd")));
+            Assert.That(dataRow[10].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().BeginDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[11].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().EndDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
             Assert.That(dataRow[12].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().ElectionType!.GetText()));
             Assert.That(dataRow[13].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().MembershipAddition!.GetText()));
             Assert.That(dataRow[14].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Remarks));
@@ -564,7 +567,7 @@ public class GeneralElectionCommitteeServiceTests
                 Arg.Is<IEnumerable<Guid>>(list => list.SequenceEqual(new[] { membershipCandidateId })))
             .Returns(geCommittee);
 
-        var stream = new MemoryStream();
+        using var stream = new MemoryStream();
 
         Spreadsheet? capturedSpreadsheet = null;
         _documentService
@@ -583,13 +586,13 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[2].Text, Is.Empty);
             Assert.That(dataRow[3].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Surname));
             Assert.That(dataRow[4].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().GivenName));
-            Assert.That(dataRow[5].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().BirthYear.ToString()));
+            Assert.That(dataRow[5].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().BirthYear.ToString(CultureInfo.InvariantCulture)));
             Assert.That(dataRow[6].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Gender!.GetText()));
             Assert.That(dataRow[7].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Language!.GetText()));
             Assert.That(dataRow[8].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().RemarksStatus));
             Assert.That(dataRow[9].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Function!.GetText()));
-            Assert.That(dataRow[10].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().BeginDate.ToString("yyyy-MM-dd")));
-            Assert.That(dataRow[11].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().EndDate.ToString("yyyy-MM-dd")));
+            Assert.That(dataRow[10].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().BeginDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
+            Assert.That(dataRow[11].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().EndDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
             Assert.That(dataRow[12].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().ElectionType!.GetText()));
             Assert.That(dataRow[13].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().MembershipAddition!.GetText()));
             Assert.That(dataRow[14].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Remarks));
@@ -599,8 +602,6 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[18].Text, Is.Empty);
             Assert.That(dataRow[19].Text, Is.Empty);
         });
-
-        await stream.DisposeAsync();
     }
 
     [Test]

@@ -11,6 +11,8 @@ public static class WorklistTaskQueryExtensions
 {
     public static IQueryable<WorklistTask> SortWorklistTasks(this IQueryable<WorklistTask> worklistTasks, string sort, SortDirection sortDirection, CultureInfo cultureInfo)
     {
+        ArgumentNullException.ThrowIfNull(cultureInfo);
+
         return sort switch
         {
             "assignedBy" => sortDirection == SortDirection.Asc

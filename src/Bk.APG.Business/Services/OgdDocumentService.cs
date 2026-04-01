@@ -18,6 +18,8 @@ public class OgdDocumentService : IOgdDocumentService
 
     public OgdDocumentService([FromKeyedServices("ogd")] IAmazonS3 s3Client, IOptions<OgdS3Configuration> s3Configuration, ILogger<DocumentService> logger)
     {
+        ArgumentNullException.ThrowIfNull(s3Configuration);
+
         _s3Client = s3Client;
         _s3Configuration = s3Configuration.Value;
         _logger = logger;
@@ -25,13 +27,15 @@ public class OgdDocumentService : IOgdDocumentService
 
     public async Task UploadDocument(string path, string fileName, Stream fileStream)
     {
+        ArgumentNullException.ThrowIfNull(fileName);
+
         _logger.LogInformation("Upload new OGD document {FileName} to S3 bucket {Bucket} at path {Path}", fileName, _s3Configuration.bucket, path);
 
         // Sanitize filename to prevent header injection
-        var safeFileName = fileName.Replace("\r", "").Replace("\n", "");
+        var safeFileName = fileName.Replace("\r", "", StringComparison.InvariantCultureIgnoreCase).Replace("\n", "", StringComparison.InvariantCultureIgnoreCase);
 
         // Create ASCII-only version for legacy filename parameter (replace non-ASCII with underscore)
-        var asciiFileName = string.Concat(safeFileName.Select(c => c > 127 ? '_' : c)).Replace("\"", "\\\"");
+        var asciiFileName = string.Concat(safeFileName.Select(c => c > 127 ? '_' : c)).Replace("\"", "\\\"", StringComparison.InvariantCultureIgnoreCase);
 
         // UTF-8 percent-encode for RFC 5987/6266 compatibility with non-ASCII characters
         var encodedUtf8FileName = Uri.EscapeDataString(safeFileName);
