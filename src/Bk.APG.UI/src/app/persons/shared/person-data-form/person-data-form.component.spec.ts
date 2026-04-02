@@ -11,9 +11,10 @@ import {MatInput} from '@angular/material/input';
 import {MatRadioButton} from '@angular/material/radio';
 import {MatSelect, MatSelectChange, MatSelectTrigger} from '@angular/material/select';
 import {Address} from '@api/Address';
+import {Occupation} from '@api/Occupation';
 import {PersonDetails} from '@api/PersonDetails';
 import {PersonUpdate} from '@api/PersonUpdate';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObErrorMessagesModule, ObInputClearModule, ObNotificationService, ObUnsavedChangesDirective} from '@oblique/oblique';
 import {AddressService} from '@shared/address.service';
 import {ErrorService} from '@shared/error-service.service';
@@ -38,6 +39,7 @@ describe('PersonDataFormComponent', () => {
         councils: jest.fn(),
         offices: jest.fn(),
         countries: jest.fn(),
+        getOccupationsByName: jest.fn(),
     };
 
     const personsServiceMock = {
@@ -92,6 +94,11 @@ describe('PersonDataFormComponent', () => {
         isSecretariatUser$: isSecretariatSubject.asObservable(),
     };
 
+    const onLangChangeSubject = new Subject<any>();
+    const translateServiceMock = {
+        onLangChange: onLangChangeSubject.asObservable(),
+    };
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
@@ -114,6 +121,7 @@ describe('PersonDataFormComponent', () => {
                 {provide: ErrorService, useValue: errorServiceMock},
                 {provide: AuthService, useValue: authServiceMock},
                 {provide: ConfigsService, useValue: configsServiceMock},
+                {provide: TranslateService, useValue: translateServiceMock},
                 HttpClient,
             ],
         }).compileComponents();
@@ -127,6 +135,7 @@ describe('PersonDataFormComponent', () => {
         personsServiceMock.getSimilarPersons.mockReturnValue(of([{id: 'id', surname: 'Clark', givenName: 'Jimm'}]));
         addressServiceMock.getAddressSuggestions.mockReturnValue(of([{city: 'Baden', zip: '5400', street: '', canton: {id: 'AG'}}]));
         personsServiceMock.generateSalutation.mockReturnValue(of(''));
+        masterDataServiceMock.getOccupationsByName.mockReturnValue(of([]));
     });
 
     afterEach(() => {
@@ -1030,6 +1039,63 @@ describe('PersonDataFormComponent', () => {
             fixture.detectChanges();
 
             expect(personsServiceMock.generateSalutation).not.toHaveBeenCalled();
+        });
+    });
+
+    describe('Occupation translation refresh', () => {
+        it('should refresh selected occupations on language change', () => {
+            const oldOccupation: Occupation = {
+                id: 'occ-1',
+                text: 'Engineer',
+                textFemale: 'Engineer (f)',
+                description: '',
+                isDeleted: false,
+                uri: '/occupations/occ-1',
+            };
+            const translatedOccupation: Occupation = {
+                id: 'occ-1',
+                text: 'Ingenieur',
+                textFemale: 'Ingenieurin',
+                description: '',
+                isDeleted: false,
+                uri: '/occupations/occ-1',
+            };
+
+            component.selectedOccupations = [oldOccupation];
+            masterDataServiceMock.getOccupationsByName.mockImplementation((query: string) => {
+                if (query === 'Engineer' || query === 'Engineer (f)') {
+                    return of([translatedOccupation]);
+                }
+                return of([]);
+            });
+
+            onLangChangeSubject.next({lang: 'de'});
+
+            expect(component.selectedOccupations).toEqual([translatedOccupation]);
+        });
+
+        it('should refresh occupation suggestions on language change when query is present', () => {
+            const translatedSuggestion: Occupation = {
+                id: 'occ-2',
+                text: 'Lehrerin',
+                textFemale: 'Lehrerin',
+                description: '',
+                isDeleted: false,
+                uri: '/occupations/occ-2',
+            };
+
+            component.personForm.controls.occupations.setValue('Leh');
+            component.filteredOccupationDb.set([]);
+            masterDataServiceMock.getOccupationsByName.mockImplementation((query: string) => {
+                if (query === 'Leh') {
+                    return of([translatedSuggestion]);
+                }
+                return of([]);
+            });
+
+            onLangChangeSubject.next({lang: 'de'});
+
+            expect(component.filteredOccupationDb()).toEqual([translatedSuggestion]);
         });
     });
 });
