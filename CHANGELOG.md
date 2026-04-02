@@ -8,6 +8,7 @@
 -   Mark membership with end date today still as active [BKDO-3327](https://bkdev.atlassian.net/browse/BKDO-3327)
 -   Add eIAM assignment role validations [BKDO-2574](https://bkdev.atlassian.net/browse/BKDO-2574)
 -   Exclude inactive contact points from OGD export [BKDO-3290](https://bkdev.atlassian.net/browse/BKDO-3290)
+-   Case-insensitive sorting in committee membership table [BKDO-3289](https://bkdev.atlassian.net/browse/BKDO-3289)
 
 ## 1.2.0
 
