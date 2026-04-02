@@ -31,6 +31,7 @@ import {MembershipDataFormComponent} from './membership-data-form.component';
 describe('MembershipDataFormComponent', () => {
     let component: MembershipDataFormComponent;
     let fixture: ComponentFixture<MembershipDataFormComponent>;
+    let membershipAdditionsSignal: ReturnType<typeof signal>;
 
     let activatedRouteMock: Partial<ActivatedRoute>;
     let notificationServiceMock: Partial<ObNotificationService>;
@@ -54,6 +55,11 @@ describe('MembershipDataFormComponent', () => {
                 params: {id: '123'},
             } as unknown as ActivatedRouteSnapshot,
         };
+        membershipAdditionsSignal = signal([
+            {id: 'addition-1', text: 'Membership Addition EN', isDeleted: false},
+            {id: 'addition-2', text: 'Deleted Addition', isDeleted: true},
+        ]);
+
         const masterDataServiceMock = {
             electionTypes: signal([
                 {id: 'id1', text: 'type1', description: 'desc1', isDeleted: false},
@@ -69,7 +75,7 @@ describe('MembershipDataFormComponent', () => {
             ]),
             committeeTypes: jest.fn(),
             terms: jest.fn(),
-            membershipAdditions: jest.fn(),
+            membershipAdditions: membershipAdditionsSignal,
         } as unknown as Partial<MasterDataService>;
 
         notificationServiceMock = {
@@ -374,5 +380,18 @@ describe('MembershipDataFormComponent', () => {
 
             expect(component.membershipForm.controls.endDate.value).toEqual(originalEndDate);
         });
+    });
+
+    it('should refresh selected membership addition text when membership additions are updated', () => {
+        component.membershipAdditionId = 'addition-1';
+        component.membershipForm.controls.membershipAdditionId.setValue('Mitgliedschaftszusatz DE', {emitEvent: false});
+
+        membershipAdditionsSignal.set([
+            {id: 'addition-1', text: 'Membership Addition FR', isDeleted: false},
+            {id: 'addition-2', text: 'Deleted Addition', isDeleted: true},
+        ]);
+        fixture.detectChanges();
+
+        expect(component.membershipForm.controls.membershipAdditionId.value).toBe('Membership Addition FR');
     });
 });
