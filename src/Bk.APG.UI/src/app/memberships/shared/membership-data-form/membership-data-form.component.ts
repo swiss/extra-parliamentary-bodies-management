@@ -275,6 +275,11 @@ export class MembershipDataFormComponent implements OnInit {
         });
 
         effect(() => {
+            this.membershipAdditions();
+            this.syncMembershipAdditionLabelToCurrentLanguage();
+        });
+
+        effect(() => {
             if (!this.isUpdateMode || !this.membershipModification() || !(this.committeeEntity() || this.personEntity())) {
                 return;
             }
@@ -299,6 +304,7 @@ export class MembershipDataFormComponent implements OnInit {
                     this.resetForm(this.membershipModification()!);
 
                     this.membershipAdditionId = this.membershipModification()?.membershipAdditionId;
+                    this.syncMembershipAdditionLabelToCurrentLanguage();
 
                     this.canEdit = (this.membershipModification() as MembershipUpdate).canEdit;
                     this.canEditBeginDate = (this.membershipModification() as MembershipUpdate).canEditBeginDate;
@@ -510,6 +516,22 @@ export class MembershipDataFormComponent implements OnInit {
         };
 
         return {...this.membershipModification(), ...formValues} as MembershipCreate | MembershipUpdate;
+    }
+
+    private syncMembershipAdditionLabelToCurrentLanguage() {
+        if (!this.membershipAdditionId) {
+            return;
+        }
+
+        const selectedMembershipAddition = this.membershipAdditions().find(membershipAddition => membershipAddition.id === this.membershipAdditionId);
+        if (!selectedMembershipAddition) {
+            return;
+        }
+
+        if (this.membershipForm.controls.membershipAdditionId.value !== selectedMembershipAddition.text) {
+            this.membershipForm.controls.membershipAdditionId.setValue(selectedMembershipAddition.text, {emitEvent: false});
+            this.filterText.set('');
+        }
     }
 
     private createForm() {
