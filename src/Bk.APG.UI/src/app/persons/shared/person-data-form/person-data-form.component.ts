@@ -19,7 +19,7 @@ import {Office} from '@api/Office';
 import {PersonCreate} from '@api/PersonCreate';
 import {PersonDetails} from '@api/PersonDetails';
 import {PersonUpdate} from '@api/PersonUpdate';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObAlertComponent, ObErrorMessagesDirective, ObInputClearDirective, ObNotificationService, ObUnsavedChangesDirective} from '@oblique/oblique';
 import {AddressService} from '@shared/address.service';
 import {ErrorService} from '@shared/error-service.service';
@@ -27,7 +27,7 @@ import {conditionalValidator} from '@shared/form-validators/conditional.validato
 import {TEL_PATTERN} from '@shared/form-validators/validation-patterns';
 import {isEmptyId} from '@shared/id-util';
 import {MasterDataService} from '@shared/master-data.service';
-import {combineLatest, debounceTime, filter, map, merge, Subject, switchMap, takeUntil} from 'rxjs';
+import {catchError, combineLatest, debounceTime, filter, forkJoin, map, merge, of, Subject, switchMap, takeUntil} from 'rxjs';
 import {AuthService} from '../../../auth/auth.service';
 import {ConfigsService} from '../../../configs.service';
 import {HelpTooltipComponent} from '../../../shared/help-tooltip/help-tooltip.component';
@@ -182,7 +182,8 @@ export class PersonDataFormComponent implements OnInit {
         protected readonly obNotificationService: ObNotificationService,
         protected readonly errorService: ErrorService,
         protected readonly authService: AuthService,
-        protected readonly configsService: ConfigsService
+        protected readonly configsService: ConfigsService,
+        private readonly translateService: TranslateService
     ) {
         this.authService.isDepartmentUser$.pipe(takeUntil(this.unsubscribe)).subscribe(isDepartment => {
             this.isDepartment = isDepartment;
@@ -328,6 +329,11 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.controls.languageId.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
             this.personForm.controls.correspondenceLanguageId.setValue(value);
             this.refreshCorrespondenceLanguageState();
+        });
+
+        this.translateService.onLangChange.pipe(takeUntilDestroyed()).subscribe(() => {
+            this.refreshSelectedOccupationsInCurrentLanguage();
+            this.refreshOccupationSuggestionsInCurrentLanguage();
         });
 
         // Effect to generate salutation when surname, title, correspondenceLanguageId, or genderId changes
@@ -660,6 +666,37 @@ export class PersonDataFormComponent implements OnInit {
                 this.filteredOccupationDb.set([]);
             }
         }, 500);
+    }
+
+    private refreshSelectedOccupationsInCurrentLanguage(): void {
+        if (!this.selectedOccupations.length) {
+            return;
+        }
+
+        forkJoin(
+            this.selectedOccupations.map(occupation =>
+                forkJoin([
+                    this.masterDataService.getOccupationsByName(occupation.text).pipe(catchError(() => of([]))),
+                    this.masterDataService.getOccupationsByName(occupation.textFemale).pipe(catchError(() => of([]))),
+                ]).pipe(
+                    map(([matchingByText, matchingByFemaleText]) => {
+                        const matchedOccupation = [...matchingByText, ...matchingByFemaleText].find(occupationResult => occupationResult.id === occupation.id);
+                        return matchedOccupation ?? occupation;
+                    })
+                )
+            )
+        ).subscribe(updatedOccupations => {
+            this.selectedOccupations = updatedOccupations;
+        });
+    }
+
+    private refreshOccupationSuggestionsInCurrentLanguage(): void {
+        this.filteredOccupationDb.set([]);
+        const occupationQuery = this.personForm.controls.occupations.value;
+
+        if (typeof occupationQuery === 'string' && occupationQuery.length >= 3) {
+            this.masterDataService.getOccupationsByName(occupationQuery).subscribe(result => this.filteredOccupationDb.set(result));
+        }
     }
 
     private checkIfAddressIsEmpty(controlId: AddressControlId): boolean {
