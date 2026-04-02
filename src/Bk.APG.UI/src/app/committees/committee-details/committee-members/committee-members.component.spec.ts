@@ -121,15 +121,32 @@ describe('CommitteeMembersComponent', () => {
     });
 
     describe('prepareData', () => {
-        const dummyMembers = [{id: '1', beginDate: '2020-01-01'} as any, {id: '2', beginDate: '2019-01-01'} as any, {id: '3', beginDate: '2021-01-01'} as any];
-        const paging: {pageIndex: number; pageSize: number} = {pageIndex: 0, pageSize: 2};
-        const sort: Sort = {active: 'beginDate', direction: 'asc'};
-
         it('should sort and slice the members array correctly', () => {
+            const dummyMembers = [
+                {id: '1', beginDate: '2020-01-01'} as any,
+                {id: '2', beginDate: '2019-01-01'} as any,
+                {id: '3', beginDate: '2021-01-01'} as any,
+            ];
+            const paging: {pageIndex: number; pageSize: number} = {pageIndex: 0, pageSize: 2};
+            const sort: Sort = {active: 'beginDate', direction: 'asc'};
+
             const data = (component as any).prepareData(dummyMembers, paging, sort);
+
             expect(data.length).toBe(2);
             expect(data[0].id).toBe('2'); // 2019-01-01
             expect(data[1].id).toBe('1'); // 2020-01-01
+        });
+
+        it('should sort data case-insensitively', () => {
+            const membersWithCase = [{id: '1', surname: 'b'} as any, {id: '2', surname: 'C'} as any, {id: '3', surname: 'A'} as any];
+            const paging: {pageIndex: number; pageSize: number} = {pageIndex: 0, pageSize: 3};
+            const sort: Sort = {active: 'surname', direction: 'asc'};
+
+            const data = (component as any).prepareData(membersWithCase, paging, sort);
+
+            expect(data[0].id).toBe('3');
+            expect(data[1].id).toBe('1');
+            expect(data[2].id).toBe('2');
         });
     });
 
