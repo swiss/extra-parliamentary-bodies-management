@@ -10,6 +10,7 @@
 -   Exclude inactive contact points from OGD export [BKDO-3290](https://bkdev.atlassian.net/browse/BKDO-3290)
 -   Case-insensitive sorting in committee membership table [BKDO-3289](https://bkdev.atlassian.net/browse/BKDO-3289)
 -   Update occupation labels when changing language [BKDO-3336](https://bkdev.atlassian.net/browse/BKDO-3336)
+-   Update membership addition label when changing language [BKDO-3337](https://bkdev.atlassian.net/browse/BKDO-3337)
 
 ## 1.2.0
 
