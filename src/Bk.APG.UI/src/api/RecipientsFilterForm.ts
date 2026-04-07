@@ -9,4 +9,5 @@ export interface RecipientsFilterForm {
     formLetterSender: FormControl<string | null>;
     exportType: FormControl<string | null>;
     exportFileType: FormControl<string | null>;
+    formLetterExportDate: FormControl<Date | null>;
 }
