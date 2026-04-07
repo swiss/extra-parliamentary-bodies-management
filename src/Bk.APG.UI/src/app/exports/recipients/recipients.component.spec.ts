@@ -1,7 +1,8 @@
 import {DOCUMENT, EventEmitter, signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
-import {MatDatepicker, MatDatepickerToggle} from '@angular/material/datepicker';
+import {provideNativeDateAdapter} from '@angular/material/core';
+import {MatDatepicker, MatDatepickerModule, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatSelectModule, MatFormField} from '@angular/material/select';
 import {ActivatedRoute, ActivatedRouteSnapshot} from '@angular/router';
@@ -89,6 +90,7 @@ describe('RecipientsComponent', () => {
                 MockModule(ReactiveFormsModule),
                 MockComponents(MatFormField, MatDatepicker, MatDatepickerToggle),
                 MockPipe(TranslatePipe),
+                MockModule(MatDatepickerModule),
             ],
             providers: [
                 {provide: WINDOW, useValue: window},
@@ -100,6 +102,7 @@ describe('RecipientsComponent', () => {
                 {provide: GeneralElectionCommitteesService, useValue: generalElectionCommitteesServiceMock},
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: ActivatedRoute, useValue: activatedRouteMock},
+                provideNativeDateAdapter(),
                 {
                     provide: AuthService,
                     useValue: MockService(AuthService, {
