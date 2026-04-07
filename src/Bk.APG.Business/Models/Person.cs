@@ -51,6 +51,7 @@ public class Person : EntityBase
 
     [NotMapped]
     public bool NeedsAttention =>
+        NeedsAttentionMembershipExpired ||
         NeedsAttentionLongerDuty ||
         NeedsAttentionShorterDuty ||
         NeedsAttentionFederalDuty ||
@@ -60,19 +61,19 @@ public class Person : EntityBase
         NeedsAttentionOccupation;
 
     [NotMapped]
-    public bool NeedsAttentionLongerDuty => Memberships.Any(y => y.IsActive && y.NeedsAttentionLongerDuty);
+    public bool NeedsAttentionLongerDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionLongerDuty: true });
 
     [NotMapped]
-    public bool NeedsAttentionShorterDuty => Memberships.Any(y => y.IsActive && y.NeedsAttentionShorterDuty);
+    public bool NeedsAttentionShorterDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionShorterDuty: true });
 
     [NotMapped]
-    public bool NeedsAttentionFederalDuty => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalDuty);
+    public bool NeedsAttentionFederalDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionFederalDuty: true });
 
     [NotMapped]
-    public bool NeedsAttentionFederalAssemblyAuthoritiesCommission => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalAssemblyAuthoritiesCommission);
+    public bool NeedsAttentionFederalAssemblyAuthoritiesCommission => Memberships.Any(y => y is { IsActive: true, NeedsAttentionFederalAssemblyAuthoritiesCommission: true });
 
     [NotMapped]
-    public bool NeedsAttentionFederalAssemblyAdministrationCommission => Memberships.Any(y => y.IsActive && y.NeedsAttentionFederalAssemblyAdministrationCommission);
+    public bool NeedsAttentionFederalAssemblyAdministrationCommission => Memberships.Any(y => y is { IsActive: true, NeedsAttentionFederalAssemblyAdministrationCommission: true });
 
     [NotMapped]
     public bool NeedsAttentionInterests => !NoInterest &&
