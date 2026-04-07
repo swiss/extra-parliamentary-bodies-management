@@ -16,4 +16,5 @@ export interface RecipientsFilterParameters {
     formLetterSender?: FormLettersSenderList['id'] | null;
     exportType?: string | null;
     exportFileType?: string | null;
+    formLetterExportDate?: Date | null;
 }

@@ -12,4 +12,5 @@ public class FormLetterFilterParameters
     public DateOnly? EndDateCurrentTermOfOfficeDate { get; set; }
     public string? ExportType { get; set; }
     public string? ExportFileType { get; set; }
+    public DateOnly? FormLetterDate { get; set; }
 }

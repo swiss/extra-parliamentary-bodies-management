@@ -920,5 +920,6 @@
   "recipients.filter.singleDocuments.label": "FR_Ein Dokument pro Gremium",
   "recipients.filter.multipleDocuments.label": "FR_Alle Gremien in einem Dokument",
   "recipients.filter.word.label": "FR_Word generieren",
-  "recipients.filter.pdf.label": "FR_PDF generieren"
+  "recipients.filter.pdf.label": "FR_PDF generieren",
+  "recipients.filter.formLetterExportDate.label": "FR_Brief-Datum"
 }
