@@ -19,7 +19,8 @@
         committeeDetails.needsAttentionLongerDuty ||
         committeeDetails.needsAttentionShorterDuty ||
         committeeDetails.needsAttentionFederalDuty ||
-        committeeDetails.needsAttentionFederalAssembly
+        committeeDetails.needsAttentionFederalAssembly ||
+        committeeDetails.needsAttentionRequirementsProfile
     ) {
         <ob-alert type="warning">{{ 'committee.details.warning.membershipJustificationOrStatus' | translate }}</ob-alert>
     }
