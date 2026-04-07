@@ -40,7 +40,7 @@ internal class PersonMapperTests
         var dto = PersonMapper.ToPersonListDto(person);
 
         Assert.That(dto, Is.Not.Null);
-        Assert.Multiple(() =>
+        using (Assert.EnterMultipleScope())
         {
             Assert.That(dto.Id, Is.EqualTo(person.Id));
             Assert.That(dto.Surname, Is.EqualTo(person.Surname));
@@ -49,9 +49,9 @@ internal class PersonMapperTests
             Assert.That(dto.Canton, Is.EqualTo(person.CorrespondenceAddress!.Canton!.TextDe));
             Assert.That(dto.City, Is.EqualTo(person.CorrespondenceAddress.City));
             Assert.That(dto.Language, Is.EqualTo(person.Language!.TextDe));
-            Assert.That(dto.HasActiveMembership, Is.EqualTo(false));
+            Assert.That(dto.HasActiveMembership, Is.False);
             Assert.That(dto.NeedsAttention, Is.EqualTo(person.NeedsAttention));
-        });
+        }
     }
 
     [Test]
