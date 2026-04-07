@@ -277,4 +277,141 @@ internal class PersonTests
 
         Assert.That(person.NeedsAttentionOccupation, Is.EqualTo(expected));
     }
+
+    [Test]
+    public void NeedsAttention_WhenNoAttentionFlagsAreSet_ShouldReturnFalse()
+    {
+        var person = new PersonBuilder().Build();
+
+        Assert.That(person.NeedsAttention, Is.False);
+    }
+
+    [TestCaseSource(nameof(NeedsAttentionCases))]
+    public void NeedsAttention_WhenAnyAttentionFlagIsSet_ShouldReturnTrue(Person person)
+    {
+        Assert.That(person.NeedsAttention, Is.True);
+    }
+
+    private static IEnumerable<TestCaseData> NeedsAttentionCases()
+    {
+        yield return new TestCaseData(BuildPersonWithExpiredMembershipAttention())
+            .SetName("NeedsAttention_WhenMembershipExpired_ShouldReturnTrue");
+        yield return new TestCaseData(BuildPersonWithLongerDutyAttention())
+            .SetName("NeedsAttention_WhenLongerDutyNeedsJustification_ShouldReturnTrue");
+        yield return new TestCaseData(BuildPersonWithShorterDutyAttention())
+            .SetName("NeedsAttention_WhenShorterDutyNeedsJustification_ShouldReturnTrue");
+        yield return new TestCaseData(BuildPersonWithFederalDutyAttention())
+            .SetName("NeedsAttention_WhenFederalDutyNeedsJustification_ShouldReturnTrue");
+        yield return new TestCaseData(BuildPersonWithFederalAssemblyAuthoritiesAttention())
+            .SetName("NeedsAttention_WhenFederalAssemblyAuthoritiesNeedsJustification_ShouldReturnTrue");
+        yield return new TestCaseData(BuildPersonWithFederalAssemblyAdministrationAttention())
+            .SetName("NeedsAttention_WhenFederalAssemblyAdministrationNeedsJustification_ShouldReturnTrue");
+        yield return new TestCaseData(BuildPersonWithInterestsAttention())
+            .SetName("NeedsAttention_WhenInterestsAreMissing_ShouldReturnTrue");
+        yield return new TestCaseData(BuildPersonWithOccupationAttention())
+            .SetName("NeedsAttention_WhenOccupationDataIsMissing_ShouldReturnTrue");
+    }
+
+    private static Person BuildPersonWithExpiredMembershipAttention()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var membership = new MembershipBuilder()
+            .WithBeginDate(today.AddYears(-1))
+            .WithEndDate(today.AddDays(-1))
+            .WithElectionType(new ElectionTypeBuilder().WithUri(ElectionType.NewElection).Build())
+            .Build();
+
+        return new PersonBuilder().WithMemberships([membership]).Build();
+    }
+
+    private static Person BuildPersonWithLongerDutyAttention()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var membership = new MembershipBuilder()
+            .WithBeginDate(today.AddYears(-13))
+            .WithEndDate(today.AddDays(1))
+            .WithCommittee(new CommitteeBuilder().WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid).Build())
+            .WithJustificationLongerDuty(string.Empty)
+            .Build();
+
+        return new PersonBuilder().WithMemberships([membership]).Build();
+    }
+
+    private static Person BuildPersonWithShorterDutyAttention()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .WithTermOfOfficeId(TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().WithEndDate(today.AddDays(2)).Build())
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithBeginDate(today.AddDays(-10))
+            .WithEndDate(today.AddDays(1))
+            .WithCommittee(committee)
+            .WithJustificationShorterDuty(string.Empty)
+            .Build();
+
+        return new PersonBuilder().WithMemberships([membership]).Build();
+    }
+
+    private static Person BuildPersonWithFederalDutyAttention()
+    {
+        var membership = ActiveMembershipBuilder(CommitteeType.AuthoritiesCommissionGuid)
+            .WithPerson(new PersonBuilder().WithFederalDuty(true).Build())
+            .WithJustificationMemberInFederalDuty(string.Empty)
+            .Build();
+
+        return new PersonBuilder().WithMemberships([membership]).Build();
+    }
+
+    private static Person BuildPersonWithFederalAssemblyAuthoritiesAttention()
+    {
+        var membership = ActiveMembershipBuilder(CommitteeType.AuthoritiesCommissionGuid)
+            .WithPerson(new PersonBuilder().WithFederalAssembly(true).Build())
+            .WithJustificationMemberInFederalAssembly(string.Empty)
+            .Build();
+
+        return new PersonBuilder().WithMemberships([membership]).Build();
+    }
+
+    private static Person BuildPersonWithFederalAssemblyAdministrationAttention()
+    {
+        var membership = ActiveMembershipBuilder(CommitteeType.AdministrationCommissionGuid)
+            .WithPerson(new PersonBuilder().WithFederalAssembly(true).Build())
+            .WithJustificationMemberInFederalAssembly(string.Empty)
+            .Build();
+
+        return new PersonBuilder().WithMemberships([membership]).Build();
+    }
+
+    private static Person BuildPersonWithInterestsAttention()
+    {
+        var person = new PersonBuilder()
+            .WithNoInterest(false)
+            .WithMemberships([ActiveMembershipBuilder(CommitteeType.AuthoritiesCommissionGuid).Build()])
+            .Build();
+
+        return person;
+    }
+
+    private static Person BuildPersonWithOccupationAttention()
+    {
+        var person = new PersonBuilder()
+            .WithFederalDuty(false)
+            .WithNoEmployment(false)
+            .WithEmployer(string.Empty)
+            .WithMemberships([ActiveMembershipBuilder(CommitteeType.ManagementCommitteeGuid).Build()])
+            .Build();
+
+        return person;
+    }
+
+    private static MembershipBuilder ActiveMembershipBuilder(Guid committeeTypeId)
+    {
+        return new MembershipBuilder()
+            .WithIsActive(true)
+            .WithCommittee(new CommitteeBuilder().WithCommitteeTypeId(committeeTypeId).Build());
+    }
 }
