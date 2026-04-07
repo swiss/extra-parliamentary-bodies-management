@@ -53,6 +53,7 @@ describe('RecipientsService', () => {
             exportFileType: null,
             exportType: null,
             formLetterSenderId: 'id',
+            formLetterDate: null,
         };
         expect(httpClientMock.post).toHaveBeenCalledWith(
             expectedUrl,

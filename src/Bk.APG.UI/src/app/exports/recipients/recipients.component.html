@@ -64,6 +64,15 @@
             </mat-select>
         </mat-form-field>
 
+        <mat-form-field obErrorMessages>
+            <mat-label>{{ 'recipients.filter.formLetterExportDate.label' | translate }}</mat-label>
+            <input [formControl]="form.controls.formLetterExportDate" [matDatepicker]="formLetterExportDate" matInput />
+            <mat-datepicker-toggle matSuffix [for]="formLetterExportDate" />
+            <mat-datepicker #formLetterExportDate xPosition="end" />
+        </mat-form-field>
+
+        <div></div>
+
         <mat-radio-group formControlName="exportType">
             <mat-radio-button value="single">
                 {{ 'recipients.filter.singleDocuments.label' | translate }}

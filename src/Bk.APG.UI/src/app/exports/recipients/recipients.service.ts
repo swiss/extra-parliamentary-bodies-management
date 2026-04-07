@@ -26,6 +26,7 @@ export class RecipientsService {
             formLetterSenderId: filterParameters.formLetterSender || null,
             exportType: filterParameters.exportType || null,
             exportFileType: filterParameters.exportFileType || null,
+            formLetterDate: filterParameters.formLetterExportDate || null,
         };
 
         return this.http.post('/api/Report/downloadFormLetter', body, {
