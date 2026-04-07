@@ -199,6 +199,7 @@ internal class PersonMapperTests
             Assert.That(mappedPerson.NeedsAttentionBasicData, Is.EqualTo(person.NeedsAttentionBasicData));
             Assert.That(mappedPerson.NeedsAttentionMembershipExpired, Is.EqualTo(person.NeedsAttentionMembershipExpired));
             Assert.That(mappedPerson.NeedsAttentionOccupation, Is.EqualTo(person.NeedsAttentionOccupation));
+            Assert.That(mappedPerson.NeedsAttentionRequirementsProfile, Is.EqualTo(person.NeedsAttentionRequirementsProfile));
             Assert.That(mappedPerson.Interests.Count, Is.EqualTo(2));
 
             Assert.That(mappedPerson.Interests.First().Text, Is.EqualTo(interest2.InterestText));
