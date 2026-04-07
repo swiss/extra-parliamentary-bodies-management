@@ -12,6 +12,7 @@
 -   Update occupation labels when changing language [BKDO-3336](https://bkdev.atlassian.net/browse/BKDO-3336)
 -   Update membership addition label when changing language [BKDO-3337](https://bkdev.atlassian.net/browse/BKDO-3337)
 -   Update function labels [BKDO-3393](https://bkdev.atlassian.net/browse/BKDO-3393)
+-   Mark people with expired memberships [BKDO-3399](https://bkdev.atlassian.net/browse/BKDO-3399)
 
 ## 1.2.0
 
