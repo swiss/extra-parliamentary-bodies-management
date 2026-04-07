@@ -244,6 +244,7 @@ public class Committee : EntityBase
             NeedsAttentionAboveMaxMembers ||
             NeedsAttentionMembershipExpired ||
             NeedsAttentionMembershipInterestOrOccupation ||
+            NeedsAttentionRequirementsProfile ||
             NeedsAttentionDataProtectionOfficer ||
             NeedsAttentionSecretariat);
 
@@ -281,6 +282,9 @@ public class Committee : EntityBase
         m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
         m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
         m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid))));
+
+    [NotMapped]
+    public bool NeedsAttentionRequirementsProfile => Memberships.Any(m => m is { IsActive: true, NeedsAttentionRequirementsProfile: true });
 
     [NotMapped]
     public bool NeedsAttentionDataProtectionOfficer => (CommitteeTypeId == CommitteeType.AdministrationCommissionGuid || CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) &&

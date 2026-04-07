@@ -71,7 +71,8 @@ public class Membership : EntityBase
             NeedsAttentionShorterDuty ||
             NeedsAttentionFederalDuty ||
             NeedsAttentionFederalAssemblyAuthoritiesCommission ||
-            NeedsAttentionFederalAssemblyAdministrationCommission);
+            NeedsAttentionFederalAssemblyAdministrationCommission ||
+            NeedsAttentionRequirementsProfile);
 
     [NotMapped]
     public bool NeedsAttentionMembershipExpired => EndDate < DateOnly.FromDateTime(DateTime.Now) && (ElectionType?.Uri is ElectionType.NewElection or ElectionType.ReElection);
@@ -93,4 +94,10 @@ public class Membership : EntityBase
 
     [NotMapped]
     public bool NeedsAttentionInterests => Person is not null && Person.NeedsAttentionInterests;
+
+    [NotMapped]
+    public bool NeedsAttentionRequirementsProfile => string.IsNullOrWhiteSpace(RequirementsProfile) && ElectionTypeId == ElectionType.NewElectionGuid &&
+                                                     (Committee!.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
+                                                      Committee!.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
+                                                      Committee!.SupervisionDuty == true);
 }
