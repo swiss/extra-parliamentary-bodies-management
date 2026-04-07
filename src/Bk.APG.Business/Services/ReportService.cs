@@ -80,6 +80,7 @@ public class ReportService : IReportService
         var reportDto = await FillFormLetterDto(filterDto);
 
         var zipStream = new MemoryStream();
+        var maxFileNameLength = 150;
 
         if (reportDto.Memberships != null && filterDto.ExportType == "single")
         {
@@ -99,10 +100,15 @@ public class ReportService : IReportService
                 var reducedDataDto = reportDto;
                 reducedDataDto.Memberships = allMemberships;
 
-                var reducedMembersDto = reducedDataDto.Memberships.Where(m => m.CommitteeId == currentCommitteeId);
+                var reducedMembersDto = reducedDataDto.Memberships.Where(m => m.CommitteeId == currentCommitteeId).OrderBy(m => m.Surname).ThenBy(m => m.GivenName);
                 reducedDataDto.Memberships = reducedMembersDto;
 
-                var fileName = first.CommitteeName;
+                var fileName = first.FileName.Replace(" ", "_", StringComparison.InvariantCultureIgnoreCase);
+
+                if (fileName.Length > maxFileNameLength)
+                {
+                    fileName = fileName.Substring(0, maxFileNameLength);
+                }
 
                 if (filterDto.ExportFileType == "word")
                 {
@@ -1323,7 +1329,7 @@ public class ReportService : IReportService
 
         var endedMemberships = await GetEndedMemberships(filterDto, electionTypeListPresent, sender);
 
-        var allRecipients = newAndReElections.Concat(endedMemberships).ToList();
+        var allRecipients = newAndReElections.Concat(endedMemberships).ToList().OrderBy(m => m.Surname).ThenBy(m => m.GivenName);
 
         if (sender != null && nextTermOfOfficeDate != null && currentTermOfOfficeDate != null)
         {
@@ -1376,16 +1382,20 @@ public class ReportService : IReportService
         var generalElectionTextItalian = "Rinnovo integrale";
         var generalElectionTextRomansh = "Renovaziun totala";
 
-        var currentMonthAndYearGerman = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("de-CH")) ?? "";
-        var currentMonthAndYearFrench = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("fr-CH")) ?? "";
-        var currentMonthAndYearItalian = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("it-CH")) ?? "";
-        var currentMonthAndYearRomansh = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("rm-CH")) ?? "";
+        var formLetterDate = filterDto.FormLetterDate != null ? (DateOnly)filterDto.FormLetterDate! : DateOnly.FromDateTime(DateTime.Today);
+
+        var currentMonthAndYearGerman = formLetterDate.ToString("MMMM yyyy", new CultureInfo("de-CH")) ?? "";
+        var currentMonthAndYearFrench = formLetterDate.ToString("MMMM yyyy", new CultureInfo("fr-CH")) ?? "";
+        var currentMonthAndYearItalian = formLetterDate.ToString("MMMM yyyy", new CultureInfo("it-CH")) ?? "";
+        var currentMonthAndYearRomansh = formLetterDate.ToString("MMMM yyyy", new CultureInfo("rm-CH")) ?? "";
 
         var allValidMemberships = await _generalElectionCommitteeRepository.GetAllForFormLetter(filterDto, electionTypeListFuture);
 
         var newAndReElections = allValidMemberships
             .SelectMany(c => c.MembershipCandidates.Where(m => m.PersonId != null && m.Person!.CorrespondenceAddressId != null).Select(m => new FormLetterMembershipReportDto
             {
+                // as the zip file is always named in german, we also name all the committee files with the german name!
+                FileName = c.DescriptionGerman,
                 FormLetterType = m.ElectionTypeId == ElectionType.NewElectionGuid ? FormLetterType.NewElection : FormLetterType.ReElection,
                 FormLetterLanguage = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? FormLetterLanguage.German :
                     m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? FormLetterLanguage.French :
@@ -1468,6 +1478,8 @@ public class ReportService : IReportService
         var endedMemberships = allEndedMemberships
             .SelectMany(c => c.Memberships.Select(m => new FormLetterMembershipReportDto
             {
+                // as the zip file is always named in german, we also name all the committee files with the german name!
+                FileName = c.DescriptionGerman,
                 FormLetterType = m.ElectionTypeId == ElectionType.RetirementGuid ? FormLetterType.Retire : m.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid ? FormLetterType.MaximumMembershipDuration : FormLetterType.OtherRetirement,
                 FormLetterLanguage = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? FormLetterLanguage.German :
                     m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? FormLetterLanguage.French :
