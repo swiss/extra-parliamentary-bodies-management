@@ -99,6 +99,7 @@ export interface GeneralElectionCommitteeDetails {
     needsAttentionBasicData: boolean;
     needsAttentionMembershipExpired: boolean;
     needsAttentionMembershipInterestOrOccupation: boolean;
+    needsAttentionRequirementsProfile: boolean;
     justificationsNeedAttention: boolean;
     futureGeneralElectionCommittee: boolean;
 }
