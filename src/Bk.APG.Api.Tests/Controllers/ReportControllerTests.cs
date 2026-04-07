@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Bk.APG.Api.Controllers;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Services;
@@ -42,6 +43,74 @@ internal class ReportControllerTests
         {
             Assert.That(resultObject.FileDownloadName, Is.EqualTo("FooBar"));
             Assert.That(resultObject.ContentType, Is.EqualTo("application/vnd.openxmlformats-officedocument.wordprocessingml.template"));
+            Assert.That(resultObject.FileStream, Is.EqualTo(memoryStream));
+        });
+    }
+
+    [Test]
+    public async Task GenerateReportFormLetter_WithExportTypeSingle_ReturnsZipFileResult()
+    {
+        using var memoryStream = new MemoryStream();
+        var filterDto = new FormLetterFilterParameters { ExportType = "single" };
+
+        _reportService.CreateFormLetterAsZipFile(filterDto).Returns(("FooBar", memoryStream));
+
+        var result = await _controller.GenerateReportFormLetter(filterDto);
+
+        Assert.That(result, Is.Not.Null);
+        var resultObject = result as FileStreamResult;
+
+        Assert.That(resultObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultObject.FileDownloadName, Is.EqualTo("FooBar"));
+            Assert.That(resultObject.ContentType, Is.EqualTo(MediaTypeNames.Application.Zip));
+            Assert.That(resultObject.FileStream, Is.EqualTo(memoryStream));
+        });
+    }
+
+    [Test]
+    public async Task GenerateReportFormLetter_WithExportTypeMultiAndTypeWord_ReturnsDocFileResult()
+    {
+        var wordMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
+
+        using var memoryStream = new MemoryStream();
+        var filterDto = new FormLetterFilterParameters { ExportType = "multi", ExportFileType = "word" };
+
+        _reportService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
+
+        var result = await _controller.GenerateReportFormLetter(filterDto);
+
+        Assert.That(result, Is.Not.Null);
+        var resultObject = result as FileStreamResult;
+
+        Assert.That(resultObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultObject.FileDownloadName, Is.EqualTo("FooBar"));
+            Assert.That(resultObject.ContentType, Is.EqualTo(wordMimeType));
+            Assert.That(resultObject.FileStream, Is.EqualTo(memoryStream));
+        });
+    }
+
+    [Test]
+    public async Task GenerateReportFormLetter_WithExportTypeMultiAndTypePdf_ReturnsDocFileResult()
+    {
+        using var memoryStream = new MemoryStream();
+        var filterDto = new FormLetterFilterParameters { ExportType = "multi", ExportFileType = "pdf" };
+
+        _reportService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
+
+        var result = await _controller.GenerateReportFormLetter(filterDto);
+
+        Assert.That(result, Is.Not.Null);
+        var resultObject = result as FileStreamResult;
+
+        Assert.That(resultObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultObject.FileDownloadName, Is.EqualTo("FooBar"));
+            Assert.That(resultObject.ContentType, Is.EqualTo(MediaTypeNames.Application.Pdf));
             Assert.That(resultObject.FileStream, Is.EqualTo(memoryStream));
         });
     }
