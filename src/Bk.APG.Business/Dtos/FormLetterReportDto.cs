@@ -22,6 +22,7 @@ public class FormLetterReportDto
 
 public class FormLetterMembershipReportDto
 {
+    public required string FileName { get; set; }
     public string? SenderDepartment { get; set; }
     public string? SenderOffice { get; set; }
     public string? SenderOfficeShort { get; set; }
