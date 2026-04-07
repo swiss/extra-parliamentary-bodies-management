@@ -4,6 +4,7 @@ import {takeUntilDestroyed, toSignal} from '@angular/core/rxjs-interop';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton, MatButtonModule} from '@angular/material/button';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatFormField, MatInputModule} from '@angular/material/input';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatLabel, MatSelectModule} from '@angular/material/select';
@@ -36,6 +37,9 @@ export type ExportType = 'single' | 'multi';
         MatInputModule,
         MatRadioModule,
         ReactiveFormsModule,
+        MatDatepickerInput,
+        MatDatepickerToggle,
+        MatDatepicker,
         MatColumnDef,
         MatCellDef,
         MatRowDef,
@@ -236,6 +240,7 @@ export class RecipientsComponent {
             formLetterSender: this.fb.control<string | null>(null, {validators: [Validators.required]}),
             exportType: this.fb.control<ExportType | null>('single'),
             exportFileType: this.fb.control<string | null>('word'),
+            formLetterExportDate: this.fb.control<Date | null>(null),
         });
     }
 }
