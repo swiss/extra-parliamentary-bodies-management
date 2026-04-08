@@ -16,6 +16,7 @@ export class PersonDetailsService {
     needsAttentionLongerDuty = computed(() => this.personDetails().needsAttentionLongerDuty);
     needsAttentionShorterDuty = computed(() => this.personDetails().needsAttentionShorterDuty);
     needsAttentionMembershipExpired = computed(() => this.personDetails().needsAttentionMembershipExpired);
+    needsAttentionRequirementsProfile = computed(() => this.personDetails().needsAttentionRequirementsProfile);
 
     isObserver = toSignal(this.authService.isObserver$, {initialValue: false});
     isDataFormDirty = signal(false);
