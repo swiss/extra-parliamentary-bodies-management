@@ -39,4 +39,5 @@ export interface PersonDetails {
     needsAttentionInterests: boolean;
     needsAttentionOccupation: boolean;
     needsAttentionMembershipExpired: boolean;
+    needsAttentionRequirementsProfile: boolean;
 }
