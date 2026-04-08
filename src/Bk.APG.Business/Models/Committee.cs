@@ -278,10 +278,13 @@ public class Committee : EntityBase
     public bool NeedsAttentionMembershipExpired => Memberships.Any(y => y.NeedsAttentionMembershipExpired);
 
     [NotMapped]
-    public bool NeedsAttentionMembershipInterestOrOccupation => Memberships.Any(m => m.IsActive && m.Person is not null && (m.Person.NeedsAttentionOccupation || (!m.Person.NoInterest && m.Person.Interests.Count == 0 && ((m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid) ||
-        m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
-        m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
-        m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid))));
+    public bool NeedsAttentionMembershipInterestOrOccupation => Memberships.Any(m => m is { IsActive: true, Person: not null } &&
+                                                                                     (m.Person.NeedsAttentionOccupation ||
+                                                                                      (!m.Person.NoInterest && m.Person.Interests.Count == 0 &&
+                                                                                       (m.Committee?.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
+                                                                                        m.Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid ||
+                                                                                        m.Committee?.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
+                                                                                        m.Committee?.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid))));
 
     [NotMapped]
     public bool NeedsAttentionRequirementsProfile => Memberships.Any(m => m is { IsActive: true, NeedsAttentionRequirementsProfile: true });
