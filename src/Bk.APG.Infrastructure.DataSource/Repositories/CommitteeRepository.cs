@@ -97,7 +97,6 @@ public class CommitteeRepository : ICommitteeRepository
 
         var query = _dataContext.Committees
             .Include(item => item.ContactPoints)
-            .Include(item => item.Memberships)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -108,6 +107,9 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.Memberships)
                 .ThenInclude(m => m.Person)
                     .ThenInclude(p => p!.Interests)
+            .Include(item => item.Memberships)
+                .ThenInclude(m => m.Person)
+                    .ThenInclude(p => p!.Occupations)
             .FilterCommittees(filterParameters)
             .AsSingleQuery();
 
