@@ -96,6 +96,9 @@ public class Membership : EntityBase
     public bool NeedsAttentionInterests => Person is not null && Person.NeedsAttentionInterests;
 
     [NotMapped]
+    public bool NeedsAttentionOccupation => Person is not null && Person.NeedsAttentionOccupation;
+
+    [NotMapped]
     public bool NeedsAttentionRequirementsProfile => string.IsNullOrWhiteSpace(RequirementsProfile) && ElectionTypeId == ElectionType.NewElectionGuid &&
                                                      (Committee!.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
                                                       Committee!.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
