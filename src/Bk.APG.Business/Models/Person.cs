@@ -58,7 +58,8 @@ public class Person : EntityBase
         NeedsAttentionFederalAssemblyAuthoritiesCommission ||
         NeedsAttentionFederalAssemblyAdministrationCommission ||
         NeedsAttentionInterests ||
-        NeedsAttentionOccupation;
+        NeedsAttentionOccupation ||
+        NeedsAttentionRequirementsProfile;
 
     [NotMapped]
     public bool NeedsAttentionLongerDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionLongerDuty: true });
@@ -98,6 +99,9 @@ public class Person : EntityBase
 
     [NotMapped]
     public bool NeedsAttentionMembershipExpired => Memberships.Any(y => y.NeedsAttentionMembershipExpired);
+
+    [NotMapped]
+    public bool NeedsAttentionRequirementsProfile => Memberships.Any(m => m is { IsActive: true, NeedsAttentionRequirementsProfile: true });
 
     [NotMapped]
     public int Age => DateTime.UtcNow.Year - BirthYear;
