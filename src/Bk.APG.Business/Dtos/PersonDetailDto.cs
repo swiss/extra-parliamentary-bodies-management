@@ -35,6 +35,7 @@ public class PersonDetailDto
     public bool NeedsAttentionOccupation { get; set; }
     public bool NeedsAttentionInterests { get; set; }
     public bool NeedsAttentionMembershipExpired { get; set; }
+    public bool NeedsAttentionRequirementsProfile { get; set; }
 
     public ICollection<MembershipDetailDto> Memberships { get; set; } = new List<MembershipDetailDto>();
     public ICollection<InterestListDto> Interests { get; set; } = new List<InterestListDto>();
