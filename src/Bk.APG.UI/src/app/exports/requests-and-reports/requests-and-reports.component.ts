@@ -242,13 +242,22 @@ export class RequestsAndReportsComponent {
                 this.form.controls.analysisDate1.setValue(today());
             }
 
-            if (this.form.controls.documentType.value! === ReportType.CompareListGE) {
+            if (this.form.controls.documentType.value! === ReportType.CompareListGeneralElection) {
                 this.form.controls.analysisDate1.setValue(this.analysisDateDefaultValue);
                 this.form.controls.analysisDate2.setValue(today());
                 this.form.controls.analysisDate2.enable();
             } else {
                 this.form.controls.analysisDate2.setValue(null);
                 this.form.controls.analysisDate2.disable();
+            }
+        } else {
+            if (this.form.controls.documentType.value === ReportType.InformationNoteGeneralElection) {
+                this.form.controls.analysisDate1.disable();
+                this.form.controls.releasedCommittees.setValue(true);
+                this.form.controls.releasedCommittees.disable();
+            } else {
+                this.form.controls.analysisDate1.enable();
+                this.form.controls.releasedCommittees.enable();
             }
         }
     }
