@@ -10,13 +10,14 @@ namespace Bk.APG.Api.Tests.Controllers;
 internal class ReportControllerTests
 {
     private readonly IReportService _reportService = Substitute.For<IReportService>();
+    private readonly IFormLetterService _formLetterService = Substitute.For<IFormLetterService>();
 
     private ReportController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new ReportController(_reportService);
+        _controller = new ReportController(_reportService, _formLetterService);
     }
 
     [TearDown]
@@ -53,7 +54,7 @@ internal class ReportControllerTests
         using var memoryStream = new MemoryStream();
         var filterDto = new FormLetterFilterParameters { ExportType = "single" };
 
-        _reportService.CreateFormLetterAsZipFile(filterDto).Returns(("FooBar", memoryStream));
+        _formLetterService.CreateFormLetterAsZipFile(filterDto).Returns(("FooBar", memoryStream));
 
         var result = await _controller.GenerateReportFormLetter(filterDto);
 
@@ -77,7 +78,7 @@ internal class ReportControllerTests
         using var memoryStream = new MemoryStream();
         var filterDto = new FormLetterFilterParameters { ExportType = "multi", ExportFileType = "word" };
 
-        _reportService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
+        _formLetterService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
 
         var result = await _controller.GenerateReportFormLetter(filterDto);
 
@@ -99,7 +100,7 @@ internal class ReportControllerTests
         using var memoryStream = new MemoryStream();
         var filterDto = new FormLetterFilterParameters { ExportType = "multi", ExportFileType = "pdf" };
 
-        _reportService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
+        _formLetterService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
 
         var result = await _controller.GenerateReportFormLetter(filterDto);
 
