@@ -2,10 +2,10 @@ export enum ReportType {
     ParliamentaryReport = 'ParliamentaryReport',
     AppendixFederalCouncil = 'AppendixFederalCouncil',
     Vacancies = 'Vacancies',
-    CompareListGE = 'CompareListGE',
+    CompareListGeneralElection = 'CompareListGeneralElection',
     AppendixFederalCouncilCheck = 'AppendixFederalCouncilCheck',
     DecisionFederalCouncil = 'DecisionFederalCouncil',
-    IN_GE = 'IN_GE',
+    InformationNoteGeneralElection = 'InformationNoteGeneralElection',
     ElectoralListFC = 'ElectoralListFC',
     ElectoralListOnline = 'ElectoralListOnline',
 }
