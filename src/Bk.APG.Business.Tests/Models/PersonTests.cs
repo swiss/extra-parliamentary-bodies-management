@@ -252,6 +252,28 @@ internal class PersonTests
         Assert.That(person.NeedsAttentionBasicData, Is.False);
     }
 
+    [Test]
+    public void NeedsAttentionBasicData_WithFederalDutyAndWithoutOffice_ShouldReturnTrue()
+    {
+        var person = new PersonBuilder()
+            .WithOfficeAddress(new AddressBuilder().WithEmail("test@test.ch").Build())
+            .WithFederalDuty(true)
+            .Build();
+
+        Assert.That(person.NeedsAttentionBasicData, Is.True);
+    }
+
+    [Test]
+    public void NeedsAttentionBasicData_WithFederalAssemblyAndWithoutCouncil_ShouldReturnTrue()
+    {
+        var person = new PersonBuilder()
+            .WithOfficeAddress(new AddressBuilder().WithEmail("test@test.ch").Build())
+            .WithFederalAssembly(true)
+            .Build();
+
+        Assert.That(person.NeedsAttentionBasicData, Is.True);
+    }
+
     [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, true, false, true)]
     [TestCase(CommitteeType.AdministrationCommissionGuidAsString, true, false, true)]
     [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, false, false, true)]
