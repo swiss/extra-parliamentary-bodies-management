@@ -1028,6 +1028,7 @@ internal class PersonServiceTests
             SalutationId = _personToUpdate.SalutationId,
             MaskAddress = false,
             FederalDuty = true,
+            OfficeId = Guid.NewGuid(),
             RowVersion = 666
         };
 
