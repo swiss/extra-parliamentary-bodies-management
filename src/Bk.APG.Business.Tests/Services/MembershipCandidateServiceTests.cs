@@ -1271,6 +1271,7 @@ internal class MembershipCandidateServiceTests
         var person = new PersonBuilder()
             .WithNoInterest(false)
             .WithFederalDuty(true)
+            .WithOffice(Guid.NewGuid())
             .WithMemberships(new List<Membership> { membership })
             .WithInterests(new List<Interest>())
             .WithLanguage(new LanguageBuilder().Build())
