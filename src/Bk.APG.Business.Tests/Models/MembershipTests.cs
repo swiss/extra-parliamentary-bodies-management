@@ -441,6 +441,19 @@ internal class MembershipTests
     }
 
     [Test]
+    public void NeedsAttentionRequirementsProfile_WithOtherElectionOffice_ShouldReturnFalse()
+    {
+        var membership = new MembershipBuilder()
+            .WithRequirementsProfile(string.Empty)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithCommittee(new CommitteeBuilder().WithSupervisionDuty(true).Build())
+            .WithElectionOfficeId(ElectionOffice.OtherGuid)
+            .Build();
+
+        Assert.That(membership.NeedsAttentionRequirementsProfile, Is.False);
+    }
+
+    [Test]
     public void NeedsAttention_WithInactive_ShouldReturnFalse()
     {
         var membership = new MembershipBuilder()

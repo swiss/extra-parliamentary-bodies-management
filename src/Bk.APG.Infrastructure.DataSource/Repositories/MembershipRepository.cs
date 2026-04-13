@@ -164,8 +164,9 @@ public class MembershipRepository : IMembershipRepository
         var result =
             from m in _dataContext.Memberships
             join f in _dataContext.Functions on m.FunctionId equals f.Id
-            where m.BeginDate < today &&
-                  m.EndDate > today &&
+            where m.BeginDate <= today &&
+                  m.EndDate >= today &&
+                  m.ElectionOfficeId != ElectionOffice.OtherGuid &&
                   _dataContext.Committees.Any(c =>
                         c.Id == m.CommitteeId &&
                         c.BeginDate <= today &&
