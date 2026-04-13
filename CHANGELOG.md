@@ -3,6 +3,8 @@
 ## 1.4.0
 
 -   Export interests without begin date [BKDO-3453](https://bkdev.atlassian.net/browse/BKDO-3453)
+-   Add "Other" as election office [BKDO-3326](https://bkdev.atlassian.net/browse/BKDO-3326)
+-   Introduce information note report [BKDO-1032](https://bkdev.atlassian.net/browse/BKDO-1032)
 
 ## 1.3.0
 
