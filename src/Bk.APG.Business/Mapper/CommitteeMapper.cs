@@ -355,7 +355,7 @@ public static class CommitteeMapper
             MeasuresGenders = committee.MeasuresGenders,
             JustificationLanguages = committee.JustificationLanguages,
             MeasuresLanguages = committee.MeasuresLanguages,
-            CurrentMemberCount = committee.Memberships.Count(m => m.IsActive),
+            CurrentMemberCount = committee.ActiveMemberCount,
             CurrentGenderQuota = GenerateGenderQuotaString(committee),
             CurrentLanguageQuota = GenerateLanguageQuotaString(committee),
             RowVersion = committee.RowVersion

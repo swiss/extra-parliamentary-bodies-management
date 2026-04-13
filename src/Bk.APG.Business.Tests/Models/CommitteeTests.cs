@@ -310,6 +310,24 @@ internal class CommitteeTests
     }
 
     [Test]
+    public void NeedsAttentionAboveMaxMembers_ShouldIgnoreMembershipsWithOtherElectionOffice()
+    {
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AdministrationCommissionGuid)
+            .WithMembership(new MembershipBuilder()
+                .WithElectionOfficeId(ElectionOffice.OtherGuid)
+                .WithIsActive(true)
+                .Build())
+            .WithMembership(new MembershipBuilder()
+                .WithIsActive(true)
+                .Build())
+            .Build();
+        committee.MaximalMembers = 1;
+
+        Assert.That(committee.NeedsAttentionAboveMaxMembers, Is.False);
+    }
+
+    [Test]
     public void NeedsAttentionDataProtectionOfficer_WithDpo_ShouldReturnFalse()
     {
         var committee = new CommitteeBuilder()
@@ -550,6 +568,11 @@ internal class CommitteeTests
                 .WithIsActive(true)
                 .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Male).Build()).Build())
                 .Build())
+            .WithMembership(new MembershipBuilder()
+                .WithIsActive(true)
+                .WithElectionOfficeId(ElectionOffice.OtherGuid)
+                .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Male).Build()).Build())
+                .Build())
             .Build();
 
         Assert.That(committee.FemaleQuota, Is.EqualTo(33.33));
@@ -579,6 +602,11 @@ internal class CommitteeTests
                 .WithIsActive(true)
                 .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Female).Build()).Build())
                 .Build())
+            .WithMembership(new MembershipBuilder()
+                .WithIsActive(true)
+                .WithElectionOfficeId(ElectionOffice.OtherGuid)
+                .WithPerson(new PersonBuilder().WithGender(new GenderBuilder().WithUri(Gender.Female).Build()).Build())
+                .Build())
             .Build();
 
         Assert.That(committee.MaleQuota, Is.EqualTo(33.33));
@@ -602,6 +630,11 @@ internal class CommitteeTests
                 .Build())
             .WithMembership(new MembershipBuilder()
                 .WithIsActive(true)
+                .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.FrenchUri).Build()).Build())
+                .Build())
+            .WithMembership(new MembershipBuilder()
+                .WithIsActive(true)
+                .WithElectionOfficeId(ElectionOffice.OtherGuid)
                 .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.FrenchUri).Build()).Build())
                 .Build())
             .Build();
@@ -633,6 +666,11 @@ internal class CommitteeTests
                 .WithIsActive(true)
                 .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.GermanUri).Build()).Build())
                 .Build())
+            .WithMembership(new MembershipBuilder()
+                .WithIsActive(true)
+                .WithElectionOfficeId(ElectionOffice.OtherGuid)
+                .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.GermanUri).Build()).Build())
+                .Build())
             .Build();
 
         Assert.That(committee.FrenchQuota, Is.EqualTo(33.33));
@@ -656,6 +694,11 @@ internal class CommitteeTests
                 .Build())
             .WithMembership(new MembershipBuilder()
                 .WithIsActive(true)
+                .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.GermanUri).Build()).Build())
+                .Build())
+            .WithMembership(new MembershipBuilder()
+                .WithIsActive(true)
+                .WithElectionOfficeId(ElectionOffice.OtherGuid)
                 .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.GermanUri).Build()).Build())
                 .Build())
             .Build();
@@ -689,6 +732,11 @@ internal class CommitteeTests
                 .Build())
             .WithMembership(new MembershipBuilder()
                 .WithIsActive(true)
+                .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.GermanUri).Build()).Build())
+                .Build())
+            .WithMembership(new MembershipBuilder()
+                .WithIsActive(true)
+                .WithElectionOfficeId(ElectionOffice.OtherGuid)
                 .WithPerson(new PersonBuilder().WithLanguage(new LanguageBuilder().WithUri(Language.GermanUri).Build()).Build())
                 .Build())
             .Build();
@@ -779,5 +827,16 @@ internal class CommitteeTests
             Assert.That(committee.FrenchUnderStaffed, Is.True);
             Assert.That(committee.ItalianUnderStaffed, Is.True);
         });
+    }
+
+    [Test]
+    public void ActiveMemberCount_ShouldIgnoreMembershipsWithOtherElectionOffice()
+    {
+        var committee = new CommitteeBuilder()
+            .WithMembership(new MembershipBuilder().WithIsActive(true).WithElectionOfficeId(ElectionOffice.OtherGuid).Build())
+            .WithMembership(new MembershipBuilder().WithIsActive(true).Build())
+            .Build();
+
+        Assert.That(committee.ActiveMemberCount, Is.EqualTo(1));
     }
 }
