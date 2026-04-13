@@ -40,8 +40,12 @@ public class Membership : EntityBase
         (m.EndDate < DateOnly.FromDateTime(DateTime.Now) && m.ElectionType != null && (m.ElectionType.Uri == ElectionType.NewElection || m.ElectionType.Uri == ElectionType.ReElection));
 
     public static readonly Expression<Func<Membership, bool>> IsFutureExpression = m => m.BeginDate > DateOnly.FromDateTime(DateTime.Now) && m.EndDate > DateOnly.FromDateTime(DateTime.Now);
+
+    public static readonly Expression<Func<Membership, bool>> HasOtherElectionOfficeExpression = m => m.ElectionOfficeId == ElectionOffice.OtherGuid;
+
     private static readonly Func<Membership, bool> _isActivePredicate = IsActiveExpression.Compile();
     private static readonly Func<Membership, bool> _isFuturePredicate = IsFutureExpression.Compile();
+    private static readonly Func<Membership, bool> _hasOtherElectionOfficePredicate = HasOtherElectionOfficeExpression.Compile();
 
     [NotMapped]
     public string FunctionName => Person?.Gender is null || Function is null ? string.Empty : Person.Gender.Uri == Gender.Female ? Function.GetFemaleText() : Function.GetText();
@@ -51,6 +55,9 @@ public class Membership : EntityBase
 
     [NotMapped]
     public bool IsFuture => _isFuturePredicate(this);
+
+    [NotMapped]
+    public bool HasOtherElectionOffice => _hasOtherElectionOfficePredicate(this);
 
     [NotMapped]
     public bool JustificationLongerDutyNeeded => Committee?.ExtraParliamentaryCommission == true && MembershipTermCalculator.CalculateEstimatedTermInYears(BeginDate, EndDate) > 12;
@@ -76,7 +83,7 @@ public class Membership : EntityBase
                                    (Person is not null && Person.NeedsAttentionBasicData));
 
     [NotMapped]
-    public bool NeedsAttentionMembershipExpired => EndDate < DateOnly.FromDateTime(DateTime.Now) && (ElectionType?.Uri is ElectionType.NewElection or ElectionType.ReElection);
+    public bool NeedsAttentionMembershipExpired => EndDate < DateOnly.FromDateTime(DateTime.Now) && ElectionType?.Uri is ElectionType.NewElection or ElectionType.ReElection;
 
     [NotMapped]
     public bool NeedsAttentionLongerDuty => JustificationLongerDutyNeeded && string.IsNullOrWhiteSpace(JustificationLongerDuty);
@@ -97,5 +104,5 @@ public class Membership : EntityBase
     public bool NeedsAttentionRequirementsProfile => string.IsNullOrWhiteSpace(RequirementsProfile) && ElectionTypeId == ElectionType.NewElectionGuid &&
                                                      (Committee!.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
                                                       Committee!.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
-                                                      Committee!.SupervisionDuty == true);
+                                                      Committee!.SupervisionDuty == true) && !HasOtherElectionOffice;
 }

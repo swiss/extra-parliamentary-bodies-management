@@ -2,20 +2,29 @@ namespace Bk.APG.Business.Models;
 
 public class CommitteeType : MasterDataBase
 {
-    // Verwaltungskommission
+    /// Verwaltungskommission
     public const string AdministrationCommissionGuidAsString = "0a4b7f1d-d8bf-4932-bece-dd2a51cc2d59";
+    /// Verwaltungskommission
     public static readonly Guid AdministrationCommissionGuid = Guid.Parse(AdministrationCommissionGuidAsString);
-    // Behördenkommission
+
+    /// Behördenkommission
     public const string AuthoritiesCommissionGuidAsString = "f2e2af70-d1d4-42b5-b23a-793cbc220064";
+    /// Behördenkommission
     public static readonly Guid AuthoritiesCommissionGuid = Guid.Parse(AuthoritiesCommissionGuidAsString);
-    // Leitungsorgane
+
+    /// Leitungsorgane
     public const string ManagementCommitteeGuidAsString = "0959d68e-9c09-4ab3-9434-a5a4689c0305";
+    /// Leitungsorgane
     public static readonly Guid ManagementCommitteeGuid = Guid.Parse(ManagementCommitteeGuidAsString);
-    // Vertretungen des Bundes
+
+    /// Vertretungen des Bundes
     public const string FederalAgenciesCommitteeGuidAsString = "408865cf-2b92-4c19-ac66-ee8f4cea76e5";
+    /// Vertretungen des Bundes
     public static readonly Guid FederalAgenciesCommitteeGuid = Guid.Parse(FederalAgenciesCommitteeGuidAsString);
-    // Vertretungen des Bundes in grenzüberschreitenden Gremien
+
+    /// Vertretungen des Bundes in grenzüberschreitenden Gremien
     public const string CrossBorderFederalAgenciesCommitteeGuidAsString = "469134d7-fb82-42ac-8feb-c2df6b7d032b";
+    /// Vertretungen des Bundes in grenzüberschreitenden Gremien
     public static readonly Guid CrossBorderFederalAgenciesCommitteeGuid = Guid.Parse(CrossBorderFederalAgenciesCommitteeGuidAsString);
 
     // APK, no master data, just to help us to have a constant GUID
