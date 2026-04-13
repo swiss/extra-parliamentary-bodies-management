@@ -246,6 +246,12 @@ public class MembershipBuilder
         return this;
     }
 
+    public MembershipBuilder WithElectionOfficeId(Guid electionOfficeId)
+    {
+        _electionOfficeId = electionOfficeId;
+        return this;
+    }
+
     public MembershipBuilder WithIsDeleted(bool isDeleted)
     {
         _isDeleted = isDeleted;
@@ -264,6 +270,12 @@ public class MembershipBuilder
 
         _electionType = electionType;
         _electionTypeId = electionType.Id;
+        return this;
+    }
+
+    public MembershipBuilder WithElectionTypeId(Guid electionTypeId)
+    {
+        _electionTypeId = electionTypeId;
         return this;
     }
 

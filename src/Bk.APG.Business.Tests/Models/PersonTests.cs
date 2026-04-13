@@ -22,6 +22,7 @@ internal class PersonTests
                 [
                     new MembershipBuilder().WithIsActive(true).Build(),
                     new MembershipBuilder().WithIsActive(false).Build(),
+                    new MembershipBuilder().WithIsActive(true).WithElectionOfficeId(ElectionOffice.OtherGuid).Build()
                 ]
             )
             .Build();
@@ -37,6 +38,7 @@ internal class PersonTests
                 [
                     new MembershipBuilder().WithIsActive(true).WithEmploymentLevel(10).Build(),
                     new MembershipBuilder().WithIsActive(true).WithEmploymentLevel(20).Build(),
+                    new MembershipBuilder().WithIsActive(true).WithElectionOfficeId(ElectionOffice.OtherGuid).WithEmploymentLevel(20).Build(),
                     new MembershipBuilder().WithIsActive(false).WithEmploymentLevel(10).Build(),
                 ]
             )
@@ -52,6 +54,7 @@ internal class PersonTests
             .WithMemberships(
                 [
                     new MembershipBuilder().WithIsActive(true).Build(),
+                    new MembershipBuilder().WithIsActive(true).WithElectionOfficeId(ElectionOffice.OtherGuid).Build(),
                     new MembershipBuilder().WithIsActive(false).Build()
                 ]
             )

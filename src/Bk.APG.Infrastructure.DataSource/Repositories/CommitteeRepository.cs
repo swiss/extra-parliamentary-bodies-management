@@ -200,7 +200,8 @@ public class CommitteeRepository : ICommitteeRepository
                 // Filter only active memberships
                 Memberships = c.Memberships
                     .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) &&
-                                m.EndDate > DateOnly.FromDateTime(DateTime.Now))
+                                m.EndDate > DateOnly.FromDateTime(DateTime.Now) &&
+                                !m.HasOtherElectionOffice)
                     .ToList()
             })
             .ToListAsync();
@@ -292,11 +293,11 @@ public class CommitteeRepository : ICommitteeRepository
             .ThenInclude(item => item.Person)
             .ThenInclude(item => item!.Salutation)
             .Include(item => item.Memberships)
-            .ThenInclude(item => item!.Function)
+            .ThenInclude(item => item.Function)
             .Include(item => item.Memberships)
-            .ThenInclude(item => item!.ElectionType)
+            .ThenInclude(item => item.ElectionType)
             .FilterCommitteesForFormLetter(filterDto, electionTypesIds)
-        .AsSplitQuery()
+            .AsSplitQuery()
             .Select(c => new Committee
             {
                 Id = c.Id,
@@ -329,12 +330,10 @@ public class CommitteeRepository : ICommitteeRepository
                 // bring only members, which match by language and electiontype
                 Memberships = c.Memberships
                     .Where(m => m.Person != null && m.EndDate == filterDto.EndDateCurrentTermOfOfficeDate &&
-                        (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
-                         filterDto.CorrespondenceLanguageIds!.Contains(
-                             m.Person.CorrespondenceLanguageId)) &&
-                        (electionTypesIds == null || electionTypesIds.Count == 0 ||
-                         electionTypesIds!.Contains(
-                             m.ElectionTypeId)))
+                                (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
+                                 filterDto.CorrespondenceLanguageIds!.Contains(m.Person.CorrespondenceLanguageId)) &&
+                                (electionTypesIds == null || electionTypesIds.Count == 0 || electionTypesIds.Contains(m.ElectionTypeId)) &&
+                                !m.HasOtherElectionOffice)
                     .ToList()
             })
             .Where(c => c.Memberships.Count > 0)
@@ -489,7 +488,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Where(x => !x.CommitteeType!.IsDeleted)
             .Where(x => x.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid || x.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid ||
                 x.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid || x.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid)
-            .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
+            .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Today)))
             .Include(x => x.Department)
             .Include(x => x.CommitteeType)
             .Include(x => x.Memberships)

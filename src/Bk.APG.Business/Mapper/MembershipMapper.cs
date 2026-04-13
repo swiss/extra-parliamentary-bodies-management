@@ -155,8 +155,11 @@ public static class MembershipMapper
         dataRow.KeyDimensionLinks.Add(
             new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasCommittee", Uri = $"committee:{membership.Committee.OgdId}" });
 
+        var electionOfficeUri = membership.ElectionOfficeId == ElectionOffice.OtherGuid
+            ? $"{OgdExportConstants.NamespaceElectionOffice}:{membership.ElectionOffice!.OgdId}" // "Andere" doesn't exist on register.ld.admin.ch
+            : OgdExportConstants.CreateUriLinkForRegisterLdAdminCh(membership.ElectionOffice!.Uri);
         dataRow.KeyDimensionLinks.Add(
-            new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasElectionOffice", Uri = OgdExportConstants.CreateUriLinkForRegisterLdAdminCh(membership.ElectionOffice!.Uri) });
+            new KeyDimensionLink { Predicate = $"{OgdExportConstants.NamespaceMembership}:hasElectionOffice", Uri = electionOfficeUri });
 
         if (membership.Function is not null)
         {
