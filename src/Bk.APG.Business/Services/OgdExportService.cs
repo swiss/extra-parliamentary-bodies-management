@@ -97,6 +97,7 @@ public class OgdExportService : IOgdExportService
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceInterestFunction, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceInterestFunction}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceInterestCommittee, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceInterestCommittee}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceOccupation, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceOccupation}/"));
+        graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceElectionOffice, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceElectionOffice}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespacePerson, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespacePerson}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceCommittee, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceCommittee}/"));
         graph.NamespaceMap.AddNamespace(OgdExportConstants.NamespaceContactPoint, new Uri($"{_sparqlOptions.ExportGraphBaseUri}/{OgdExportConstants.NamespaceContactPoint}/"));
@@ -225,6 +226,7 @@ public class OgdExportService : IOgdExportService
         var interestCommitteeTriples = await CreateInterestCommitteeDimension(graph);
         var contactPointTypeTriples = await CreateContactPointTypeDimension(graph);
         var contactPointTriples = CreateContactPointTriples(graph);
+        var electionOfficeTriples = await CreateElectionOfficeDimension(graph);
 
         var people = (await _personRepository.GetForOgdExport()).ToArray();
         var personTriples = CreatePersonDimension(graph, people);
@@ -261,7 +263,11 @@ public class OgdExportService : IOgdExportService
                 OgdExportConstants.UriCommitteeFunctionStatistic,
                 functionStatisticData.Select(OgdFunctionStatisticMapper.ToFunctionStatisticObservation));
 
-        var cantonStatisticData = await _membershipService.GetMembershipsForCantonStatistic(membershipData);
+        var membershipsForStatistics = membershipData
+            .Where(x => !x.HasOtherElectionOffice)
+            .ToArray();
+
+        var cantonStatisticData = await _membershipService.GetMembershipsForCantonStatistic(membershipsForStatistics);
 
         var committeeCantonStatisticRawData =
             _cubeRawDataService.CreateTriples(
@@ -269,13 +275,15 @@ public class OgdExportService : IOgdExportService
                 OgdExportConstants.UriCommitteeCantonStatistic,
                 cantonStatisticData.Select(OgdCantonStatisticMapper.ToCantonStatisticObservation));
 
-        var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipData);
+        var committeeGenderLanguageStatisticData = _membershipService.GetMembershipsForGenderLanguageStatistic(membershipsForStatistics);
 
-        var departmentGenderLanguageStatisticData = _membershipService.GetMembershipsForCommitteeTypeAndDepartmentGenderLanguageStatistic(membershipData);
+        var departmentGenderLanguageStatisticData = _membershipService.GetMembershipsForCommitteeTypeAndDepartmentGenderLanguageStatistic(membershipsForStatistics);
 
-        var extraAndNonExtraParliamentaryCommissions = _membershipService.GetExtraAndNonExtraParliamentaryCommitteesStatistic(membershipData);
+        var extraAndNonExtraParliamentaryCommissions = _membershipService.GetExtraAndNonExtraParliamentaryCommitteesStatistic(membershipsForStatistics);
 
-        var genderLanguageStatisticData = committeeGenderLanguageStatisticData.Concat(departmentGenderLanguageStatisticData).Concat(extraAndNonExtraParliamentaryCommissions);
+        var genderLanguageStatisticData = committeeGenderLanguageStatisticData
+            .Concat(departmentGenderLanguageStatisticData)
+            .Concat(extraAndNonExtraParliamentaryCommissions);
 
         var committeeGenderLanguageStatisticRawData =
             _cubeRawDataService.CreateTriples(
@@ -307,6 +315,7 @@ public class OgdExportService : IOgdExportService
             .Concat(cantonTriples)
             .Concat(contactPointTypeTriples)
             .Concat(contactPointTriples)
+            .Concat(electionOfficeTriples)
             .Concat(committeeTriples)
             .Concat(committeeCube)
             .Concat(committeeCubeMetadata)
@@ -747,6 +756,23 @@ public class OgdExportService : IOgdExportService
                 yield return t;
             }
         }
+    }
+
+    private async Task<IEnumerable<Triple>> CreateElectionOfficeDimension(Graph graph)
+    {
+        // we use existing election offices from LINDAS, except "Other"
+        // that's why we export this explicitly as APG vocabulary
+        var otherElectionOffice = await _masterDataRepository.GetById<ElectionOffice>(ElectionOffice.OtherGuid);
+
+        var electionOfficeTriples =
+            _dimensionService.CreateTriples(
+                [MasterDataMapper.ToDimensionItem(otherElectionOffice!)],
+                graph,
+                $"{_sparqlOptions.ExportGraphBaseUri}/vocabulary/{OgdExportConstants.NamespaceElectionOffice}",
+                [new Literal("Wahlbehörde", "de"), new Literal("Autorité de nomination", "fr"), new Literal("Autorità di nomina", "it")]
+            );
+
+        return electionOfficeTriples;
     }
 
     private static List<Triple> CreateMetaDataTriples(Graph graph, string uri, string createDate, string publishDate, string schemaName, string schemaDescription)

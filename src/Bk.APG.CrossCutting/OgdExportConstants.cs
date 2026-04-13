@@ -86,6 +86,7 @@ public static class OgdExportConstants
     public const string NamespaceInterestFunction = "interest-function";
     public const string NamespaceInterestCommittee = "interest-committee";
     public const string NamespaceOccupation = "occupation";
+    public const string NamespaceElectionOffice = "election-office";
     public const string NamespacePerson = "person";
     public const string NamespaceCommittee = "committee";
     public const string NamespaceContactPoint = "contact-point";
