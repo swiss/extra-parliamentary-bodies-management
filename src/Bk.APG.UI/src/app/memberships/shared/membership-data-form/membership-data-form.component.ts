@@ -144,6 +144,7 @@ export class MembershipDataFormComponent implements OnInit {
     private isValidating = false;
 
     private readonly selectedElectionTypeId = toSignal(this.membershipForm.controls.electionTypeId.valueChanges);
+    private readonly selectedElectionOfficeId = toSignal(this.membershipForm.controls.electionOfficeId.valueChanges);
 
     private readonly justificationLongerDutyNeeded = computed(() => {
         const extraParliamentaryCommission = this.committee()?.extraParliamentaryCommission ?? false;
@@ -184,7 +185,8 @@ export class MembershipDataFormComponent implements OnInit {
             (!!(this.committee()?.committeeTypeId === this.configsService.frontendConfig.entityIds.committeeType.managementId) ||
                 !!(this.committee()?.committeeTypeId === this.configsService.frontendConfig.entityIds.committeeType.federalAgenciesId) ||
                 !!(this.committee()?.supervisionDuty === true)) &&
-            this.selectedElectionTypeId() === this.configsService.frontendConfig.entityIds.electionType.newElectionId
+            this.selectedElectionTypeId() === this.configsService.frontendConfig.entityIds.electionType.newElectionId &&
+            this.selectedElectionOfficeId() !== this.configsService.frontendConfig.entityIds.electionOffice.otherId
         );
     });
 
