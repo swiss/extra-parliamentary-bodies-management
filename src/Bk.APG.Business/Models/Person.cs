@@ -113,18 +113,16 @@ public class Person : EntityBase
     public int Age => DateTime.UtcNow.Year - BirthYear;
 
     [NotMapped]
-    public int ActiveMembershipCount => Memberships.Count(x => x.IsActive);
+    public int ActiveMembershipCount => Memberships.Count(x => x is { IsActive: true, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public int TotalEmploymentLevel => Memberships
-        .Where(x => x.IsActive)
-        .Where(x => !x.IsDeleted)
+        .Where(x => x is { IsActive: true, IsDeleted: false, HasOtherElectionOffice: false })
         .Sum(x => x.MaximumEmploymentLevel ?? 0);
 
     [NotMapped]
     public IEnumerable<Committee> ActiveCommittees => Memberships
-        .Where(x => x.IsActive)
-        .Where(x => !x.IsDeleted)
+        .Where(x => x is { IsActive: true, IsDeleted: false, HasOtherElectionOffice: false })
         .Select(x => x.Committee!);
 
     [NotMapped]

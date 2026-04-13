@@ -244,9 +244,7 @@ public class MasterDataService : IMasterDataService
     {
         var electionOffices = await _masterDataRepository.GetElectionOffices();
 
-        return electionOffices
-            .Select(x => MasterDataMapper.MapToMasterDataDto<ElectionOfficeDto>(x, _cultureService.GetCurrentUiCulture()))
-            .OrderBy(x => x.Text);
+        return electionOffices.Select(x => MasterDataMapper.MapToMasterDataDto<ElectionOfficeDto>(x, _cultureService.GetCurrentUiCulture()));
     }
 
     public async Task<IEnumerable<FunctionDto>> GetFunctions()
