@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+
+-   Export interests without begin date [BKDO-3453](https://bkdev.atlassian.net/browse/BKDO-3453)
+
 ## 1.3.0
 
 -   Add form letter export [BKDO-288](https://bkdev.atlassian.net/browse/BKDO-288)
