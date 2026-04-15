@@ -327,6 +327,9 @@
     <data name="Vacancies_Report_Filename" xml:space="preserve">
         <value>FR_Liste_Vakanzen</value>
     </data>
+    <data name="Information_Note_Filename" xml:space="preserve">
+        <value>FR_Informationsnotiz</value>
+    </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Conseillère nationale</value>
     </data>
@@ -467,5 +470,32 @@
     </data>
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
         <value>FR_APG_Serienbrief_Gesamt</value>
+    </data>
+    <data name="InformationNoteExport_MemberCount" xml:space="preserve">
+        <value>FR_{0} Mitglied(er)</value>
+    </data>
+    <data name="InformationNoteExport_FederalMemberCount" xml:space="preserve">
+        <value>FR_{0} Mitglied(er) im Bundesdienst</value>
+    </data>
+    <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
+        <value>FR_{0} Mitglied(er), davon {1} im Bundesdienst</value>
+    </data>
+    <data name="InformationNoteExport_Vacancies" xml:space="preserve">
+        <value>FR_{0} Vakanz(en)</value>
+    </data>
+    <data name="InformationNoteExport_Male" xml:space="preserve">
+        <value>FR_{0} % Männer</value>
+    </data>
+    <data name="InformationNoteExport_Female" xml:space="preserve">
+        <value>FR_{0} % Frauen</value>
+    </data>
+    <data name="InformationNoteExport_FrenchAndItalianMissing" xml:space="preserve">
+        <value>FR_Französisch und Italienisch nicht vertreten</value>
+    </data>
+    <data name="InformationNoteExport_FrenchMissing" xml:space="preserve">
+        <value>FR_Französisch nicht vertreten</value>
+    </data>
+    <data name="InformationNoteExport_ItalianMissing" xml:space="preserve">
+        <value>FR_Italienisch nicht vertreten</value>
     </data>
 </root>
