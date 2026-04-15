@@ -3,6 +3,7 @@ using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting.Configuration;
+using Bk.APG.CrossCutting.Tests.Builders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -113,6 +114,8 @@ internal class OgdExportServiceTests
         BeginDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-100)),
     };
 
+    private readonly ElectionOffice _electionOffice = new ElectionOfficeBuilder().Build();
+
     [SetUp]
     public void SetUp()
     {
@@ -216,12 +219,14 @@ internal class OgdExportServiceTests
         _personRepository.GetAll().Returns([_person]);
         _membershipRepository.GetAllActiveForOgdExport().Returns([_membership]);
         _interestRepository.GetAllForOgdExport().Returns([_interest]);
+        _masterDataRepository.GetById<ElectionOffice>(ElectionOffice.OtherGuid).Returns(_electionOffice);
 
         await _ogdExportService.Export(CancellationToken.None);
 
         _dimensionService.Received().CreateTriples(Arg.Any<IEnumerable<DimensionItem>>(), Arg.Any<Graph>(), "http://example.base.uri.org/person", Arg.Any<IList<Literal>>(), null, Arg.Any<IList<string>>());
         _dimensionService.Received().CreateTriples(Arg.Any<IEnumerable<DimensionItem>>(), Arg.Any<Graph>(), "http://example.base.uri.org/committee", Arg.Any<IList<Literal>>());
         _dimensionService.Received().CreateTriples(Arg.Any<IEnumerable<DimensionItem>>(), Arg.Any<Graph>(), "http://example.base.uri.org/appointment-decision", Arg.Any<IList<Literal>>(), rdfTypes: Arg.Is<IList<string>>(x => x.Single() == "http://schema.org/DigitalDocument"));
+        _dimensionService.Received().CreateTriples(Arg.Any<IEnumerable<DimensionItem>>(), Arg.Any<Graph>(), "http://example.base.uri.org/vocabulary/election-office", Arg.Any<IList<Literal>>());
 
         _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "membership:1", Arg.Any<IEnumerable<ObservationDataRow>>());
         _cubeRawDataService.Received(1).CreateTriples(Arg.Any<Graph>(), "vested-interest:1", Arg.Any<IEnumerable<ObservationDataRow>>());
