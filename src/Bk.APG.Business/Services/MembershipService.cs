@@ -88,7 +88,7 @@ public class MembershipService : IMembershipService
 
         // TODO: Code smell – MembershipService is handling GEW workflow logic.
         // Extract GEW-related behavior into an application/orchestrator service.
-        if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(membershipWithPerson.CommitteeId))
+        if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(membershipWithPerson))
         {
             if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
@@ -124,7 +124,7 @@ public class MembershipService : IMembershipService
         return mappedMembership;
     }
 
-    public async Task<IEnumerable<MembershipCantonStatisticDto>> GetMembershipsForCantonStatistic(IEnumerable<Membership> memberships)
+    public async Task<IEnumerable<MembershipCantonStatisticDto>> GetMembershipsForCantonStatistic(Membership[] memberships)
     {
         var cantons = await _masterDataRepository.GetCantons();
         var dtos = new List<MembershipCantonStatisticDto>();
@@ -135,22 +135,18 @@ public class MembershipService : IMembershipService
 
             var groupedMemberships = filteredMemberships.GroupBy(m => new { m.CommitteeId, m.Committee!.OgdId });
 
-            foreach (var committeeGroup in groupedMemberships)
-            {
-                var committeeId = committeeGroup.Key.CommitteeId;
-                var committeeOgdId = committeeGroup.Key.OgdId;
-
-                var dto = new MembershipCantonStatisticDto
-                {
-                    CommitteeId = committeeId,
-                    CommitteeOgdId = committeeOgdId,
-                    CantonCount = committeeGroup.Count(),
-                    CantonId = canton.Id,
-                    CantonUri = canton.Uri,
-                    CantonOgdId = canton.OgdId,
-                };
-                dtos.Add(dto);
-            }
+            dtos.AddRange(from committeeGroup in groupedMemberships
+                          let committeeId = committeeGroup.Key.CommitteeId
+                          let committeeOgdId = committeeGroup.Key.OgdId
+                          select new MembershipCantonStatisticDto
+                          {
+                              CommitteeId = committeeId,
+                              CommitteeOgdId = committeeOgdId,
+                              CantonCount = committeeGroup.Count(),
+                              CantonId = canton.Id,
+                              CantonUri = canton.Uri,
+                              CantonOgdId = canton.OgdId,
+                          });
         }
         return dtos;
     }
@@ -413,67 +409,6 @@ public class MembershipService : IMembershipService
         return totalDto;
     }
 
-    public async Task<IEnumerable<MembershipStatisticByCantonDto>> GetMembershipsForDetailedCantonStatistic(IEnumerable<Membership> memberships)
-    {
-        var cantons = await _masterDataRepository.GetCantons();
-        var dtos = new List<MembershipStatisticByCantonDto>();
-        var currentYear = DateTime.Today.Year;
-
-        foreach (var canton in cantons)
-        {
-            var filteredMemberships = memberships.Where(m => m.Person!.CorrespondenceAddress!.CantonId == canton.Id);
-
-            var groupedMemberships = filteredMemberships.GroupBy(m => new { m.CommitteeId, m.Committee!.OgdId });
-
-            foreach (var committeeGroup in groupedMemberships)
-            {
-                var committeeId = committeeGroup.Key.CommitteeId;
-                var committeeOgdId = committeeGroup.Key.OgdId;
-
-                var dto = new MembershipStatisticByCantonDto
-                {
-                    CommitteeId = committeeId,
-                    CommitteeOgdId = committeeOgdId,
-                    CantonCount = committeeGroup.Count(),
-                    CantonId = canton.Id,
-                    CantonOgdId = canton.OgdId,
-                    FemaleCount = committeeGroup.Count(m => m.Person!.GenderId == Gender.FemaleGuid),
-                    MaleCount = committeeGroup.Count(m => m.Person!.GenderId == Gender.MaleGuid),
-                    GermanCount = committeeGroup.Count(m => m.Person!.LanguageId == Language.GermanGuid),
-                    FrenchCount = committeeGroup.Count(m => m.Person!.LanguageId == Language.FrenchGuid),
-                    ItalianCount = committeeGroup.Count(m => m.Person!.LanguageId == Language.ItalianGuid),
-                    RomanshCount = committeeGroup.Count(m => m.Person!.LanguageId == Language.RomanshGuid),
-                    FederalDutyCount = committeeGroup.Count(m => m.Person!.FederalDuty),
-                    FederalAssemblyCount = committeeGroup.Count(m => m.Person!.FederalAssembly),
-                    UpTo30Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear < 31),
-                    From31To40Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 31 and <= 40),
-                    From41To50Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 41 and <= 50),
-                    From51To60Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 51 and <= 60),
-                    From61To70Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear is >= 61 and <= 70),
-                    Over70Count = committeeGroup.Count(m => currentYear - m.Person!.BirthYear > 70),
-                };
-
-                if (dto.CantonCount > 0)
-                {
-                    dto.FemalePercentage = Math.Round((decimal)dto.FemaleCount / dto.CantonCount * 100, 2);
-                    dto.MalePercentage = Math.Round((decimal)dto.MaleCount / dto.CantonCount * 100, 2);
-                    dto.GermanPercentage = Math.Round((decimal)dto.GermanCount / dto.CantonCount * 100, 2);
-                    dto.FrenchPercentage = Math.Round((decimal)dto.FrenchCount / dto.CantonCount * 100, 2);
-                    dto.ItalianPercentage = Math.Round((decimal)dto.ItalianCount / dto.CantonCount * 100, 2);
-                    dto.RomanshPercentage = Math.Round((decimal)dto.RomanshCount / dto.CantonCount * 100, 2);
-                    dto.UpTo30Percentage = Math.Round((decimal)dto.UpTo30Count / dto.CantonCount * 100, 2);
-                    dto.From31To40Percentage = Math.Round((decimal)dto.From31To40Count / dto.CantonCount * 100, 2);
-                    dto.From41To50Percentage = Math.Round((decimal)dto.From41To50Count / dto.CantonCount * 100, 2);
-                    dto.From51To60Percentage = Math.Round((decimal)dto.From51To60Count / dto.CantonCount * 100, 2);
-                    dto.From61To70Percentage = Math.Round((decimal)dto.From61To70Count / dto.CantonCount * 100, 2);
-                    dto.Over70Percentage = Math.Round((decimal)dto.Over70Count / dto.CantonCount * 100, 2);
-                }
-                dtos.Add(dto);
-            }
-        }
-        return dtos;
-    }
-
     public async Task<MembershipUpdateDto> UpdateMembership(Guid id, MembershipUpdateDto updateDto)
     {
         ArgumentNullException.ThrowIfNull(updateDto);
@@ -531,7 +466,7 @@ public class MembershipService : IMembershipService
 
         // TODO: Code smell – MembershipService is handling GEW workflow logic.
         // Extract GEW-related behavior into an application/orchestrator service.
-        if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(existingEntry.CommitteeId))
+        if (isGeneralElectionRunning && await IsMembershipForGeneralElectionCommittee(existingEntry))
         {
             if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
@@ -566,7 +501,7 @@ public class MembershipService : IMembershipService
 
         // TODO: Code smell – MembershipService is handling GEW workflow logic.
         // Extract GEW-related behavior into an application/orchestrator service.
-        if (isGeneralElectionRunning && membership.IsActive && await IsMembershipForGeneralElectionCommittee(membership.CommitteeId))
+        if (isGeneralElectionRunning && membership.IsActive && await IsMembershipForGeneralElectionCommittee(membership))
         {
             if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
@@ -602,9 +537,15 @@ public class MembershipService : IMembershipService
                 && (await _authorizationService.IsCommitteeAssigned(membership.Committee!.Id)))));
     }
 
-    private async Task<bool> IsMembershipForGeneralElectionCommittee(Guid committeeId)
+    private async Task<bool> IsMembershipForGeneralElectionCommittee(Membership membership)
     {
-        var committee = await _committeeRepository.GetById(committeeId);
+        // memberships with election office "Andere" don't need to be handled in GEW
+        if (membership.HasOtherElectionOffice)
+        {
+            return false;
+        }
+
+        var committee = await _committeeRepository.GetById(membership.CommitteeId);
         return committee.IsInGeneralElection;
     }
 }
