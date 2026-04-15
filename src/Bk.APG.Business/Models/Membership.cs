@@ -66,12 +66,14 @@ public class Membership : EntityBase
 
     [NotMapped]
     public bool NeedsAttention => IsActive &&
-        (NeedsAttentionMembershipExpired ||
-            NeedsAttentionLongerDuty ||
-            NeedsAttentionShorterDuty ||
-            NeedsAttentionFederalDuty ||
-            NeedsAttentionFederalAssemblyAuthoritiesCommission ||
-            NeedsAttentionFederalAssemblyAdministrationCommission);
+                                  (NeedsAttentionMembershipExpired ||
+                                   NeedsAttentionLongerDuty ||
+                                   NeedsAttentionShorterDuty ||
+                                   NeedsAttentionFederalDuty ||
+                                   NeedsAttentionFederalAssemblyAuthoritiesCommission ||
+                                   NeedsAttentionFederalAssemblyAdministrationCommission ||
+                                   NeedsAttentionRequirementsProfile ||
+                                   (Person is not null && Person.NeedsAttentionBasicData));
 
     [NotMapped]
     public bool NeedsAttentionMembershipExpired => EndDate < DateOnly.FromDateTime(DateTime.Now) && (ElectionType?.Uri is ElectionType.NewElection or ElectionType.ReElection);
@@ -92,5 +94,8 @@ public class Membership : EntityBase
     public bool NeedsAttentionFederalAssemblyAdministrationCommission => JustificationMemberInFederalAssemblyNeeded && Committee?.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid && string.IsNullOrWhiteSpace(JustificationMemberInFederalAssembly);
 
     [NotMapped]
-    public bool NeedsAttentionInterests => Person is not null && Person.NeedsAttentionInterests;
+    public bool NeedsAttentionRequirementsProfile => string.IsNullOrWhiteSpace(RequirementsProfile) && ElectionTypeId == ElectionType.NewElectionGuid &&
+                                                     (Committee!.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
+                                                      Committee!.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
+                                                      Committee!.SupervisionDuty == true);
 }
