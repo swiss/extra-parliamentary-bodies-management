@@ -2,8 +2,9 @@ namespace Bk.APG.Business.Dtos;
 
 public class FormLetterReportDto
 {
-    public string? SenderOffice { get; set; }
-    public string? SenderOfficeShort { get; set; }
+    public string? SenderOfficeGerman { get; set; }
+    public string? SenderOfficeFrench { get; set; }
+    public string? SenderOfficeItalian { get; set; }
     public string? SenderName { get; set; }
     public string? SenderStreet { get; set; }
     public string? SenderZip { get; set; }
