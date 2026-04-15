@@ -48,6 +48,7 @@ export interface CommitteeDetails {
     needsAttentionBasicData: boolean;
     needsAttentionMembershipExpired: boolean;
     needsAttentionMembershipInterestOrOccupation: boolean;
+    needsAttentionRequirementsProfile: boolean;
     canCreateMembership: boolean;
     canCreateJustification: boolean;
     period4YearsInGeneralElection: boolean;
