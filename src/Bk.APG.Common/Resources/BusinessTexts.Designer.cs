@@ -1294,6 +1294,96 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Informationsnotiz.
+        /// </summary>
+        public static string Information_Note_Filename {
+            get {
+                return ResourceManager.GetString("Information_Note_Filename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Mitglied(er) im Bundesdienst.
+        /// </summary>
+        public static string InformationNoteExport_FederalMemberCount {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_FederalMemberCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} % Frauen.
+        /// </summary>
+        public static string InformationNoteExport_Female {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_Female", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Französisch und Italienisch nicht vertreten.
+        /// </summary>
+        public static string InformationNoteExport_FrenchAndItalianMissing {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_FrenchAndItalianMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Französisch nicht vertreten.
+        /// </summary>
+        public static string InformationNoteExport_FrenchMissing {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_FrenchMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Italienisch nicht vertreten.
+        /// </summary>
+        public static string InformationNoteExport_ItalianMissing {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_ItalianMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} % Männer.
+        /// </summary>
+        public static string InformationNoteExport_Male {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_Male", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Mitglied(er), davon {1} im Bundesdienst.
+        /// </summary>
+        public static string InformationNoteExport_MemberAndFederalMemberCount {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_MemberAndFederalMemberCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Mitglied(er).
+        /// </summary>
+        public static string InformationNoteExport_MemberCount {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_MemberCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Vakanz(en).
+        /// </summary>
+        public static string InformationNoteExport_Vacancies {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_Vacancies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nationalrätin.
         /// </summary>
         public static string NationalCouncilFemale {

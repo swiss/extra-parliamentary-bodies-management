@@ -128,7 +128,7 @@ describe('RequestsAndReportsComponent', () => {
         expect(component.form.controls.analysisDate1.value).toEqual(today());
     });
 
-    it.each([ReportType.CompareListGE])('should update "date 1" field and enable "date 2" field properly for document Type "%s"', dt => {
+    it.each([ReportType.CompareListGeneralElection])('should update "date 1" field and enable "date 2" field properly for document Type "%s"', dt => {
         component.analysisDateDefaultValue = new Date(2023, 2, 2);
         component.form.controls.documentType.setValue(dt);
         expect(component.form.controls.analysisDate1.value).toEqual(component.analysisDateDefaultValue);
