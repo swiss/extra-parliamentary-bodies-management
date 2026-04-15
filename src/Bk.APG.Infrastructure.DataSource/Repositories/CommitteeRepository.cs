@@ -201,7 +201,7 @@ public class CommitteeRepository : ICommitteeRepository
                 Memberships = c.Memberships
                     .Where(m => m.BeginDate <= DateOnly.FromDateTime(DateTime.Now) &&
                                 m.EndDate > DateOnly.FromDateTime(DateTime.Now) &&
-                                !m.HasOtherElectionOffice)
+                                m.ElectionOfficeId != ElectionOffice.OtherGuid)
                     .ToList()
             })
             .ToListAsync();
@@ -333,7 +333,7 @@ public class CommitteeRepository : ICommitteeRepository
                                 (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
                                  filterDto.CorrespondenceLanguageIds!.Contains(m.Person.CorrespondenceLanguageId)) &&
                                 (electionTypesIds == null || electionTypesIds.Count == 0 || electionTypesIds.Contains(m.ElectionTypeId)) &&
-                                !m.HasOtherElectionOffice)
+                                m.ElectionOfficeId != ElectionOffice.OtherGuid)
                     .ToList()
             })
             .Where(c => c.Memberships.Count > 0)
