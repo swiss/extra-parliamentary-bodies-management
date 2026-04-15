@@ -80,16 +80,16 @@ public class Committee : EntityBase
     public bool CanCreateMembership => _canCreateMembershipPredicate(this);
 
     [NotMapped]
-    public int ActiveMemberCount => Memberships.Count(x => x is { IsActive: true, IsDeleted: false });
+    public int ActiveMemberCount => Memberships.Count(x => x is { IsActive: true, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int FemaleCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Female, IsDeleted: false });
+    public int FemaleCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Female, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public double FemaleQuota => ActiveMemberCount > 0 ? Math.Round((double)FemaleCount / ActiveMemberCount * 100, 2) : 0;
 
     [NotMapped]
-    public int MaleCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Male, IsDeleted: false });
+    public int MaleCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Male, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public double MaleQuota => ActiveMemberCount > 0 ? Math.Round((double)MaleCount / ActiveMemberCount * 100, 2) : 0;
@@ -101,34 +101,34 @@ public class Committee : EntityBase
     public bool MaleUnderStuffed => ActiveMemberCount > 0 && ((double)MaleCount / ActiveMemberCount * 100) < CommitteeType!.MaleThreshold;
 
     [NotMapped]
-    public int FemalePresidentCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Female, Function.Uri: Function.PresidentUri, IsDeleted: false });
+    public int FemalePresidentCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Female, Function.Uri: Function.PresidentUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int MalePresidentCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Male, Function.Uri: Function.PresidentUri, IsDeleted: false });
+    public int MalePresidentCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Male, Function.Uri: Function.PresidentUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int PresidentCount => Memberships.Count(x => x is { IsActive: true, Function.Uri: Function.PresidentUri, IsDeleted: false });
+    public int PresidentCount => Memberships.Count(x => x is { IsActive: true, Function.Uri: Function.PresidentUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int GermanCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.GermanUri, IsDeleted: false });
+    public int GermanCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.GermanUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public double GermanQuota => ActiveMemberCount > 0 ? Math.Round((double)GermanCount / ActiveMemberCount * 100, 2) : 0;
 
     [NotMapped]
-    public int FrenchCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.FrenchUri, IsDeleted: false });
+    public int FrenchCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.FrenchUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public double FrenchQuota => ActiveMemberCount > 0 ? Math.Round((double)FrenchCount / ActiveMemberCount * 100, 2) : 0;
 
     [NotMapped]
-    public int ItalianCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.ItalianUri, IsDeleted: false });
+    public int ItalianCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.ItalianUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public double ItalianQuota => ActiveMemberCount > 0 ? Math.Round((double)ItalianCount / ActiveMemberCount * 100, 2) : 0;
 
     [NotMapped]
-    public int RomanshCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.RomanshUri, IsDeleted: false });
+    public int RomanshCount => Memberships.Count(x => x is { IsActive: true, Person.Language.Uri: Language.RomanshUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public double RomanshQuota => ActiveMemberCount > 0 ? Math.Round((double)RomanshCount / ActiveMemberCount * 100, 2) : 0;
@@ -149,34 +149,34 @@ public class Committee : EntityBase
         : CommitteeType!.ItalianThresholdPercentage != null && ItalianQuota < CommitteeType!.ItalianThresholdPercentage;
 
     [NotMapped]
-    public int FederalDutyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalDuty: true, IsDeleted: false });
+    public int FederalDutyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalDuty: true, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int NotFederalDutyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalDuty: false, IsDeleted: false });
+    public int NotFederalDutyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalDuty: false, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int IsCentralFederalAdministrationCount => Memberships.Count(x => x is { IsActive: true, Person.OfficeId: not null, Person.Office.IsCentralFederalAdministration: true });
+    public int IsCentralFederalAdministrationCount => Memberships.Count(x => x is { IsActive: true, Person.OfficeId: not null, Person.Office.IsCentralFederalAdministration: true, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int IsDecentralizedFederalAdministrationCount => Memberships.Count(x => x is { IsActive: true, Person.OfficeId: not null, Person.Office.IsCentralFederalAdministration: false });
+    public int IsDecentralizedFederalAdministrationCount => Memberships.Count(x => x is { IsActive: true, Person.OfficeId: not null, Person.Office.IsCentralFederalAdministration: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int FederalAssemblyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalAssembly: true, IsDeleted: false });
+    public int FederalAssemblyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalAssembly: true, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int NotFederalAssemblyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalAssembly: false, IsDeleted: false });
+    public int NotFederalAssemblyCount => Memberships.Count(x => x is { IsActive: true, Person.FederalAssembly: false, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public bool ExtraParliamentaryCommission => CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid || CommitteeTypeId == CommitteeType.AdministrationCommissionGuid;
 
     [NotMapped]
-    public int ActiveMemberCountFuture => Memberships.Count(x => x is { IsFuture: true, IsDeleted: false });
+    public int ActiveMemberCountFuture => Memberships.Count(x => x is { IsFuture: true, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int FemaleCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Gender.Uri: Gender.Female, IsDeleted: false });
+    public int FemaleCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Gender.Uri: Gender.Female, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int MaleCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Gender.Uri: Gender.Male, IsDeleted: false });
+    public int MaleCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Gender.Uri: Gender.Male, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public bool FemaleUnderStuffedFuture => ActiveMemberCountFuture > 0 && 100 / ActiveMemberCountFuture * FemaleCount < CommitteeType!.FemaleThreshold;
@@ -185,16 +185,16 @@ public class Committee : EntityBase
     public bool MaleUnderStuffedFuture => ActiveMemberCountFuture > 0 && 100 / ActiveMemberCountFuture * MaleCount < CommitteeType!.MaleThreshold;
 
     [NotMapped]
-    public int GermanCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.GermanUri, IsDeleted: false });
+    public int GermanCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.GermanUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int FrenchCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.FrenchUri, IsDeleted: false });
+    public int FrenchCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.FrenchUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int ItalianCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.ItalianUri, IsDeleted: false });
+    public int ItalianCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.ItalianUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public int RomanshCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.RomanshUri, IsDeleted: false });
+    public int RomanshCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.RomanshUri, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
     public int? VacanciesInCurrentTermOfOffice
@@ -272,7 +272,7 @@ public class Committee : EntityBase
     public bool NeedsAttentionNoMembers => !Memberships.Any(y => y.IsActive);
 
     [NotMapped]
-    public bool NeedsAttentionAboveMaxMembers => ExtraParliamentaryCommission && MaximalMembers > 0 && Memberships.Count(y => y.IsActive) > MaximalMembers;
+    public bool NeedsAttentionAboveMaxMembers => ExtraParliamentaryCommission && MaximalMembers > 0 && ActiveMemberCount > MaximalMembers;
 
     [NotMapped]
     public bool NeedsAttentionMembershipExpired => Memberships.Any(y => y.NeedsAttentionMembershipExpired);

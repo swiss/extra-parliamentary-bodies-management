@@ -476,37 +476,38 @@ public class CommitteeService : ICommitteeService
         var activeCommittees = await _committeeRepository.GetCommitteeDataForStatistics();
 
         var committeesWithActiveMembers = activeCommittees
-        .Select(c => new Committee
-        {
-            Id = c.Id,
-            CommitteeType = c.CommitteeType,
-            CommitteeTypeId = c.CommitteeTypeId,
-            ModifiedBy = c.ModifiedBy,
-            Modified = c.Modified,
-            CreatedBy = c.CreatedBy,
-            Created = c.Created,
-            TermOfOfficeDateId = c.TermOfOfficeDateId,
-            Department = c.Department,
-            DepartmentId = c.DepartmentId,
-            IsDeleted = c.IsDeleted,
-            DescriptionGerman = c.DescriptionGerman,
-            DescriptionFrench = c.DescriptionFrench,
-            DescriptionItalian = c.DescriptionItalian,
-            DescriptionRomansh = c.DescriptionRomansh,
-            Memberships = c.Memberships
-                .Where(x =>
-                    x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate > DateOnly.FromDateTime(DateTime.Now) || (x.ElectionType != null && (x.ElectionType.Uri == ElectionType.NewElection || x.ElectionType.Uri == ElectionType.ReElection))))
-                .ToList()
-        })
-        .ToList();
+            .Select(c => new Committee
+            {
+                Id = c.Id,
+                CommitteeType = c.CommitteeType,
+                CommitteeTypeId = c.CommitteeTypeId,
+                ModifiedBy = c.ModifiedBy,
+                Modified = c.Modified,
+                CreatedBy = c.CreatedBy,
+                Created = c.Created,
+                TermOfOfficeDateId = c.TermOfOfficeDateId,
+                Department = c.Department,
+                DepartmentId = c.DepartmentId,
+                IsDeleted = c.IsDeleted,
+                DescriptionGerman = c.DescriptionGerman,
+                DescriptionFrench = c.DescriptionFrench,
+                DescriptionItalian = c.DescriptionItalian,
+                DescriptionRomansh = c.DescriptionRomansh,
+                Memberships = c.Memberships
+                    .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Today) &&
+                                (x.EndDate >= DateOnly.FromDateTime(DateTime.Today) || x.ElectionType is { Uri: ElectionType.NewElection or ElectionType.ReElection }) &&
+                                !x.HasOtherElectionOffice)
+                    .ToList()
+            })
+            .ToList();
 
         var administrationCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToList();
         var authoritiesCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).ToList();
         var extraParliamentaryCommissions = administrationCommissions.Concat(authoritiesCommissions).ToList();
 
         var federalAgenciesCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid).ToList();
-        var managmentCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
-        var nonExtraParliamentaryCommissions = federalAgenciesCommissions.Concat(managmentCommissions).ToList();
+        var managementCommissions = committeesWithActiveMembers.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
+        var nonExtraParliamentaryCommissions = federalAgenciesCommissions.Concat(managementCommissions).ToList();
 
         statisticDto = FillExtraParliamentaryCommissions(statisticDto, extraParliamentaryCommissions);
 
@@ -518,7 +519,7 @@ public class CommitteeService : ICommitteeService
 
         statisticDto = FillFederalAgenciesCommissions(statisticDto, federalAgenciesCommissions);
 
-        statisticDto = FillManagementCommissions(statisticDto, managmentCommissions);
+        statisticDto = FillManagementCommissions(statisticDto, managementCommissions);
 
         statisticDtos.Add(statisticDto);
 
@@ -530,23 +531,17 @@ public class CommitteeService : ICommitteeService
         // we need to have "Leitungsorgane" and "Vertretungen des Bundes" summed together, as well as "Behördenkommissionen" and "Verwaltungskommissionen" -> APK
         var statisticDtos = new List<CommitteeTypeDepartmentStatisticDto>();
 
-        var extraParliamentaryCommissionPrefix = "APK";
-        var nonExtraParliamentaryCommissionPrefix = "NON_APK";
+        const string extraParliamentaryCommissionPrefix = "APK";
+        const string nonExtraParliamentaryCommissionPrefix = "NON_APK";
 
-        var totalPrefix = "TOTAL";
-        var totalAuthoritiesCommissions = 0;
-        var totalAdministrationCommissions = 0;
-        var totalFederalAgenciesCommissions = 0;
-        var totalManagementCommissions = 0;
-        var totalExtraParliamentaryCommissions = 0;
-        var totalNonExtraParliamentaryCommissions = 0;
+        const string totalPrefix = "TOTAL";
 
-        var committeeTypes = await _masterDataRepository.GetCommitteeTypes();
+        var committeeTypes = (await _masterDataRepository.GetCommitteeTypes()).ToArray();
 
-        var ogdIDAuthoritiesCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.AuthoritiesCommissionGuid)!.OgdId;
-        var ogdIDAdministrationCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.AdministrationCommissionGuid)!.OgdId;
-        var ogdIDFederalAgenciesCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.FederalAgenciesCommitteeGuid)!.OgdId;
-        var ogdIDManagementCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.ManagementCommitteeGuid)!.OgdId;
+        var ogdIdAuthoritiesCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.AuthoritiesCommissionGuid)!.OgdId;
+        var ogdIdAdministrationCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.AdministrationCommissionGuid)!.OgdId;
+        var ogdIdFederalAgenciesCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.FederalAgenciesCommitteeGuid)!.OgdId;
+        var ogdIdManagementCommissions = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.ManagementCommitteeGuid)!.OgdId;
 
         var generatedOgdId = 1;
 
@@ -571,12 +566,12 @@ public class CommitteeService : ICommitteeService
             DepartmentId = c.Department!.Id
         });
 
-        totalAuthoritiesCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).Count();
-        totalAdministrationCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).Count();
-        totalFederalAgenciesCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid).Count();
-        totalManagementCommissions = activeCommittees.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).Count();
-        totalExtraParliamentaryCommissions = extraParliamentaryCommissions.Count;
-        totalNonExtraParliamentaryCommissions = nonExtraParliamentaryCommissions.Count;
+        var totalAuthoritiesCommissions = activeCommittees.Count(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid);
+        var totalAdministrationCommissions = activeCommittees.Count(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid);
+        var totalFederalAgenciesCommissions = activeCommittees.Count(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid);
+        var totalManagementCommissions = activeCommittees.Count(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid);
+        var totalExtraParliamentaryCommissions = extraParliamentaryCommissions.Count;
+        var totalNonExtraParliamentaryCommissions = nonExtraParliamentaryCommissions.Count;
 
         foreach (var group in groupedCommittees)
         {
@@ -635,7 +630,7 @@ public class CommitteeService : ICommitteeService
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Behördenkommissionen",
-            CommitteeTypeOgdId = ogdIDAuthoritiesCommissions,
+            CommitteeTypeOgdId = ogdIdAuthoritiesCommissions,
             CommitteeCount = totalAuthoritiesCommissions
         };
 
@@ -647,7 +642,7 @@ public class CommitteeService : ICommitteeService
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Verwaltungskommissionen",
-            CommitteeTypeOgdId = ogdIDAdministrationCommissions,
+            CommitteeTypeOgdId = ogdIdAdministrationCommissions,
             CommitteeCount = totalAdministrationCommissions
         };
 
@@ -659,7 +654,7 @@ public class CommitteeService : ICommitteeService
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-VertretungenDesBundes",
-            CommitteeTypeOgdId = ogdIDFederalAgenciesCommissions,
+            CommitteeTypeOgdId = ogdIdFederalAgenciesCommissions,
             CommitteeCount = totalFederalAgenciesCommissions
         };
 
@@ -671,7 +666,7 @@ public class CommitteeService : ICommitteeService
             OgdId = generatedOgdId,
             Organisation = "Bund",
             CommitteeType = $"{totalPrefix}-Leitungsorgane",
-            CommitteeTypeOgdId = ogdIDManagementCommissions,
+            CommitteeTypeOgdId = ogdIdManagementCommissions,
             CommitteeCount = totalManagementCommissions
         };
 

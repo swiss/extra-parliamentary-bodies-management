@@ -106,6 +106,7 @@ describe('MembershipDataFormComponent', () => {
                     },
                     electionOffice: {
                         federalGovernmentId: 'federalGovernmentId',
+                        otherId: 'otherId',
                     },
                     electionType: {
                         newElectionId: 'newElectionId',
@@ -300,6 +301,22 @@ describe('MembershipDataFormComponent', () => {
 
         expect(component.membershipForm.controls.requirementsProfile.enabled).toBe(false);
     });
+
+    it('should disable requirementsProfile for other election office', () => {
+        const committeeDetails = {id: '5', committeeTypeId: 'managementId'} as CommitteeDetails;
+        component.committeeEntity.set(committeeDetails);
+
+        component.personSelected.set({id: '100'} as PersonDetails);
+        component.membershipForm.controls.beginDate.setValue(new Date(2020, 2, 1));
+        component.membershipForm.controls.endDate.setValue(new Date(2099, 2, 1));
+        component.membershipForm.controls.electionTypeId.setValue('newElectionId');
+        component.membershipForm.controls.electionOfficeId.setValue('otherId');
+
+        component.updateValidity(false);
+
+        expect(component.membershipForm.controls.requirementsProfile.enabled).toBe(false);
+    });
+
     it('should updateValidity set checkbox inCorrelationWithFederalDutyCheckbox true', () => {
         component.personSelected.set({id: '100', federalDuty: true, federalAssembly: true} as PersonDetails);
         component.updateValidity(true);
