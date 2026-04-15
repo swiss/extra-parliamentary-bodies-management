@@ -130,7 +130,7 @@ public class GeneralElectionService : IGeneralElectionService
 
                 foreach (var membership in activeMemberships)
                 {
-                    if (!CheckMembership(membership, termOfOfficeBeginDate))
+                    if (!CheckMembership(membership))
                     {
                         continue;
                     }
@@ -357,11 +357,17 @@ public class GeneralElectionService : IGeneralElectionService
         return true;
     }
 
-    private static bool CheckMembership(Membership membership, DateOnly termOfOfficeStartDate)
+    private static bool CheckMembership(Membership membership)
     {
         // any form of retirement will be ignored
         if (membership.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid || membership.ElectionTypeId == ElectionType.MembershipEndedBecauseOfDeathGuid ||
             membership.ElectionTypeId == ElectionType.OtherRetirementReasonGuid || membership.ElectionTypeId == ElectionType.RetirementGuid)
+        {
+            return false;
+        }
+
+        // memberships with "Andere" as election office don't need to be handled in GEW
+        if (membership.HasOtherElectionOffice)
         {
             return false;
         }

@@ -87,6 +87,7 @@ export interface CantonIdConfig {
 
 export interface ElectionOfficeIdConfig {
     federalGovernmentId: string;
+    otherId: string;
 }
 
 export interface CommitteeTypeIdConfig {

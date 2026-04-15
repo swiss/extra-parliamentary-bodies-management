@@ -145,6 +145,9 @@ public class ElectionOfficeOptions
 {
     [Required]
     public required string FederalGovernmentId { get; init; }
+
+    [Required]
+    public required string OtherId { get; init; }
 }
 
 public class CommitteeTypeOptions
