@@ -151,6 +151,7 @@ public static class PersonMapper
         personDetail.NeedsAttentionOccupation = person.NeedsAttentionOccupation;
         personDetail.NeedsAttentionInterests = person.NeedsAttentionInterests;
         personDetail.NeedsAttentionMembershipExpired = person.NeedsAttentionMembershipExpired;
+        personDetail.NeedsAttentionRequirementsProfile = person.NeedsAttentionRequirementsProfile;
 
         return personDetail;
     }

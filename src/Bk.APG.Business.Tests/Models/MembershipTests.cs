@@ -427,6 +427,19 @@ internal class MembershipTests
         Assert.That(membership.NeedsAttentionFederalAssemblyAuthoritiesCommission, Is.EqualTo(expectedAuthoritiesCommission));
     }
 
+    [TestCase(null, ElectionType.NewElectionGuidAsString, CommitteeType.ManagementCommitteeGuidAsString, false, true)]
+    [TestCase("   ", ElectionType.NewElectionGuidAsString, CommitteeType.FederalAgenciesCommitteeGuidAsString, false, true)]
+    [TestCase("", ElectionType.NewElectionGuidAsString, CommitteeType.AuthoritiesCommissionGuidAsString, true, true)]
+    [TestCase("requirements profile", ElectionType.NewElectionGuidAsString, CommitteeType.ManagementCommitteeGuidAsString, false, false)]
+    [TestCase("", ElectionType.ReElectionGuidAsString, CommitteeType.ManagementCommitteeGuidAsString, false, false)]
+    [TestCase("", ElectionType.NewElectionGuidAsString, CommitteeType.AuthoritiesCommissionGuidAsString, false, false)]
+    public void NeedsAttentionRequirementsProfile_ShouldReturnExpected(string? requirementsProfile, string electionTypeId, string committeeTypeId, bool supervisionDuty, bool expected)
+    {
+        var membership = BuildMembershipForRequirementsProfile(requirementsProfile, electionTypeId, committeeTypeId, supervisionDuty);
+
+        Assert.That(membership.NeedsAttentionRequirementsProfile, Is.EqualTo(expected));
+    }
+
     [Test]
     public void NeedsAttention_WithInactive_ShouldReturnFalse()
     {
@@ -465,5 +478,24 @@ internal class MembershipTests
             .Build();
 
         Assert.That(membership.NeedsAttention, Is.True);
+    }
+
+    private static Membership BuildMembershipForRequirementsProfile(string? requirementsProfile, string electionTypeId, string committeeTypeId, bool supervisionDuty)
+    {
+        var membership = new MembershipBuilder()
+            .WithCommittee(
+                new CommitteeBuilder()
+                    .WithCommitteeTypeId(new Guid(committeeTypeId))
+                    .WithSupervisionDuty(supervisionDuty)
+                    .WithGermanDescription("DE")
+                    .WithFrenchDescription("FR")
+                    .WithItalianDescription("IT")
+                    .Build())
+            .WithElectionType(new ElectionTypeBuilder().WithId(new Guid(electionTypeId)).Build())
+            .Build();
+
+        membership.RequirementsProfile = requirementsProfile;
+
+        return membership;
     }
 }
