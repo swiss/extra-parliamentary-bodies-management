@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+
+-   Export interests without begin date [BKDO-3453](https://bkdev.atlassian.net/browse/BKDO-3453)
+
 ## 1.3.0
 
 -   Add form letter export [BKDO-288](https://bkdev.atlassian.net/browse/BKDO-288)
@@ -12,7 +16,7 @@
 -   Update occupation labels when changing language [BKDO-3336](https://bkdev.atlassian.net/browse/BKDO-3336)
 -   Update membership addition label when changing language [BKDO-3337](https://bkdev.atlassian.net/browse/BKDO-3337)
 -   Update function labels [BKDO-3393](https://bkdev.atlassian.net/browse/BKDO-3393)
--   Mark people with expired memberships [BKDO-3399](https://bkdev.atlassian.net/browse/BKDO-3399)
+-   Validation fixes (requirements profile, expired memberships, missing occupation includes, federal duty, federal assembly) [BKDO-3399](https://bkdev.atlassian.net/browse/BKDO-3399)
 
 ## 1.2.0
 

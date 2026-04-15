@@ -44,13 +44,13 @@ public class InterestRepository : IInterestRepository
         var today = DateOnly.FromDateTime(DateTime.Today);
 
         var interests = await _dataContext.Interests
-            .Where(i => (i.BeginDate <= today && (i.EndDate > today || i.EndDate == null)) || (i.BeginDate == null && i.EndDate == null))
+            .Where(i => (i.BeginDate == null || i.BeginDate <= today) && (i.EndDate == null || i.EndDate >= today))
             .Include(item => item.Person!)
                 .ThenInclude(item => item.Memberships)
             .Include(item => item.InterestCommittee)
             .Include(item => item.InterestFunction)
             .Include(item => item.LegalForm)
-            .Where(c => c.Person!.Memberships.Any(m => m.BeginDate <= today && m.EndDate > today))
+            .Where(c => c.Person!.Memberships.Any(m => m.BeginDate <= today && m.EndDate >= today))
             .AsSplitQuery()
             .ToListAsync();
 

@@ -75,6 +75,7 @@ public class CommitteeDetailDto
     public bool NeedsAttentionBasicData { get; set; }
     public bool NeedsAttentionMembershipExpired { get; set; }
     public bool NeedsAttentionMembershipInterestOrOccupation { get; set; }
+    public bool NeedsAttentionRequirementsProfile { get; set; }
     public bool FutureGeneralElectionCommittee { get; set; }
 
     // General Election related fields
