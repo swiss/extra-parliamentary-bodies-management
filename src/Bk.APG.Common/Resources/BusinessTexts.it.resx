@@ -327,6 +327,9 @@
     <data name="Vacancies_Report_Filename" xml:space="preserve">
         <value>IT_Liste_Vakanzen</value>
     </data>
+    <data name="Information_Note_Filename" xml:space="preserve">
+        <value>IT_Informationsnotiz</value>
+    </data>    
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Consigliera nazionale</value>
     </data>

@@ -10,7 +10,11 @@
                 <mat-option value="ParliamentaryReport">{{ 'requestsAndReports.filter.documentType.parliamentaryReport' | translate }}</mat-option>
                 <mat-option value="AppendixFederalCouncil">{{ 'requestsAndReports.filter.documentType.appendixFederalCouncil' | translate }}</mat-option>
                 <mat-option value="DecisionFederalCouncil">{{ 'requestsAndReports.filter.documentType.decisionFederalCouncil' | translate }}</mat-option>
-                <mat-option value="IN_GE">{{ 'requestsAndReports.filter.documentType.IN_GE' | translate }}</mat-option>
+                @if (isAdmin()) {
+                    <mat-option value="InformationNoteGeneralElection">{{
+                        'requestsAndReports.filter.documentType.informationNoteGeneralElection' | translate
+                    }}</mat-option>
+                }
                 <mat-option value="ElectoralListFC">{{ 'requestsAndReports.filter.documentType.electoralListFC' | translate }}</mat-option>
                 <mat-option value="ElectoralListOnline">{{ 'requestsAndReports.filter.documentType.electoralListOnline' | translate }}</mat-option>
             </mat-select>
@@ -53,7 +57,9 @@
                 }}</mat-option> -->
                 <mat-option value="Vacancies">{{ 'requestsAndReports.filter.documentType.vacancies' | translate }}</mat-option>
                 <!-- TODO: wird zu einem späteren Zeitpunkt aktiviert -->
-                <!-- <mat-option value="CompareListGE">{{ 'requestsAndReports.filter.documentType.compareListGE' | translate }}</mat-option> -->
+                <!-- <mat-option value="CompareListGeneralElection">{{
+                    'requestsAndReports.filter.documentType.compareListGeneralElection' | translate
+                }}</mat-option>-->
             </mat-select>
         </mat-form-field>
 
