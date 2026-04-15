@@ -58,7 +58,9 @@ public class Person : EntityBase
         NeedsAttentionFederalAssemblyAuthoritiesCommission ||
         NeedsAttentionFederalAssemblyAdministrationCommission ||
         NeedsAttentionInterests ||
-        NeedsAttentionOccupation;
+        NeedsAttentionOccupation ||
+        NeedsAttentionRequirementsProfile ||
+        NeedsAttentionBasicData;
 
     [NotMapped]
     public bool NeedsAttentionLongerDuty => Memberships.Any(y => y is { IsActive: true, NeedsAttentionLongerDuty: true });
@@ -92,12 +94,20 @@ public class Person : EntityBase
         (string.IsNullOrWhiteSpace(Employer) || Occupations.Count == 0));
 
     [NotMapped]
-    public bool NeedsAttentionBasicData => !IsValidPhoneNumber(OfficeAddress?.Phone) || !IsValidPhoneNumber(PrivateAddress?.Phone) ||
-        !IsValidPhoneNumber(OfficeAddress?.Mobile) || !IsValidPhoneNumber(PrivateAddress?.Mobile) ||
-        !IsValidEmail(OfficeAddress?.Email) || !IsValidEmail(PrivateAddress?.Email);
+    public bool NeedsAttentionBasicData => !IsValidPhoneNumber(OfficeAddress?.Phone) ||
+                                           !IsValidPhoneNumber(PrivateAddress?.Phone) ||
+                                           !IsValidPhoneNumber(OfficeAddress?.Mobile) ||
+                                           !IsValidPhoneNumber(PrivateAddress?.Mobile) ||
+                                           !IsValidEmail(OfficeAddress?.Email) ||
+                                           !IsValidEmail(PrivateAddress?.Email) ||
+                                           (FederalDuty && OfficeId is null) ||
+                                           (FederalAssembly && CouncilId is null);
 
     [NotMapped]
     public bool NeedsAttentionMembershipExpired => Memberships.Any(y => y.NeedsAttentionMembershipExpired);
+
+    [NotMapped]
+    public bool NeedsAttentionRequirementsProfile => Memberships.Any(m => m is { IsActive: true, NeedsAttentionRequirementsProfile: true });
 
     [NotMapped]
     public int Age => DateTime.UtcNow.Year - BirthYear;

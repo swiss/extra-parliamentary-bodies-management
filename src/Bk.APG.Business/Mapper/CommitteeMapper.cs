@@ -153,6 +153,7 @@ public static class CommitteeMapper
             NeedsAttentionBasicData = committee.NeedsAttentionBasicData,
             NeedsAttentionMembershipExpired = committee.NeedsAttentionMembershipExpired,
             NeedsAttentionMembershipInterestOrOccupation = committee.NeedsAttentionMembershipInterestOrOccupation,
+            NeedsAttentionRequirementsProfile = committee.NeedsAttentionRequirementsProfile,
             FutureGeneralElectionCommittee = committee.FutureGeneralElectionCommittee
         };
         return committeeDetailDto;

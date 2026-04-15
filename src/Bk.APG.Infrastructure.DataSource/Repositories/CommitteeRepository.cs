@@ -97,7 +97,6 @@ public class CommitteeRepository : ICommitteeRepository
 
         var query = _dataContext.Committees
             .Include(item => item.ContactPoints)
-            .Include(item => item.Memberships)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -108,6 +107,9 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.Memberships)
                 .ThenInclude(m => m.Person)
                     .ThenInclude(p => p!.Interests)
+            .Include(item => item.Memberships)
+                .ThenInclude(m => m.Person)
+                    .ThenInclude(p => p!.Occupations)
             .FilterCommittees(filterParameters)
             .AsSingleQuery();
 
@@ -500,7 +502,6 @@ public class CommitteeRepository : ICommitteeRepository
     private IQueryable<Committee> GetCommittees()
     {
         return _dataContext.Committees
-            .Include(item => item.Memberships).ThenInclude(m => m.ElectionType)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -508,12 +509,22 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.TermOfOffice)
             .Include(item => item.LegalForm)
             .Include(item => item.TermOfOfficeDate)
-            .Include(item => item.Memberships)
             .Include(item => item.GeneralElectionCommittees)
             .Include(item => item.EiamAssignment)
-            .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Gender)
-            .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Language)
-            .Include(item => item.Memberships).ThenInclude(m => m.Person).ThenInclude(p => p!.Interests)
+            .Include(item => item.Memberships)
+                .ThenInclude(m => m.ElectionType)
+            .Include(item => item.Memberships)
+                .ThenInclude(m => m.Person)
+                    .ThenInclude(p => p!.Gender)
+            .Include(item => item.Memberships)
+                .ThenInclude(m => m.Person)
+                    .ThenInclude(p => p!.Language)
+            .Include(item => item.Memberships)
+                .ThenInclude(m => m.Person)
+                    .ThenInclude(p => p!.Interests)
+            .Include(item => item.Memberships)
+                .ThenInclude(m => m.Person)
+                    .ThenInclude(p => p!.Occupations)
             .Include(item => item.ContactPoints).ThenInclude(x => x.ContactPointType)
             .Include(item => item.ContactPoints).ThenInclude(x => x.Language)
             .Include(item => item.ContactPoints).ThenInclude(x => x.Gender)
