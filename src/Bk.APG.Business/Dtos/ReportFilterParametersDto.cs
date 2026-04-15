@@ -20,10 +20,10 @@ public enum ReportType
     AppendixFederalCouncil,
     AppendixFederalCouncilCheck,
     Vacancies,
-    CompareListGE,
-    AttachmentFCR_GE,
+    CompareListGeneralElection,
+    AttachmentFCR_GeneralElection,
     DecisionFederalCouncil,
-    IN_GE,
+    InformationNoteGeneralElection,
     ElectoralListFC,
     ElectoralListOnline
 }
