@@ -45,6 +45,7 @@ public class MembershipRepository : IMembershipRepository
             .Include(m => m.Person!.Interests)
             .Include(m => m.Person!.Gender)
             .Include(m => m.Person!.Language)
+            .Include(m => m.Person!.Occupations)
             .Include(m => m.Function)
             .Include(m => m.ElectionType)
             .Include(m => m.MembershipAddition)
