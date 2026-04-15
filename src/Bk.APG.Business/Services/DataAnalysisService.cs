@@ -140,7 +140,7 @@ public class DataAnalysisService : IDataAnalysisService
             {
                 new() { Text = group.First().CommitteeType!.GetText() }, // Gremiumart
                 NumberCell(group.Count()), // Total aktive Gremien
-                NumberCell(group.Sum(x => x.Memberships.Count)), // Total aktive Mitglieder
+                NumberCell(group.Sum(x => x.ActiveMemberCount)), // Total aktive Mitglieder
                 NumberCell(group.Sum(x => x.FemalePresidentCount)), // # Präsidentinnen
                 PercentageCell(Divide(group.Sum(x => x.FemalePresidentCount), group.Sum(x => x.PresidentCount))), // % Präsidentinnen
                 NumberCell(group.Sum(x => x.MalePresidentCount)), // # Präsidenten
@@ -292,7 +292,7 @@ public class DataAnalysisService : IDataAnalysisService
                 new() { Text = committee.TermOfOffice?.GetText() },
                 DateCell(committee.BeginDate),
                 DateCell(committee.EndDate),
-                NumberCell(committee.Memberships.Count), // Total aktive Mitglieder
+                NumberCell(committee.ActiveMemberCount), // Total aktive Mitglieder
                 NumberCell(committee.FemalePresidentCount), // # Präsidentinnen
                 PercentageCell(Divide(committee.FemalePresidentCount, committee.PresidentCount)), // % Präsidentinnen
                 NumberCell(committee.MalePresidentCount), // # Präsidenten
@@ -399,7 +399,7 @@ public class DataAnalysisService : IDataAnalysisService
 
         var memberships = committees
             .SelectMany(x => x.Memberships)
-            .Where(x => x is { IsActive: true, IsDeleted: false });
+            .Where(x => x is { IsActive: true, IsDeleted: false, HasOtherElectionOffice: false });
 
         var bodyCells = memberships
             .OrderBy(x => x.Committee!.GetDescription())
@@ -759,7 +759,7 @@ public class DataAnalysisService : IDataAnalysisService
                 var cantonSum = committees
                     .Where(x => x.DepartmentId == department.Id)
                     .SelectMany(x => x.Memberships)
-                    .Where(x => x is { IsActive: true, IsDeleted: false })
+                    .Where(x => x is { IsActive: true, IsDeleted: false, HasOtherElectionOffice: false })
                     .Count(x => x.Person!.CorrespondenceAddress?.CantonId == canton.Id);
                 cantonRow.Add(NumberCell(cantonSum));
                 sum += cantonSum;
@@ -883,7 +883,7 @@ public class DataAnalysisService : IDataAnalysisService
 
         var memberships = committees
             .SelectMany(x => x.Memberships)
-            .Where(x => x is { IsActive: true, IsDeleted: false });
+            .Where(x => x is { IsActive: true, IsDeleted: false, HasOtherElectionOffice: false });
 
         var bodyCells = memberships.GroupBy(x => x.Person!.Age)
             .OrderBy(x => x.Key)
