@@ -13,10 +13,12 @@ public class ReportController : ControllerBase
     private const string WordMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
 
     private readonly IReportService _reportService;
+    private readonly IFormLetterService _formLetterService;
 
-    public ReportController(IReportService parliamentaryReportService)
+    public ReportController(IReportService parliamentaryReportService, IFormLetterService formLetterService)
     {
         _reportService = parliamentaryReportService;
+        _formLetterService = formLetterService;
     }
 
     [HttpPost("download")]
@@ -35,13 +37,13 @@ public class ReportController : ControllerBase
         if (filterDto.ExportType == "single")
         {
             // we export a ZIP File with all documents within
-            var (fileName, zipFile) = await _reportService.CreateFormLetterAsZipFile(filterDto);
+            var (fileName, zipFile) = await _formLetterService.CreateFormLetterAsZipFile(filterDto);
 
             return File(zipFile, MediaTypeNames.Application.Zip, fileName);
         }
         else
         {
-            var (fileName, content) = await _reportService.CreateFormLetterSingleDocument(filterDto);
+            var (fileName, content) = await _formLetterService.CreateFormLetterSingleDocument(filterDto);
 
             if (filterDto.ExportFileType == "word")
             {
