@@ -192,7 +192,8 @@ public class GeneralElectionServiceTests
         var memberships = new List<Membership>
         {
             new MembershipBuilder().WithPerson(person1).Build(),
-            new MembershipBuilder().WithPerson(person2).Build()
+            new MembershipBuilder().WithPerson(person2).Build(),
+            new MembershipBuilder().WithElectionOfficeId(ElectionOffice.OtherGuid).WithPerson(person1).Build()
         };
 
         var parentId = Guid.NewGuid();
