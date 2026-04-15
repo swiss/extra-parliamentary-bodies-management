@@ -43,9 +43,9 @@ public class TermOfOfficeDateService : ITermOfOfficeDateService
     {
         var termOfOfficeDates = await _termOfOfficeDateRepository.GetAll();
 
-        var geTermOfOfficeDate = termOfOfficeDates.FirstOrDefault(t => t.IsGeneralElection == true);
+        var generalElectionTermOfOfficeDate = termOfOfficeDates.FirstOrDefault(t => t.IsGeneralElection == true);
 
-        return geTermOfOfficeDate ?? throw new EntityNotFoundException("No TermOfOfficeDate with active GeneralElection found");
+        return generalElectionTermOfOfficeDate ?? throw new EntityNotFoundException("No TermOfOfficeDate with active GeneralElection found");
     }
 
     public async Task<TermOfOfficeDate> Update(TermOfOfficeDate termOfOfficeDate)
