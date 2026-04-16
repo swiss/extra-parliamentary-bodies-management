@@ -19,6 +19,7 @@ export interface FrontendConfig {
     eiamMyAccountUrl: string;
     froalaKey: string;
     entityIds: EntityIdConfig;
+    openDataStack: OpenDataStackConfig;
 }
 
 export interface EntityIdConfig {
@@ -120,6 +121,12 @@ export interface ElectionTypeIdConfig {
 
 export interface CountryIdConfig {
     switzerlandId: string;
+}
+
+export interface OpenDataStackConfig {
+    enabled: boolean;
+    baseUrl: string;
+    dashboard: string;
 }
 
 @Injectable({providedIn: 'root'})
