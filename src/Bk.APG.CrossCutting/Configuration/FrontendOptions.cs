@@ -46,4 +46,7 @@ public class FrontendOptions
 
     [Required]
     public required EntityIdOptions EntityIds { get; init; }
+
+    [Required]
+    public required OpenDataStackFrontendOptions OpenDataStack { get; init; }
 }
