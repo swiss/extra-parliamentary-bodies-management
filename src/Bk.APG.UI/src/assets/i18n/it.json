@@ -607,7 +607,7 @@
   "requestsAndReports.filter.department.label": "Dipartimento",
   "requestsAndReports.filter.office.label": "Servizio amministrativo",
   "requestsAndReports.filter.committeeType.label": "Tipo di organo",
-  "requestsAndReports.filter.committeesWithActiveMembership.label": "Organi con membri attivi",
+  "requestsAndReports.filter.committeesWithActiveMembership.label": "Solo organi con membri attivi",
   "requestsAndReports.filter.releasedCommittees.label": "Solo organi autorizzati",
   "requestsAndReports.filter.documentType.parliamentaryReport": "Rapporto del Parlamento",
   "requestsAndReports.filter.documentType.appendixFederalCouncil": "Allegato proposta al Consiglio federale nell'ambito delle ERI",
