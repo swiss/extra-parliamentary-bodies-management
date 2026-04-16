@@ -64,6 +64,7 @@ try
         .Get<SparqlOptions>()!;
     builder.Services.AddValidatedOptions<SparqlTargetsOptions>(builder.Configuration, SparqlTargetsOptions.SectionKey);
     builder.Services.AddValidatedOptions<AppointmentDecisionOptions>(builder.Configuration, AppointmentDecisionOptions.SectionKey);
+    builder.Services.AddValidatedOptions<OpenDataStackOptions>(builder.Configuration, OpenDataStackOptions.SectionKey);
 
     builder.Services.AddUidWebService(uidOptions);
 
