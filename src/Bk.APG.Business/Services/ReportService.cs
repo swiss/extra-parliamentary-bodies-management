@@ -372,7 +372,6 @@ public class ReportService : IReportService
 
     private async Task<(string fileName, Stream content)> GenerateInformationNote(ReportFilterParametersDto filterDto)
     {
-        // as this is admin only, we basically don't need this. But we can use the same repository calls, if we use it anyway.
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
         var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == Language.French ? "InformationNote_French" : "InformationNote_German";
@@ -394,7 +393,7 @@ public class ReportService : IReportService
         var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
 
         var allGeneralElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
-        var allGeneralElectionCommitteesUnfiltered = await _generalElectionCommitteeRepository.GetAll();
+        var allGeneralElectionCommitteesUnfiltered = await _generalElectionCommitteeRepository.GetAllWithPermissionCheck(departmentId, officeId, committeeId);
 
         if (filterDto.CommitteesWithActiveMembership)
         {
@@ -539,26 +538,26 @@ public class ReportService : IReportService
             UnreleasedExtraParliamentaryCommittees = allFederalAgenciesCommittees.Count(c => !c.IsValidated),
             PreviousTotalExtraParliamentaryCommittees = extraParliamentaryCommittees.Count,
 
-            CurrentFemalePercentage = Math.Round((decimal)allFemaleCandidates / allCandidates * 100, 2),
-            PreviousFemalePercentage = Math.Round((decimal)allFemaleMembers / allMembers * 100, 2),
+            CurrentFemalePercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allFemaleCandidates / allCandidates * 100, 2),
+            PreviousFemalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFemaleMembers / allMembers * 100, 2),
             ExpectedGenderPercentage = (decimal?)(managementCommitteeType != null ? managementCommitteeType.FemaleThreshold : 0),
             PreviousExpectedGenderPercentage = previousExpectedGenderPercentage,
             UnderstuffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleUnderStaffed),
             HeavyUnderstuffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
             PreviousHeavyUnderstuffedFemaleCommittees = extraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
             CurrentMalePercentage = Math.Round((decimal)allMaleCandidates / allCandidates * 100, 2),
-            PreviousMalePercentage = Math.Round((decimal)allMaleMembers / allMembers * 100, 2),
+            PreviousMalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allMaleMembers / allMembers * 100, 2),
             UnderstuffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleUnderStaffed),
             HeavyUnderstuffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
             PreviousHeavyUnderstuffedMaleCommittees = extraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
-            CurrentGermanPercentage = Math.Round((decimal)allGermanCandidates / allCandidates * 100, 2),
-            PreviousGermanPercentage = Math.Round((decimal)allGermanMembers / allMembers * 100, 2),
-            CurrentFrenchPercentage = Math.Round((decimal)allFrenchCandidates / allCandidates * 100, 2),
-            PreviousFrenchPercentage = Math.Round((decimal)allFrenchMembers / allMembers * 100, 2),
-            CurrentItalianPercentage = Math.Round((decimal)allItalianCandidates / allCandidates * 100, 2),
-            PreviousItalianPercentage = Math.Round((decimal)allItalianMembers / allMembers * 100, 2),
-            CurrentRomanshPercentage = Math.Round((decimal)allRomanshCandidates / allCandidates * 100, 2),
-            PreviousRomanshPercentage = Math.Round((decimal)allRomanshMembers / allMembers * 100, 2),
+            CurrentGermanPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allGermanCandidates / allCandidates * 100, 2),
+            PreviousGermanPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allGermanMembers / allMembers * 100, 2),
+            CurrentFrenchPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allFrenchCandidates / allCandidates * 100, 2),
+            PreviousFrenchPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFrenchMembers / allMembers * 100, 2),
+            CurrentItalianPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allItalianCandidates / allCandidates * 100, 2),
+            PreviousItalianPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allItalianMembers / allMembers * 100, 2),
+            CurrentRomanshPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allRomanshCandidates / allCandidates * 100, 2),
+            PreviousRomanshPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allRomanshMembers / allMembers * 100, 2),
 
             MissingGermanCommittees = allExtraParliamentaryCommittees.Count(c =>
                 !c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.GermanGuid) &&
@@ -599,19 +598,19 @@ public class ReportService : IReportService
             MinimalItalianThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.ItalianThresholdPercentage! : 0,
             MinimalRomanshThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.RomanshThresholdPercentage! : 0,
 
-            CurrentFemaleThresholdManagementCommittees = Math.Round((decimal)allFemaleCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
-            CurrentMaleThresholdManagementCommittees = Math.Round((decimal)allMaleCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
-            CurrentGermanThresholdManagementCommittees = Math.Round((decimal)allGermanCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
-            CurrentFrenchThresholdManagementCommittees = Math.Round((decimal)allFrenchCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
-            CurrentItalianThresholdManagementCommittees = Math.Round((decimal)allItalianCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
-            CurrentRomanshThresholdManagementCommittees = Math.Round((decimal)allRomanshCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
+            CurrentFemaleThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allFemaleCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
+            CurrentMaleThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allMaleCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
+            CurrentGermanThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allGermanCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
+            CurrentFrenchThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allFrenchCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
+            CurrentItalianThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allItalianCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
+            CurrentRomanshThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allRomanshCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
 
-            CurrentFemaleThresholdFederalAgenciesCommittees = Math.Round((decimal)allFemaleCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
-            CurrentMaleThresholdFederalAgenciesCommittees = Math.Round((decimal)allMaleCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
-            CurrentGermanThresholdFederalAgenciesCommittees = Math.Round((decimal)allGermanCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
-            CurrentFrenchThresholdFederalAgenciesCommittees = Math.Round((decimal)allFrenchCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
-            CurrentItalianThresholdFederalAgenciesCommittees = Math.Round((decimal)allItalianCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
-            CurrentRomanshThresholdFederalAgenciesCommittees = Math.Round((decimal)allRomanshCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
+            CurrentFemaleThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allFemaleCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
+            CurrentMaleThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allMaleCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
+            CurrentGermanThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allGermanCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
+            CurrentFrenchThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allFrenchCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
+            CurrentItalianThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allItalianCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
+            CurrentRomanshThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allRomanshCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
 
             UnderstuffedFemaleManagementCommittees = allManagementCommittees.Count(c => c.FemaleUnderStaffed && c.IsValidated),
             UnderstuffedMaleManagementCommittees = allManagementCommittees.Count(c => c.MaleUnderStaffed && c.IsValidated),

@@ -13,6 +13,7 @@ public interface IGeneralElectionCommitteeRepository
     Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetterPreview(GeneralElectionCommitteeExportFilterParameters filterDto, List<Guid> electionTypesIds);
     Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds);
     Task<IEnumerable<GeneralElectionCommittee>> GetAll();
+    Task<IEnumerable<GeneralElectionCommittee>> GetAllWithPermissionCheck(Guid departmentId, Guid officeId, Guid committeeId);
     Task CommitChanges();
     Task<GeneralElectionCommittee> Create(GeneralElectionCommittee generalElectionCommittee);
     Task<IEnumerable<GeneralElectionCommittee>> GetByDepartmentId(Guid departmentId);

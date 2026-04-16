@@ -611,7 +611,7 @@
   "requestsAndReports.filter.department.label": "Département",
   "requestsAndReports.filter.office.label": "Unité administrative",
   "requestsAndReports.filter.committeeType.label": "Type d'organe",
-  "requestsAndReports.filter.committeesWithActiveMembership.label": "Organes avec membres actifs",
+  "requestsAndReports.filter.committeesWithActiveMembership.label": "Uniquement les organes avec membres actifs",
   "requestsAndReports.filter.releasedCommittees.label": "Uniquement les organes autorisés",
   "requestsAndReports.filter.documentType.parliamentaryReport": "Rapport Parlement",
   "requestsAndReports.filter.documentType.appendixFederalCouncil": "Annexe proposition au CF RI",
