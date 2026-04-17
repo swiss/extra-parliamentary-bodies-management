@@ -51,6 +51,12 @@
       <None Update="Templates\FormLetterGeneralElection.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\InformationNote_French.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\InformationNote_German.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="Templates\Report_Parliament_French.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
