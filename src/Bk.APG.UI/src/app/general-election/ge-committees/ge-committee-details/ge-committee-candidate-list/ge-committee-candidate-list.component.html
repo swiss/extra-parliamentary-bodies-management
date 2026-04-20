@@ -243,7 +243,7 @@
             </div>
         }
         @if (generalElectionCommittee()?.canSaveCandidateList) {
-            <button mat-button obButton="secondary" type="button" (click)="saveSelectedIds()">
+            <button mat-button [obButton]="selectionChanged() ? 'primary' : 'secondary'" type="button" (click)="saveSelectedIds()">
                 {{ 'generalElection.candidateList.save' | translate }}
             </button>
         }
