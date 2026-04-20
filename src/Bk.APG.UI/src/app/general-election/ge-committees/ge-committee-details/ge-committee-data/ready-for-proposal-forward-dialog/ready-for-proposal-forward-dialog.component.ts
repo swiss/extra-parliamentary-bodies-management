@@ -2,7 +2,7 @@ import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import {Component, Inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
-import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
 import {MatInput} from '@angular/material/input';
 import {MatError, MatFormField, MatLabel, MatOption, MatSelect} from '@angular/material/select';
 import {EiamAssignment} from '@api/EiamAssignment';
@@ -46,7 +46,8 @@ export class ReadyForProposalForwardDialogComponent implements OnInit {
         private readonly formBuilder: FormBuilder,
         private readonly dataService: GeneralElectionCommitteeDataService,
         private readonly detailsService: GeneralElectionCommitteeDetailsService,
-        private readonly notificationService: ObNotificationService
+        private readonly notificationService: ObNotificationService,
+        private readonly dialogRef: MatDialogRef<ReadyForProposalForwardDialogComponent>
     ) {}
 
     ngOnInit(): void {
@@ -58,6 +59,8 @@ export class ReadyForProposalForwardDialogComponent implements OnInit {
             this.form.markAllAsTouched();
             return;
         }
+
+        this.dialogRef.close();
 
         this.dataService.forwardReadyForProposal(this.data.committeeId, this.form.getRawValue() as ReadyForProposalForward).subscribe({
             next: () => {
