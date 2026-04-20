@@ -123,6 +123,8 @@ public class GeneralElectionService : IGeneralElectionService
                 _logger.LogInformation("Generate general election data for committee {CommitteeId}", committee.Id);
 
                 var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, _authorizationService.GetCurrentUserName());
+                generalElectionCommittee.CommitteeType = null;
+                generalElectionCommittee.Department = null;
 
                 var createdGeneralElectionCommittee = await _generalElectionCommitteeRepository.Create(generalElectionCommittee);
 
