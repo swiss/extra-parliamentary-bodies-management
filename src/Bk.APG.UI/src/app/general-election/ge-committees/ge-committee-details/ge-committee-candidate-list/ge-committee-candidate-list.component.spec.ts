@@ -509,6 +509,54 @@ describe('GeneralElectionCommitteeCandidateListComponent', () => {
             });
         });
 
+        describe('selectionChanged signal', () => {
+            it('should be false initially', () => {
+                expect(component.selectionChanged()).toBe(false);
+            });
+
+            it('should become true after toggleSelection', () => {
+                component.toggleSelection('candidate-1');
+
+                expect(component.selectionChanged()).toBe(true);
+            });
+
+            it('should become true after toggleSelectAll selects all', () => {
+                component.toggleSelectAll();
+
+                expect(component.selectionChanged()).toBe(true);
+            });
+
+            it('should become true after toggleSelectAll deselects all', () => {
+                component.selectedIds = ['candidate-1', 'candidate-2'];
+                component.allSelected = true;
+
+                component.toggleSelectAll();
+
+                expect(component.selectionChanged()).toBe(true);
+            });
+
+            it('should reset to false after saveSelectedIds succeeds', () => {
+                const saveCandidateListMock = jest.fn().mockReturnValue(of(undefined));
+                membershipCandidateListServiceMock.saveCandidateList = saveCandidateListMock;
+                component.toggleSelection('candidate-1');
+                expect(component.selectionChanged()).toBe(true);
+
+                component.saveSelectedIds();
+
+                expect(component.selectionChanged()).toBe(false);
+            });
+
+            it('should remain true after saveSelectedIds fails', () => {
+                const saveCandidateListMock = jest.fn().mockReturnValue(throwError(() => new Error('fail')));
+                membershipCandidateListServiceMock.saveCandidateList = saveCandidateListMock;
+                component.toggleSelection('candidate-1');
+
+                component.saveSelectedIds();
+
+                expect(component.selectionChanged()).toBe(true);
+            });
+        });
+
         describe('deleteMembershipCandidate', () => {
             it('should delete membership candidate', () => {
                 component.deleteMembershipCandidate('foo');
