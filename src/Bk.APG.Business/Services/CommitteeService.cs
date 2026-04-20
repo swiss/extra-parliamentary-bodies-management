@@ -401,7 +401,7 @@ public class CommitteeService : ICommitteeService
 
         if (createdCommittee.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && await _termOfOfficeDateService.CheckForRunningGeneralElection())
         {
-            _logger.LogInformation("Generate general election data for committee {CommitteeId}", createdCommittee.Id);
+            _logger.LogInformation("Generate general election data for new committee {CommitteeId}", createdCommittee.Id);
 
             var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, _authorizationService.GetCurrentUserName());
 
