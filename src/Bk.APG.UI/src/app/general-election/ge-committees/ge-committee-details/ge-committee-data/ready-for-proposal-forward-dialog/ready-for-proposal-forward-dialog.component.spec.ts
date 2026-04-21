@@ -1,5 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {MAT_DIALOG_DATA} from '@angular/material/dialog';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {EiamAssignment} from '@api/EiamAssignment';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObNotificationService} from '@oblique/oblique';
@@ -15,6 +15,7 @@ describe('ReadyForProposalForwardDialogComponent', () => {
     let dataService: jest.Mocked<GeneralElectionCommitteeDataService>;
     let detailsService: jest.Mocked<GeneralElectionCommitteeDetailsService>;
     let notificationService: jest.Mocked<ObNotificationService>;
+    let dialogRef: jest.Mocked<MatDialogRef<ReadyForProposalForwardDialogComponent>>;
 
     const mockDialogData = {
         committeeId: 'committee-123',
@@ -33,6 +34,7 @@ describe('ReadyForProposalForwardDialogComponent', () => {
             success: jest.fn(),
             error: jest.fn(),
         } as unknown as jest.Mocked<ObNotificationService>;
+        dialogRef = {close: jest.fn()} as unknown as jest.Mocked<MatDialogRef<ReadyForProposalForwardDialogComponent>>;
         const translateServiceMock = {
             getCurrentLang: jest.fn(() => 'en'),
             onLangChange: new Subject(),
@@ -43,6 +45,7 @@ describe('ReadyForProposalForwardDialogComponent', () => {
             providers: [
                 {provide: TranslateService, useValue: translateServiceMock},
                 {provide: MAT_DIALOG_DATA, useValue: mockDialogData},
+                {provide: MatDialogRef, useValue: dialogRef},
                 {provide: GeneralElectionCommitteeDetailsService, useValue: detailsService},
                 {provide: ObNotificationService, useValue: notificationService},
             ],
@@ -83,6 +86,7 @@ describe('ReadyForProposalForwardDialogComponent', () => {
 
         component.forward();
 
+        expect(dialogRef.close).toHaveBeenCalled();
         expect(dataService.forwardReadyForProposal).toHaveBeenCalledWith('committee-123', {
             forwardToId: 'assignment-1',
             description: 'Test description',
@@ -99,6 +103,7 @@ describe('ReadyForProposalForwardDialogComponent', () => {
 
         component.forward();
 
+        expect(dialogRef.close).not.toHaveBeenCalled();
         expect(dataService.forwardReadyForProposal).not.toHaveBeenCalled();
         expect(component.form.touched).toBe(true);
     });
