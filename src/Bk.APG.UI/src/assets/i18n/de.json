@@ -921,5 +921,6 @@
   "recipients.filter.multipleDocuments.label": "Alle Gremien in einem Dokument",
   "recipients.filter.word.label": "Word generieren",
   "recipients.filter.pdf.label": "PDF generieren",
-  "recipients.filter.formLetterExportDate.label": "Brief-Datum"
+  "recipients.filter.formLetterExportDate.label": "Brief-Datum",
+  "openDataStack.title": "Open Data Stack"
 }
