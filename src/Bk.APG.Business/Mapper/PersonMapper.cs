@@ -243,7 +243,7 @@ public static class PersonMapper
             GenderId = personCreateDto.GenderId,
             FederalDuty = personCreateDto.FederalDuty,
             FederalAssembly = personCreateDto.FederalAssembly,
-            SalutationId = personCreateDto.SalutationId,
+            SalutationId = personCreateDto.SalutationId == null ? personCreateDto.GenderId == Gender.MaleGuid ? Salutation.ManGuid : Salutation.WomanGuid : personCreateDto.SalutationId,
             SalutationText = personCreateDto.SalutationText,
             OfficeId = personCreateDto.OfficeId,
             CouncilId = personCreateDto.CouncilId,
