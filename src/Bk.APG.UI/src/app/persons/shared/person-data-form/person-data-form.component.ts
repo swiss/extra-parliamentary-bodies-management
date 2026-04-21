@@ -163,7 +163,7 @@ export class PersonDataFormComponent implements OnInit {
     private readonly unsubscribe = new Subject<void>();
 
     private readonly selectedGenderId = toSignal(this.personForm.controls.genderId.valueChanges);
-    private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges);
+    private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges.pipe(debounceTime(1000)));
     private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges.pipe(debounceTime(1000)));
     private readonly selectedCorrespondenceLanguageId = toSignal(this.personForm.controls.correspondenceLanguageId.valueChanges);
     private lastSalutationParamsKey?: string;
