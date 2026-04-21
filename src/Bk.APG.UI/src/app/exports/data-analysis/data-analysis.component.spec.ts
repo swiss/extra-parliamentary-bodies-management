@@ -7,8 +7,10 @@ import {ObHttpApiInterceptorEvents, ObNotificationService, WINDOW} from '@obliqu
 import {ErrorService} from '@shared/error-service.service';
 import * as fileUtil from '@shared/file-util';
 import {DOCUMENT} from '@shared/injection.tokens';
-import {MockComponents, MockModule, MockPipe} from 'ng-mocks';
+import {MockComponent, MockComponents, MockModule, MockPipe} from 'ng-mocks';
 import {of, Subject, throwError} from 'rxjs';
+import {ConfigsService} from '../../../app/configs.service';
+import {OpenDataStackComponent} from '../open-data-stack/open-data-stack.component';
 import {DataAnalysisComponent} from './data-analysis.component';
 import {DataAnalysisService} from './data-analysis.service';
 
@@ -18,6 +20,7 @@ describe('DataAnalysisComponent', () => {
     let dataAnalysisServiceMock: jest.Mocked<DataAnalysisService>;
     let interceptorEventsMock: jest.Mocked<ObHttpApiInterceptorEvents>;
     let notificationServiceMock: jest.Mocked<ObNotificationService>;
+    let configsServiceMock: jest.Mocked<ConfigsService>;
 
     beforeEach(async () => {
         const translateServiceMock = {
@@ -44,6 +47,14 @@ describe('DataAnalysisComponent', () => {
             error: jest.fn(),
         } as unknown as jest.Mocked<ObNotificationService>;
 
+        configsServiceMock = {
+            frontendConfig: {
+                openDataStack: {
+                    enabled: true,
+                },
+            },
+        } as unknown as jest.Mocked<ConfigsService>;
+
         await TestBed.configureTestingModule({
             imports: [
                 DataAnalysisComponent,
@@ -51,6 +62,7 @@ describe('DataAnalysisComponent', () => {
                 MockModule(MatDatepickerModule),
                 MockComponents(MatFormField, MatDatepicker, MatDatepickerToggle),
                 MockPipe(TranslatePipe),
+                MockComponent(OpenDataStackComponent),
             ],
             providers: [
                 {provide: TranslateService, useValue: translateServiceMock},
@@ -58,6 +70,7 @@ describe('DataAnalysisComponent', () => {
                 {provide: DataAnalysisService, useValue: dataAnalysisServiceMock},
                 {provide: ObHttpApiInterceptorEvents, useValue: interceptorEventsMock},
                 {provide: ObNotificationService, useValue: notificationServiceMock},
+                {provide: ConfigsService, useValue: configsServiceMock},
                 {provide: WINDOW, useValue: window},
                 {provide: DOCUMENT, useValue: document},
             ],
