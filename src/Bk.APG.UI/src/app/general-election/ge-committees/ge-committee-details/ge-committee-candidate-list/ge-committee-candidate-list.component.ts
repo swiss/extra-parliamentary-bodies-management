@@ -154,6 +154,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
     selectedPerson = signal<PersonDetails | undefined>(undefined);
     allSelected = false;
     selectedIds: string[] = [];
+    selectionChanged = signal(false);
     vacancies = computed(() =>
         this.generalElectionCommitteeDetailsService.committeeDetails()?.vacanciesGeneralElection != null
             ? this.generalElectionCommitteeDetailsService.committeeDetails()?.vacanciesGeneralElection
@@ -239,6 +240,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
                 this.initializeForms(generalElectionCommittee.candidates ?? []);
                 this.selectedIds = (generalElectionCommittee.candidates ?? []).filter(x => x.isSelected).map(x => x.id);
                 this.allSelected = false;
+                this.selectionChanged.set(false);
                 this.clearValidationList('errors');
                 this.generalElectionCommittee.set(generalElectionCommittee);
             }
@@ -387,6 +389,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
         } else {
             this.selectedIds.push(id);
         }
+        this.selectionChanged.set(true);
         this.updateAllSelectedState();
     }
 
@@ -398,6 +401,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
             this.selectedIds = [...this.dataSource.data.map(item => item.id)];
             this.allSelected = true;
         }
+        this.selectionChanged.set(true);
     }
 
     isPartiallySelected(): boolean {
@@ -442,6 +446,7 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
     saveSelectedIds() {
         this.membershipCandidateListService.saveCandidateList(this.route.snapshot.params.id, this.selectedIds).subscribe({
             next: () => {
+                this.selectionChanged.set(false);
                 this.generalElectionCommitteeDetailsService.reload$.next();
                 this.notificationService.success('generalElection.candidateList.save.success');
             },
