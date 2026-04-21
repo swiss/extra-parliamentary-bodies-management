@@ -78,6 +78,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IFormLetterSenderService, FormLetterSenderService>();
         services.AddScoped<ICountryService, CountryService>();
         services.AddScoped<IFormLetterService, FormLetterService>();
+        services.AddScoped<IOpenDataStackService, OpenDataStackService>();
 
         services.AddScoped<ISparqlClientFactory, SparqlClientFactory>();
         services.AddScoped<IOgdExportService, OgdExportService>();
