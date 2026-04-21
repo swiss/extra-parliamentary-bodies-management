@@ -761,17 +761,10 @@ public class ReportService : IReportService
 
             foreach (var committeeGroup in groupedCommittees)
             {
-                var committeeList = new List<ReportCommitteeDto>();
-
-                foreach (var committee in committeeGroup)
-                {
-                    var committeeDto = new ReportCommitteeDto
-                    {
-                        Name = committee.GetDescription()
-                    };
-
-                    committeeList.Add(committeeDto);
-                }
+                var committeeList =
+                    committeeGroup
+                        .Select(g => new ReportCommitteeDto { Name = g.GetDescription() })
+                        .ToList();
 
                 var committeeTypeDto = new ReportCommitteeTypeDto
                 {
