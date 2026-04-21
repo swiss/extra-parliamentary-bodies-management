@@ -937,7 +937,6 @@ public class ReportService : IReportService
                 .Where(c => c.DepartmentId == department.Id)
                 .ToList();
 
-            var committeeList = new List<ReportCommitteeDto>();
 
             var moreThan12YearsDto = filteredCommittees
                 .Select(c => new
@@ -957,20 +956,17 @@ public class ReportService : IReportService
                 })
                 .ToList();
 
-            foreach (var committee in moreThan12YearsDto)
-            {
-                var committeeDto = new ReportCommitteeDto
-                {
-                    Name = committee.Name,
-                    FreeText = committee.MemberCount > 0 && committee.FederalMemberCount > 0 && committee.MemberCount != committee.FederalMemberCount ?
-                    string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberAndFederalMemberCount, committee.MemberCount, committee.FederalMemberCount) :
-                    committee.MemberCount > 0 && committee.FederalMemberCount > 0 && committee.MemberCount == committee.FederalMemberCount ?
-                    string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_FederalMemberCount, committee.FederalMemberCount) :
-                    string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberCount, committee.MemberCount)
-                };
-
-                committeeList.Add(committeeDto);
-            }
+            var committeeList =
+                moreThan12YearsDto
+                    .Select(x => new ReportCommitteeDto
+                    {
+                        Name = x.Name,
+                        FreeText =
+                            x.MemberCount > 0 && x.FederalMemberCount > 0 && x.MemberCount != x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberAndFederalMemberCount, x.MemberCount, x.FederalMemberCount) :
+                            x.MemberCount > 0 && x.FederalMemberCount > 0 && x.MemberCount == x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_FederalMemberCount, x.FederalMemberCount) :
+                            string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberCount, x.MemberCount)
+                    })
+                    .ToList();
 
             dtoDict[department.GetText()].Committees = committeeList;
         }
