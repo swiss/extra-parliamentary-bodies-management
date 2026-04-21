@@ -461,8 +461,6 @@ public class ReportService : IReportService
         var membersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.EstimatedTermOfOffice > 12);
         var federalDutyMembersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.EstimatedTermOfOffice > 12 && m.Person!.FederalDuty);
 
-        var allSelectedCandidates = allGeneralElectionCommittees.Where(c => c.IsValidated).SelectMany(c => c.MembershipCandidates).Where(m => m.IsSelected);
-
         var multipleMemberships = allGeneralElectionCommittees
             .Where(c => c.IsValidated)
             .SelectMany(c => c.MembershipCandidates
