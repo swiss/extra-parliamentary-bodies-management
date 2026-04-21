@@ -36,20 +36,6 @@ public class OccupationRepository : IOccupationRepository
                                  o.TextFemaleIt == searchString);
     }
 
-    // Used, to cleanup the migrated data.
-    public async Task RemoveAllGermanDuplicatesForCleanup()
-    {
-        var duplicates = await _dataContext.Occupations
-            .GroupBy(e => e.TextDe)
-            .Where(g => g.Count() > 1)
-            .Skip(1)
-            // .SelectMany(g => g.OrderBy(e => e.Id).Skip(1))  // skip first, take rest as duplicates
-            .ToListAsync();
-
-        //_dataContext.Occupations.RemoveRange(duplicates);
-        //_dataContext.SaveChanges();
-    }
-
     public async Task<Occupation?> GetById(Guid id)
     {
         return await _dataContext.Occupations
