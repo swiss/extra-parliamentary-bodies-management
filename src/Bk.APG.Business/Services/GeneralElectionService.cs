@@ -60,11 +60,11 @@ public class GeneralElectionService : IGeneralElectionService
 
         var isGeneralElectionInProgress = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 
-        if (!isGeneralElectionInProgress)
+        if (!isGeneralElectionInProgress || _authorizationService.IsObserver)
         {
             result = false;
         }
-        else if (_authorizationService.IsAdmin || _authorizationService.IsObserver)
+        else if (_authorizationService.IsAdmin)
         {
             result = true;
         }
