@@ -163,7 +163,7 @@ export class PersonDataFormComponent implements OnInit {
     private readonly unsubscribe = new Subject<void>();
 
     private readonly selectedGenderId = toSignal(this.personForm.controls.genderId.valueChanges);
-    private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges.pipe(debounceTime(1000)));
+    private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges);
     private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges.pipe(debounceTime(1000)));
     private readonly selectedCorrespondenceLanguageId = toSignal(this.personForm.controls.correspondenceLanguageId.valueChanges);
     private lastSalutationParamsKey?: string;
@@ -280,6 +280,8 @@ export class PersonDataFormComponent implements OnInit {
 
         this.personForm.valueChanges.pipe(debounceTime(300), takeUntilDestroyed()).subscribe(formValues => {
             const formValuesWithNull = {...this.personForm.getRawValue()};
+
+            // Todo, analog Membershipform in die Save-Funktion auslagern, nur zeilen 290-294 drin lassen
 
             this.officeId = formValuesWithNull.officeId;
             this.councilId = formValuesWithNull.councilId;
