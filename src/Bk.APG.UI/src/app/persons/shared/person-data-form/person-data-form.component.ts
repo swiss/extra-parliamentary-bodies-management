@@ -281,8 +281,6 @@ export class PersonDataFormComponent implements OnInit {
         this.personForm.valueChanges.pipe(debounceTime(300), takeUntilDestroyed()).subscribe(formValues => {
             const formValuesWithNull = {...this.personForm.getRawValue()};
 
-            // Todo, analog Membershipform in die Save-Funktion auslagern, nur zeilen 290-294 drin lassen
-
             this.officeId = formValuesWithNull.officeId;
             this.councilId = formValuesWithNull.councilId;
             this.employer = formValuesWithNull.employer;
