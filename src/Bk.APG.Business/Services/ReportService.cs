@@ -672,23 +672,20 @@ public class ReportService : IReportService
 
             foreach (var committeeGroup in groupedCommittees)
             {
-                var committeeList = new List<InformationNoteNonExtraParliamentaryCommitteeData>();
-
-                foreach (var committee in committeeGroup)
-                {
-                    var committeeDto = new InformationNoteNonExtraParliamentaryCommitteeData
-                    {
-                        Name = committee.GetDescription(),
-                        GermanText = $"{committee.GermanCount} ({committee.GermanQuota} %)",
-                        FrenchText = $"{committee.FrenchCount} ({committee.FrenchQuota} %)",
-                        ItalianText = $"{committee.ItalianCount} ({committee.ItalianQuota} %)",
-                        RomanshText = $"{committee.RomanshCount} ({committee.RomanshQuota} %)",
-                        FemaleText = $"{committee.FemaleCount} ({committee.FemaleQuota} %)",
-                        MaleText = $"{committee.MaleCount} ({committee.MaleQuota} %)",
-                    };
-
-                    committeeList.Add(committeeDto);
-                }
+                var committeeList =
+                    committeeGroup
+                        .Select(g =>
+                            new InformationNoteNonExtraParliamentaryCommitteeData
+                            {
+                                Name = g.GetDescription(),
+                                GermanText = $"{g.GermanCount} ({g.GermanQuota} %)",
+                                FrenchText = $"{g.FrenchCount} ({g.FrenchQuota} %)",
+                                ItalianText = $"{g.ItalianCount} ({g.ItalianQuota} %)",
+                                RomanshText = $"{g.RomanshCount} ({g.RomanshQuota} %)",
+                                FemaleText = $"{g.FemaleCount} ({g.FemaleQuota} %)",
+                                MaleText = $"{g.MaleCount} ({g.MaleQuota} %)"
+                            })
+                        .ToList();
 
                 var committeeTypeDto = new InformationNoteNonExtraParliamentaryCommitteeTypeDto
                 {
