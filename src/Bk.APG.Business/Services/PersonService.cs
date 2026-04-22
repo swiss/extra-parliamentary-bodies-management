@@ -184,7 +184,6 @@ public class PersonService : IPersonService
 
         existingEntry.GenderId = updateDto.GenderId;
         existingEntry.LanguageId = updateDto.LanguageId;
-
         existingEntry.GivenName = updateDto.GivenName;
         existingEntry.Surname = updateDto.Surname;
         existingEntry.BirthYear = updateDto.BirthYear;
@@ -198,7 +197,16 @@ public class PersonService : IPersonService
         existingEntry.SalutationText = updateDto.SalutationText;
 
         existingEntry.CorrespondenceLanguageId = updateDto.CorrespondenceLanguageId;
-        existingEntry.SalutationId = updateDto.SalutationId;
+
+        if (updateDto.SalutationId == null)
+        {
+            existingEntry.SalutationId = updateDto.GenderId == Gender.MaleGuid ? Salutation.ManGuid : Salutation.WomanGuid;
+        }
+        else
+        {
+            existingEntry.SalutationId = updateDto.SalutationId;
+        }
+
         existingEntry.CouncilId = updateDto.CouncilId;
         existingEntry.OfficeId = updateDto.OfficeId;
 

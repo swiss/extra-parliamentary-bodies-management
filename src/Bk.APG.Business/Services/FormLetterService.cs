@@ -277,7 +277,9 @@ public class FormLetterService : IFormLetterService
                 m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextIt :
                 m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.GenderId == Gender.FemaleGuid ? m.Function!.TextFemaleIt :
                 m.Person!.CorrespondenceLanguageId == Language.RomanshGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextRm : string.Empty,
-                Salutation = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? m.Person!.Salutation!.TextDe :
+                // Salutation can be null, then we display nothing
+                Salutation = m.Person!.Salutation == null ? string.Empty :
+                    m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? m.Person!.Salutation!.TextDe :
                     m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? m.Person!.Salutation!.TextFr :
                     m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? m.Person!.Salutation!.TextIt :
                     m.Person!.CorrespondenceLanguageId == Language.RomanshGuid ? m.Person!.Salutation!.TextRm : string.Empty,
