@@ -6,6 +6,7 @@ public class DocumentStorageModificationDto
 {
     public Guid? Id { get; set; }
     public required string DisplayName { get; set; }
+    public string? DocumentStorageId { get; set; }
     public required bool IsOriginal { get; set; }
     public required Guid LanguageId { get; set; }
     public IFormFile? File { get; set; }
