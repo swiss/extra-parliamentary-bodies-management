@@ -220,14 +220,10 @@ public class CommitteeService : ICommitteeService
 
         existingCommittee.Modified = DateTime.UtcNow;
 
-        if (checkAuthorization)
-        {
-            existingCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
-        }
-        else
-        {
-            existingCommittee.ModifiedBy = "system";
-        }
+        existingCommittee.ModifiedBy =
+            checkAuthorization
+                ? existingCommittee.ModifiedBy = _authorizationService.GetCurrentUserName()
+                : existingCommittee.ModifiedBy = "system";
 
         await _committeeRepository.CommitChanges();
 
