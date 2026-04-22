@@ -6,6 +6,8 @@
 -   Add "Other" as election office [BKDO-3326](https://bkdev.atlassian.net/browse/BKDO-3326)
 -   Introduce information note report [BKDO-1032](https://bkdev.atlassian.net/browse/BKDO-1032)
 -   Integrate Open Data Stack reports via iFrame [BKDO-2937](https://bkdev.atlassian.net/browse/BKDO-2937)
+-   No general election for observers [BKDO-3524](https://bkdev.atlassian.net/browse/BKDO-3524)
+-   Fix form letter issues with empty salutations [BKDO-3525](https://bkdev.atlassian.net/browse/BKDO-3525)
 
 ## 1.3.0
 
