@@ -94,7 +94,8 @@ public class GeneralElectionCommittee : EntityBase
     public int ActiveMemberCount => MembershipCandidates.Count(x => x is { IsSelected: true, IsDeleted: false });
 
     [NotMapped]
-    public int? CalculatedVacancies => MinimalMembers - MembershipCandidates.Count(x => x is { IsSelected: true, IsDeleted: false });
+    public int? CalculatedVacancies => MembershipCandidates.Count(x => x is { IsSelected: true, IsDeleted: false }) < MinimalMembers ?
+        MinimalMembers - MembershipCandidates.Count(x => x is { IsSelected: true, IsDeleted: false }) : 0;
 
     [NotMapped]
     public int FemaleCount => MembershipCandidates.Count(x => x is { IsSelected: true, Gender.Uri: Gender.Female, IsDeleted: false });
