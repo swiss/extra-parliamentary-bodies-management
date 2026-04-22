@@ -84,14 +84,14 @@ public class GeneralElectionServiceTests
     }
 
     [Test]
-    public async Task IsGeneralElectionAvailable_WhenUserIsObserver_ReturnsTrue()
+    public async Task IsGeneralElectionAvailable_WhenUserIsObserver_ReturnsFalse()
     {
         _authorizationService.IsAdmin.Returns(false);
         _authorizationService.IsObserver.Returns(true);
 
         var result = await _generalElectionService.IsGeneralElectionToggleAvailable();
 
-        Assert.That(result, Is.True);
+        Assert.That(result, Is.False);
     }
 
     [Test]

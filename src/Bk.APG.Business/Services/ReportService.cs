@@ -812,8 +812,7 @@ public class ReportService : IReportService
 
                     if (informationNoteData == InformationNoteData.Vacancies)
                     {
-                        // if there is no value in VacanciesGeneralElection, we have to calculate it!
-                        var vacancies = committee.VacanciesGeneralElection ?? committee.MinimalMembers - committee.MembershipCandidates.Count(m => m.IsSelected);
+                        var vacancies = committee.MinimalMembers - committee.MembershipCandidates.Count(m => m.IsSelected);
                         freeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_Vacancies, vacancies);
                     }
                     else if (informationNoteData == InformationNoteData.Genders)
