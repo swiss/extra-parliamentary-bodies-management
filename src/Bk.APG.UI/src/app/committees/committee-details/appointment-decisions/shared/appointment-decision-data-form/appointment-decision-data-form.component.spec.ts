@@ -10,7 +10,9 @@ import {ObEUploadEventType, ObFileUploadModule, ObNotificationService, ObUnsaved
 import {ErrorService} from '@shared/error-service.service';
 import {MasterDataService} from '@shared/master-data.service';
 import {MockComponents, MockDirective, MockModule, MockPipe} from 'ng-mocks';
+import {of} from 'rxjs';
 import {ConfigsService} from '../../../../../configs.service';
+import {AppointmentDecisionService} from '../../appointment-decision.service';
 import {AppointmentDecisionDataFormComponent} from './appointment-decision-data-form.component';
 
 describe('AppointmentDecisionDataFormComponent', () => {
@@ -28,6 +30,7 @@ describe('AppointmentDecisionDataFormComponent', () => {
             {
                 id: '11',
                 displayName: 'dName',
+                documentStorageId: '1111',
                 isOriginal: true,
                 languageId: 'germanLanguageId',
                 file: {} as File,
@@ -81,6 +84,10 @@ describe('AppointmentDecisionDataFormComponent', () => {
         ]),
     } as unknown as Partial<MasterDataService>;
 
+    const appointmentDecisionServiceMock = {
+        downloadFile: jest.fn().mockReturnValue(of()),
+    };
+
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
@@ -99,6 +106,7 @@ describe('AppointmentDecisionDataFormComponent', () => {
                 {provide: ErrorService, useValue: errorServiceMock},
                 {provide: ConfigsService, useValue: configsServiceMock},
                 {provide: ObNotificationService, useValue: notificationServiceMock},
+                {provide: AppointmentDecisionService, useValue: appointmentDecisionServiceMock},
             ],
         }).compileComponents();
 
@@ -222,6 +230,15 @@ describe('AppointmentDecisionDataFormComponent', () => {
             expect(formGroup.get('displayName')!.value).toBe('file1_FR.docx');
             expect(formGroup.get('languageId')!.value).toBe(configsServiceMock.frontendConfig.entityIds.language.frenchLanguageId);
             expect(formGroup.get('id')!.value).toBe('');
+        });
+
+        it('should download a document', () => {
+            component.isUpdateMode = true;
+            fixture.detectChanges();
+            expect(component.documentsForm.length).toBe(1);
+            component.downloadDocument(0);
+
+            expect(appointmentDecisionServiceMock.downloadFile).toHaveBeenCalledTimes(1);
         });
     });
 
