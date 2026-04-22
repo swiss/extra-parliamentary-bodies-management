@@ -25,6 +25,7 @@ import {conditionalValidator} from '@shared/form-validators/conditional.validato
 import {MasterDataService} from '@shared/master-data.service';
 import {debounceTime, merge} from 'rxjs';
 import {ConfigsService} from '../../../../../configs.service';
+import {AppointmentDecisionService} from '../../appointment-decision.service';
 
 /* eslint-disable dot-notation */
 @Component({
@@ -86,9 +87,10 @@ export class AppointmentDecisionDataFormComponent {
     constructor(
         protected readonly masterDataService: MasterDataService,
         protected readonly errorService: ErrorService,
+        protected readonly configsService: ConfigsService,
         private readonly fb: FormBuilder,
         private readonly notificationService: ObNotificationService,
-        protected readonly configsService: ConfigsService
+        private readonly appointmentDecisionService: AppointmentDecisionService
     ) {
         this.documentsForm = new UntypedFormArray([]);
         merge(this.appointmentDecisionForm.valueChanges, this.documentsForm.valueChanges)
@@ -145,7 +147,7 @@ export class AppointmentDecisionDataFormComponent {
         this.files = [];
         this.documentsForm.clear();
         appointmentDecisionUpdate?.documents.forEach(element => {
-            this.addExistingToDocumentForm(element.displayName, element.id, element.languageId, element.isOriginal);
+            this.addExistingToDocumentForm(element.displayName, element.id, element.languageId, element.isOriginal, element.documentStorageId);
             this.files?.push({} as File);
         });
     }
@@ -190,6 +192,25 @@ export class AppointmentDecisionDataFormComponent {
                 this.addNewToDocumentForm(element as File);
             });
         }
+    }
+
+    public downloadDocument(i: number) {
+        const documentFormGroup = this.documentsForm.controls[i] as FormGroup;
+
+        this.appointmentDecisionService.downloadFile(documentFormGroup.get('documentStorageId')!.value).subscribe({
+            next: blob => {
+                const suggestedFileName = documentFormGroup.get('displayName')!.value;
+                const url = window.URL.createObjectURL(blob);
+                const anchor = document.createElement('a');
+                anchor.href = url;
+                anchor.download = suggestedFileName;
+                anchor.click();
+                window.URL.revokeObjectURL(url);
+            },
+            error: error => {
+                console.error('Download failed:', error);
+            },
+        });
     }
 
     public removeUploadedDocument(i: number) {
@@ -243,9 +264,10 @@ export class AppointmentDecisionDataFormComponent {
         this.appointmentDecisionForm.controls.text.updateValueAndValidity();
     }
 
-    private addExistingToDocumentForm(displayName: string, id: string, languageId: string, isOriginal: boolean) {
+    private addExistingToDocumentForm(displayName: string, id: string, languageId: string, isOriginal: boolean, documentStorageId?: string) {
         const formGroup = this.fb.group({
             id,
+            documentStorageId,
             displayName: this.fb.control(displayName, {validators: [Validators.required]}),
             ...(this.isInstitutionSelected() ? {isOriginal: this.fb.control(isOriginal, {validators: [Validators.required]})} : {}),
             languageId: this.fb.control(languageId, {validators: [Validators.required]}),
