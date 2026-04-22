@@ -11,7 +11,7 @@
     <ItemGroup>
         <!--Npgsql.EntityFrameworkCore.PostgreSQL pulls Version Microsoft.EntityFrameworkCore.Relational 8.0.11 which leads to ambiguous references. -->
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="8.0.22" />
-        
+
         <PackageReference Include="Swiss.FCh.Monitoring" Version="2.5.3" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.22" />
