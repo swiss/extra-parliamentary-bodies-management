@@ -45,6 +45,10 @@ public class InformationNoteDto
     public required int ReleasedFederalAgenciesCommittees { get; set; }
     public required int TotalFederalAgenciesCommittees { get; set; }
     public required int UnreleasedFederalAgenciesCommittees { get; set; }
+    public required int OneVacanciesFederalAgenciesCommittees { get; set; }
+    public required int TwoVacanciesFederalAgenciesCommittees { get; set; }
+    public required int ThreeVacanciesFederalAgenciesCommittees { get; set; }
+    public required int FourVacanciesFederalAgenciesCommittees { get; set; }
 
     // APK
     public required int TotalExtraParliamentaryCommittees { get; set; }
