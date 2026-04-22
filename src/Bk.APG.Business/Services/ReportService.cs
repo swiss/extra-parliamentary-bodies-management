@@ -404,7 +404,7 @@ public class ReportService : IReportService
 
         var allAuthoritiesCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).ToList();
         var allAdministrationCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToList();
-        var allManagementCommittees = allGeneralElectionCommittees.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
+        var allManagementCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
         var allFederalAgenciesCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid).ToList();
         var allExtraParliamentaryCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.ExtraParliamentaryCommission && c.IsValidated).ToList();
         var allNonExtraParliamentaryCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => !c.ExtraParliamentaryCommission && c.IsValidated).ToList();
@@ -532,6 +532,10 @@ public class ReportService : IReportService
             TotalFederalAgenciesCommittees = allFederalAgenciesCommittees.Count,
             ReleasedFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.IsValidated),
             UnreleasedFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => !c.IsValidated),
+            OneVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 1),
+            TwoVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 2),
+            ThreeVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 3),
+            FourVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies >= 4),
             TotalExtraParliamentaryCommittees = allExtraParliamentaryCommittees.Count,
             UnreleasedExtraParliamentaryCommittees = allFederalAgenciesCommittees.Count(c => !c.IsValidated),
             PreviousTotalExtraParliamentaryCommittees = extraParliamentaryCommittees.Count,
