@@ -128,13 +128,25 @@
                         }
                     </mat-select>
                 </mat-form-field>
-                <div>
+                <div class="actions">
+                    @if (isUpdateMode) {
+                        <button
+                            class="action-button"
+                            (click)="$event.stopPropagation(); downloadDocument(i)"
+                            mat-icon-button
+                            obButton="secondary"
+                            type="button"
+                            [matTooltip]="'appointmentDecision.download.info' | translate"
+                        >
+                            <mat-icon svgIcon="download" />
+                        </button>
+                    }
                     <button
                         mat-icon-button
                         obButton="secondary"
                         type="button"
                         (click)="removeUploadedDocument(i)"
-                        class="subject-button"
+                        class="action-button"
                         [matTooltip]="'appointmentDecision.delete.title' | translate"
                     >
                         <mat-icon svgIcon="delete" class="ob-icon" />
