@@ -47,7 +47,14 @@ $gap: 16px;
     }
 
     .action-button {
-        margin-left: $ob-spacing-default;
+        &:first-of-type {
+            margin-left: $ob-spacing-default;
+        }
+        
         margin-top: $ob-spacing-xs;
+    }
+
+    .actions {
+        white-space: nowrap;
     }
 }

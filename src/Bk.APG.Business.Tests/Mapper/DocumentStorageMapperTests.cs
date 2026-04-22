@@ -21,6 +21,7 @@ internal class DocumentStorageMapperTests
         {
             Assert.That(dto.Id, Is.EqualTo(documentStorage.Id));
             Assert.That(dto.DisplayName, Is.EqualTo(documentStorage.DocumentName));
+            Assert.That(dto.DocumentStorageId, Is.EqualTo(documentStorage.DocumentStorageId));
             Assert.That(dto.LanguageId, Is.EqualTo(languageId));
             Assert.That(dto.IsOriginal, Is.True);
         });
@@ -31,8 +32,9 @@ internal class DocumentStorageMapperTests
     {
         var updateDto = new Faker<DocumentStorageModificationDto>().Generate();
         updateDto.Id = null;
+        updateDto.DocumentStorageId = "storageId";
 
-        var dto = DocumentStorageMapper.FromModificationDto(updateDto, "storageId", "userName");
+        var dto = DocumentStorageMapper.FromModificationDto(updateDto, "userName");
 
         Assert.That(dto, Is.Not.Null);
         Assert.Multiple(() =>
@@ -52,8 +54,9 @@ internal class DocumentStorageMapperTests
     {
         var updateDto = new Faker<DocumentStorageModificationDto>().Generate();
         updateDto.Id = new Guid("3E0016AE-13DB-4A1F-9E26-ADA79D93834E");
+        updateDto.DocumentStorageId = "storageId";
 
-        var dto = DocumentStorageMapper.FromModificationDto(updateDto, "storageId", "userName");
+        var dto = DocumentStorageMapper.FromModificationDto(updateDto, "userName");
 
         Assert.That(dto, Is.Not.Null);
         Assert.Multiple(() =>
