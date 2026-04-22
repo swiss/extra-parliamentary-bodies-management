@@ -45,14 +45,9 @@ public class ReportController : ControllerBase
         {
             var (fileName, content) = await _formLetterService.CreateFormLetterSingleDocument(filterDto);
 
-            if (filterDto.ExportFileType == "word")
-            {
-                return File(content, WordMimeType, fileName);
-            }
-            else
-            {
-                return File(content, MediaTypeNames.Application.Pdf, fileName);
-            }
+            return filterDto.ExportFileType == "word"
+                ? File(content, WordMimeType, fileName)
+                : File(content, MediaTypeNames.Application.Pdf, fileName);
         }
     }
 }

@@ -461,8 +461,6 @@ public class ReportService : IReportService
         var membersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.EstimatedTermOfOffice > 12);
         var federalDutyMembersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.EstimatedTermOfOffice > 12 && m.Person!.FederalDuty);
 
-        var allSelectedCandidates = allGeneralElectionCommittees.Where(c => c.IsValidated).SelectMany(c => c.MembershipCandidates).Where(m => m.IsSelected);
-
         var multipleMemberships = allGeneralElectionCommittees
             .Where(c => c.IsValidated)
             .SelectMany(c => c.MembershipCandidates
@@ -674,23 +672,20 @@ public class ReportService : IReportService
 
             foreach (var committeeGroup in groupedCommittees)
             {
-                var committeeList = new List<InformationNoteNonExtraParliamentaryCommitteeData>();
-
-                foreach (var committee in committeeGroup)
-                {
-                    var committeeDto = new InformationNoteNonExtraParliamentaryCommitteeData
-                    {
-                        Name = committee.GetDescription(),
-                        GermanText = $"{committee.GermanCount} ({committee.GermanQuota} %)",
-                        FrenchText = $"{committee.FrenchCount} ({committee.FrenchQuota} %)",
-                        ItalianText = $"{committee.ItalianCount} ({committee.ItalianQuota} %)",
-                        RomanshText = $"{committee.RomanshCount} ({committee.RomanshQuota} %)",
-                        FemaleText = $"{committee.FemaleCount} ({committee.FemaleQuota} %)",
-                        MaleText = $"{committee.MaleCount} ({committee.MaleQuota} %)",
-                    };
-
-                    committeeList.Add(committeeDto);
-                }
+                var committeeList =
+                    committeeGroup
+                        .Select(g =>
+                            new InformationNoteNonExtraParliamentaryCommitteeData
+                            {
+                                Name = g.GetDescription(),
+                                GermanText = $"{g.GermanCount} ({g.GermanQuota} %)",
+                                FrenchText = $"{g.FrenchCount} ({g.FrenchQuota} %)",
+                                ItalianText = $"{g.ItalianCount} ({g.ItalianQuota} %)",
+                                RomanshText = $"{g.RomanshCount} ({g.RomanshQuota} %)",
+                                FemaleText = $"{g.FemaleCount} ({g.FemaleQuota} %)",
+                                MaleText = $"{g.MaleCount} ({g.MaleQuota} %)"
+                            })
+                        .ToList();
 
                 var committeeTypeDto = new InformationNoteNonExtraParliamentaryCommitteeTypeDto
                 {
@@ -763,17 +758,10 @@ public class ReportService : IReportService
 
             foreach (var committeeGroup in groupedCommittees)
             {
-                var committeeList = new List<ReportCommitteeDto>();
-
-                foreach (var committee in committeeGroup)
-                {
-                    var committeeDto = new ReportCommitteeDto
-                    {
-                        Name = committee.GetDescription()
-                    };
-
-                    committeeList.Add(committeeDto);
-                }
+                var committeeList =
+                    committeeGroup
+                        .Select(g => new ReportCommitteeDto { Name = g.GetDescription() })
+                        .ToList();
 
                 var committeeTypeDto = new ReportCommitteeTypeDto
                 {
@@ -949,7 +937,6 @@ public class ReportService : IReportService
                 .Where(c => c.DepartmentId == department.Id)
                 .ToList();
 
-            var committeeList = new List<ReportCommitteeDto>();
 
             var moreThan12YearsDto = filteredCommittees
                 .Select(c => new
@@ -969,20 +956,17 @@ public class ReportService : IReportService
                 })
                 .ToList();
 
-            foreach (var committee in moreThan12YearsDto)
-            {
-                var committeeDto = new ReportCommitteeDto
-                {
-                    Name = committee.Name,
-                    FreeText = committee.MemberCount > 0 && committee.FederalMemberCount > 0 && committee.MemberCount != committee.FederalMemberCount ?
-                    string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberAndFederalMemberCount, committee.MemberCount, committee.FederalMemberCount) :
-                    committee.MemberCount > 0 && committee.FederalMemberCount > 0 && committee.MemberCount == committee.FederalMemberCount ?
-                    string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_FederalMemberCount, committee.FederalMemberCount) :
-                    string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberCount, committee.MemberCount)
-                };
-
-                committeeList.Add(committeeDto);
-            }
+            var committeeList =
+                moreThan12YearsDto
+                    .Select(x => new ReportCommitteeDto
+                    {
+                        Name = x.Name,
+                        FreeText =
+                            x.MemberCount > 0 && x.FederalMemberCount > 0 && x.MemberCount != x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberAndFederalMemberCount, x.MemberCount, x.FederalMemberCount) :
+                            x.MemberCount > 0 && x.FederalMemberCount > 0 && x.MemberCount == x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_FederalMemberCount, x.FederalMemberCount) :
+                            string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberCount, x.MemberCount)
+                    })
+                    .ToList();
 
             dtoDict[department.GetText()].Committees = committeeList;
         }
@@ -1013,40 +997,7 @@ public class ReportService : IReportService
 
             var committeeList = new List<ReportCommitteeGenderMissingDto>();
 
-            foreach (var committee in filteredCommittees)
-            {
-                if (committee.ActiveMemberCount > 0)
-                {
-                    var femalePercentage = Math.Round((decimal)committee.FemaleCount / committee.ActiveMemberCount * 100, 2);
-                    var malePercentage = Math.Round((decimal)committee.MaleCount / committee.ActiveMemberCount * 100, 2);
-
-                    if (femalePercentage < (decimal)committee.CommitteeType?.FemaleThreshold! || malePercentage < (decimal)committee.CommitteeType?.MaleThreshold!)
-                    {
-                        var committeeDto = new ReportCommitteeGenderMissingDto
-                        {
-                            Name = committee.GetDescription(),
-                            MemberCount = committee.Memberships.Count,
-                            Measure = committee.MeasuresGenders,
-                            Justification = committee.JustificationGenders,
-                            FemaleMissingPercentage = femalePercentage,
-                            MaleMissingPercentage = malePercentage,
-                        };
-                        committeeList.Add(committeeDto);
-                    }
-                }
-            }
-            dtoDict[department.GetText()].Committees = committeeList;
-        }
-        return departmentList;
-    }
-
-    private static List<ReportCommitteeGenderMissingDto> GetCommitteesWithGenders(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
-    {
-        var committeeList = new List<ReportCommitteeGenderMissingDto>();
-
-        foreach (var committee in committees)
-        {
-            if (committee.ActiveMemberCount > 0)
+            foreach (var committee in filteredCommittees.Where(c => c.ActiveMemberCount > 0))
             {
                 var femalePercentage = Math.Round((decimal)committee.FemaleCount / committee.ActiveMemberCount * 100, 2);
                 var malePercentage = Math.Round((decimal)committee.MaleCount / committee.ActiveMemberCount * 100, 2);
@@ -1062,9 +1013,38 @@ public class ReportService : IReportService
                         FemaleMissingPercentage = femalePercentage,
                         MaleMissingPercentage = malePercentage,
                     };
+
                     committeeList.Add(committeeDto);
                 }
             }
+            dtoDict[department.GetText()].Committees = committeeList;
+        }
+        return departmentList;
+    }
+
+    private static List<ReportCommitteeGenderMissingDto> GetCommitteesWithGenders(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    {
+        var committeeList = new List<ReportCommitteeGenderMissingDto>();
+
+        foreach (var committee in committees.Where(c => c.ActiveMemberCount > 0))
+        {
+            var femalePercentage = Math.Round((decimal)committee.FemaleCount / committee.ActiveMemberCount * 100, 2);
+            var malePercentage = Math.Round((decimal)committee.MaleCount / committee.ActiveMemberCount * 100, 2);
+
+            if (femalePercentage < (decimal)committee.CommitteeType?.FemaleThreshold! || malePercentage < (decimal)committee.CommitteeType?.MaleThreshold!)
+            {
+                var committeeDto = new ReportCommitteeGenderMissingDto
+                {
+                    Name = committee.GetDescription(),
+                    MemberCount = committee.Memberships.Count,
+                    Measure = committee.MeasuresGenders,
+                    Justification = committee.JustificationGenders,
+                    FemaleMissingPercentage = femalePercentage,
+                    MaleMissingPercentage = malePercentage,
+                };
+                committeeList.Add(committeeDto);
+            }
+
         }
 
         committeeList = committeeList.OrderBy(c => c.Name).ToList();
@@ -1096,65 +1076,7 @@ public class ReportService : IReportService
 
             var committeeList = new List<ReportCommitteeLanguageMissingDto>();
 
-            foreach (var committee in filteredCommittees)
-            {
-                if (committee.ActiveMemberCount > 0)
-                {
-                    var italianMissing = false;
-                    var frenchMissing = false;
-
-                    if (committee.CommitteeType!.GermanMinimalThreshold > 0)
-                    {
-                        // minimal members per language
-                        italianMissing = committee.ItalianCount < committee.CommitteeType!.ItalianMinimalThreshold;
-                        frenchMissing = committee.FrenchCount < committee.CommitteeType!.FrenchMinimalThreshold;
-                    }
-                    else
-                    {
-                        // minimal member percentage per language
-                        var italian = Math.Round((decimal)committee.ItalianCount / committee.ActiveMemberCount * 100, 2);
-                        var french = Math.Round((decimal)committee.FrenchCount / committee.ActiveMemberCount * 100, 2);
-
-                        if (italian < (decimal)committee.CommitteeType!.ItalianThresholdPercentage!)
-                        {
-                            italianMissing = true;
-                        }
-
-                        if (french < (decimal)committee.CommitteeType!.FrenchThresholdPercentage!)
-                        {
-                            frenchMissing = true;
-                        }
-                    }
-
-                    if (italianMissing || frenchMissing)
-                    {
-                        var committeeDto = new ReportCommitteeLanguageMissingDto
-                        {
-                            Name = committee.GetDescription(),
-                            MemberCount = committee.Memberships.Count,
-                            Measure = committee.MeasuresLanguages,
-                            Justification = committee.JustificationLanguages,
-                            ItalianMissing = italianMissing,
-                            FrenchMissing = frenchMissing,
-                        };
-
-                        committeeList.Add(committeeDto);
-                    }
-                }
-            }
-
-            dtoDict[department.GetText()].Committees = committeeList;
-        }
-        return departmentList;
-    }
-
-    private static List<ReportCommitteeLanguageMissingDto> GetCommitteesWithLanguages(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
-    {
-        var committeeList = new List<ReportCommitteeLanguageMissingDto>();
-
-        foreach (var committee in committees)
-        {
-            if (committee.ActiveMemberCount > 0)
+            foreach (var committee in filteredCommittees.Where(c => c.ActiveMemberCount > 0))
             {
                 var italianMissing = false;
                 var frenchMissing = false;
@@ -1197,7 +1119,61 @@ public class ReportService : IReportService
                     committeeList.Add(committeeDto);
                 }
             }
+
+            dtoDict[department.GetText()].Committees = committeeList;
         }
+
+        return departmentList;
+    }
+
+    private static List<ReportCommitteeLanguageMissingDto> GetCommitteesWithLanguages(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    {
+        var committeeList = new List<ReportCommitteeLanguageMissingDto>();
+
+        foreach (var committee in committees.Where(c => c.ActiveMemberCount > 0))
+        {
+            var italianMissing = false;
+            var frenchMissing = false;
+
+            if (committee.CommitteeType!.GermanMinimalThreshold > 0)
+            {
+                // minimal members per language
+                italianMissing = committee.ItalianCount < committee.CommitteeType!.ItalianMinimalThreshold;
+                frenchMissing = committee.FrenchCount < committee.CommitteeType!.FrenchMinimalThreshold;
+            }
+            else
+            {
+                // minimal member percentage per language
+                var italian = Math.Round((decimal)committee.ItalianCount / committee.ActiveMemberCount * 100, 2);
+                var french = Math.Round((decimal)committee.FrenchCount / committee.ActiveMemberCount * 100, 2);
+
+                if (italian < (decimal)committee.CommitteeType!.ItalianThresholdPercentage!)
+                {
+                    italianMissing = true;
+                }
+
+                if (french < (decimal)committee.CommitteeType!.FrenchThresholdPercentage!)
+                {
+                    frenchMissing = true;
+                }
+            }
+
+            if (italianMissing || frenchMissing)
+            {
+                var committeeDto = new ReportCommitteeLanguageMissingDto
+                {
+                    Name = committee.GetDescription(),
+                    MemberCount = committee.Memberships.Count,
+                    Measure = committee.MeasuresLanguages,
+                    Justification = committee.JustificationLanguages,
+                    ItalianMissing = italianMissing,
+                    FrenchMissing = frenchMissing,
+                };
+
+                committeeList.Add(committeeDto);
+            }
+        }
+
         committeeList = committeeList.OrderBy(c => c.Name).ToList();
 
         return committeeList;
@@ -1227,37 +1203,34 @@ public class ReportService : IReportService
 
             var committeeList = new List<ReportCommitteeLanguageMissingDto>();
 
-            foreach (var committee in filteredCommittees)
+            foreach (var committee in filteredCommittees.Where(c => c.Memberships.Count != 0 && c.ActiveMemberCount > 0))
             {
-                if (committee.Memberships.Count != 0 && committee.ActiveMemberCount > 0)
+                var germanMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.GermanId));
+                var frenchMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.FrenchId));
+                var italianMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.ItalianId));
+                var romanshMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.RomanshId));
+
+                var german = Math.Round((decimal)germanMembers / committee.ActiveMemberCount * 100, 2);
+                var french = Math.Round((decimal)frenchMembers / committee.ActiveMemberCount * 100, 2);
+                var italian = Math.Round((decimal)italianMembers / committee.ActiveMemberCount * 100, 2);
+                var romansh = Math.Round((decimal)romanshMembers / committee.ActiveMemberCount * 100, 2);
+
+                if (italian < (decimal)committee.CommitteeType!.ItalianThresholdPercentage! || french < (decimal)committee.CommitteeType!.FrenchThresholdPercentage! ||
+                    german < (decimal)committee.CommitteeType!.GermanThresholdPercentage!)
                 {
-                    var germanMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.GermanId));
-                    var frenchMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.FrenchId));
-                    var italianMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.ItalianId));
-                    var romanshMembers = committee.Memberships.Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.RomanshId));
-
-                    var german = Math.Round((decimal)germanMembers / committee.ActiveMemberCount * 100, 2);
-                    var french = Math.Round((decimal)frenchMembers / committee.ActiveMemberCount * 100, 2);
-                    var italian = Math.Round((decimal)italianMembers / committee.ActiveMemberCount * 100, 2);
-                    var romansh = Math.Round((decimal)romanshMembers / committee.ActiveMemberCount * 100, 2);
-
-                    if (italian < (decimal)committee.CommitteeType!.ItalianThresholdPercentage! || french < (decimal)committee.CommitteeType!.FrenchThresholdPercentage! ||
-                        german < (decimal)committee.CommitteeType!.GermanThresholdPercentage!)
+                    var committeeDto = new ReportCommitteeLanguageMissingDto
                     {
-                        var committeeDto = new ReportCommitteeLanguageMissingDto
-                        {
-                            Name = committee.GetDescription(),
-                            MemberCount = committee.Memberships.Count,
-                            Measure = committee.MeasuresLanguages,
-                            Justification = committee.JustificationLanguages,
-                            GermanPercentage = german,
-                            FrenchPercentage = french,
-                            ItalianPercentage = italian,
-                            RomanshPercentage = romansh,
-                        };
+                        Name = committee.GetDescription(),
+                        MemberCount = committee.Memberships.Count,
+                        Measure = committee.MeasuresLanguages,
+                        Justification = committee.JustificationLanguages,
+                        GermanPercentage = german,
+                        FrenchPercentage = french,
+                        ItalianPercentage = italian,
+                        RomanshPercentage = romansh,
+                    };
 
-                        committeeList.Add(committeeDto);
-                    }
+                    committeeList.Add(committeeDto);
                 }
             }
 
