@@ -86,11 +86,11 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
                     await fileStream.CopyToAsync(stream);
 
-                    var documentId = await _documentService.UploadDocument(stream.ToArray());
+                    documentDto.DocumentStorageId = await _documentService.UploadDocument(stream.ToArray());
 
-                    uploadedDocumentIds.Add(documentId);
+                    uploadedDocumentIds.Add(documentDto.DocumentStorageId);
 
-                    var documentStorage = DocumentStorageMapper.FromModificationDto(documentDto, documentId, userName);
+                    var documentStorage = DocumentStorageMapper.FromModificationDto(documentDto, userName);
 
                     SetDocumentReferenceWithLanguage(documentDto.LanguageId, documentDto.IsOriginal, appointmentDecision, documentStorage);
                 }
@@ -151,11 +151,11 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
                         await fileStream.CopyToAsync(stream);
 
-                        var documentId = await _documentService.UploadDocument(stream.ToArray());
+                        documentDto.DocumentStorageId = await _documentService.UploadDocument(stream.ToArray());
 
-                        uploadedDocumentIds.Add(documentId);
+                        uploadedDocumentIds.Add(documentDto.DocumentStorageId);
 
-                        documentStorage = DocumentStorageMapper.FromModificationDto(documentDto, documentId, currentUserName);
+                        documentStorage = DocumentStorageMapper.FromModificationDto(documentDto, currentUserName);
                         await _documentStorageRepository.Create(documentStorage);
                     }
                     else

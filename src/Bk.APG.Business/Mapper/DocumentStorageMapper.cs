@@ -5,7 +5,7 @@ namespace Bk.APG.Business.Mapper;
 
 public static class DocumentStorageMapper
 {
-    public static DocumentStorage FromModificationDto(DocumentStorageModificationDto documentStorageModificationDto, string documentStorageId, string userName)
+    public static DocumentStorage FromModificationDto(DocumentStorageModificationDto documentStorageModificationDto, string userName)
     {
         ArgumentNullException.ThrowIfNull(documentStorageModificationDto);
 
@@ -15,11 +15,11 @@ public static class DocumentStorageMapper
         {
             Id = documentStorageModificationDto.Id ?? Guid.NewGuid(),
             DocumentName = documentStorageModificationDto.DisplayName,
+            DocumentStorageId = documentStorageModificationDto.DocumentStorageId!,
             CreatedBy = userName,
             Created = utcNow,
             ModifiedBy = userName,
-            Modified = utcNow,
-            DocumentStorageId = documentStorageId,
+            Modified = utcNow
         };
     }
 
@@ -31,6 +31,7 @@ public static class DocumentStorageMapper
         {
             Id = documentStorage.Id,
             DisplayName = documentStorage.DocumentName,
+            DocumentStorageId = documentStorage.DocumentStorageId,
             LanguageId = languageId,
             IsOriginal = isOriginal
         };
