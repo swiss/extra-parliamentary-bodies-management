@@ -8,6 +8,7 @@
 -   Integrate Open Data Stack reports via iFrame [BKDO-2937](https://bkdev.atlassian.net/browse/BKDO-2937)
 -   No general election for observers [BKDO-3524](https://bkdev.atlassian.net/browse/BKDO-3524)
 -   Fix form letter issues with empty salutations [BKDO-3525](https://bkdev.atlassian.net/browse/BKDO-3525)
+-   Remove empty descriptions from membership addition export [BKDO-3549](https://bkdev.atlassian.net/browse/BKDO-3549)
 
 ## 1.3.0
 
