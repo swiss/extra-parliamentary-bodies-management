@@ -179,25 +179,25 @@ public static class MembershipMapper
             if (!string.IsNullOrWhiteSpace(membership.MembershipAddition.TextDe))
             {
                 dataRow.Values.Add(
-                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = $"{membership.MembershipAddition.TextDe}: {membership.MembershipAddition.DescriptionDe}", LanguageTag = OgdExportConstants.LanguageDe });
+                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = membership.MembershipAddition.TextDe, LanguageTag = OgdExportConstants.LanguageDe });
             }
 
             if (!string.IsNullOrWhiteSpace(membership.MembershipAddition.TextFr))
             {
                 dataRow.Values.Add(
-                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = $"{membership.MembershipAddition.TextFr}: {membership.MembershipAddition.DescriptionFr}", LanguageTag = OgdExportConstants.LanguageFr });
+                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = membership.MembershipAddition.TextFr, LanguageTag = OgdExportConstants.LanguageFr });
             }
 
             if (!string.IsNullOrWhiteSpace(membership.MembershipAddition.TextIt))
             {
                 dataRow.Values.Add(
-                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = $"{membership.MembershipAddition.TextIt}: {membership.MembershipAddition.DescriptionIt}", LanguageTag = OgdExportConstants.LanguageIt });
+                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = membership.MembershipAddition.TextIt, LanguageTag = OgdExportConstants.LanguageIt });
             }
 
             if (!string.IsNullOrWhiteSpace(membership.MembershipAddition.TextRm))
             {
                 dataRow.Values.Add(
-                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = $"{membership.MembershipAddition.TextRm}: {membership.MembershipAddition.DescriptionRm}", LanguageTag = OgdExportConstants.LanguageRm });
+                    new DimensionValue { Predicate = OgdExportConstants.SchemaDescription, Object = membership.MembershipAddition.TextRm, LanguageTag = OgdExportConstants.LanguageRm });
             }
         }
 
