@@ -549,7 +549,7 @@
   "worklist.task.create.error": "Erreur lors de la création de la tâche",
   "worklist.task.edit.error": "Erreur lors de la modification de la tâche",
   "worklist.task.forward.error": "Erreur lors de la transmission de la tâche",
-  "worklist.task.create.generalElectionStart.dueDateHint": "Veuillez fixer une date limite à laquelle le SG devra avoir autorisé l'organe en vue de la proposition de RI adressée au Conseil fédéral pour que l'organe en question figure dans la proposition susmentionnée.",
+  "worklist.task.create.generalElectionStart.dueDateHint": "FR_TEXT_CHANGED_Veuillez fixer une date limite à laquelle le SG devra avoir autorisé l'organe en vue de la proposition de RI adressée au Conseil fédéral pour que l'organe en question figure dans la proposition susmentionnée.  Achtung: diese Aufgabe kann länger als eine Minute dauern, da im Hintergrund die GEW Daten angelegt werden!",
   "generalElection.committee.details.candidateList": "Liste de candidats",
   "generalElection.committee.candidateList.title": "Liste de candidats",
   "generalElection.committee.candidateList.table.noEntries": "Aucun candidat trouvé",
