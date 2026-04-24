@@ -143,7 +143,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             .FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && x.WorklistTaskStateId == WorklistTaskState.Active);
         var wasGeneralElectionStartedForCommittee = candidateListTasks.Count != 0;
 
-        var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id;
+        var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id || activeCandidateListTask?.AssignedTo?.ParentId == currentEiamAssignment.Id;
         var isCandidateListValidatedOrReadyForFederalCouncil = generalElectionCommittee.CandidateListStateId == CandidateListState.Validated
             || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded
             || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
@@ -158,7 +158,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         dto.AssignedTo = activeCandidateListTask?.AssignedTo!.GetText();
         dto.WasGeneralElectionStartedForCommittee = wasGeneralElectionStartedForCommittee;
-        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && !isCandidateListValidatedOrReadyForFederalCouncil;
+        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && (!isCandidateListValidatedOrReadyForFederalCouncil || _authorizationService.IsDepartment);
         dto.CanValidateCandidateList = wasGeneralElectionStartedForCommittee && canValidate;
         dto.CanForwardCandidateList = wasGeneralElectionStartedForCommittee && canForward;
         dto.IsCandidateListValidated = isCandidateListValidatedOrReadyForFederalCouncil;

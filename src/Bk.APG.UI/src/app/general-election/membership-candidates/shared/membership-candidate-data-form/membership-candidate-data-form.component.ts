@@ -102,7 +102,7 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
         });
     }
 
-    public buildMembershipModification(): MembershipCandidateUpdate {
+    buildMembershipModification(): MembershipCandidateUpdate {
         const formValues = {
             ...this.membershipCandidateForm.getRawValue(),
             personId: this.selectedPerson()?.id,

@@ -164,7 +164,7 @@ export class PersonDataFormComponent implements OnInit {
 
     private readonly selectedGenderId = toSignal(this.personForm.controls.genderId.valueChanges);
     private readonly selectedSurname = toSignal(this.personForm.controls.surname.valueChanges);
-    private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges.pipe(debounceTime(1000)));
+    private readonly selectedTitle = toSignal(this.personForm.controls.title.valueChanges);
     private readonly selectedCorrespondenceLanguageId = toSignal(this.personForm.controls.correspondenceLanguageId.valueChanges);
     private lastSalutationParamsKey?: string;
 
@@ -295,7 +295,7 @@ export class PersonDataFormComponent implements OnInit {
                 value =>
                     ({
                         ...value,
-                        ...this.GetFormContent(formValues as PersonCreate | PersonUpdate),
+                        ...this.getFormContent(formValues as PersonCreate | PersonUpdate),
                         officeId: this.officeId,
                         councilId: this.councilId,
                         employer: this.employer,
@@ -415,6 +415,18 @@ export class PersonDataFormComponent implements OnInit {
         if (!this.isUpdateMode) {
             this.toggleNonBasicControls(false);
         }
+    }
+
+    public buildPersonModification(): PersonCreate | PersonUpdate {
+        const formValues = {
+            ...this.personForm.getRawValue(),
+        };
+        if (!formValues.correspondenceLanguageId && formValues.languageId) {
+            formValues.correspondenceLanguageId = formValues.languageId;
+        }
+        formValues.occupations = this.selectedOccupations;
+
+        return {...this.personModification(), ...formValues} as PersonCreate | PersonUpdate;
     }
 
     changeActiveAddress(selection: AddressControlId) {
@@ -870,7 +882,7 @@ export class PersonDataFormComponent implements OnInit {
         return form;
     }
 
-    private GetFormContent(person: PersonUpdate | PersonCreate | undefined): PersonUpdate | PersonCreate | undefined {
+    private getFormContent(person: PersonUpdate | PersonCreate | undefined): PersonUpdate | PersonCreate | undefined {
         if (person) {
             person.occupations = this.selectedOccupations;
             if (!person.correspondenceLanguageId && person.languageId) {
