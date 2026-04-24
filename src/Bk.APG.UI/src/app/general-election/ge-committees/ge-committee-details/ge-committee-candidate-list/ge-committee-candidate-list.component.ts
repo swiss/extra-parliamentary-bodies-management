@@ -484,7 +484,6 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
         this.generalElectionCommitteesService.updateGeneralElectionCommitteeVacancies(this.route.snapshot.params.id, newVacancies).subscribe({
             next: async () => {
                 this.generalElectionCommitteeDetailsService.reload$.next();
-                await this.router.navigate([]);
                 return this.notificationService.success('committee.details.vacancies.success');
             },
             error: () => this.notificationService.error('committee.details.vacancies.error'),
