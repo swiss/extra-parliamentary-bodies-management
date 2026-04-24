@@ -70,6 +70,7 @@ public class GeneralElectionCommitteeDetailDto
     public bool CanFinalizeReadyForProposal { get; set; }
     public bool IsReadyForProposalForCurrentRole { get; set; }
     public bool IsReadyForProposalFinalized { get; set; }
+    public bool HasActiveMembershipValidationTasks { get; set; }
     public required CommitteeQuotasDto Quotas { get; set; }
     public IEnumerable<MembershipCandidateDetailDto> Candidates { get; set; } = new List<MembershipCandidateDetailDto>();
 }
