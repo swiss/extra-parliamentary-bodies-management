@@ -15,6 +15,8 @@ public class UidService : IUidService, IHealthCheck
 
     // according to decision of FCh we are limiting the displayed legal forms. This list reflects the masterdata of legalforms (https://bkdev.atlassian.net/browse/BKDO-1518)
     private readonly List<string> _allowedLegalForms = new() { "0103", "0104", "0106", "0107", "0108", "0109", "0110", "0117", "0224", "0234", "0302", "0571" };
+    // this information reveals, if the entry is currently active (Item3) or in mutation (Item4).
+    private readonly List<uidregStatusEnterpriseDetailType> _allowedStates = new() { uidregStatusEnterpriseDetailType.Item3, uidregStatusEnterpriseDetailType.Item4 };
 
     public UidService(IPublicServices publicService, IMasterDataService masterDataService, IOptions<UidConfiguration> uidConfiguration)
     {
@@ -33,7 +35,7 @@ public class UidService : IUidService, IHealthCheck
         {
             Item = new uidEntityPublicSearchParameters
             {
-                organisationName = organizationName
+                organisationName = organizationName,
             }
         };
 
@@ -41,7 +43,7 @@ public class UidService : IUidService, IHealthCheck
         {
             searchMode = searchMode.Auto,
             maxNumberOfRecords = 100,
-            searchNameAndAddressHistory = false
+            searchNameAndAddressHistory = false,
         };
 
         var result = await _publicService.SearchAsync(request, config);
@@ -49,7 +51,8 @@ public class UidService : IUidService, IHealthCheck
         if (result != null && result.uidEntitySearchResultItem is not null)
         {
             var filteredUidResult = result.uidEntitySearchResultItem
-                .Where(uid => uid.rating > minimalMatchQuality && _allowedLegalForms.Contains(uid.organisation.organisation.organisationIdentification.legalForm))
+                .Where(uid => uid.rating > minimalMatchQuality && _allowedLegalForms.Contains(uid.organisation.organisation.organisationIdentification.legalForm) &&
+                    _allowedStates.Contains(uid.organisation.uidregInformation.uidregStatusEnterpriseDetail))
                 .Select(uid => new UidDto
                 {
                     OrganizationName = uid.organisation.organisation.organisationIdentification.organisationName,
