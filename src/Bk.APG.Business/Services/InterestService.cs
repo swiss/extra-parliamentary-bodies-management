@@ -28,7 +28,10 @@ public class InterestService : IInterestService
     {
         var interests = await _interestRepository.GetAllByPersonId(personId);
 
-        var interestList = interests.Select(InterestMapper.ToInterestUpdateDto).ToList().OrderBy(i => i.BeginDate).ThenBy(i => i.Text);
+        var interestList = interests
+            .Select(InterestMapper.ToInterestUpdateDto)
+            .OrderBy(i => i.InterestText)
+            .ThenBy(i => i.BeginDate);
 
         return interestList;
     }

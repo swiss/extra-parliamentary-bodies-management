@@ -1,6 +1,11 @@
 <div class="membership-candidate-list-header">
     <h2>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h2>
-    <h4 class="candidate-list-state">{{ generalElectionCommittee()?.candidateListState }}</h4>
+    <h4 class="candidate-list-state">
+        {{ generalElectionCommittee()?.candidateListState }}
+        @if (generalElectionCommittee()?.isValidated && generalElectionCommittee()?.hasActiveMembershipValidationTasks) {
+            ({{ 'candidateList.hasActiveTasks' | translate }})
+        }
+    </h4>
 
     @if (generalElectionCommittee()?.isReadyForProposalForCurrentRole && !this.isAdmin()) {
         <ob-alert type="warning">{{ 'candidateList.isReadyForProposalHint' | translate }}</ob-alert>

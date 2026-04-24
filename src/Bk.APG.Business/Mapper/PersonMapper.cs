@@ -115,7 +115,10 @@ public static class PersonMapper
                     IsActive = m.IsActive,
                     IsFuture = m.IsFuture,
                     NeedsAttention = m.NeedsAttention
-                }).ToList(),
+                })
+                .OrderByDescending(m => m.IsActive || m.NeedsAttention)
+                .ThenByDescending(m => m.BeginDate)
+                .ToList(),
             Interests = person.Interests
                 .Where(i => (i.BeginDate == null || i.BeginDate <= today) && (i.EndDate == null || i.EndDate >= today))
                 .Select(i => new InterestListDto
@@ -130,28 +133,19 @@ public static class PersonMapper
                     Function = i.InterestFunction!.GetText(),
                     LegalForm = i.LegalForm is not null ? i.LegalForm.GetText() : string.Empty
                 })
-                .ToList()
+                .OrderBy(x => x.Text)
+                .ToList(),
+            NeedsAttentionLongerDuty = person.NeedsAttentionLongerDuty,
+            NeedsAttentionShorterDuty = person.NeedsAttentionShorterDuty,
+            NeedsAttentionFederalDuty = person.NeedsAttentionFederalDuty,
+            NeedsAttentionFederalAssemblyAdministrationCommission = person.NeedsAttentionFederalAssemblyAdministrationCommission,
+            NeedsAttentionFederalAssemblyAuthoritiesCommission = person.NeedsAttentionFederalAssemblyAuthoritiesCommission,
+            NeedsAttentionBasicData = person.NeedsAttentionBasicData,
+            NeedsAttentionOccupation = person.NeedsAttentionOccupation,
+            NeedsAttentionInterests = person.NeedsAttentionInterests,
+            NeedsAttentionMembershipExpired = person.NeedsAttentionMembershipExpired,
+            NeedsAttentionRequirementsProfile = person.NeedsAttentionRequirementsProfile
         };
-
-        personDetail.Memberships = personDetail.Memberships
-            .OrderByDescending(m => m.IsActive || m.NeedsAttention)
-            .ThenByDescending(m => m.BeginDate)
-            .ToList();
-
-        personDetail.Interests = personDetail.Interests
-            .OrderBy(i => i.Text)
-            .ToList();
-
-        personDetail.NeedsAttentionLongerDuty = person.NeedsAttentionLongerDuty;
-        personDetail.NeedsAttentionShorterDuty = person.NeedsAttentionShorterDuty;
-        personDetail.NeedsAttentionFederalDuty = person.NeedsAttentionFederalDuty;
-        personDetail.NeedsAttentionFederalAssemblyAdministrationCommission = person.NeedsAttentionFederalAssemblyAdministrationCommission;
-        personDetail.NeedsAttentionFederalAssemblyAuthoritiesCommission = person.NeedsAttentionFederalAssemblyAuthoritiesCommission;
-        personDetail.NeedsAttentionBasicData = person.NeedsAttentionBasicData;
-        personDetail.NeedsAttentionOccupation = person.NeedsAttentionOccupation;
-        personDetail.NeedsAttentionInterests = person.NeedsAttentionInterests;
-        personDetail.NeedsAttentionMembershipExpired = person.NeedsAttentionMembershipExpired;
-        personDetail.NeedsAttentionRequirementsProfile = person.NeedsAttentionRequirementsProfile;
 
         return personDetail;
     }

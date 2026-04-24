@@ -143,11 +143,19 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             .FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && x.WorklistTaskStateId == WorklistTaskState.Active);
         var wasGeneralElectionStartedForCommittee = candidateListTasks.Count != 0;
 
-        var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id || activeCandidateListTask?.AssignedTo?.ParentId == currentEiamAssignment.Id;
+        var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id || (activeCandidateListTask?.AssignedTo?.ParentId == currentEiamAssignment.Id && !_authorizationService.IsDepartment);
         var isCandidateListValidatedOrReadyForFederalCouncil = generalElectionCommittee.CandidateListStateId == CandidateListState.Validated
             || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded
             || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
         var isFederalCouncilProposalForwarded = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded;
+
+        var hasActiveMembershipValidationTasks = generalElectionCommitteeTasks.Any(y => y.AssignedTo?.Role == Role.Secretariat && y.WorklistTaskStateId == WorklistTaskState.Active
+            && (y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation));
 
         var isFederalCouncilProposalFinalized = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
         var isReadyForProposalForCurrentRole = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded &&
@@ -167,6 +175,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         dto.CanFinalizeReadyForProposal = canFinalizeReadyForProposal;
         dto.IsReadyForProposalForCurrentRole = isReadyForProposalForCurrentRole;
         dto.IsReadyForProposalFinalized = isFederalCouncilProposalFinalized;
+        dto.HasActiveMembershipValidationTasks = hasActiveMembershipValidationTasks;
 
         return dto;
     }

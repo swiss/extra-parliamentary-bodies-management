@@ -675,7 +675,7 @@ internal class MembershipCandidateServiceTests
         var generalElectionCommittee = new Faker<GeneralElectionCommittee>().Generate();
         generalElectionCommittee.MinimalMembers = 5;
         generalElectionCommittee.MaximalMembers = 10;
-        generalElectionCommittee.VacanciesGeneralElection = 0;
+        generalElectionCommittee.VacanciesGeneralElection = null;
 
         var validationResult = new CandidateListValidationResultDto();
 
@@ -691,7 +691,7 @@ internal class MembershipCandidateServiceTests
         var generalElectionCommittee = new Faker<GeneralElectionCommittee>().Generate();
         generalElectionCommittee.MinimalMembers = 5;
         generalElectionCommittee.MaximalMembers = 10;
-        generalElectionCommittee.VacanciesGeneralElection = 0;
+        generalElectionCommittee.VacanciesGeneralElection = null;
         var validationResult = new CandidateListValidationResultDto();
 
         MembershipCandidateService.ValidateCandidateCount(12, generalElectionCommittee, validationResult);

@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
@@ -315,6 +316,45 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(result.CanForwardReadyForProposal, Is.False);
             Assert.That(result.CanFinalizeReadyForProposal, Is.True);
         }
+    }
+
+    [TestCaseSource(nameof(GetGeneralElectionCommitteeCases))]
+    public async Task GetGeneralElectionCommittee_WithActiveTasks_ShouldSetHasActiveMembershipValidationTasksTrue(Guid worklistTaskStateId, Guid worklistTaskTypeId, bool expected)
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Validated)
+            .Build();
+        var currentAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "admin-external-id",
+            Role = Role.Admin
+        };
+        _generalElectionCommitteeRepository.GetByCommitteeId(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _authorizationService.HasAccessToCommittee(_generalElectionCommittee1.Committee!).Returns(true);
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+        _generalMeasureRepository.GetGeneralGenderMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralGenderMeasure?>(null));
+        _generalMeasureRepository.GetGeneralLanguageMeasure(_generalElectionCommittee1.DepartmentId).Returns(Task.FromResult<GeneralLanguageMeasure?>(null));
+
+        var currentAssignmentSecretariat = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Secretariat)
+            .Build();
+
+        var activeCandidateListTaskSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(worklistTaskTypeId)
+            .WithWorklistTaskStateId(worklistTaskStateId)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Build();
+
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([activeCandidateListTaskSecretariat]);
+
+        var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
+
+        Assert.That(result.HasActiveMembershipValidationTasks, Is.EqualTo(expected));
     }
 
     [Test]
@@ -761,5 +801,70 @@ public class GeneralElectionCommitteeServiceTests
             SelectionProcedure = "selectionProcedure",
             RowVersion = 666
         };
+    }
+
+    private static IEnumerable GetGeneralElectionCommitteeCases()
+    {
+        yield return new TestCaseData(
+            WorklistTaskState.Active,
+            WorklistTaskType.GeneralElectionMissingJustifications,
+            true
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Active,
+            WorklistTaskType.GeneralElectionMissingSecretariat,
+            true
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Active,
+            WorklistTaskType.GeneralElectionPersonBaseData,
+            true
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Active,
+            WorklistTaskType.GeneralElectionPersonInterests,
+            true
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Active,
+            WorklistTaskType.GeneralElectionMissingDataProtectionOfficer,
+            true
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Active,
+            WorklistTaskType.GeneralElectionMembershipValidation,
+            true
+        );
+
+        yield return new TestCaseData(
+            WorklistTaskState.Inactive,
+            WorklistTaskType.GeneralElectionMissingJustifications,
+            false
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Inactive,
+            WorklistTaskType.GeneralElectionMissingSecretariat,
+            false
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Inactive,
+            WorklistTaskType.GeneralElectionPersonBaseData,
+            false
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Inactive,
+            WorklistTaskType.GeneralElectionPersonInterests,
+            false
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Inactive,
+            WorklistTaskType.GeneralElectionMissingDataProtectionOfficer,
+            false
+        );
+        yield return new TestCaseData(
+            WorklistTaskState.Inactive,
+            WorklistTaskType.GeneralElectionMembershipValidation,
+            false
+        );
     }
 }
