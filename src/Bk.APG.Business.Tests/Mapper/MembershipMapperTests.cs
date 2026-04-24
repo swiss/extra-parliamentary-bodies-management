@@ -314,19 +314,19 @@ internal class MembershipMapperTests
             Assert.That(result.Values[3].LanguageTag, Is.EqualTo("rm"));
 
             Assert.That(result.Values[4].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[4].Object, Is.EqualTo("de: desc de"));
+            Assert.That(result.Values[4].Object, Is.EqualTo("de"));
             Assert.That(result.Values[4].LanguageTag, Is.EqualTo("de"));
 
             Assert.That(result.Values[5].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[5].Object, Is.EqualTo("fr: desc fr"));
+            Assert.That(result.Values[5].Object, Is.EqualTo("fr"));
             Assert.That(result.Values[5].LanguageTag, Is.EqualTo("fr"));
 
             Assert.That(result.Values[6].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[6].Object, Is.EqualTo("it: desc it"));
+            Assert.That(result.Values[6].Object, Is.EqualTo("it"));
             Assert.That(result.Values[6].LanguageTag, Is.EqualTo("it"));
 
             Assert.That(result.Values[7].Predicate, Is.EqualTo(OgdExportConstants.SchemaDescription));
-            Assert.That(result.Values[7].Object, Is.EqualTo("rm: desc rm"));
+            Assert.That(result.Values[7].Object, Is.EqualTo("rm"));
             Assert.That(result.Values[7].LanguageTag, Is.EqualTo("rm"));
         }
     }
