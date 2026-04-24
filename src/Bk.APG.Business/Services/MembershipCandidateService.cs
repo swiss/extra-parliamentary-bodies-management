@@ -325,12 +325,13 @@ public class MembershipCandidateService : IMembershipCandidateService
         ArgumentNullException.ThrowIfNull(validationResult);
         ArgumentNullException.ThrowIfNull(generalElectionCommittee);
 
-        if (candidateCount < generalElectionCommittee.MinimalMembers)
+        // the saved value from VacanciesGeneralElection has to be counted as well!
+        if (candidateCount + generalElectionCommittee.VacanciesGeneralElection < generalElectionCommittee.MinimalMembers)
         {
             validationResult.Errors.Add(string.Format(CultureInfo.InvariantCulture, BusinessTexts.CandidateListValidationError_MinimumMembers, generalElectionCommittee.MinimalMembers));
         }
 
-        if (generalElectionCommittee.MaximalMembers is not null && generalElectionCommittee.MaximalMembers != 0 && candidateCount > generalElectionCommittee.MaximalMembers)
+        if (generalElectionCommittee.MaximalMembers is not null && generalElectionCommittee.MaximalMembers != 0 && candidateCount + generalElectionCommittee.VacanciesGeneralElection > generalElectionCommittee.MaximalMembers)
         {
             validationResult.Errors.Add(string.Format(CultureInfo.InvariantCulture, BusinessTexts.CandidateListValidationError_MaximumMembers, generalElectionCommittee.MaximalMembers));
         }
@@ -594,7 +595,9 @@ public class MembershipCandidateService : IMembershipCandidateService
                 {
                     officeTask.WorklistTaskStateId = WorklistTaskState.Completed;
                 }
-                else
+
+                // if an office executes the task, the one from the secretariat has to be completed as well
+                if (secretariatTask is not null)
                 {
                     secretariatTask.WorklistTaskStateId = WorklistTaskState.Completed;
                 }
