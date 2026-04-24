@@ -9,6 +9,7 @@
 -   No general election for observers [BKDO-3524](https://bkdev.atlassian.net/browse/BKDO-3524)
 -   Fix form letter issues with empty salutations [BKDO-3525](https://bkdev.atlassian.net/browse/BKDO-3525)
 -   Remove empty descriptions from membership addition export [BKDO-3549](https://bkdev.atlassian.net/browse/BKDO-3549)
+-   Sort interests by text [BKDO-3457](https://bkdev.atlassian.net/browse/BKDO-3457)
 
 ## 1.3.0
 
