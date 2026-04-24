@@ -149,6 +149,14 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
         var isFederalCouncilProposalForwarded = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded;
 
+        var hasActiveMembershipValidationTasks = generalElectionCommitteeTasks.Any(y => y.AssignedTo?.Role == Role.Secretariat && y.WorklistTaskStateId == WorklistTaskState.Active
+            && (y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation));
+
         var isFederalCouncilProposalFinalized = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
         var isReadyForProposalForCurrentRole = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded &&
             generalElectionCommitteeTasks.FirstOrDefault(y => y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && y.AssignedToId == currentEiamAssignment.Id && y.WorklistTaskStateId == WorklistTaskState.Completed) is not null;
@@ -167,6 +175,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         dto.CanFinalizeReadyForProposal = canFinalizeReadyForProposal;
         dto.IsReadyForProposalForCurrentRole = isReadyForProposalForCurrentRole;
         dto.IsReadyForProposalFinalized = isFederalCouncilProposalFinalized;
+        dto.HasActiveMembershipValidationTasks = hasActiveMembershipValidationTasks;
 
         return dto;
     }

@@ -922,5 +922,6 @@
   "recipients.filter.word.label": "Word generieren",
   "recipients.filter.pdf.label": "PDF generieren",
   "recipients.filter.formLetterExportDate.label": "Brief-Datum",
-  "openDataStack.title": "Open Data Stack"
+  "openDataStack.title": "Open Data Stack",
+  "candidateList.hasActiveTasks": "Es gibt noch offene Aufgaben"
 }
