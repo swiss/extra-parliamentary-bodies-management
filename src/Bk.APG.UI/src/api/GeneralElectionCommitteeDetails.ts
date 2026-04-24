@@ -102,4 +102,5 @@ export interface GeneralElectionCommitteeDetails {
     needsAttentionRequirementsProfile: boolean;
     justificationsNeedAttention: boolean;
     futureGeneralElectionCommittee: boolean;
+    hasActiveMembershipValidationTasks: boolean;
 }
