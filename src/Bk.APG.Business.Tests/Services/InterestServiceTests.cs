@@ -99,6 +99,7 @@ internal class InterestServiceTests
             new InterestBuilder()
                 .WithPersonId(_personId)
                 .WithText("CD")
+                .WithInterestText("CD")
                 .WithBeginDate(null)
                 .WithInterestCommittee(new InterestCommitteeBuilder().Build())
                 .WithInterestLegalForm(new InterestLegalFormBuilder().Build())
@@ -107,6 +108,7 @@ internal class InterestServiceTests
             new InterestBuilder()
                 .WithPersonId(_personId)
                 .WithText("AD")
+                .WithInterestText("AD")
                 .WithBeginDate(beginDate)
                 .WithInterestCommittee(new InterestCommitteeBuilder().Build())
                 .WithInterestLegalForm(new InterestLegalFormBuilder().Build())
@@ -115,6 +117,7 @@ internal class InterestServiceTests
             new InterestBuilder()
                 .WithPersonId(_personId)
                 .WithText("AC")
+                .WithInterestText("AC")
                 .WithBeginDate(beginDate)
                 .WithInterestCommittee(new InterestCommitteeBuilder().Build())
                 .WithInterestLegalForm(new InterestLegalFormBuilder().Build())
@@ -131,8 +134,8 @@ internal class InterestServiceTests
         Assert.That(interests, Is.Not.Null);
         Assert.That(interests, Has.Count.EqualTo(resultFromRepository.Count));
 
-        Assert.That(interests.First().Text, Is.EqualTo("CD"));
-        Assert.That(interests.Last().Text, Is.EqualTo("AD"));
+        Assert.That(interests.First().Text, Is.EqualTo("AC"));
+        Assert.That(interests.Last().Text, Is.EqualTo("CD"));
     }
 
     [Test]
