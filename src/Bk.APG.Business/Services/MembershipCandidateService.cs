@@ -325,13 +325,15 @@ public class MembershipCandidateService : IMembershipCandidateService
         ArgumentNullException.ThrowIfNull(validationResult);
         ArgumentNullException.ThrowIfNull(generalElectionCommittee);
 
+        var savedVacancies = generalElectionCommittee.VacanciesGeneralElection ?? 0;
+
         // the saved value from VacanciesGeneralElection has to be counted as well!
-        if (candidateCount + generalElectionCommittee.VacanciesGeneralElection < generalElectionCommittee.MinimalMembers)
+        if (candidateCount + savedVacancies < generalElectionCommittee.MinimalMembers)
         {
             validationResult.Errors.Add(string.Format(CultureInfo.InvariantCulture, BusinessTexts.CandidateListValidationError_MinimumMembers, generalElectionCommittee.MinimalMembers));
         }
 
-        if (generalElectionCommittee.MaximalMembers is not null && generalElectionCommittee.MaximalMembers != 0 && candidateCount + generalElectionCommittee.VacanciesGeneralElection > generalElectionCommittee.MaximalMembers)
+        if (generalElectionCommittee.MaximalMembers is not null && generalElectionCommittee.MaximalMembers != 0 && candidateCount + savedVacancies > generalElectionCommittee.MaximalMembers)
         {
             validationResult.Errors.Add(string.Format(CultureInfo.InvariantCulture, BusinessTexts.CandidateListValidationError_MaximumMembers, generalElectionCommittee.MaximalMembers));
         }

@@ -417,7 +417,7 @@ export class PersonDataFormComponent implements OnInit {
         }
     }
 
-    public buildPersonModification(): PersonCreate | PersonUpdate {
+    buildPersonModification(): PersonCreate | PersonUpdate {
         const formValues = {
             ...this.personForm.getRawValue(),
         };
