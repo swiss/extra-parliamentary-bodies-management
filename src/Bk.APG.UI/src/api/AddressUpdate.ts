@@ -1,5 +1,5 @@
 export interface AddressUpdate {
-    id: string;
+    id?: string;
     companyName?: string;
     street?: string;
     poBox?: string;
