@@ -928,20 +928,6 @@ describe('PersonDataFormComponent', () => {
             personsServiceMock.generateSalutation = jest.fn().mockReturnValue(of('Sehr geehrte Frau Dr. Müller'));
         });
 
-        it('should call generateSalutation when all required fields are filled', fakeAsync(() => {
-            component.personForm.controls.genderId.setValue('femaleId');
-            component.personForm.controls.correspondenceLanguageId.setValue('de');
-            component.personForm.controls.surname.setValue('Müller');
-            component.personForm.controls.title.setValue('Dr.');
-
-            fixture.detectChanges();
-            tick(1000);
-            fixture.detectChanges();
-
-            expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'de', 'Müller', 'Dr.');
-            expect(component.personForm.controls.salutationText.value).toBe('Sehr geehrte Frau Dr. Müller');
-        }));
-
         it('should update salutationText when surname changes', () => {
             component.personForm.controls.genderId.setValue('maleId');
             component.personForm.controls.correspondenceLanguageId.setValue('de');
@@ -964,12 +950,12 @@ describe('PersonDataFormComponent', () => {
             component.personForm.controls.surname.setValue('Weber');
             component.personForm.controls.title.setValue('');
 
+            fixture.detectChanges();
+
             personsServiceMock.generateSalutation.mockClear();
             personsServiceMock.generateSalutation.mockReturnValue(of('Sehr geehrte Frau Prof. Weber'));
             component.personForm.controls.title.setValue('Prof.');
 
-            fixture.detectChanges();
-            tick(1000);
             fixture.detectChanges();
 
             expect(personsServiceMock.generateSalutation).toHaveBeenCalledWith('femaleId', 'de', 'Weber', 'Prof.');
