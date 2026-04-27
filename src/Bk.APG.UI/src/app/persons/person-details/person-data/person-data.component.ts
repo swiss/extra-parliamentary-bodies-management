@@ -96,9 +96,11 @@ export class PersonDataComponent implements OnInit {
             return;
         }
 
+        const personToUpdate = this.formComponent().buildPersonModification() as PersonUpdate;
+
         this.httpApiInterceptorEvents.deactivateNotificationOnNextAPICalls();
 
-        this.personsService.updatePerson(this.person!).subscribe({
+        this.personsService.updatePerson(personToUpdate).subscribe({
             next: async person => {
                 this.personUpdate.set(person);
                 this.form().reset(this.personUpdate(), {emitEvent: false});
