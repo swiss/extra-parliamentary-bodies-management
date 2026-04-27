@@ -10,6 +10,9 @@
 -   Fix form letter issues with empty salutations [BKDO-3525](https://bkdev.atlassian.net/browse/BKDO-3525)
 -   Remove empty descriptions from membership addition export [BKDO-3549](https://bkdev.atlassian.net/browse/BKDO-3549)
 -   Sort interests by text [BKDO-3457](https://bkdev.atlassian.net/browse/BKDO-3457)
+-   Add vacancies to calculate candidates [BKDO-3534](https://bkdev.atlassian.net/browse/BKDO-3534)
+-   Allow office user to finish task of secretariat [BKDO-3493](https://bkdev.atlassian.net/browse/BKDO-3493)
+-   Filter out inactive hits from UID service [BKDO-3244](https://bkdev.atlassian.net/browse/BKDO-3244)
 
 ## 1.3.0
 
