@@ -107,6 +107,7 @@ internal class UidServiceTests
 
         var organisation = new organisationType();
         var organisation1 = new organisationType1();
+        var uidRegInformation = new uidregInformationType();
         var identificationType = new organisationIdentificationType();
         var uid = new uidStructureType();
         var addresses = new List<organisationAddressType>();
@@ -117,12 +118,14 @@ internal class UidServiceTests
         };
         addresses.Add(address);
         uid.uidOrganisationId = "MyId";
+        uidRegInformation.uidregStatusEnterpriseDetail = uidregStatusEnterpriseDetailType.Item3;
         identificationType.organisationName = "Test AG";
         identificationType.uid = uid;
         identificationType.legalForm = "0103";
         organisation1.organisationIdentification = identificationType;
         organisation1.address = addresses.ToArray();
         organisation.organisation = organisation1;
+        organisation.uidregInformation = uidRegInformation;
 
         _resultItem.organisation = organisation;
         _resultItems.Add(_resultItem);
@@ -196,6 +199,60 @@ internal class UidServiceTests
         organisation1.organisationIdentification = identificationType;
         organisation1.address = addresses.ToArray();
         organisation.organisation = organisation1;
+
+        _resultItem.organisation = organisation;
+        _resultItems.Add(_resultItem);
+
+        _resultItem = new uidEntitySearchResultItem
+        {
+            rating = 99,
+            organisation = organisation
+        };
+        _resultItems.Add(_resultItem);
+
+        _response.uidEntitySearchResultItem = _resultItems.ToArray();
+
+        _publicServices.SearchAsync(Arg.Any<uidEntityPublicSearchRequest>(), Arg.Any<searchConfiguration>()).Returns(_response);
+
+        var uidResults = await _uidService.Search(searchString);
+
+        Assert.That(uidResults.Count(), Is.EqualTo(0));
+    }
+
+    [Test]
+    public async Task Search_WithNonMatchingState_ShouldReturnNoHits()
+    {
+        var searchString = "searchString";
+        _response = new uidEntitySearchResponse();
+
+        _resultItems = new List<uidEntitySearchResultItem>();
+
+        _resultItem = new uidEntitySearchResultItem
+        {
+            rating = 100
+        };
+
+        var organisation = new organisationType();
+        var organisation1 = new organisationType1();
+        var uidRegInformation = new uidregInformationType();
+        var identificationType = new organisationIdentificationType();
+        var uid = new uidStructureType();
+        var addresses = new List<organisationAddressType>();
+        var address = new organisationAddressType
+        {
+            Items = new[] { "5012" },
+            town = "Town"
+        };
+        addresses.Add(address);
+        uid.uidOrganisationId = "MyId";
+        uidRegInformation.uidregStatusEnterpriseDetail = uidregStatusEnterpriseDetailType.Item1;
+        identificationType.organisationName = "Test AG";
+        identificationType.uid = uid;
+        identificationType.legalForm = "0103";
+        organisation1.organisationIdentification = identificationType;
+        organisation1.address = addresses.ToArray();
+        organisation.organisation = organisation1;
+        organisation.uidregInformation = uidRegInformation;
 
         _resultItem.organisation = organisation;
         _resultItems.Add(_resultItem);
