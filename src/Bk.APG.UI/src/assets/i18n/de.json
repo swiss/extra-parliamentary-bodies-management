@@ -579,7 +579,7 @@
   "worklist.task.create.error": "Fehler beim Erstellen der Aufgabe",
   "worklist.task.edit.error": "Fehler beim Bearbeiten der Aufgabe",
   "worklist.task.forward.error": "Fehler beim Weiterleiten der Aufgabe",
-  "worklist.task.create.generalElectionStart.dueDateHint": "Setzen Sie eine Frist, bis wann die GS das Gremium für den Bundesratsantrag GEW freigegeben haben muss, um Teil des GEW Bundesratsantrags zu sein.",
+  "worklist.task.create.generalElectionStart.dueDateHint": "Setzen Sie eine Frist, bis wann die GS das Gremium für den Bundesratsantrag GEW freigegeben haben muss, um Teil des GEW Bundesratsantrags zu sein. Achtung: diese Aufgabe kann länger als eine Minute dauern, da im Hintergrund die GEW Daten angelegt werden!",
   "generalElection.committee.details.candidateList": "Wahlvorschlag",
   "generalElection.committee.candidateList.title": "Kandidatenliste",
   "generalElection.committee.candidateList.table.noEntries": "Keine Kandidaten gefunden",
