@@ -41,6 +41,7 @@ public class CommitteeDetailDto
     public bool CanCreateJustification { get; set; }
     public bool CanEdit { get; set; }
     public bool? FederalInstitution { get; set; }
+    public bool? SelfOrganized { get; set; }
 
     public string? JustificationMembers { get; set; }
 
