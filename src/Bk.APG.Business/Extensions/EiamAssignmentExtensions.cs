@@ -1,4 +1,5 @@
 using Bk.APG.Business.Models;
+using Bk.APG.Business.Services;
 
 namespace Bk.APG.Business.Extensions;
 
@@ -75,7 +76,7 @@ public static class EiamAssignmentExtensions
         return assignableIds;
     }
 
-    public static IEnumerable<EiamAssignment> GetAssignmentsForReadyForProposalForward(this EiamAssignment eiamAssignment, Guid committeeId)
+    public static IEnumerable<EiamAssignment> GetAssignmentsForReadyForProposalForward(this EiamAssignment eiamAssignment, Guid committeeId, IEnumerable<WorklistTask> worklistTasks)
     {
         ArgumentNullException.ThrowIfNull(eiamAssignment);
 
@@ -83,20 +84,37 @@ public static class EiamAssignmentExtensions
         switch (eiamAssignment.Role)
         {
             case Role.Admin:
-                assignableIds.Add(eiamAssignment.Children
+                if (WorklistTaskService.HasCompletedReadyForProposal(worklistTasks, Role.Department))
+                {
+                    assignableIds.Add(eiamAssignment.Children
                     .First(departmentAssignment => departmentAssignment.Children.Any(officeAssignment => officeAssignment.Children.Any(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId))));
+                }
                 break;
             case Role.Department:
                 assignableIds.Add(eiamAssignment.Parent!);
-                assignableIds.Add(eiamAssignment.Department!.IsBigDepartment
-                    ? eiamAssignment.Children.First(officeAssignment => officeAssignment.Children.Any(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId))
-                    : eiamAssignment.Children
-                        .SelectMany(officeAssignment => officeAssignment.Children)
-                        .First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+                if (eiamAssignment.Department!.IsBigDepartment)
+                {
+                    if (WorklistTaskService.HasCompletedReadyForProposal(worklistTasks, Role.Office))
+                    {
+                        assignableIds.Add(eiamAssignment.Children.First(officeAssignment => officeAssignment.Children.Any(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId)));
+                    }
+                }
+                else
+                {
+                    if (WorklistTaskService.HasCompletedReadyForProposal(worklistTasks, Role.Secretariat))
+                    {
+                        assignableIds.Add(eiamAssignment.Children
+                            .SelectMany(officeAssignment => officeAssignment.Children)
+                            .First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+                    }
+                }
                 break;
             case Role.Office:
                 assignableIds.Add(eiamAssignment.Parent!);
-                assignableIds.Add(eiamAssignment.Children.First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+                if (WorklistTaskService.HasCompletedReadyForProposal(worklistTasks, Role.Secretariat))
+                {
+                    assignableIds.Add(eiamAssignment.Children.First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+                }
                 break;
             case Role.Secretariat:
                 assignableIds.Add(eiamAssignment.Committee!.Department!.IsBigDepartment ? eiamAssignment.Parent! : eiamAssignment.Parent!.Parent!);
