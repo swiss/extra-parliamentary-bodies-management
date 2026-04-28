@@ -31,7 +31,6 @@ public class GeneralElectionCommitteeDetailDto
     public bool Period4YearsInGeneralElection { get; set; }
     public int? MinimalMembers { get; set; }
     public int? MaximalMembers { get; set; }
-    public int MembersCount { get; set; }
     public int? VacanciesGeneralElection { get; set; }
     public int? CalculatedVacancies { get; set; }
     public string? GeneralGenderMeasure { get; set; }
@@ -43,6 +42,7 @@ public class GeneralElectionCommitteeDetailDto
     public bool IsDeleted { get; set; }
     public bool IsActive { get; set; }
     public bool? FederalInstitution { get; set; }
+    public bool? SelfOrganized { get; set; }
     public bool IsValidated { get; set; }
     public bool IsReadyForFederalCouncilProposalForwarded { get; set; }
     public bool WasValidatedOnce { get; set; }
