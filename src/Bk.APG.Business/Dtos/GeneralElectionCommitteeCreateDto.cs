@@ -28,6 +28,7 @@ public class GeneralElectionCommitteeCreateDto
     public string? LinkHomepageItalian { get; set; }
     public string? LinkHomepageRomansh { get; set; }
     public bool? FederalInstitution { get; set; }
+    public bool? SelfOrganized { get; set; }
     public string? SelectionProcedure { get; set; }
     public bool CanEditAll { get; set; }
     public bool CanEditDepartment { get; set; }

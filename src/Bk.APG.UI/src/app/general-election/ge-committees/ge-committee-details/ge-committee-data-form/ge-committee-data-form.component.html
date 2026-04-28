@@ -181,7 +181,27 @@
                 </mat-form-field>
                 <apg-help-tooltip text="committee.helpTooltip.vacancies" />
             </div>
-            <span></span>
+
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'committee.details.termOfOffice' | translate }}</mat-label>
+                    <mat-select [formControl]="committeeForm.controls.termOfOfficeId">
+                        @for (term of masterDataService.terms(); track term.id) {
+                            <mat-option [value]="term.id">{{ term.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>{{
+                        errorService.getControlError(
+                            committeeForm.controls.termOfOfficeId.errors,
+                            'committee.details.termOfOffice' | translate,
+                            'committee.error'
+                        )
+                    }}</mat-error>
+                </mat-form-field>
+                @if (!isAuthorityOrAdministration()) {
+                    <apg-help-tooltip text="committee.helpTooltip.termDuration" />
+                }
+            </div>
         </div>
 
         <div class="input-grid">
@@ -215,23 +235,22 @@
         <div class="input-grid">
             <div class="form-field-with-tooltip">
                 <mat-form-field obErrorMessages>
-                    <mat-label>{{ 'committee.details.termOfOffice' | translate }}</mat-label>
-                    <mat-select [formControl]="committeeForm.controls.termOfOfficeId">
-                        @for (term of masterDataService.terms(); track term.id) {
-                            <mat-option [value]="term.id">{{ term.text }}</mat-option>
-                        }
+                    <mat-label>{{ 'committee.details.selfOrganized' | translate }}</mat-label>
+
+                    <mat-select [formControl]="committeeForm.controls.selfOrganized">
+                        <mat-option [value]="true">{{ 'common.yes' | translate }}</mat-option>
+                        <mat-option [value]="false">{{ 'common.no' | translate }}</mat-option>
                     </mat-select>
+
                     <mat-error>{{
                         errorService.getControlError(
-                            committeeForm.controls.termOfOfficeId.errors,
-                            'committee.details.termOfOffice' | translate,
+                            committeeForm.controls.selfOrganized.errors,
+                            'committee.details.selfOrganized' | translate,
                             'committee.error'
                         )
                     }}</mat-error>
                 </mat-form-field>
-                @if (!isAuthorityOrAdministration()) {
-                    <apg-help-tooltip text="committee.helpTooltip.termDuration" />
-                }
+                <apg-help-tooltip text="committee.helpTooltip.selfOrganized" />
             </div>
 
             <div class="form-field-with-tooltip">

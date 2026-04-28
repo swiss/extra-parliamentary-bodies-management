@@ -29,6 +29,7 @@ export interface GeneralElectionCommitteeUpdate {
     linkHomepageItalian?: string;
     linkHomepageRomansh?: string;
     federalInstitution?: boolean;
+    selfOrganized?: boolean;
     canEditAll: boolean;
     canEditDepartment: boolean;
     canEditLegalbase: boolean;
