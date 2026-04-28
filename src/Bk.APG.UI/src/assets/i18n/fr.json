@@ -153,6 +153,8 @@
   "committee.details.legalBase": "Bases légales",
   "committee.details.releaseGeneralElection": "Autorisation pour le renouvellement intégral",
   "committee.details.federalLawEstablishment": "Inscrit dans la loi fédérale",
+  "committee.details.selfOrganized": "FR_Selbstorganisiert",
+  "committees.details.selfOrganized.label": "FR_Selbstorganisiertes Gremium",
   "committee.details.extraParliamentaryCommission": "Commission extraparlementaire",
   "committee.details.extraParliamentaryCommissionAbbreviation": "Commissions extraparlementaires",
   "committee.details.supervisionDuty": "Tâches de surveillance ou de réglementation",
