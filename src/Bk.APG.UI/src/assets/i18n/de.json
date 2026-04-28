@@ -159,6 +159,8 @@
   "committee.details.legalBase": "Rechtliche Grundlagen",
   "committee.details.releaseGeneralElection": "Bereit für GEW Bundesratsantrag",
   "committee.details.federalLawEstablishment": "Im Bundesgesetz eingeführt",
+  "committee.details.selfOrganized": "Selbstorganisiert",
+  "committees.details.selfOrganized.label": "Selbstorganisiertes Gremium",
   "committee.details.extraParliamentaryCommission": "Ausserparlamentarische Kommission",
   "committee.details.extraParliamentaryCommissionAbbreviation": "APK",
   "committee.details.supervisionDuty": "Aufsichts- oder Regulierungsaufgaben",

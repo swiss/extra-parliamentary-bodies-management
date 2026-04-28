@@ -71,6 +71,7 @@ export interface GeneralElectionCommitteeDetails {
     wasValidatedOnce?: boolean;
     isFederalCouncilProposalDirty?: boolean;
     federalInstitution?: boolean;
+    selfOrganized?: boolean;
     selectionProcedure?: string;
     candidateListState?: string;
     assignedTo?: string;

@@ -966,6 +966,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
+                    b.Property<bool?>("SelfOrganized")
+                        .HasColumnType("boolean")
+                        .HasColumnName("self_organized");
+
                     b.Property<bool?>("SupervisionDuty")
                         .HasColumnType("boolean")
                         .HasColumnName("supervision_duty");
@@ -3075,6 +3079,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                     b.Property<string>("SelectionProcedure")
                         .HasColumnType("text")
                         .HasColumnName("selection_procedure");
+
+                    b.Property<bool?>("SelfOrganized")
+                        .HasColumnType("boolean")
+                        .HasColumnName("self_organized");
 
                     b.Property<bool?>("SupervisionDuty")
                         .HasColumnType("boolean")

@@ -198,6 +198,7 @@ public class CommitteeService : ICommitteeService
 
         existingCommittee.FederalLawEstablishment = updateDto.FederalLawEstablishment;
         existingCommittee.FederalInstitution = updateDto.FederalInstitution;
+        existingCommittee.SelfOrganized = updateDto.SelfOrganized;
         existingCommittee.SupervisionDuty = updateDto.SupervisionDuty;
         existingCommittee.MarketOrientated = updateDto.MarketOrientated;
 
