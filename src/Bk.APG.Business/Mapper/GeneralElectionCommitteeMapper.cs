@@ -116,7 +116,6 @@ public static class GeneralElectionCommitteeMapper
             Period4YearsInGeneralElection = generalElectionCommittee.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid,
             MinimalMembers = generalElectionCommittee.MinimalMembers,
             MaximalMembers = generalElectionCommittee.MaximalMembers,
-            MembersCount = 0, // TODO BKDO-1031
             VacanciesGeneralElection = generalElectionCommittee.VacanciesGeneralElection,
             CalculatedVacancies = generalElectionCommittee.MinimalMembers - generalElectionCommittee.ActiveMemberCount > 0
                 ? generalElectionCommittee.MinimalMembers - generalElectionCommittee.ActiveMemberCount
@@ -129,6 +128,7 @@ public static class GeneralElectionCommitteeMapper
             ContactPoints = generalElectionCommittee.ContactPoints.Select(ContactPointMapper.ToContactPointDetailDto).ToList(),
             JustificationMembers = generalElectionCommittee.JustificationMembers,
             FederalInstitution = generalElectionCommittee.FederalInstitution,
+            SelfOrganized = generalElectionCommittee.SelfOrganized,
             ExtraParliamentaryCommission = generalElectionCommittee.ExtraParliamentaryCommission,
             IsValidated = generalElectionCommittee.IsValidated,
             IsReadyForFederalCouncilProposalForwarded = generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded,
@@ -182,8 +182,8 @@ public static class GeneralElectionCommitteeMapper
             LinkHomepageItalian = generalElectionCommitteeUpdate.LinkHomepageItalian,
             LinkHomepageRomansh = generalElectionCommitteeUpdate.LinkHomepageRomansh,
             FederalInstitution = generalElectionCommitteeUpdate.FederalInstitution,
+            SelfOrganized = generalElectionCommitteeUpdate.SelfOrganized,
             SelectionProcedure = generalElectionCommitteeUpdate.SelectionProcedure,
-            MembersCount = 0, // TODO BKDO-1031
             RowVersion = generalElectionCommitteeUpdate.RowVersion
         };
     }
