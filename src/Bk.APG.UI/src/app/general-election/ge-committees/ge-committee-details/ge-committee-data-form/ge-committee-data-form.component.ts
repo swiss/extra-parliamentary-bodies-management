@@ -209,6 +209,7 @@ export class GeneralElectionCommitteeDataFormComponent {
             oldLegalForm: new FormControl<string | undefined>({disabled: true, value: undefined}),
             legalBase: new FormControl<string | undefined>({value: undefined, disabled: false}, {validators: [Validators.maxLength(2000)]}),
             federalLawEstablishment: new FormControl<boolean | null>(null),
+            selfOrganized: new FormControl<boolean | null>(null),
             supervisionDuty: new FormControl<boolean | null>(null),
             marketOrientated: new FormControl<boolean | null>(null),
             beginDate: new FormControl<Date>({value: today(), disabled: true}, {nonNullable: true, validators: [Validators.required]}),
