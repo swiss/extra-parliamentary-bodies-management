@@ -20,6 +20,7 @@ export interface CommitteeCreate {
     additionalAuthorityMembers: boolean;
     linkAuthorityWebsite: string;
     federalInstitution?: boolean;
+    selfOrganized?: boolean;
     linkHomepageGerman?: string;
     linkHomepageFrench?: string;
     linkHomepageItalian?: string;
