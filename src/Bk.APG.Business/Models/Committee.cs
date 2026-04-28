@@ -52,6 +52,7 @@ public class Committee : EntityBase
     public bool? SupervisionDuty { get; set; }
     public bool AdditionalAuthorityMembers { get; set; }
     public bool? FederalInstitution { get; set; }
+    public bool? SelfOrganized { get; set; }
     public string? LinkHomepageGerman { get; set; }
     public string? LinkHomepageFrench { get; set; }
     public string? LinkHomepageItalian { get; set; }
