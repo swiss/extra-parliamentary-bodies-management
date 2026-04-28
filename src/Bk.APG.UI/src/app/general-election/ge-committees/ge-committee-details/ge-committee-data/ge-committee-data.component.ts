@@ -96,7 +96,7 @@ export class GeneralElectionCommitteeDataComponent implements OnInit {
         dialogRef
             .afterClosed()
             .pipe(
-                filter(result => result !== undefined),
+                filter(result => result === true),
                 switchMap(() => this.generalElectionCommitteeDataService.finalizeReadyForProposal(this.route.snapshot.params.id)),
                 takeUntilDestroyed(this.dr)
             )
