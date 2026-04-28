@@ -354,7 +354,7 @@ public class GeneralElectionCommitteeServiceTests
 
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommittee(_committeeId);
 
-        Assert.That(result.HasActiveMembershipValidationTasks, Is.EqualTo(expected));
+        Assert.That(result.HasActiveValidationTasks, Is.EqualTo(expected));
     }
 
     [Test]
