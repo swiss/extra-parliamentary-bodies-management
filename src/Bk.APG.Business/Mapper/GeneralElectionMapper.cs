@@ -86,6 +86,7 @@ public static class GeneralElectionMapper
             ReleaseGeneralElection = committee.ReleaseGeneralElection is not null && (bool)committee.ReleaseGeneralElection,
             FederalLawEstablishment = committee.FederalLawEstablishment,
             FederalInstitution = committee.FederalInstitution,
+            SelfOrganized = committee.SelfOrganized,
             SupervisionDuty = committee.SupervisionDuty,
             MarketOrientated = committee.MarketOrientated,
             LegalFormId = committee.LegalFormId,

@@ -422,6 +422,7 @@ export class CommitteeDataFormComponent implements OnInit {
             this.committeeForm.controls.supervisionDuty.enable();
             this.committeeForm.controls.marketOrientated.enable();
             this.committeeForm.controls.federalInstitution.enable();
+            this.committeeForm.controls.selfOrganized.enable();
 
             if (this.committeeForm.controls.additionalAuthorityMembers.value) {
                 this.committeeForm.controls.linkAuthorityWebsite.enable();
@@ -453,6 +454,7 @@ export class CommitteeDataFormComponent implements OnInit {
             this.committeeForm.controls.supervisionDuty.disable();
             this.committeeForm.controls.marketOrientated.disable();
             this.committeeForm.controls.federalInstitution.disable();
+            this.committeeForm.controls.selfOrganized.disable();
             this.committeeForm.controls.linkAuthorityWebsite.disable();
             this.committeeForm.controls.legalFormId.disable();
             this.committeeForm.controls.legalBase.disable();
@@ -487,6 +489,7 @@ export class CommitteeDataFormComponent implements OnInit {
             additionalAuthorityMembers: new FormControl<boolean | null>(null, {validators: [Validators.required]}),
             linkAuthorityWebsite: new FormControl<string | undefined>({value: undefined, disabled: true}, {validators: [Validators.maxLength(500)]}),
             federalInstitution: new FormControl<boolean | null>(null),
+            selfOrganized: new FormControl<boolean | null>(null),
             linkHomepageGerman: new FormControl<string | undefined>({value: undefined, disabled: false}, {validators: [Validators.maxLength(500)]}),
             linkHomepageFrench: new FormControl<string | undefined>({value: undefined, disabled: false}, {validators: [Validators.maxLength(500)]}),
             linkHomepageItalian: new FormControl<string | undefined>({value: undefined, disabled: false}, {validators: [Validators.maxLength(500)]}),

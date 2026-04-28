@@ -25,7 +25,6 @@ public class GeneralElectionCommitteeUpdateDto
     public required Guid TermOfOfficeId { get; set; }
     public int? MinimalMembers { get; set; }
     public int? MaximalMembers { get; set; }
-    public int? MembersCount { get; set; }
     public bool AdditionalAuthorityMembers { get; init; }
     public string? LinkAuthorityWebsite { get; set; }
     public string? LinkHomepageGerman { get; set; }
@@ -33,6 +32,7 @@ public class GeneralElectionCommitteeUpdateDto
     public string? LinkHomepageItalian { get; set; }
     public string? LinkHomepageRomansh { get; set; }
     public bool? FederalInstitution { get; set; }
+    public bool? SelfOrganized { get; set; }
     public string? SelectionProcedure { get; set; }
     public bool CanEditAll { get; set; }
     public bool CanEditDepartment { get; set; }

@@ -166,8 +166,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         dto.AssignedTo = activeCandidateListTask?.AssignedTo!.GetText();
         dto.WasGeneralElectionStartedForCommittee = wasGeneralElectionStartedForCommittee;
-        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && (!isCandidateListValidatedOrReadyForFederalCouncil || _authorizationService.IsDepartment);
         dto.CanValidateCandidateList = wasGeneralElectionStartedForCommittee && canValidate;
+        dto.CanSaveCandidateList = wasGeneralElectionStartedForCommittee && (canValidate || canForward) && (!isCandidateListValidatedOrReadyForFederalCouncil || _authorizationService.IsDepartment);
         dto.CanForwardCandidateList = wasGeneralElectionStartedForCommittee && canForward;
         dto.IsCandidateListValidated = isCandidateListValidatedOrReadyForFederalCouncil;
         dto.ReadyForProposalAssignedTo = activeReadyForProposalTask?.AssignedTo!.GetText();
@@ -316,6 +316,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         existingCommittee.FederalLawEstablishment = updateDto.FederalLawEstablishment;
         existingCommittee.FederalInstitution = updateDto.FederalInstitution;
+        existingCommittee.SelfOrganized = updateDto.SelfOrganized;
         existingCommittee.SupervisionDuty = updateDto.SupervisionDuty;
         existingCommittee.MarketOrientated = updateDto.MarketOrientated;
 

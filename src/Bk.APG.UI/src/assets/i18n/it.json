@@ -152,6 +152,8 @@
   "committee.details.legalBase": "Basi legali",
   "committee.details.releaseGeneralElection": "Approvazione delle elezioni per il rinnovo integrale (ERI)",
   "committee.details.federalLawEstablishment": "Introdotto in una legge federale",
+  "committee.details.selfOrganized": "IT_Selbstorganisiert",
+  "committees.details.selfOrganized.label": "IT_Selbstorganisiertes Gremium",
   "committee.details.extraParliamentaryCommission": "Commissione extraparlamentare",
   "committee.details.extraParliamentaryCommissionAbbreviation": "Commissione extraparlamentare",
   "committee.details.supervisionDuty": "Compiti di vigilanza e regolamentazione",
