@@ -1,4 +1,5 @@
 using Bk.APG.Business.Models;
+using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting.Tests.Builders;
 
@@ -8,6 +9,7 @@ namespace Bk.APG.Business.Tests.Services;
 public class EiamAssignmentServiceTests
 {
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
+    private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
 
     private EiamAssignmentService _service = null!;
 
@@ -16,7 +18,7 @@ public class EiamAssignmentServiceTests
     [SetUp]
     public void SetUp()
     {
-        _service = new EiamAssignmentService(_authorizationService);
+        _service = new EiamAssignmentService(_authorizationService, _worklistTaskRepository);
     }
 
     [TearDown]
@@ -289,6 +291,18 @@ public class EiamAssignmentServiceTests
             Children = new List<EiamAssignment> { officeAssignment }
         };
         _authorizationService.GetCurrentEiamAssignment().Returns(currentAssignment);
+
+        _worklistTaskRepository.GetAllByCommitteeId(committeeId).Returns([
+            new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Completed)
+                .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+                .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Department).Build()).Build(),
+            new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Completed)
+                .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+                .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Office).Build()).Build(),
+            new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Completed)
+                .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+                .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Secretariat).Build()).Build()
+            ]);
 
         var result = (await _service.GetAllForReadyForProposalForward(committeeId)).ToList();
 
