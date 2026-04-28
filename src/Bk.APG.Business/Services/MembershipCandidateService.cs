@@ -682,6 +682,29 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         if (targetStage > currentStage)
         {
+            /* Set all inactive tasks in the hierarchy up to the current stage 
+             * (Secretariat → Office → Department → Admin) to Completed */
+
+            var assignmentInChain = activeTask.AssignedTo;
+
+            while (assignmentInChain is not null)
+            {
+                var task = readyForProposalTasks.FirstOrDefault(x =>
+                    x.AssignedToId == assignmentInChain.Id);
+
+                if (task is not null)
+                {
+                    task.WorklistTaskStateId = WorklistTaskState.Completed;
+                }
+
+                if (assignmentInChain.Id == currentEiamAssignment.Id)
+                {
+                    break;
+                }
+
+                assignmentInChain = assignmentInChain.Parent;
+            }
+
             generalElectionCommittee.CandidateListStateId = CandidateListState.ReadyForFederalCouncilProposalForwarded;
         }
         else if (targetStage == 0)
