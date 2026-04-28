@@ -7,6 +7,18 @@ namespace Bk.APG.Business.Tests.Extensions;
 [TestFixture]
 public class EiamAssignmentExtensionsTests
 {
+    private readonly IEnumerable<WorklistTask> _tasks = [
+        new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Department).Build()).Build(),
+        new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Office).Build()).Build(),
+        new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Secretariat).Build()).Build()
+            ];
+
     [Test]
     public void GetSearchableIds_WithAdminRole_ReturnsOnlyAssignmentId()
     {
@@ -114,7 +126,7 @@ public class EiamAssignmentExtensionsTests
             Children = new List<EiamAssignment> { officeAssignment }
         };
 
-        var result = departmentAssignment.GetAssignmentsForReadyForProposalForward(secretariatAssignment.CommitteeId!.Value).ToList();
+        var result = departmentAssignment.GetAssignmentsForReadyForProposalForward(secretariatAssignment.CommitteeId!.Value, _tasks).ToList();
 
         Assert.That(result, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
@@ -154,13 +166,64 @@ public class EiamAssignmentExtensionsTests
             Children = new List<EiamAssignment> { officeAssignment }
         };
 
-        var result = departmentAssignment.GetAssignmentsForReadyForProposalForward(secretariatAssignment.CommitteeId!.Value).ToList();
+        var result = departmentAssignment.GetAssignmentsForReadyForProposalForward(secretariatAssignment.CommitteeId!.Value, _tasks).ToList();
 
         Assert.That(result, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Contains.Item(parentAssignment));
             Assert.That(result, Contains.Item(officeAssignment));
+        }
+    }
+
+    [Test]
+    public void GetAssignmentsForReadyForProposalForward_WithDepartmentRole_AndBigDepartmentButWithoutCompletedOfficeTask_ReturnsParentButNotOffice()
+    {
+        var tasks = new List<WorklistTask>([
+        new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Department).Build()).Build(),
+            new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Office).Build()).Build(),
+            new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Secretariat).Build()).Build()
+            ]);
+
+        var department = new DepartmentBuilder()
+            .WithIsBigDepartment(true)
+            .Build();
+        var parentAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Admin)
+            .Build();
+
+        var secretariatAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Secretariat)
+            .WithCommittee(new CommitteeBuilder().WithDepartment(department).Build())
+            .Build();
+
+        var officeAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Office)
+            .WithChildren([secretariatAssignment])
+            .Build();
+
+        var departmentAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "department",
+            Role = Role.Department,
+            Parent = parentAssignment,
+            Department = department,
+            Children = new List<EiamAssignment> { officeAssignment }
+        };
+
+        var result = departmentAssignment.GetAssignmentsForReadyForProposalForward(secretariatAssignment.CommitteeId!.Value, tasks).ToList();
+
+        Assert.That(result, Has.Count.EqualTo(1));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Contains.Item(parentAssignment));
         }
     }
 
@@ -184,13 +247,54 @@ public class EiamAssignmentExtensionsTests
             Children = new List<EiamAssignment> { secretariatAssignment }
         };
 
-        var result = officeAssignment.GetAssignmentsForReadyForProposalForward(committeeId).ToList();
+        var result = officeAssignment.GetAssignmentsForReadyForProposalForward(committeeId, _tasks).ToList();
 
         Assert.That(result, Has.Count.EqualTo(2));
         using (Assert.EnterMultipleScope())
         {
             Assert.That(result, Contains.Item(departmentAssignment));
             Assert.That(result, Contains.Item(secretariatAssignment));
+        }
+    }
+
+    [Test]
+    public void GetAssignmentsForReadyForProposalForward_WithOfficeRoleButWithoutCompletedSecretaryTask_ReturnsParentButNotSecretariat()
+    {
+        var tasks = new List<WorklistTask>([
+        new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Department).Build()).Build(),
+            new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Office).Build()).Build(),
+            new WorklistTaskBuilder().WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithAssignedTo(new EiamAssignmentBuilder().WithRole(Role.Secretariat).Build()).Build()
+            ]);
+
+        var committeeId = Guid.NewGuid();
+        var departmentAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Department)
+            .Build();
+        var secretariatAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Secretariat)
+            .WithCommittee(new CommitteeBuilder().WithId(committeeId).Build())
+            .Build();
+        var officeAssignment = new EiamAssignment
+        {
+            Id = Guid.NewGuid(),
+            ExternalId = "office",
+            Role = Role.Office,
+            Parent = departmentAssignment,
+            Children = new List<EiamAssignment> { secretariatAssignment }
+        };
+
+        var result = officeAssignment.GetAssignmentsForReadyForProposalForward(committeeId, tasks).ToList();
+
+        Assert.That(result, Has.Count.EqualTo(1));
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(result, Contains.Item(departmentAssignment));
         }
     }
 
@@ -214,7 +318,7 @@ public class EiamAssignmentExtensionsTests
                 .Build()
         };
 
-        var result = secretariatAssignment.GetAssignmentsForReadyForProposalForward(committeeId).ToList();
+        var result = secretariatAssignment.GetAssignmentsForReadyForProposalForward(committeeId, _tasks).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
         Assert.That(result.First(), Is.EqualTo(officeAssignment));
@@ -247,7 +351,7 @@ public class EiamAssignmentExtensionsTests
                 .Build()
         };
 
-        var result = secretariatAssignment.GetAssignmentsForReadyForProposalForward(committeeId).ToList();
+        var result = secretariatAssignment.GetAssignmentsForReadyForProposalForward(committeeId, _tasks).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
         Assert.That(result.First(), Is.EqualTo(departmentAssignment));
@@ -289,7 +393,7 @@ public class EiamAssignmentExtensionsTests
             .WithChildren([nonMatchingDepartment, matchingDepartment])
             .Build();
 
-        var result = adminAssignment.GetAssignmentsForReadyForProposalForward(committeeId).ToList();
+        var result = adminAssignment.GetAssignmentsForReadyForProposalForward(committeeId, _tasks).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
         Assert.That(result.First(), Is.EqualTo(matchingDepartment));
@@ -302,6 +406,6 @@ public class EiamAssignmentExtensionsTests
             .WithRole(Role.Observer)
             .Build();
 
-        Assert.Throws<ArgumentOutOfRangeException>(() => assignment.GetAssignmentsForReadyForProposalForward(Guid.NewGuid()));
+        Assert.Throws<ArgumentOutOfRangeException>(() => assignment.GetAssignmentsForReadyForProposalForward(Guid.NewGuid(), _tasks));
     }
 }

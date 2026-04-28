@@ -2,7 +2,7 @@
     <h2>{{ generalElectionCommitteeDetailsService.committeeDetails()?.description }}</h2>
     <h4 class="candidate-list-state">
         {{ generalElectionCommittee()?.candidateListState }}
-        @if (generalElectionCommittee()?.isValidated && generalElectionCommittee()?.hasActiveMembershipValidationTasks) {
+        @if (generalElectionCommittee()?.isValidated && generalElectionCommittee()?.hasActiveValidationTasks) {
             ({{ 'candidateList.hasActiveTasks' | translate }})
         }
     </h4>
