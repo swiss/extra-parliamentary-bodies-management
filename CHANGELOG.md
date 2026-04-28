@@ -13,6 +13,8 @@
 -   Add vacancies to calculate candidates [BKDO-3534](https://bkdev.atlassian.net/browse/BKDO-3534)
 -   Allow office user to finish task of secretariat [BKDO-3493](https://bkdev.atlassian.net/browse/BKDO-3493)
 -   Filter out inactive hits from UID service [BKDO-3244](https://bkdev.atlassian.net/browse/BKDO-3244)
+-   Display additional text when a candidate list is validated but a task is still pending [BKDO-3409](https://bkdev.atlassian.net/browse/BKDO-3409)
+-   Allow users with higher roles to complete ReadyForProposalForward tasks [BKDO-3487](https://bkdev.atlassian.net/browse/BKDO-3487)
 
 ## 1.3.0
 
