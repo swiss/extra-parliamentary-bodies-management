@@ -164,7 +164,17 @@ public class WorklistTaskRepository : IWorklistTaskRepository
     public async Task<IEnumerable<WorklistTask>> GetAllByGeneralElectionCommitteeId(Guid generalElectionCommitteeId)
     {
         return await _dataContext.WorklistTasks.Include(x => x.AssignedTo)
+            .ThenInclude(y => y!.Parent)
             .Where(x => x.GeneralElectionCommitteeId == generalElectionCommitteeId && !x.IsDeleted)
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<WorklistTask>> GetAllByCommitteeId(Guid committeeId)
+    {
+        return await _dataContext.WorklistTasks.Include(x => x.AssignedTo)
+            .ThenInclude(y => y!.Parent)
+            .Where(x => x.CommitteeId == committeeId && !x.IsDeleted)
+            .AsNoTracking()
             .ToListAsync();
     }
 
