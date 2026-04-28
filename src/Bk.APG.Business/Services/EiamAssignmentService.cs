@@ -1,16 +1,19 @@
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Extensions;
 using Bk.APG.Business.Mapper;
+using Bk.APG.Business.Repositories;
 
 namespace Bk.APG.Business.Services;
 
 public class EiamAssignmentService : IEiamAssignmentService
 {
     private readonly IAuthorizationService _authorizationService;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
 
-    public EiamAssignmentService(IAuthorizationService authorizationService)
+    public EiamAssignmentService(IAuthorizationService authorizationService, IWorklistTaskRepository worklistTaskRepository)
     {
         _authorizationService = authorizationService;
+        _worklistTaskRepository = worklistTaskRepository;
     }
 
     public async Task<IEnumerable<EiamAssignmentDto>> GetAvailableAssignments()
@@ -30,7 +33,8 @@ public class EiamAssignmentService : IEiamAssignmentService
     public async Task<IEnumerable<EiamAssignmentDto>> GetAllForReadyForProposalForward(Guid committeeId)
     {
         var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
-        var availableAssignments = currentEiamAssignment.GetAssignmentsForReadyForProposalForward(committeeId).ToList();
+        var tasks = await _worklistTaskRepository.GetAllByCommitteeId(committeeId);
+        var availableAssignments = currentEiamAssignment.GetAssignmentsForReadyForProposalForward(committeeId, tasks).ToList();
         return availableAssignments.Select(x => EiamAssignmentMapper.ToDto(x));
     }
 
