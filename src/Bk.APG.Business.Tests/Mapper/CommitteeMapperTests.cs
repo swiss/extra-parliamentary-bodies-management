@@ -307,6 +307,7 @@ internal class CommitteeMapperTests
             Assert.That(committeeUpdateDto.LinkHomepageItalian, Is.EqualTo(committee.LinkHomepageItalian));
             Assert.That(committeeUpdateDto.LinkHomepageRomansh, Is.EqualTo(committee.LinkHomepageRomansh));
             Assert.That(committeeUpdateDto.FederalInstitution, Is.EqualTo(committee.FederalInstitution));
+            Assert.That(committeeUpdateDto.SelfOrganized, Is.EqualTo(committee.SelfOrganized));
             Assert.That(committeeUpdateDto.MembersCount, Is.EqualTo(committee.ActiveMemberCount));
             Assert.That(committeeUpdateDto.VacanciesInGeneralElection, Is.EqualTo(committee.VacanciesGeneralElection));
             Assert.That(committeeUpdateDto.MembershipAdditionsInGeneralElection, Is.EqualTo(committee.MembershipAdditionsInGeneralElection.Select(x => x.Id).ToArray()));

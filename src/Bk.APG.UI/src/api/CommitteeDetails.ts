@@ -78,6 +78,7 @@ export interface CommitteeDetails {
     measuresLanguages?: string;
     generalLanguageMeasure?: string;
     federalInstitution?: boolean;
+    selfOrganized?: boolean;
     futureGeneralElectionCommittee: boolean;
     isFederalCouncilProposalDirty?: boolean;
     isReadyForProposalForCurrentRole?: boolean;
