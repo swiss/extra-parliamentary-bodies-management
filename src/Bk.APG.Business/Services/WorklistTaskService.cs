@@ -33,6 +33,36 @@ public class WorklistTaskService : IWorklistTaskService
         _logger = logger;
     }
 
+    private static readonly HashSet<Guid> ActiveValidationTaskTypes = [
+        WorklistTaskType.GeneralElectionMissingJustifications,
+        WorklistTaskType.GeneralElectionMissingSecretariat,
+        WorklistTaskType.GeneralElectionPersonBaseData,
+        WorklistTaskType.GeneralElectionPersonInterests,
+        WorklistTaskType.GeneralElectionMissingDataProtectionOfficer,
+        WorklistTaskType.GeneralElectionMembershipValidation
+    ];
+
+    private static bool IsActiveValidationTask(WorklistTask task)
+    {
+        ArgumentNullException.ThrowIfNull(task);
+
+        return task.AssignedTo?.Role == Role.Secretariat &&
+            task.WorklistTaskStateId == WorklistTaskState.Active &&
+            ActiveValidationTaskTypes.Contains(task.WorklistTaskTypeId);
+    }
+
+    public static bool HasActiveValidationTasks(IEnumerable<WorklistTask> tasks)
+        => tasks.Any(IsActiveValidationTask);
+
+    public static bool HasCompletedReadyForProposal(IEnumerable<WorklistTask> tasks, Role role)
+        => tasks.Any(y => y.AssignedTo?.Role == role
+            && y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal
+            && y.WorklistTaskStateId == WorklistTaskState.Completed);
+
+    public static bool CanForwardOfficeTasks(IEnumerable<WorklistTask> tasks, Role role)
+        => HasCompletedReadyForProposal(tasks, role)
+           || HasActiveValidationTasks(tasks);
+
     public async Task<PagedResultDto<WorklistTaskDto>> GetWorklistTasks(PagingParametersDto paging, WorklistFilterParametersDto? filterParametersDto, string? sort, SortDirection? sortDirection)
     {
         if (_authorizationService.IsObserver)
