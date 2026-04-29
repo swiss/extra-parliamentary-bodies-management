@@ -23,13 +23,16 @@
       "ES2022",
       "dom"
     ],
-    "baseUrl": "./",
+    "types": [
+      "node",
+      "jest"
+    ],
     "paths": {
       "@api/*": [
-        "src/api/*"
+        "./src/api/*"
       ],
       "@shared/*": [
-        "src/app/shared/*"
+        "./src/app/shared/*"
       ]
     }
   },
