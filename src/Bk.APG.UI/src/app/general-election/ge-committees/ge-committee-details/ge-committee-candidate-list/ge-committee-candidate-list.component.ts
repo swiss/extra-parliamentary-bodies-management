@@ -160,6 +160,8 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
             ? this.generalElectionCommitteeDetailsService.committeeDetails()?.vacanciesGeneralElection
             : this.generalElectionCommitteeDetailsService.committeeDetails()?.calculatedVacancies
     );
+    savedVacancies = computed(() => (this.generalElectionCommitteeDetailsService.committeeDetails()?.vacanciesGeneralElection != null ? true : false));
+
     duplicateCheckConfirmed = false;
     personSearchComponent = viewChild(PersonSearchComponent);
     highlightedCandidateId: string | null = null;
