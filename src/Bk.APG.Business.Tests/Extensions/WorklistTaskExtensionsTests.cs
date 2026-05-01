@@ -21,6 +21,9 @@ internal class WorklistTaskExtensionsTests
         [Test]
         public void ShouldReturnTrue_WhenAllConditionsAreMet()
         {
+            var isDepartment = false;
+            var isBigDepartment = false;
+
             var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
                 .WithAssignedTo(assignment)
@@ -28,7 +31,7 @@ internal class WorklistTaskExtensionsTests
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(assignment.Id);
+            var result = _worklistTask.GetCanBeForwarded(assignment.Id, isDepartment, isBigDepartment);
 
             Assert.That(result, Is.True);
         }
@@ -36,6 +39,9 @@ internal class WorklistTaskExtensionsTests
         [Test]
         public void ShouldReturnFalse_WhenAssignedToIdDoesNotMatch()
         {
+            var isDepartment = false;
+            var isBigDepartment = false;
+
             var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
                 .WithAssignedTo(assignment)
@@ -43,7 +49,7 @@ internal class WorklistTaskExtensionsTests
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(Guid.NewGuid());
+            var result = _worklistTask.GetCanBeForwarded(Guid.NewGuid(), isDepartment, isBigDepartment);
 
             Assert.That(result, Is.False);
         }
@@ -51,6 +57,9 @@ internal class WorklistTaskExtensionsTests
         [Test]
         public void ShouldReturnFalse_WhenWorklistTaskStateIsNotActive()
         {
+            var isDepartment = false;
+            var isBigDepartment = false;
+
             var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
                 .WithAssignedTo(assignment)
@@ -58,7 +67,7 @@ internal class WorklistTaskExtensionsTests
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(assignment.Id);
+            var result = _worklistTask.GetCanBeForwarded(assignment.Id, isDepartment, isBigDepartment);
 
             Assert.That(result, Is.False);
         }
@@ -66,6 +75,9 @@ internal class WorklistTaskExtensionsTests
         [Test]
         public void ShouldReturnFalse_WhenWorklistTaskTypeIsNotGeneralElectionDispatch()
         {
+            var isDepartment = false;
+            var isBigDepartment = false;
+
             var assignment = new EiamAssignmentBuilder().Build();
             _worklistTask = new WorklistTaskBuilder()
                 .WithAssignedTo(assignment)
@@ -73,9 +85,52 @@ internal class WorklistTaskExtensionsTests
                 .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart)
                 .Build();
 
-            var result = _worklistTask.GetCanBeForwarded(assignment.Id);
+            var result = _worklistTask.GetCanBeForwarded(assignment.Id, isDepartment, isBigDepartment);
 
             Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public void ShouldReturnFalse_WhenWorklistTaskTypeIsForBigDepartmentWithWrongParentId()
+        {
+            var isDepartment = true;
+            var isBigDepartment = true;
+
+            var parentId = Guid.NewGuid();
+            var otherParentId = Guid.NewGuid();
+            var eiamId = Guid.NewGuid();
+            var assignment = new EiamAssignmentBuilder().WithId(eiamId).WithParentId(otherParentId).WithRole(Role.Office).Build();
+
+            _worklistTask = new WorklistTaskBuilder()
+                .WithAssignedTo(assignment)
+                .WithWorklistTaskStateId(WorklistTaskState.Active)
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
+                .Build();
+
+            var result = _worklistTask.GetCanBeForwarded(parentId, isDepartment, isBigDepartment);
+
+            Assert.That(result, Is.False);
+        }
+
+        [Test]
+        public void ShouldReturnTrue_WhenAllConditionsForBigDepartmentAreMet()
+        {
+            var isDepartment = true;
+            var isBigDepartment = true;
+
+            var parentId = Guid.NewGuid();
+            var eiamId = Guid.NewGuid();
+            var assignment = new EiamAssignmentBuilder().WithId(eiamId).WithParentId(parentId).WithRole(Role.Office).Build();
+
+            _worklistTask = new WorklistTaskBuilder()
+                .WithAssignedTo(assignment)
+                .WithWorklistTaskStateId(WorklistTaskState.Active)
+                .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionDispatch)
+                .Build();
+
+            var result = _worklistTask.GetCanBeForwarded(parentId, isDepartment, isBigDepartment);
+
+            Assert.That(result, Is.True);
         }
     }
 
