@@ -15,6 +15,8 @@ public class EiamAssignmentBuilder
     private Department? _department;
     private readonly List<EiamAssignment> _children;
     private readonly Guid? _departmentId;
+    private EiamAssignment? _parent;
+    private Guid? _parentId;
 
     public EiamAssignmentBuilder()
     {
@@ -26,6 +28,8 @@ public class EiamAssignmentBuilder
         _department = null;
         _children = [];
         _departmentId = _faker.Random.Guid();
+        _parentId = _faker.Random.Guid();
+        _parent = null;
     }
 
     public EiamAssignmentBuilder WithId(Guid id)
@@ -67,6 +71,23 @@ public class EiamAssignmentBuilder
         return this;
     }
 
+    public EiamAssignmentBuilder WithParent(EiamAssignment parentAssignment)
+    {
+        ArgumentNullException.ThrowIfNull(parentAssignment);
+
+        _parent = parentAssignment;
+        _parentId = parentAssignment.Id;
+        return this;
+    }
+
+    public EiamAssignmentBuilder WithParentId(Guid parentAssignmentId)
+    {
+        ArgumentNullException.ThrowIfNull(parentAssignmentId);
+
+        _parentId = parentAssignmentId;
+        return this;
+    }
+
     public EiamAssignment Build()
     {
         return new EiamAssignment
@@ -78,7 +99,9 @@ public class EiamAssignmentBuilder
             CommitteeId = _committeeId,
             Department = _department,
             Children = _children,
-            DepartmentId = _departmentId
+            DepartmentId = _departmentId,
+            Parent = _parent,
+            ParentId = _parentId,
         };
     }
 }
