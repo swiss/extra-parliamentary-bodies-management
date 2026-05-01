@@ -195,7 +195,7 @@ public class WorklistTaskBuilder
             DepartmentId = _departmentId,
             Department = _department,
             OfficeId = _officeId,
-            Office = _office
+            Office = _office,
         };
     }
 }

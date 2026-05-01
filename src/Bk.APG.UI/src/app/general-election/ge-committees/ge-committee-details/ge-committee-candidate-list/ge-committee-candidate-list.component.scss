@@ -270,4 +270,12 @@
         display: flex;
         justify-content: space-between;
     }
+
+    .saved-value {
+        color: $ob-green-500;
+    }
+
+    .calculated-value {
+        color: $ob-red-500;
+    }
 }
