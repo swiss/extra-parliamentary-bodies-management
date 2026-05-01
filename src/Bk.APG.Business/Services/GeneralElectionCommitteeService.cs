@@ -143,7 +143,8 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             .FirstOrDefault(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && x.WorklistTaskStateId == WorklistTaskState.Active);
         var wasGeneralElectionStartedForCommittee = candidateListTasks.Count != 0;
 
-        var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id || (activeCandidateListTask?.AssignedTo?.ParentId == currentEiamAssignment.Id && !_authorizationService.IsDepartment);
+        var canForward = activeCandidateListTask?.AssignedToId == currentEiamAssignment.Id ||
+            (activeCandidateListTask?.AssignedTo?.ParentId == currentEiamAssignment.Id && !_authorizationService.IsDepartment);
         var isCandidateListValidatedOrReadyForFederalCouncil = generalElectionCommittee.CandidateListStateId == CandidateListState.Validated
             || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded
             || generalElectionCommittee.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
