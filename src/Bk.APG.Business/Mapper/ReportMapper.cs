@@ -54,6 +54,8 @@ public static class ReportMapper
             JustificationGenders = committee.JustificationGenders,
             JustificationLanguages = committee.JustificationLanguages,
             JustificationMembers = committee.JustificationMembers,
+            MeasuresGenders = committee.MeasuresGenders,
+            MeasuresLanguages = committee.MeasuresLanguages,
             Memberships = committee.MembershipCandidates.Select(FromMembershipCandidateToReportMembershipDto).ToList(),
             IsDeleted = false,
             IsValidated = committee.IsValidated
@@ -107,6 +109,8 @@ public static class ReportMapper
             JustificationGenders = committee.JustificationGenders,
             JustificationLanguages = committee.JustificationLanguages,
             JustificationMembers = committee.JustificationMembers,
+            MeasuresGenders = committee.MeasuresGenders,
+            MeasuresLanguages = committee.MeasuresLanguages,
             MembershipAdditionsInGeneralElection = committee.MembershipAdditionsInGeneralElection,
             SelectionProcedure = string.Empty,
             Memberships = committee.Memberships.Count > 0 ? committee.Memberships.Select(m => FromMembershipToReportMembershipDto(m)).ToList() : new List<ReportGeneralElectionMembershipDto>(),
