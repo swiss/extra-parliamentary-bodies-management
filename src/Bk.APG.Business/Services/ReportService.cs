@@ -78,6 +78,23 @@ public class ReportService : IReportService
 
         var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToList();
 
+        // this whole block is necessary because of self organized committees, all functions are made to members there (BKDO-2475)
+        var memberFunction = await _masterDataRepository.GetById<Function>(Function.MemberGuid);
+
+        foreach (var committee in generalElectionCommitteesWithMembers)
+        {
+            if (committee.SelfOrganized == true)
+            {
+                var memberships = committee.Memberships.ToList();
+
+                foreach (var m in memberships)
+                {
+                    m.Function = memberFunction;
+                }
+                committee.Memberships = memberships;
+            }
+        }
+
         var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
         var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
 
@@ -138,6 +155,23 @@ public class ReportService : IReportService
         var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
 
         var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToList();
+
+        // this whole block is necessary because of self organized committees, all functions are made to members there (BKDO-2475)
+        var memberFunction = await _masterDataRepository.GetById<Function>(Function.MemberGuid);
+
+        foreach (var committee in generalElectionCommitteesWithMembers)
+        {
+            if (committee.SelfOrganized == true)
+            {
+                var memberships = committee.Memberships.ToList();
+
+                foreach (var m in memberships)
+                {
+                    m.Function = memberFunction;
+                }
+                committee.Memberships = memberships;
+            }
+        }
 
         var vacanciesCommittees = generalElectionCommitteesWithMembers.Where(c => c.VacanciesGeneralElection > 0).ToArray();
 
@@ -280,6 +314,24 @@ public class ReportService : IReportService
 
         // to be able to use the same functions, we map here the GeneralElection data to normal data!
         var geCommitteesWithMembers = generalElectionCommittees.Select(c => ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto(c)).ToList();
+
+        // this whole block is necessary because of self organized committees, all functions are made to members there (BKDO-2475)
+        var memberFunction = await _masterDataRepository.GetById<Function>(Function.MemberGuid);
+
+        foreach (var committee in geCommitteesWithMembers)
+        {
+            if (committee.SelfOrganized == true)
+            {
+                var memberships = committee.Memberships.ToList();
+
+                foreach (var m in memberships)
+                {
+                    m.Function = memberFunction;
+                }
+                committee.Memberships = memberships;
+            }
+        }
+
         var extraParliamentaryCommissions = geCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToList();
 
         var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&

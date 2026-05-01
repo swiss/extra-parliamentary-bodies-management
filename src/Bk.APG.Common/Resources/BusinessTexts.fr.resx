@@ -319,7 +319,7 @@
         <value>La durée maximale du mandat pour ce membre a été atteinte : </value>
     </data>
     <data name="ParliamentaryReport_Filename" xml:space="preserve">
-        <value>Organes extraparlementaires_rapport_Parlement</value>
+        <value>Organes_extraparlementaires_rapport_Parlement</value>
     </data>
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
         <value>FR_APG_Bundesratsbeschluss</value>
@@ -358,7 +358,7 @@
         <value>Procédure de sélection : {0}</value>
     </data>
     <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
-        <value>Annexe_Décision du Conseil fédéral</value>
+        <value>Annexe_proposition_du_Conseil_fédéral</value>
     </data>
     <data name="Report_ShorterDutyText" xml:space="preserve">
         <value>Nommé par {0} jusqu'à {1}</value>
@@ -497,5 +497,8 @@
     </data>
     <data name="InformationNoteExport_ItalianMissing" xml:space="preserve">
         <value>FR_Italienisch nicht vertreten</value>
+    </data>
+    <data name="Committee_SelfOrganized" xml:space="preserve">
+        <value>FR_Selbstorgansisiert</value>
     </data>
 </root>
