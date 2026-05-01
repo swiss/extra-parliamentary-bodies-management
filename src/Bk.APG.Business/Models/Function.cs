@@ -9,6 +9,10 @@ public class Function : MasterDataBase
 {
     public const string PresidentUri = "www.todo.uri.A282A0CD-4A7D-48B6-9B52-9B216E9454FE";
 
+    // Mitglied
+    public const string MemberGuidAsString = "c2e8d46d-d827-412e-997b-d8afadaf41a7";
+    public static readonly Guid MemberGuid = Guid.Parse(MemberGuidAsString);
+
     public required string TextFemaleDe { get; set; }
     public required string TextFemaleFr { get; set; }
     public required string TextFemaleIt { get; set; }
