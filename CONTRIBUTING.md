@@ -1,4 +1,4 @@
-## How to contribute to fch-cube?
+## How to contribute to fch-apg?
 
 * This project is currently not under a community development phase.
 * GitHub Issues are disabled
