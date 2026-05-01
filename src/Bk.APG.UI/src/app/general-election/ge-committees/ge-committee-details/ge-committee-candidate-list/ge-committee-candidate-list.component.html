@@ -226,12 +226,23 @@
         }
         @if (!isObserver()) {
             <div class="vacancies ob-form-sm">
-                @if (isDepartment()) {
-                    <mat-icon class="info" matIconPrefix matTooltip="{{ 'committee.details.vacancies.hint' | translate }}" svgIcon="info_circle" />
-                }
+                <mat-icon class="info" matIconPrefix matTooltip="{{ 'committee.details.vacancies.hint' | translate }}" svgIcon="info_circle" />
                 <mat-form-field subscriptSizing="dynamic" appearance="outline" [formGroup]="vacanciesForm">
-                    <mat-label>{{ 'membershipCandidate.vacanciesGeneralElection' | translate }}</mat-label>
-                    <input matInput type="number" min="0" max="99" formControlName="vacancies" />
+                    @if (savedVacancies()) {
+                        <mat-label>{{ 'membershipCandidate.vacanciesGeneralElection' | translate }}</mat-label>
+                    }
+                    @if (!savedVacancies()) {
+                        <mat-label>{{ 'membershipCandidate.calculatedVacancies' | translate }}</mat-label>
+                    }
+
+                    <input
+                        matInput
+                        type="number"
+                        min="0"
+                        max="99"
+                        formControlName="vacancies"
+                        [ngClass]="savedVacancies() ? 'saved-value' : 'calculated-value'"
+                    />
 
                     <button
                         matSuffix
