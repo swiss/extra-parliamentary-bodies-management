@@ -4,13 +4,23 @@ namespace Bk.APG.Business.Extensions;
 
 public static class WorklistTaskExtensions
 {
-    public static bool GetCanBeForwarded(this WorklistTask worklistTask, Guid currentEiamAssignmentId)
+    public static bool GetCanBeForwarded(this WorklistTask worklistTask, Guid currentEiamAssignmentId, bool isDepartment, bool isBigDepartment)
     {
         ArgumentNullException.ThrowIfNull(worklistTask);
 
-        return worklistTask.AssignedTo!.Id == currentEiamAssignmentId
+        var canForward = worklistTask.AssignedTo!.Id == currentEiamAssignmentId
             && worklistTask.WorklistTaskStateId == WorklistTaskState.Active
             && worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch;
+
+        // if the task is an office task and I am the parent from a big department, I shall also be able to finish the task (BKDO-3533)
+        if (isBigDepartment && worklistTask.AssignedTo!.Role == Role.Office && isDepartment &&
+            worklistTask?.AssignedTo?.ParentId == currentEiamAssignmentId && worklistTask.WorklistTaskStateId == WorklistTaskState.Active &&
+            worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch)
+        {
+            canForward = true;
+        }
+
+        return canForward;
     }
 
     public static string GetSection(this WorklistTask worklistTask)
