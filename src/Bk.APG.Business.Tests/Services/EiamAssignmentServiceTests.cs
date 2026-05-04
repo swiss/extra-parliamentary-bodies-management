@@ -10,6 +10,7 @@ public class EiamAssignmentServiceTests
 {
     private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+    private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
 
     private EiamAssignmentService _service = null!;
 
@@ -18,7 +19,7 @@ public class EiamAssignmentServiceTests
     [SetUp]
     public void SetUp()
     {
-        _service = new EiamAssignmentService(_authorizationService, _worklistTaskRepository);
+        _service = new EiamAssignmentService(_authorizationService, _worklistTaskRepository, _generalElectionCommitteeRepository);
     }
 
     [TearDown]
