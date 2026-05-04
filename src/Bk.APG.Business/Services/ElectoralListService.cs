@@ -12,6 +12,7 @@ public class ElectoralListService : IElectoralListService
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly ICommitteeRepository _committeeRepository;
+    private readonly IMasterDataRepository _masterDataRepository;
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly ILogger<ElectoralListService> _logger;
 
@@ -19,6 +20,7 @@ public class ElectoralListService : IElectoralListService
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         IEiamAssignmentService eiamAssignmentService,
         ICommitteeRepository committeeRepository,
+        IMasterDataRepository masterDataRepository,
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         ILogger<ElectoralListService> logger
     )
@@ -26,6 +28,7 @@ public class ElectoralListService : IElectoralListService
         _documentService = documentService;
         _eiamAssignmentService = eiamAssignmentService;
         _committeeRepository = committeeRepository;
+        _masterDataRepository = masterDataRepository;
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _logger = logger;
     }
@@ -37,12 +40,26 @@ public class ElectoralListService : IElectoralListService
         _logger.LogInformation("Generating electoral list document of type {ListType}", listType);
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
+        var memberFunction = await _masterDataRepository.GetById<Function>(Function.MemberGuid);
+
         var evaluationDate = filterDto.AnalysisDate1 ?? DateOnly.FromDateTime(DateTime.Today);
 
         var allOtherCommittees = _committeeRepository.GetAll().Where(c => c.BeginDate <= evaluationDate && c.EndDate >= evaluationDate && c.TermOfOfficeId != TermOfOffice.Period4YearsInGeneralElectionGuid);
 
         var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
         var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToList();
+
+        // this whole block is necessary because of self organized committees, all functions are made to members there (BKDO-2475)
+        foreach (var committee in generalElectionCommitteesWithMembers)
+        {
+            if (committee.SelfOrganized == true)
+            {
+                foreach (var m in committee.Memberships)
+                {
+                    m.Function = memberFunction;
+                }
+            }
+        }
 
         // This lookup is used for other memberships of a person which does not belong to the current committee.
         var allMembershipsByPerson = allOtherCommittees
@@ -65,6 +82,7 @@ public class ElectoralListService : IElectoralListService
                         {
                             Name = committee.GetDescription(),
                             CommitteeType = committee.CommitteeType!.GetText(),
+                            SelfOrganized = committee.SelfOrganized == true ? BusinessTexts.Committee_SelfOrganized : string.Empty,
                             Functions = committee.Memberships
                                 .Where(membership => !membership.IsDeleted && membership.BeginDate <= evaluationDate && membership.EndDate >= evaluationDate && membership.Person != null)
                                 .OrderBy(membership => membership.Function!.Sort)

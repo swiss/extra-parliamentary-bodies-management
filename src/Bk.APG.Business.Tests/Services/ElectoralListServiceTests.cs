@@ -15,6 +15,7 @@ internal class ElectoralListServiceTests
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly IEiamAssignmentService _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
     private readonly ICommitteeRepository _committeeRepository = Substitute.For<ICommitteeRepository>();
+    private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
 
     private ElectoralListService _electoralListService = null!;
@@ -26,7 +27,7 @@ internal class ElectoralListServiceTests
     [SetUp]
     public void SetUp()
     {
-        _electoralListService = new ElectoralListService(_documentService, _eiamAssignmentService, _committeeRepository, _generalElectionCommitteeRepository, NullLogger<ElectoralListService>.Instance);
+        _electoralListService = new ElectoralListService(_documentService, _eiamAssignmentService, _committeeRepository, _masterDataRepository, _generalElectionCommitteeRepository, NullLogger<ElectoralListService>.Instance);
 
         _filterDto = new ReportFilterParametersDto { DocumentType = ReportType.ElectoralListFC, AnalysisDate1 = DateOnly.FromDateTime(DateTime.Today), CommitteesWithActiveMembership = false, ReleasedCommittees = false };
     }
