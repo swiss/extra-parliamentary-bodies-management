@@ -9,6 +9,7 @@ using Bk.APG.Infrastructure.DataSource;
 using Bk.APG.Infrastructure.Service.Post;
 using Bk.APG.Infrastructure.Service.UID.Configuration;
 using Bk.APG.Infrastructure.Service.UID.Extensions;
+using Bk.APG.Infrastructure.Service.UID.Service;
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
@@ -174,6 +175,7 @@ try
         .AddHealthChecks()
         .AddDatabase<DataContext>()
         .AddCheck<PostService>("post")
+        .AddCheck<UidService>("uid")
         .AddDocumentService();
 
     builder.Services.AddDimensionService();
