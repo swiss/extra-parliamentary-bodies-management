@@ -504,4 +504,7 @@
     <data name="InformationNoteExport_ItalianMissing" xml:space="preserve">
         <value>Italienisch nicht vertreten</value>
     </data>
+    <data name="Committee_SelfOrganized" xml:space="preserve">
+        <value>Selbstorgansisiert</value>
+    </data>
 </root>

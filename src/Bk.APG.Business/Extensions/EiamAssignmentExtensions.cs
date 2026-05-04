@@ -46,7 +46,7 @@ public static class EiamAssignmentExtensions
         return assignableIds;
     }
 
-    public static IEnumerable<EiamAssignment> GetAssignmentsForCandidateListForward(this EiamAssignment eiamAssignment, Guid committeeId)
+    public static IEnumerable<EiamAssignment> GetAssignmentsForCandidateListForward(this EiamAssignment eiamAssignment, Guid committeeId, bool isAssignedToSecretariat)
     {
         ArgumentNullException.ThrowIfNull(eiamAssignment);
 
@@ -62,7 +62,11 @@ public static class EiamAssignmentExtensions
                 break;
             case Role.Office:
                 assignableIds.Add(eiamAssignment.Parent!);
-                assignableIds.Add(eiamAssignment.Children.First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+
+                if (!isAssignedToSecretariat)
+                {
+                    assignableIds.Add(eiamAssignment.Children.First(secretariatAssignment => secretariatAssignment.CommitteeId == committeeId));
+                }
                 break;
             case Role.Secretariat:
                 assignableIds.Add(eiamAssignment.Committee!.Department!.IsBigDepartment ? eiamAssignment.Parent! : eiamAssignment.Parent!.Parent!);

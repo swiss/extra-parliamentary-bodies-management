@@ -471,4 +471,7 @@
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
         <value>IT_APG_Serienbrief_Gesamt</value>
     </data>
+    <data name="Committee_SelfOrganized" xml:space="preserve">
+        <value>IT_Selbstorgansisiert</value>
+    </data>
 </root>
