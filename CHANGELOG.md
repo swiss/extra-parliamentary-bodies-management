@@ -15,7 +15,8 @@
 -   Filter out inactive hits from UID service [BKDO-3244](https://bkdev.atlassian.net/browse/BKDO-3244)
 -   Display additional text when a candidate list is validated but a task is still pending [BKDO-3409](https://bkdev.atlassian.net/browse/BKDO-3409)
 -   Allow users with higher roles to complete ReadyForProposalForward tasks [BKDO-3487](https://bkdev.atlassian.net/browse/BKDO-3487)
--   Allow departmentusers of big departments to forward the task to secretariats [BKDO-3533](https://bkdev.atlassian.net/browse/BKDO-3533)
+-   Allow department users of big departments to forward the task to secretariats [BKDO-3533](https://bkdev.atlassian.net/browse/BKDO-3533)
+-   Update documents when committees are self organized [BKDO-2475](https://bkdev.atlassian.net/browse/BKDO-2475)
 
 ## 1.3.0
 
