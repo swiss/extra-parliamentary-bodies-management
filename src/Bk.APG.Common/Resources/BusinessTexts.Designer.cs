@@ -19,7 +19,7 @@ namespace Bk.APG.Common.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class BusinessTexts {
@@ -282,6 +282,15 @@ namespace Bk.APG.Common.Resources {
         public static string CandidateListValidationError_MinimumMembers {
             get {
                 return ResourceManager.GetString("CandidateListValidationError_MinimumMembers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selbstorgansisiert.
+        /// </summary>
+        public static string Committee_SelfOrganized {
+            get {
+                return ResourceManager.GetString("Committee_SelfOrganized", resourceCulture);
             }
         }
         

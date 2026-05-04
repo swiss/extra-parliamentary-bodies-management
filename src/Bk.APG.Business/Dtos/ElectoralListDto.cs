@@ -41,6 +41,7 @@ public class ElectoralListCommitteeDto
 {
     public required string Name { get; set; }
     public required string CommitteeType { get; set; }
+    public string? SelfOrganized { get; set; }
     public required IEnumerable<ElectoralListFunctionDto> Functions { get; set; }
 }
 
