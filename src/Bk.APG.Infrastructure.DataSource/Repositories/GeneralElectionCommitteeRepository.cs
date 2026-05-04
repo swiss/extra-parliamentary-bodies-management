@@ -126,6 +126,9 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .ThenInclude(item => item.Person)
             .ThenInclude(item => item!.Language)
             .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.Occupations)
+            .Include(item => item.MembershipCandidates)
             .ThenInclude(item => item!.Function)
             .Include(item => item.MembershipCandidates)
             .ThenInclude(item => item!.ElectionType)
@@ -171,6 +174,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 SelectionProcedure = c.SelectionProcedure,
                 CandidateListStateId = c.CandidateListStateId,
                 AssignedToRole = c.AssignedToRole,
+                SelfOrganized = c.SelfOrganized,
                 MembershipCandidates = c.MembershipCandidates.ToList()
             })
             .OrderBy(c => c.DescriptionGerman)
@@ -237,6 +241,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 SelectionProcedure = c.SelectionProcedure,
                 CandidateListStateId = c.CandidateListStateId,
                 AssignedToRole = c.AssignedToRole,
+                SelfOrganized = c.SelfOrganized,
                 MembershipCandidates = c.MembershipCandidates
                     .Where(m => m.Person != null &&
                         (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
@@ -316,6 +321,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 VacanciesGeneralElection = c.VacanciesGeneralElection,
                 SelectionProcedure = c.SelectionProcedure,
                 CandidateListStateId = c.CandidateListStateId,
+                SelfOrganized = c.SelfOrganized,
                 AssignedToRole = c.AssignedToRole,
                 // bring only candidates, which match by language and electiontype
                 MembershipCandidates = c.MembershipCandidates
