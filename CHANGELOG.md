@@ -17,6 +17,7 @@
 -   Allow users with higher roles to complete ReadyForProposalForward tasks [BKDO-3487](https://bkdev.atlassian.net/browse/BKDO-3487)
 -   Allow department users of big departments to forward the task to secretariats [BKDO-3533](https://bkdev.atlassian.net/browse/BKDO-3533)
 -   Update documents when committees are self organized [BKDO-2475](https://bkdev.atlassian.net/browse/BKDO-2475)
+-   Add UID monitoring to health check [BKDO-3050](https://bkdev.atlassian.net/browse/BKDO-3050)
 
 ## 1.3.0
 
