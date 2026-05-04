@@ -1,6 +1,7 @@
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Extensions;
 using Bk.APG.Business.Mapper;
+using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 
 namespace Bk.APG.Business.Services;
@@ -9,11 +10,13 @@ public class EiamAssignmentService : IEiamAssignmentService
 {
     private readonly IAuthorizationService _authorizationService;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
+    private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
 
-    public EiamAssignmentService(IAuthorizationService authorizationService, IWorklistTaskRepository worklistTaskRepository)
+    public EiamAssignmentService(IAuthorizationService authorizationService, IWorklistTaskRepository worklistTaskRepository, IGeneralElectionCommitteeRepository generalElectionCommitteeRepository)
     {
         _authorizationService = authorizationService;
         _worklistTaskRepository = worklistTaskRepository;
+        _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
     }
 
     public async Task<IEnumerable<EiamAssignmentDto>> GetAvailableAssignments()
@@ -26,7 +29,26 @@ public class EiamAssignmentService : IEiamAssignmentService
     public async Task<IEnumerable<EiamAssignmentDto>> GetAllForCandidateListForward(Guid committeeId)
     {
         var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
-        var availableAssignments = currentEiamAssignment.GetAssignmentsForCandidateListForward(committeeId);
+
+        var committee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
+
+        var isSecretariatTask = false;
+
+        if (committee != null)
+        {
+            var generalElectionCommitteeTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(committee.Id)).ToList();
+            var candidateListTasks = generalElectionCommitteeTasks
+                .Where(x => x.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate || x.WorklistTaskTypeId == WorklistTaskType.CandidateListForward || x.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove).ToList();
+            var activeCandidateListTask = candidateListTasks.FirstOrDefault(x => x.WorklistTaskStateId == WorklistTaskState.Active);
+
+            // find out, if the current active task is assigne to secretariat. If yes, forwarding to secretarait is not possible in dialog! (BKDO-3493)
+            if (activeCandidateListTask != null && activeCandidateListTask.AssignedTo!.Role == Role.Secretariat)
+            {
+                isSecretariatTask = true;
+            }
+        }
+
+        var availableAssignments = currentEiamAssignment.GetAssignmentsForCandidateListForward(committeeId, isSecretariatTask);
         return availableAssignments.Select(x => EiamAssignmentMapper.ToDto(x));
     }
 
