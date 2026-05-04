@@ -90,10 +90,39 @@ public class EiamAssignmentExtensionsTests
             .WithChildren([officeAssignment])
             .Build();
 
-        var result = departmentAssignment.GetAssignmentsForCandidateListForward(secretariatAssignment.CommitteeId!.Value).ToList();
+        var result = departmentAssignment.GetAssignmentsForCandidateListForward(secretariatAssignment.CommitteeId!.Value, false).ToList();
 
         Assert.That(result, Has.Count.EqualTo(1));
         Assert.That(result.First(), Is.EqualTo(secretariatAssignment));
+    }
+
+    [Test]
+    public void GetAssignmentsForCandidateListForward_WithOfficeRole_ReturnsGS()
+    {
+        var department = new DepartmentBuilder()
+            .WithIsBigDepartment(false)
+            .Build();
+
+        var secretariatAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Secretariat)
+            .Build();
+
+        var departmentAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Department)
+            .WithDepartment(department)
+            .Build();
+
+        var officeAssignment = new EiamAssignmentBuilder()
+            .WithRole(Role.Office)
+            .WithCommittee(new CommitteeBuilder().WithDepartment(department).Build())
+            .WithParent(departmentAssignment)
+            .WithChildren([secretariatAssignment])
+            .Build();
+
+        var result = officeAssignment.GetAssignmentsForCandidateListForward(officeAssignment.CommitteeId!.Value, true).ToList();
+
+        Assert.That(result, Has.Count.EqualTo(1));
+        Assert.That(result.First(), Is.EqualTo(departmentAssignment));
     }
 
     [Test]
