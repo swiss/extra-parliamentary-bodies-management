@@ -54,13 +54,10 @@ public class ElectoralListService : IElectoralListService
         {
             if (committee.SelfOrganized == true)
             {
-                var memberships = committee.Memberships.ToList();
-
-                foreach (var m in memberships)
+                foreach (var m in committee.Memberships)
                 {
                     m.Function = memberFunction;
                 }
-                committee.Memberships = memberships;
             }
         }
 
