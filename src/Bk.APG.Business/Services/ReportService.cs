@@ -1,10 +1,10 @@
 using System.Globalization;
-using System.Text.RegularExpressions;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Common.Resources;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Bk.APG.Business.Services;
@@ -21,6 +21,7 @@ public class ReportService : IReportService
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly ILogger<ReportService> _logger;
+    private readonly IConfiguration _configuration;
 
     public ReportService(
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
@@ -32,7 +33,8 @@ public class ReportService : IReportService
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         IMasterDataRepository masterDataRepository,
         IGeneralMeasureRepository generalMeasureRepository,
-        ILogger<ReportService> logger)
+        ILogger<ReportService> logger,
+        IConfiguration configuration)
     {
         _documentService = documentService;
         _termOfOfficeDateService = termOfOfficeDateService;
@@ -44,6 +46,7 @@ public class ReportService : IReportService
         _masterDataRepository = masterDataRepository;
         _generalMeasureRepository = generalMeasureRepository;
         _logger = logger;
+        _configuration = configuration;
     }
 
     public async Task<(string fileName, Stream content)> GetReport(ReportFilterParametersDto filterDto)
@@ -76,29 +79,33 @@ public class ReportService : IReportService
         var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
         var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
 
-        var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToList();
+        var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         generalElectionCommitteesWithMembers = await ReplaceSelfOrganisedMemberFunctions(generalElectionCommitteesWithMembers);
 
-        var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
-        var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
+        var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
+        var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
-        var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToList();
+        var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToArray();
 
-        var nonReleasedCommissions = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == false).ToList();
+        var nonReleasedCommissions = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == false).ToArray();
 
-        var marketOrientatedCommissions = extraParliamentaryCommissions.Where(c => c.MarketOrientated == true).ToList();
+        var marketOrientatedCommissions = extraParliamentaryCommissions.Where(c => c.MarketOrientated == true).ToArray();
 
         var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFuture(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions);
         var membersWith12OrMoreYearsDto = GetLongerMembershipData(membersWith12OrMoreYears);
 
-        var committeesWithMembersInFederalDuty = generalElectionCommitteesWithMembers.Where(c => c.Memberships.Any(m => m.Person?.FederalDuty == true)).ToList();
+        var committeesWithMembersInFederalDuty = generalElectionCommitteesWithMembers
+            .Where(c => c.Memberships.Any(m => m.Person?.FederalDuty == true))
+            .ToArray();
 
-        var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15).ToList();
+        var moreThan15MembersCommittees = generalElectionCommitteesWithMembers
+            .Where(c => c is { ExtraParliamentaryCommission: true, Memberships.Count: > 15 })
+            .ToArray();
 
         var nonReleasedCommissionsDto = GetNonReleasedCommissions(nonReleasedCommissions);
         var marketOrientatedCommissionsDto = GetMarketOrientatedMembershipData(marketOrientatedCommissions);
-        var moreThan15MembersCommitteesDto = GetCommitteesAndMembers(moreThan15MembersCommittees, ReportMembershipType.MoreThan15Members);
+        var moreThan15MembersCommitteesDto = GetCommitteesAndMembers(moreThan15MembersCommittees);
         var missingGenderMembersCommitteesDto = GetCommitteesWithGenders(extraParliamentaryCommissions);
         var missingItalianAndFrenchMembersCommitteesDto = GetCommitteesWithLanguages(extraParliamentaryCommissions);
         var committeesWithMembersInFederalDutyDto = GetFederalDutyMembershipsWithOffice(committeesWithMembersInFederalDuty);
@@ -133,28 +140,28 @@ public class ReportService : IReportService
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
         var otherCommitteeTypes = _committeeRepository.GetAll()
             .Where(c => c.TermOfOfficeId != TermOfOffice.Period4YearsInGeneralElectionGuid && c.BeginDate <= DateOnly.FromDateTime(DateTime.Today) && (c.EndDate is null || c.EndDate >= DateOnly.FromDateTime(DateTime.Today)))
-            .ToList();
-        var otherReportCommitteeTypes = otherCommitteeTypes.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
+            .ToArray();
+        var otherReportCommitteeTypes = otherCommitteeTypes.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
         var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
 
-        var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToList();
+        var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         generalElectionCommitteesWithMembers = await ReplaceSelfOrganisedMemberFunctions(generalElectionCommitteesWithMembers);
 
         var vacanciesCommittees = generalElectionCommitteesWithMembers.Where(c => c.VacanciesGeneralElection > 0).ToArray();
 
-        var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
-        var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
+        var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
+        var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
-        var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToList();
+        var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToArray();
 
         var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&
-                                                                           ((c.BeginDate > nextTermOfOfficeDate.BeginDate && c.BeginDate < nextTermOfOfficeDate.EndDate) || (c.EndDate < nextTermOfOfficeDate.EndDate && c.EndDate > nextTermOfOfficeDate.BeginDate))).ToList();
-        var disbandedReportCommittees = disbandedCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
+                                                                           ((c.BeginDate > nextTermOfOfficeDate.BeginDate && c.BeginDate < nextTermOfOfficeDate.EndDate) || (c.EndDate < nextTermOfOfficeDate.EndDate && c.EndDate > nextTermOfOfficeDate.BeginDate))).ToArray();
+        var disbandedReportCommittees = disbandedCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
-        var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFutureByDepartment(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions, departments);
+        var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFutureByDepartment(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions, departments).ToArray();
 
         var memberCountWith12OrMoreYears = membersWith12OrMoreYears
             .SelectMany(d => d.Committees!)
@@ -195,11 +202,15 @@ public class ReportService : IReportService
         var maleUnderStuffed = extraParliamentaryCommissions.Count(c => c.MaleUnderStuffed);
 
         // get all committees for GE, which are released and did not end before the current termOfOfficeDate
-        var releasedCommittees = committees.Where(c => c.ReleaseGeneralElection == true && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate)).ToList();
+        var releasedCommittees = committees
+            .Where(c => c.ReleaseGeneralElection == true && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate))
+            .ToArray();
         // same as above, but not released
-        var unreleasedCommittees = committees.Where(c => c.ReleaseGeneralElection == false && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate)).ToList();
+        var unreleasedCommittees = committees
+            .Where(c => c.ReleaseGeneralElection == false && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate))
+            .ToArray();
         // number of APKs (!) which are new or have ended before the current termOfOfficeDate
-        var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15).ToList();
+        var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c is { ExtraParliamentaryCommission: true, Memberships.Count: > 15 }).ToArray();
         var releasedCommitteesDto = GetCommitteesByDepartmentAndTypes(releasedCommittees, departments);
         var unreleasedCommitteesDto = GetCommitteesByDepartmentAndTypes(unreleasedCommittees, departments);
         var disbandedCommitteesDto = GetCommitteesByDepartment(disbandedReportCommittees, departments, ReportCommitteeType.StandardBehaviour, nextTermOfOfficeDate);
@@ -210,7 +221,7 @@ public class ReportService : IReportService
         var missingGenderMembersCommitteesDto = await GetCommitteesWithGendersByDepartment(extraParliamentaryCommissions, departments);
         var missingItalianAndFrenchMembersCommitteesDto = await GetCommitteesWithLanguagesByDepartment(extraParliamentaryCommissions, departments);
 
-        var committeesWithMembersInFederalAssembly = GetCommitteesAndMembersByDepartment(extraParliamentaryCommissions.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid), departments, ReportMembershipType.FederalAssembly);
+        var committeesWithMembersInFederalAssembly = GetCommitteesAndMembersByDepartment(extraParliamentaryCommissions.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToArray(), departments, ReportMembershipType.FederalAssembly);
         var committeesWithMembersInFederalDuty = GetCommitteesAndMembersByDepartment(extraParliamentaryCommissions, departments, ReportMembershipType.FederalDuty);
         var committeesWithDifferentTermOfOffice = GetCommitteesByDepartment(otherReportCommitteeTypes, departments, ReportCommitteeType.StandardBehaviour);
 
@@ -224,7 +235,7 @@ public class ReportService : IReportService
             NumberOfManagementCommittees = committees.Count(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid),
             NumberOfFederalAgenciesCommittees = committees.Count(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid),
             NumberOfVacancies = vacanciesCommittees.Length,
-            NumberOfExtraParliamentaryCommissions = extraParliamentaryCommissions.Count,
+            NumberOfExtraParliamentaryCommissions = extraParliamentaryCommissions.Length,
             MoreThan15Members = generalElectionCommitteesWithMembers.Count(c => c is { ExtraParliamentaryCommission: true, Memberships.Count: > 15 }),
             FemalePercentage = totalMembers > 0 ? Math.Round((decimal)femaleCount / totalMembers * 100, 2) : 0,
             MalePercentage = totalMembers > 0 ? Math.Round((decimal)maleCount / totalMembers * 100, 2) : 0,
@@ -242,7 +253,7 @@ public class ReportService : IReportService
             AdminCommMembersWithFederalAssembly = adminCommitteesFederalAssemblyMembers,
             CommissionsWithFederalDutyMembers = extraParliamentaryCommissionsWithFederalDutyMembers,
             CommissionsMembersWithFederalDuty = extraParliamentaryCommitteesFederalDutyMembers,
-            OtherCommitteeTypes = otherCommitteeTypes.Count,
+            OtherCommitteeTypes = otherCommitteeTypes.Length,
             ReleasedCommittees = releasedCommitteesDto,
             UnreleasedCommittees = unreleasedCommitteesDto,
             DisbandedCommittees = disbandedCommitteesDto,
@@ -269,44 +280,51 @@ public class ReportService : IReportService
         var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == Language.French ? "Appendix_FederalCouncil_French" : "Appendix_FederalCouncil_German";
 
         var departments = await _masterDataRepository.GetDepartments();
-        departments = departments.Where(d => d.Uri != Department.BkUri);
+        departments = departments.Where(d => d.Uri != Department.BkUri).ToArray();
 
         // there must be a general election running, or this stop the report!
         var generalElectionTermOfOfficeDate = await _termOfOfficeDateService.GetGeneralElectionTermOfOfficeDate();
 
         // present data, needed for one part of the report!
         var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
-        var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
+        var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
 
-        var reportCommittees = extraParliamentaryCommittees.Select(c => ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto(c)).ToList();
+        var reportCommittees = extraParliamentaryCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
 
         // to be able to use the same functions, we map here the GeneralElection data to normal data!
-        var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(c => ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto(c)).ToList();
+        var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         generalElectionCommitteesWithMembers = await ReplaceSelfOrganisedMemberFunctions(generalElectionCommitteesWithMembers);
 
-        var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToList();
+        var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToArray();
 
-        var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&
-                                                                           ((c.BeginDate > generalElectionTermOfOfficeDate.BeginDate && c.BeginDate < generalElectionTermOfOfficeDate.EndDate) || (c.EndDate < generalElectionTermOfOfficeDate.EndDate && c.EndDate > generalElectionTermOfOfficeDate.BeginDate))).ToList();
-        var disbandedReportCommittees = disbandedCommittees.Select(c => ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto(c)).ToList();
+        var disbandedCommittees = _committeeRepository.GetAll()
+            .Where(c => c.ExtraParliamentaryCommission && ((c.BeginDate > generalElectionTermOfOfficeDate.BeginDate && c.BeginDate < generalElectionTermOfOfficeDate.EndDate) || (c.EndDate < generalElectionTermOfOfficeDate.EndDate && c.EndDate > generalElectionTermOfOfficeDate.BeginDate)))
+            .ToArray();
+        var disbandedReportCommittees = disbandedCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
-        var marketOrientatedCommissions = generalElectionCommitteesWithMembers.Where(c => c.MarketOrientated == true).ToList();
+        var marketOrientatedCommissions = generalElectionCommitteesWithMembers.Where(c => c.MarketOrientated == true).ToArray();
 
         // get all committees for GE, which are released and did not end before the current termOfOfficeDate
-        var releasedCommittees = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == true && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToList();
+        var releasedCommittees = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == true && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToArray();
         // same as above, but not released
-        var unreleasedCommittees = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == false && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToList();
+        var unreleasedCommittees = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == false && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToArray();
         // number of APKs (!) which are new or have ended before the current termOfOfficeDate
-        var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15).ToList();
+        var moreThan15MembersCommittees = generalElectionCommitteesWithMembers
+            .Where(c => c is { ExtraParliamentaryCommission: true, Memberships.Count: > 15 })
+            .ToArray();
         var releasedCommitteesDto = GetCommitteesByDepartment(releasedCommittees, departments, ReportCommitteeType.StandardBehaviour);
         var unreleasedCommitteesDto = GetCommitteesByDepartment(unreleasedCommittees, departments, ReportCommitteeType.StandardBehaviour);
         var disbandedCommitteesDto = GetCommitteesByDepartment(disbandedReportCommittees, departments, ReportCommitteeType.StandardBehaviour);
-        var vacanciesCommittees = generalElectionCommitteesWithMembers.Where(c => c.VacanciesGeneralElection != null);
-        var selectionProcedureCommittees = generalElectionCommitteesWithMembers.Where(c => c.SelectionProcedure != null);
-        var requirementsProfileCommittees = generalElectionCommitteesWithMembers.Where(c => c.Memberships.Any(m => !string.IsNullOrWhiteSpace(m.RequirementsProfile))).ToList();
+        var vacanciesCommittees = generalElectionCommitteesWithMembers
+            .Where(c => c.VacanciesGeneralElection != null)
+            .ToArray();
+        var selectionProcedureCommittees = generalElectionCommitteesWithMembers
+            .Where(c => c.SelectionProcedure != null)
+            .ToArray();
+        var requirementsProfileCommittees = generalElectionCommitteesWithMembers.Where(c => c.Memberships.Any(m => !string.IsNullOrWhiteSpace(m.RequirementsProfile))).ToArray();
 
         var moreThan15MembersCommitteesDto = GetCommitteesByDepartment(moreThan15MembersCommittees, departments, ReportCommitteeType.StandardBehaviour);
         var missingGenderMembersCommitteesDto = await GetCommitteesWithGendersByDepartment(extraParliamentaryCommissions, departments);
@@ -322,11 +340,15 @@ public class ReportService : IReportService
         var marketOrientatedCommitteesDto = GetCommitteesAndMembersByDepartment(marketOrientatedCommissions, departments, ReportMembershipType.MarketOrientated);
 
         var committeesWithMembersInFederalAssemblyDto = GetCommitteesAndMembersByDepartment(extraParliamentaryCommissions
-            .Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid), departments, ReportMembershipType.FederalAssembly);
+            .Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToArray(), departments, ReportMembershipType.FederalAssembly);
         var committeesWithMembersInFederalDutyDto = GetCommitteesAndMembersByDepartment(extraParliamentaryCommissions, departments, ReportMembershipType.FederalDuty);
 
-        var managementCommittees = generalElectionCommitteesWithMembers.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid);
-        var federalAgencies = generalElectionCommitteesWithMembers.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid);
+        var managementCommittees = generalElectionCommitteesWithMembers
+            .Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid)
+            .ToArray();
+        var federalAgencies = generalElectionCommitteesWithMembers
+            .Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid)
+            .ToArray();
 
         var managementCommitteesWithMissingGendersDto = await GetCommitteesWithGendersByDepartment(managementCommittees, departments);
         var managementCommitteesWithMissingLanguagesDto = await GetCommitteesWithLanguagePercentagesByDepartment(managementCommittees, departments);
@@ -334,7 +356,7 @@ public class ReportService : IReportService
         var federalAgenciesWithMissingLanguagesDto = await GetCommitteesWithLanguagePercentagesByDepartment(federalAgencies, departments);
         var committeesWithVacanciesDto = GetCommitteesByDepartment(vacanciesCommittees, departments, ReportCommitteeType.Vacancies);
 
-        var multipleMembershipsDto = GetPersonsWithMultipleMemberships(generalElectionCommitteesWithMembers);
+        var multipleMembershipsDto = GetPersonsWithMultipleMemberships(generalElectionCommitteesWithMembers).ToArray();
 
         var committeesWithFormerFederalAssemblyMembersDto = GetCommitteesAndMembersByDepartment(extraParliamentaryCommissions, departments, ReportMembershipType.FederalAssembly);
         var committeesWithSelectionProcedureDto = GetCommitteesByDepartment(selectionProcedureCommittees, departments, ReportCommitteeType.SelectionProcedure);
@@ -344,12 +366,12 @@ public class ReportService : IReportService
         {
             TermOfOfficeDateRange = generalElectionTermOfOfficeDate.BeginDate.Year + " - " + generalElectionTermOfOfficeDate.EndDate?.Year,
             NumberOfMembers = generalElectionCommitteesWithMembers.Sum(c => c.ActiveMemberCount),
-            NumberOfCommittees = generalElectionCommitteesWithMembers.Count,
-            NumberOfExtraParliamentaryCommissions = extraParliamentaryCommissions.Count,
-            MoreThan15Members = generalElectionCommitteesWithMembers.Count(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15),
+            NumberOfCommittees = generalElectionCommitteesWithMembers.Length,
+            NumberOfExtraParliamentaryCommissions = extraParliamentaryCommissions.Length,
+            MoreThan15Members = generalElectionCommitteesWithMembers.Count(c => c is { ExtraParliamentaryCommission: true, Memberships.Count: > 15 }),
             MissingGender = missingGenderMembersCommitteesCount,
             MissingLanguage = missingItalianAndFrenchMembersCommitteesCount,
-            NumberOfMultipleMembershipsPersons = multipleMembershipsDto.Count(),
+            NumberOfMultipleMembershipsPersons = multipleMembershipsDto.Length,
             ReleasedCommittees = releasedCommitteesDto,
             UnreleasedCommittees = unreleasedCommitteesDto,
             DisbandedCommittees = disbandedCommitteesDto,
@@ -384,7 +406,7 @@ public class ReportService : IReportService
         var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == Language.French ? "InformationNote_French" : "InformationNote_German";
 
         var departments = await _masterDataRepository.GetDepartments();
-        departments = departments.Where(d => d.Uri != Department.BkUri);
+        departments = departments.Where(d => d.Uri != Department.BkUri).ToArray();
 
         // get relevant master data
         var generalElectionTermOfOfficeDate = await _termOfOfficeDateService.GetGeneralElectionTermOfOfficeDate();
@@ -397,39 +419,41 @@ public class ReportService : IReportService
 
         // present data, needed for the comparision with the future!
         var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
-        var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToList();
+        var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
 
-        var allGeneralElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
-        var allGeneralElectionCommitteesUnfiltered = await _generalElectionCommitteeRepository.GetAllWithPermissionCheck(departmentId, officeId, committeeId);
+        var allGeneralElectionCommittees = (await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
+        var allGeneralElectionCommitteesUnfiltered = (await _generalElectionCommitteeRepository.GetAllWithPermissionCheck(departmentId, officeId, committeeId)).ToArray();
 
         if (filterDto.CommitteesWithActiveMembership)
         {
-            allGeneralElectionCommitteesUnfiltered = allGeneralElectionCommitteesUnfiltered.Where(c => c.MembershipCandidates.Any(m => m.IsSelected)).ToList();
+            allGeneralElectionCommitteesUnfiltered = allGeneralElectionCommitteesUnfiltered
+                .Where(c => c.MembershipCandidates.Any(m => m.IsSelected))
+                .ToArray();
         }
 
         var numberOfSelectedCandidates = allGeneralElectionCommittees.Where(c => c.IsValidated).SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected);
 
-        var allAuthoritiesCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).ToList();
-        var allAdministrationCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToList();
-        var allManagementCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToList();
-        var allFederalAgenciesCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid).ToList();
-        var allExtraParliamentaryCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.ExtraParliamentaryCommission && c.IsValidated).ToList();
-        var allNonExtraParliamentaryCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => !c.ExtraParliamentaryCommission && c.IsValidated).ToList();
+        var allAuthoritiesCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid).ToArray();
+        var allAdministrationCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid).ToArray();
+        var allManagementCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid).ToArray();
+        var allFederalAgenciesCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid).ToArray();
+        var allExtraParliamentaryCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c is { ExtraParliamentaryCommission: true, IsValidated: true }).ToArray();
+        var allNonExtraParliamentaryCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c is { ExtraParliamentaryCommission: false, IsValidated: true }).ToArray();
 
         // get all committees for GE, which are released and did not end before the current termOfOfficeDate
-        var releasedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated).Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToList();
+        var releasedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated).Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToArray();
         var releasedCommitteesDto = GetCommitteesByDepartmentAndTypes(releasedCommittees, departments);
         // same as above, but not released
-        var unreleasedCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => !c.IsValidated).ToList();
+        var unreleasedCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => !c.IsValidated).ToArray();
         var unreleasedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(unreleasedCommittees, departments, InformationNoteData.Vacancies);
 
-        var moreThan12YearsCommittes = allGeneralElectionCommittees.Where(c => c.IsValidated).ToList();
+        var moreThan12YearsCommittes = allGeneralElectionCommittees.Where(c => c.IsValidated).ToArray();
         var moreThan12YearsCommitteesDto = GetCommitteesByDepartmentForMembershipDuration(moreThan12YearsCommittes, departments);
 
-        var genderUnderstuffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.FemaleUnderStaffed || c.MaleUnderStaffed)).ToList();
+        var genderUnderstuffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.FemaleUnderStaffed || c.MaleUnderStaffed)).ToArray();
         var genderUnderstuffedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(genderUnderstuffedCommittees, departments, InformationNoteData.Genders);
 
-        var languageUnderstuffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.ItalianUnderStaffed || c.FrenchUnderStaffed)).ToList();
+        var languageUnderstuffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.ItalianUnderStaffed || c.FrenchUnderStaffed)).ToArray();
         var languageUnderstuffedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(languageUnderstuffedCommittees, departments, InformationNoteData.Languages);
 
         var allCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected);
@@ -465,13 +489,13 @@ public class ReportService : IReportService
         var allItalianCandidatesFederalAgenciesCommittees = allFederalAgenciesCommittees.Where(c => c.IsValidated).SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.LanguageId == Language.ItalianGuid);
         var allRomanshCandidatesFederalAgenciesCommittees = allFederalAgenciesCommittees.Where(c => c.IsValidated).SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.LanguageId == Language.RomanshGuid);
 
-        var membersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.EstimatedTermOfOffice > 12);
-        var federalDutyMembersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.EstimatedTermOfOffice > 12 && m.Person!.FederalDuty);
+        var membersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m is { IsSelected: true, EstimatedTermOfOffice: > 12 });
+        var federalDutyMembersWith12OrMoreYears = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m is { IsSelected: true, EstimatedTermOfOffice: > 12 } && m.Person!.FederalDuty);
 
         var multipleMemberships = allGeneralElectionCommittees
             .Where(c => c.IsValidated)
             .SelectMany(c => c.MembershipCandidates
-                .Where(m => m.IsSelected && m.PersonId != null)
+                .Where(m => m is { IsSelected: true, PersonId: not null })
                 .Select(m => new
                 {
                     m.PersonId,
@@ -493,11 +517,11 @@ public class ReportService : IReportService
                     .Select(x => x.CommitteeName)
                     .Distinct()
                     .Select(name => new InformationNoteCommitteeNameDto { Name = name })
-                    .ToList()
+                    .ToArray()
             })
             .OrderBy(p => p.MembershipCount)
             .ThenBy(p => p.Surname)
-            .ToList();
+            .ToArray();
 
         var nonExtraParliamentaryCommitteesDto = FillNonExtraParliamentaryCommitteeData(allNonExtraParliamentaryCommittees, departments);
 
@@ -508,44 +532,44 @@ public class ReportService : IReportService
             NumberOfMembers = numberOfSelectedCandidates,
             CurrentYear = DateOnly.FromDateTime(DateTime.Now).Year.ToString(CultureInfo.InvariantCulture),
 
-            TotalCommittees = allGeneralElectionCommitteesUnfiltered.Count(),
-            ReleasedCommittees = releasedCommittees.Count,
-            UnreleasedCommittees = unreleasedCommittees.Count,
+            TotalCommittees = allGeneralElectionCommitteesUnfiltered.Length,
+            ReleasedCommittees = releasedCommittees.Length,
+            UnreleasedCommittees = unreleasedCommittees.Length,
             OneVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies == 1),
             TwoVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies == 2),
             ThreeVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies == 3),
             FourVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies >= 4),
-            TotalAuthoritiesCommittees = allAuthoritiesCommittees.Count,
+            TotalAuthoritiesCommittees = allAuthoritiesCommittees.Length,
             ReleasedAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.IsValidated),
             UnreleasedAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => !c.IsValidated),
             OneVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies == 1),
             TwoVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies == 2),
             ThreeVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies == 3),
             FourVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies >= 4),
-            TotalAdministrationCommittees = allAdministrationCommittees.Count,
+            TotalAdministrationCommittees = allAdministrationCommittees.Length,
             ReleasedAdministrationCommittees = allAdministrationCommittees.Count(c => c.IsValidated),
             UnreleasedAdministrationCommittees = allAdministrationCommittees.Count(c => !c.IsValidated),
             OneVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies == 1),
             TwoVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies == 2),
             ThreeVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies == 3),
             FourVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies >= 4),
-            TotalManagementCommittees = allManagementCommittees.Count,
+            TotalManagementCommittees = allManagementCommittees.Length,
             ReleasedManagementCommittees = allManagementCommittees.Count(c => c.IsValidated),
             UnreleasedManagementCommittees = allManagementCommittees.Count(c => !c.IsValidated),
             OneVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies == 1),
             TwoVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies == 2),
             ThreeVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies == 3),
             FourVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies >= 4),
-            TotalFederalAgenciesCommittees = allFederalAgenciesCommittees.Count,
+            TotalFederalAgenciesCommittees = allFederalAgenciesCommittees.Length,
             ReleasedFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.IsValidated),
             UnreleasedFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => !c.IsValidated),
             OneVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 1),
             TwoVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 2),
             ThreeVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 3),
             FourVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies >= 4),
-            TotalExtraParliamentaryCommittees = allExtraParliamentaryCommittees.Count,
+            TotalExtraParliamentaryCommittees = allExtraParliamentaryCommittees.Length,
             UnreleasedExtraParliamentaryCommittees = allFederalAgenciesCommittees.Count(c => !c.IsValidated),
-            PreviousTotalExtraParliamentaryCommittees = extraParliamentaryCommittees.Count,
+            PreviousTotalExtraParliamentaryCommittees = extraParliamentaryCommittees.Length,
 
             CurrentFemalePercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allFemaleCandidates / allCandidates * 100, 2),
             PreviousFemalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFemaleMembers / allMembers * 100, 2),
@@ -600,12 +624,12 @@ public class ReportService : IReportService
             TotalMembersExtraParliamentaryCommittees = allCandidates,
             MoreThan12Years = membersWith12OrMoreYears,
             MoreThan12YearsFederalDuty = federalDutyMembersWith12OrMoreYears,
-            MinimalFemaleThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.FemaleThreshold! : 0,
-            MinimalMaleThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.MaleThreshold! : 0,
-            MinimalGermanThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.GermanThresholdPercentage! : 0,
-            MinimalFrenchThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.FrenchThresholdPercentage! : 0,
-            MinimalItalianThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.ItalianThresholdPercentage! : 0,
-            MinimalRomanshThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType!.RomanshThresholdPercentage! : 0,
+            MinimalFemaleThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType.FemaleThreshold! : 0,
+            MinimalMaleThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType.MaleThreshold! : 0,
+            MinimalGermanThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType.GermanThresholdPercentage! : 0,
+            MinimalFrenchThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType.FrenchThresholdPercentage! : 0,
+            MinimalItalianThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType.ItalianThresholdPercentage! : 0,
+            MinimalRomanshThreshold = managementCommitteeType != null ? (decimal)managementCommitteeType.RomanshThresholdPercentage! : 0,
 
             CurrentFemaleThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allFemaleCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
             CurrentMaleThresholdManagementCommittees = allCandidatesManagementCommittees == 0 ? 0 : Math.Round((decimal)allMaleCandidatesManagementCommittees / allCandidatesManagementCommittees * 100, 2),
@@ -621,8 +645,8 @@ public class ReportService : IReportService
             CurrentItalianThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allItalianCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
             CurrentRomanshThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allRomanshCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
 
-            UnderstuffedFemaleManagementCommittees = allManagementCommittees.Count(c => c.FemaleUnderStaffed && c.IsValidated),
-            UnderstuffedMaleManagementCommittees = allManagementCommittees.Count(c => c.MaleUnderStaffed && c.IsValidated),
+            UnderstuffedFemaleManagementCommittees = allManagementCommittees.Count(c => c is { FemaleUnderStaffed: true, IsValidated: true }),
+            UnderstuffedMaleManagementCommittees = allManagementCommittees.Count(c => c is { MaleUnderStaffed: true, IsValidated: true }),
 
             TotalMembersWith3Memberships = multipleMemberships.Count(m => m.MembershipCount == 3),
             FemaleMembersWith3Memberships = multipleMemberships.Count(m => m.MembershipCount == 3 && m.GenderId == Gender.FemaleGuid),
@@ -636,7 +660,7 @@ public class ReportService : IReportService
             TotalMembersWith6Memberships = multipleMemberships.Count(m => m.MembershipCount >= 6),
             FemaleMembersWith6Memberships = multipleMemberships.Count(m => m.MembershipCount >= 6 && m.GenderId == Gender.FemaleGuid),
             MaleMembersWith6Memberships = multipleMemberships.Count(m => m.MembershipCount >= 6 && m.GenderId == Gender.MaleGuid),
-            TotalMultipleMembers = multipleMemberships.Count,
+            TotalMultipleMembers = multipleMemberships.Length,
             FemaleMultipleMembers = multipleMemberships.Count(m => m.GenderId == Gender.FemaleGuid),
             MaleMultipleMembers = multipleMemberships.Count(m => m.GenderId == Gender.MaleGuid),
 
@@ -647,7 +671,7 @@ public class ReportService : IReportService
             LongerDutyCommitteesByDepartmentAndType = moreThan12YearsCommitteesDto,
             NonExtraParliamentCommitteesByDepartmentAndType = nonExtraParliamentaryCommitteesDto,
 
-            PersonWithMultipleMemberships = multipleMemberships,
+            PersonWithMultipleMemberships = multipleMemberships
         };
 
         var documentStream = await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", informationNoteDto, "informationNote");
@@ -655,7 +679,7 @@ public class ReportService : IReportService
         return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.Information_Note_Filename}.docx", documentStream);
     }
 
-    private async Task<List<ReportGeneralElectionCommitteeDto>> ReplaceSelfOrganisedMemberFunctions(List<ReportGeneralElectionCommitteeDto> generalElectionCommittees)
+    private async Task<ReportGeneralElectionCommitteeDto[]> ReplaceSelfOrganisedMemberFunctions(ReportGeneralElectionCommitteeDto[] generalElectionCommittees)
     {
         // this whole block is necessary because of self organized committees, all functions are made to members there (BKDO-2475)
         var memberFunction = await _masterDataRepository.GetById<Function>(Function.MemberGuid);
@@ -674,7 +698,7 @@ public class ReportService : IReportService
         return generalElectionCommittees;
     }
 
-    private static List<InformationNoteNonExtraParliamentaryCommitteeDepartmentDto> FillNonExtraParliamentaryCommitteeData(List<GeneralElectionCommittee> committees, IEnumerable<Department> departments)
+    private static List<InformationNoteNonExtraParliamentaryCommitteeDepartmentDto> FillNonExtraParliamentaryCommitteeData(GeneralElectionCommittee[] committees, IEnumerable<Department> departments)
     {
         var departmentList = new List<InformationNoteNonExtraParliamentaryCommitteeDepartmentDto>();
 
@@ -692,11 +716,11 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var groupedCommittees = filteredCommittees
                 .GroupBy(c => new { CommitteeTypeId = c.CommitteeType!.Id, CommitteeTypeName = c.CommitteeType.GetText() })
-                .ToList();
+                .ToArray();
 
             var committeeTypeList = new List<InformationNoteNonExtraParliamentaryCommitteeTypeDto>();
 
@@ -715,7 +739,7 @@ public class ReportService : IReportService
                                 FemaleText = $"{g.FemaleCount} ({g.FemaleQuota} %)",
                                 MaleText = $"{g.MaleCount} ({g.MaleQuota} %)"
                             })
-                        .ToList();
+                        .ToArray();
 
                 var committeeTypeDto = new InformationNoteNonExtraParliamentaryCommitteeTypeDto
                 {
@@ -745,7 +769,7 @@ public class ReportService : IReportService
 
         var committees = (await _committeeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
 
-        var generalElectionCommittees = committees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
+        var generalElectionCommittees = committees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var reportDepartments = GetCommitteesByDepartment(generalElectionCommittees, departments, ReportCommitteeType.Vacancies);
 
@@ -753,7 +777,7 @@ public class ReportService : IReportService
         {
             TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + " - " + nextTermOfOfficeDate.EndDate?.Year,
 
-            Departments = reportDepartments,
+            Departments = reportDepartments
         };
 
         var documentStream = await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", vacanciesReportDto, "vacanciesReport");
@@ -761,7 +785,7 @@ public class ReportService : IReportService
         return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.Vacancies_Report_Filename}.docx", documentStream);
     }
 
-    private static List<ReportDepartmentWithCommitteeTypeDto> GetCommitteesByDepartmentAndTypes(IEnumerable<Committee> committees, IEnumerable<Department> departments)
+    private static List<ReportDepartmentWithCommitteeTypeDto> GetCommitteesByDepartmentAndTypes(Committee[] committees, IEnumerable<Department> departments)
     {
         var departmentList = new List<ReportDepartmentWithCommitteeTypeDto>();
         var dtoDict = new Dictionary<string, ReportDepartmentWithCommitteeTypeDto>();
@@ -778,11 +802,11 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var groupedCommittees = filteredCommittees
                 .GroupBy(c => new { CommitteeTypeId = c.CommitteeType!.Id, CommitteeTypeName = c.CommitteeType.GetText() })
-                .ToList();
+                .ToArray();
 
             var committeeTypeList = new List<ReportCommitteeTypeDto>();
 
@@ -791,7 +815,7 @@ public class ReportService : IReportService
                 var committeeList =
                     committeeGroup
                         .Select(g => new ReportCommitteeDto { Name = g.GetDescription() })
-                        .ToList();
+                        .ToArray();
 
                 var committeeTypeDto = new ReportCommitteeTypeDto
                 {
@@ -807,7 +831,7 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-    private static List<ReportDepartmentWithCommitteeTypeDto> GetCommitteesByDepartmentAndTypesForInformationNote(IEnumerable<GeneralElectionCommittee> committees, IEnumerable<Department> departments, InformationNoteData informationNoteData)
+    private static List<ReportDepartmentWithCommitteeTypeDto> GetCommitteesByDepartmentAndTypesForInformationNote(GeneralElectionCommittee[] committees, IEnumerable<Department> departments, InformationNoteData informationNoteData)
     {
         var departmentList = new List<ReportDepartmentWithCommitteeTypeDto>();
         var dtoDict = new Dictionary<string, ReportDepartmentWithCommitteeTypeDto>();
@@ -824,11 +848,11 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var groupedCommittees = filteredCommittees
                 .GroupBy(c => new { CommitteeTypeId = c.CommitteeType!.Id, CommitteeTypeName = c.CommitteeType.GetText() })
-                .ToList();
+                .ToArray();
 
             var committeeTypeList = new List<ReportCommitteeTypeDto>();
 
@@ -853,7 +877,7 @@ public class ReportService : IReportService
                     }
                     else if (informationNoteData == InformationNoteData.Languages)
                     {
-                        freeText = committee.ItalianUnderStaffed && committee.FrenchUnderStaffed ?
+                        freeText = committee is { ItalianUnderStaffed: true, FrenchUnderStaffed: true } ?
                             BusinessTexts.InformationNoteExport_FrenchAndItalianMissing :
                             committee.ItalianUnderStaffed ? BusinessTexts.InformationNoteExport_ItalianMissing :
                             committee.FrenchUnderStaffed ? BusinessTexts.InformationNoteExport_FrenchMissing : string.Empty;
@@ -862,7 +886,7 @@ public class ReportService : IReportService
                     var committeeDto = new ReportCommitteeDto
                     {
                         Name = committee.GetDescription(),
-                        FreeText = freeText,
+                        FreeText = freeText
                     };
 
                     committeeList.Add(committeeDto);
@@ -882,7 +906,7 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-    private static List<ReportDepartmentWithCommitteesDto> GetCommitteesByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees, IEnumerable<Department> departments, ReportCommitteeType type, TermOfOfficeDate? termOfOfficeDate = null)
+    private List<ReportDepartmentWithCommitteesDto> GetCommitteesByDepartment(ReportGeneralElectionCommitteeDto[] committees, IEnumerable<Department> departments, ReportCommitteeType type, TermOfOfficeDate? termOfOfficeDate = null)
     {
         var departmentList = new List<ReportDepartmentWithCommitteesDto>();
         var dtoDict = new Dictionary<string, ReportDepartmentWithCommitteesDto>();
@@ -899,28 +923,28 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var committeeList = new List<ReportCommitteeDto>();
 
             foreach (var committee in filteredCommittees)
             {
-                var freeText = "";
+                var sanitizedSelectionProcedure = ReportExportHtmlSanitizer.Sanitize(committee.SelectionProcedure);
+                string freeText;
                 var freeText2 = "";
                 var membershipCount = committee.Memberships.Count;
                 var onlyAddWhenData = false;
 
                 if (type == ReportCommitteeType.SelectionProcedure)
                 {
-                    var cleanSelectionProcedure = committee.SelectionProcedure != null ? Regex.Replace(committee.SelectionProcedure.ToString(), "<.*?>", string.Empty) : string.Empty;
-                    freeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_SelectionProcedure, cleanSelectionProcedure);
+                    freeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_SelectionProcedure, sanitizedSelectionProcedure.CleanText);
                 }
                 else if (type == ReportCommitteeType.Vacancies)
                 {
                     onlyAddWhenData = true;
                     freeText = string.Join(", ", committee.MembershipAdditionsInGeneralElection.Select(m => m.GetText()));
                     freeText2 = !string.IsNullOrWhiteSpace(committee.LinkHomepageGerman) ? committee.LinkHomepageGerman : !string.IsNullOrWhiteSpace(committee.LinkHomepageFrench) ? committee.LinkHomepageFrench : string.Empty;
-                    membershipCount = committee.VacanciesGeneralElection != null ? (int)committee.VacanciesGeneralElection : 0;
+                    membershipCount = committee.VacanciesGeneralElection ?? 0;
                 }
                 else
                 {
@@ -929,13 +953,16 @@ public class ReportService : IReportService
 
                 if (!onlyAddWhenData || membershipCount > 0)
                 {
+                    var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(committee.JustificationMembers);
                     var committeeDto = new ReportCommitteeDto
                     {
                         Name = committee.GetDescription(),
                         MemberCount = membershipCount,
-                        Justification = committee.JustificationMembers,
+                        Justification = justificationSanitization.CleanText,
+                        HasOpenJustificationChanges = justificationSanitization.HasOpenChanges,
+                        JustificationUrl = BuildCommitteeJustificationUrl(committee.Id),
                         FreeText = freeText,
-                        FreeText2 = freeText2,
+                        FreeText2 = freeText2
                     };
 
                     committeeList.Add(committeeDto);
@@ -947,7 +974,7 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-    private static List<ReportDepartmentWithCommitteesDto> GetCommitteesByDepartmentForMembershipDuration(IEnumerable<GeneralElectionCommittee> committees, IEnumerable<Department> departments)
+    private static List<ReportDepartmentWithCommitteesDto> GetCommitteesByDepartmentForMembershipDuration(GeneralElectionCommittee[] committees, IEnumerable<Department> departments)
     {
         var departmentList = new List<ReportDepartmentWithCommitteesDto>();
         var dtoDict = new Dictionary<string, ReportDepartmentWithCommitteesDto>();
@@ -964,17 +991,16 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
-
+                .ToArray();
 
             var moreThan12YearsDto = filteredCommittees
                 .Select(c => new
                 {
                     CommitteeName = c.GetDescription(),
                     Members = c.MembershipCandidates
-                        .Where(m => m.IsSelected && m.EstimatedTermOfOffice > 12),
+                        .Where(m => m is { IsSelected: true, EstimatedTermOfOffice: > 12 }),
                     FederalDutyMembers = c.MembershipCandidates
-                        .Where(m => m.IsSelected && m.EstimatedTermOfOffice > 12 && m.Person!.FederalDuty)
+                        .Where(m => m is { IsSelected: true, EstimatedTermOfOffice: > 12 } && m.Person!.FederalDuty)
                 })
                 .Where(x => x.Members.Any()) // removes empty committees
                 .Select(x => new CommitteeNameLongerDutyDto
@@ -983,7 +1009,7 @@ public class ReportService : IReportService
                     MemberCount = x.Members.Count(),
                     FederalMemberCount = x.FederalDutyMembers.Count()
                 })
-                .ToList();
+                .ToArray();
 
             var committeeList =
                 moreThan12YearsDto
@@ -991,18 +1017,18 @@ public class ReportService : IReportService
                     {
                         Name = x.Name,
                         FreeText =
-                            x.MemberCount > 0 && x.FederalMemberCount > 0 && x.MemberCount != x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberAndFederalMemberCount, x.MemberCount, x.FederalMemberCount) :
-                            x.MemberCount > 0 && x.FederalMemberCount > 0 && x.MemberCount == x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_FederalMemberCount, x.FederalMemberCount) :
+                            x is { MemberCount: > 0, FederalMemberCount: > 0 } && x.MemberCount != x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberAndFederalMemberCount, x.MemberCount, x.FederalMemberCount) :
+                            x is { MemberCount: > 0, FederalMemberCount: > 0 } && x.MemberCount == x.FederalMemberCount ? string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_FederalMemberCount, x.FederalMemberCount) :
                             string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_MemberCount, x.MemberCount)
                     })
-                    .ToList();
+                    .ToArray();
 
             dtoDict[department.GetText()].Committees = committeeList;
         }
         return departmentList;
     }
 
-    private async Task<List<ReportDepartmentWithCommitteesAndGendersDto>> GetCommitteesWithGendersByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees, IEnumerable<Department> departments)
+    private async Task<List<ReportDepartmentWithCommitteesAndGendersDto>> GetCommitteesWithGendersByDepartment(ReportGeneralElectionCommitteeDto[] committees, IEnumerable<Department> departments)
     {
         var genderMeasures = (await _generalMeasureRepository.GetGeneralGenderMeasures()).ToArray();
 
@@ -1011,10 +1037,13 @@ public class ReportService : IReportService
 
         foreach (var department in departments)
         {
+            var measureSanitization = ReportExportHtmlSanitizer.Sanitize(genderMeasures.FirstOrDefault(g => g.DepartmentId == department.Id)?.Description);
             var dto = new ReportDepartmentWithCommitteesAndGendersDto
             {
                 Name = department.GetText(),
-                Measure = genderMeasures.FirstOrDefault(g => g.DepartmentId == department.Id)?.Description
+                Measure = measureSanitization.CleanText,
+                HasOpenMeasureChanges = measureSanitization.HasOpenChanges,
+                MeasureUrl = BuildGeneralMeasuresJustificationUrl()
             };
 
             dtoDict[department.GetText()] = dto;
@@ -1022,7 +1051,7 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var committeeList = new List<ReportCommitteeGenderMissingDto>();
 
@@ -1033,14 +1062,19 @@ public class ReportService : IReportService
 
                 if (femalePercentage < (decimal)committee.CommitteeType?.FemaleThreshold! || malePercentage < (decimal)committee.CommitteeType?.MaleThreshold!)
                 {
+                    var committeeMeasureSanitization = ReportExportHtmlSanitizer.Sanitize(committee.MeasuresGenders);
+                    var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(committee.JustificationGenders);
                     var committeeDto = new ReportCommitteeGenderMissingDto
                     {
                         Name = committee.GetDescription(),
                         MemberCount = committee.Memberships.Count,
-                        Measure = committee.MeasuresGenders,
-                        Justification = committee.JustificationGenders,
+                        Measure = committeeMeasureSanitization.CleanText,
+                        HasOpenMeasureChanges = committeeMeasureSanitization.HasOpenChanges,
+                        Justification = justificationSanitization.CleanText,
+                        HasOpenJustificationChanges = justificationSanitization.HasOpenChanges,
+                        JustificationUrl = BuildCommitteeJustificationUrl(committee.Id),
                         FemaleMissingPercentage = femalePercentage,
-                        MaleMissingPercentage = malePercentage,
+                        MaleMissingPercentage = malePercentage
                     };
 
                     committeeList.Add(committeeDto);
@@ -1051,7 +1085,7 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-    private static List<ReportCommitteeGenderMissingDto> GetCommitteesWithGenders(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    private IEnumerable<ReportCommitteeGenderMissingDto> GetCommitteesWithGenders(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
     {
         var committeeList = new List<ReportCommitteeGenderMissingDto>();
 
@@ -1062,26 +1096,29 @@ public class ReportService : IReportService
 
             if (femalePercentage < (decimal)committee.CommitteeType?.FemaleThreshold! || malePercentage < (decimal)committee.CommitteeType?.MaleThreshold!)
             {
+                var measureSanitization = ReportExportHtmlSanitizer.Sanitize(committee.MeasuresGenders);
+                var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(committee.JustificationGenders);
                 var committeeDto = new ReportCommitteeGenderMissingDto
                 {
                     Name = committee.GetDescription(),
                     MemberCount = committee.Memberships.Count,
-                    Measure = committee.MeasuresGenders,
-                    Justification = committee.JustificationGenders,
+                    Measure = measureSanitization.CleanText,
+                    HasOpenMeasureChanges = measureSanitization.HasOpenChanges,
+                    Justification = justificationSanitization.CleanText,
+                    HasOpenJustificationChanges = justificationSanitization.HasOpenChanges,
+                    JustificationUrl = BuildCommitteeJustificationUrl(committee.Id),
                     FemaleMissingPercentage = femalePercentage,
-                    MaleMissingPercentage = malePercentage,
+                    MaleMissingPercentage = malePercentage
                 };
                 committeeList.Add(committeeDto);
             }
 
         }
 
-        committeeList = committeeList.OrderBy(c => c.Name).ToList();
-
-        return committeeList;
+        return committeeList.OrderBy(c => c.Name);
     }
 
-    private async Task<List<ReportDepartmentWithCommitteesAndLanguagesDto>> GetCommitteesWithLanguagesByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees, IEnumerable<Department> departments)
+    private async Task<List<ReportDepartmentWithCommitteesAndLanguagesDto>> GetCommitteesWithLanguagesByDepartment(ReportGeneralElectionCommitteeDto[] committees, IEnumerable<Department> departments)
     {
         var languageMeasures = (await _generalMeasureRepository.GetGeneralLanguageMeasures()).ToArray();
 
@@ -1090,10 +1127,13 @@ public class ReportService : IReportService
 
         foreach (var department in departments)
         {
+            var measureSanitization = ReportExportHtmlSanitizer.Sanitize(languageMeasures.FirstOrDefault(g => g.DepartmentId == department.Id)?.Description);
             var dto = new ReportDepartmentWithCommitteesAndLanguagesDto
             {
                 Name = department.GetText(),
-                Measure = languageMeasures.FirstOrDefault(g => g.DepartmentId == department.Id)?.Description
+                Measure = measureSanitization.CleanText,
+                HasOpenMeasureChanges = measureSanitization.HasOpenChanges,
+                MeasureUrl = BuildGeneralMeasuresJustificationUrl()
             };
 
             dtoDict[department.GetText()] = dto;
@@ -1101,7 +1141,7 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var committeeList = new List<ReportCommitteeLanguageMissingDto>();
 
@@ -1135,14 +1175,19 @@ public class ReportService : IReportService
 
                 if (italianMissing || frenchMissing)
                 {
+                    var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(committee.JustificationLanguages);
+                    var committeeMeasureSanitization = ReportExportHtmlSanitizer.Sanitize(committee.MeasuresLanguages);
                     var committeeDto = new ReportCommitteeLanguageMissingDto
                     {
                         Name = committee.GetDescription(),
                         MemberCount = committee.Memberships.Count,
-                        Measure = committee.MeasuresLanguages,
-                        Justification = committee.JustificationLanguages,
+                        Measure = committeeMeasureSanitization.CleanText,
+                        HasOpenMeasureChanges = committeeMeasureSanitization.HasOpenChanges,
+                        Justification = justificationSanitization.CleanText,
+                        HasOpenJustificationChanges = justificationSanitization.HasOpenChanges,
+                        JustificationUrl = BuildCommitteeJustificationUrl(committee.Id),
                         ItalianMissing = italianMissing,
-                        FrenchMissing = frenchMissing,
+                        FrenchMissing = frenchMissing
                     };
 
                     committeeList.Add(committeeDto);
@@ -1155,7 +1200,7 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-    private static List<ReportCommitteeLanguageMissingDto> GetCommitteesWithLanguages(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    private IEnumerable<ReportCommitteeLanguageMissingDto> GetCommitteesWithLanguages(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
     {
         var committeeList = new List<ReportCommitteeLanguageMissingDto>();
 
@@ -1189,26 +1234,29 @@ public class ReportService : IReportService
 
             if (italianMissing || frenchMissing)
             {
+                var measureSanitization = ReportExportHtmlSanitizer.Sanitize(committee.MeasuresLanguages);
+                var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(committee.JustificationLanguages);
                 var committeeDto = new ReportCommitteeLanguageMissingDto
                 {
                     Name = committee.GetDescription(),
                     MemberCount = committee.Memberships.Count,
-                    Measure = committee.MeasuresLanguages,
-                    Justification = committee.JustificationLanguages,
+                    Measure = measureSanitization.CleanText,
+                    HasOpenMeasureChanges = measureSanitization.HasOpenChanges,
+                    Justification = justificationSanitization.CleanText,
+                    HasOpenJustificationChanges = justificationSanitization.HasOpenChanges,
+                    JustificationUrl = BuildCommitteeJustificationUrl(committee.Id),
                     ItalianMissing = italianMissing,
-                    FrenchMissing = frenchMissing,
+                    FrenchMissing = frenchMissing
                 };
 
                 committeeList.Add(committeeDto);
             }
         }
 
-        committeeList = committeeList.OrderBy(c => c.Name).ToList();
-
-        return committeeList;
+        return committeeList.OrderBy(c => c.Name);
     }
 
-    private async Task<List<ReportDepartmentWithCommitteesAndLanguagesDto>> GetCommitteesWithLanguagePercentagesByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees, IEnumerable<Department> departments)
+    private async Task<List<ReportDepartmentWithCommitteesAndLanguagesDto>> GetCommitteesWithLanguagePercentagesByDepartment(ReportGeneralElectionCommitteeDto[] committees, IEnumerable<Department> departments)
     {
         var languageMeasures = (await _generalMeasureRepository.GetGeneralLanguageMeasures()).ToArray();
 
@@ -1217,10 +1265,13 @@ public class ReportService : IReportService
 
         foreach (var department in departments)
         {
+            var measureSanitization = ReportExportHtmlSanitizer.Sanitize(languageMeasures.FirstOrDefault(g => g.DepartmentId == department.Id)?.Description);
             var dto = new ReportDepartmentWithCommitteesAndLanguagesDto
             {
                 Name = department.GetText(),
-                Measure = languageMeasures.FirstOrDefault(g => g.DepartmentId == department.Id)?.Description,
+                Measure = measureSanitization.CleanText,
+                HasOpenMeasureChanges = measureSanitization.HasOpenChanges,
+                MeasureUrl = BuildGeneralMeasuresJustificationUrl()
             };
 
             dtoDict[department.GetText()] = dto;
@@ -1228,7 +1279,7 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var committeeList = new List<ReportCommitteeLanguageMissingDto>();
 
@@ -1247,16 +1298,21 @@ public class ReportService : IReportService
                 if (italian < (decimal)committee.CommitteeType!.ItalianThresholdPercentage! || french < (decimal)committee.CommitteeType!.FrenchThresholdPercentage! ||
                     german < (decimal)committee.CommitteeType!.GermanThresholdPercentage!)
                 {
+                    var committeeMeasureSanitization = ReportExportHtmlSanitizer.Sanitize(committee.MeasuresLanguages);
+                    var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(committee.JustificationLanguages);
                     var committeeDto = new ReportCommitteeLanguageMissingDto
                     {
                         Name = committee.GetDescription(),
                         MemberCount = committee.Memberships.Count,
-                        Measure = committee.MeasuresLanguages,
-                        Justification = committee.JustificationLanguages,
+                        Measure = committeeMeasureSanitization.CleanText,
+                        HasOpenMeasureChanges = committeeMeasureSanitization.HasOpenChanges,
+                        Justification = justificationSanitization.CleanText,
+                        HasOpenJustificationChanges = justificationSanitization.HasOpenChanges,
+                        JustificationUrl = BuildCommitteeJustificationUrl(committee.Id),
                         GermanPercentage = german,
                         FrenchPercentage = french,
                         ItalianPercentage = italian,
-                        RomanshPercentage = romansh,
+                        RomanshPercentage = romansh
                     };
 
                     committeeList.Add(committeeDto);
@@ -1269,7 +1325,7 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-    private static List<ReportDepartmentWithCommitteesAndMembersDto> GetCommitteesAndMembersByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees, IEnumerable<Department> departments, ReportMembershipType type, TermOfOfficeDate? termOfOffice = null)
+    private List<ReportDepartmentWithCommitteesAndMembersDto> GetCommitteesAndMembersByDepartment(ReportGeneralElectionCommitteeDto[] committees, IEnumerable<Department> departments, ReportMembershipType type, TermOfOfficeDate? termOfOffice = null)
     {
         var departmentList = new List<ReportDepartmentWithCommitteesAndMembersDto>();
         var dtoDict = new Dictionary<string, ReportDepartmentWithCommitteesAndMembersDto>();
@@ -1286,18 +1342,18 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .ToList();
+                .ToArray();
 
             var committeeList = new List<ReportCommitteeWithMemberDetailDto>();
 
             foreach (var committee in filteredCommittees)
             {
-                var members = GetMembershipsByType(committee, type, termOfOffice);
+                var members = GetMembershipsByType(committee, type, termOfOffice).ToArray();
 
                 var committeeDto = new ReportCommitteeWithMemberDetailDto
                 {
                     Name = committee.GetDescription(),
-                    MemberCount = members.Count(),
+                    MemberCount = members.Length,
                     Members = members
                 };
 
@@ -1310,20 +1366,19 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-    private static List<ReportCommitteeWithFreeTextDto> GetNonReleasedCommissions(IEnumerable<ReportGeneralElectionCommitteeDto> nonReleasedCommissions)
+    private static IEnumerable<ReportCommitteeWithFreeTextDto> GetNonReleasedCommissions(IEnumerable<ReportGeneralElectionCommitteeDto> nonReleasedCommissions)
     {
         var committees = nonReleasedCommissions
             .Select(c => new ReportCommitteeWithFreeTextDto
             {
-                Name = c.GetDescription(),
+                Name = c.GetDescription()
             })
-            .OrderBy(c => c.Name)
-            .ToList();
+            .OrderBy(c => c.Name);
 
         return committees;
     }
 
-    private static List<ReportCommitteeWithFreeTextDto> GetFederalDutyMembershipsWithOffice(IEnumerable<ReportGeneralElectionCommitteeDto> generalElectionCommitteesWithMembers)
+    private static IEnumerable<ReportCommitteeWithFreeTextDto> GetFederalDutyMembershipsWithOffice(IEnumerable<ReportGeneralElectionCommitteeDto> generalElectionCommitteesWithMembers)
     {
         var committees = generalElectionCommitteesWithMembers
             .Select(c => new ReportCommitteeWithFreeTextDto
@@ -1331,18 +1386,15 @@ public class ReportService : IReportService
                 Name = c.GetDescription(),
                 FreeText = string.Join(", ",
                     c.Memberships
-                     .Where(m => m.Person != null && m.Person.FederalDuty)
-                     .Select(m => $"{m.Person!.Surname}, {m.Person!.GivenName} ({m.Person?.Office?.GetDescription()} {m.Person?.Office?.Department?.GetDescription()})"))
+                        .Where(m => m.Person is { FederalDuty: true })
+                        .Select(m => $"{m.Person!.Surname}, {m.Person!.GivenName} ({m.Person?.Office?.GetDescription()} {m.Person?.Office?.Department?.GetDescription()})"))
             })
-            .OrderBy(c => c.Name)
-            .ToList();
-
-        committees = committees.OrderBy(c => c.Name).ToList();
+            .OrderBy(c => c.Name);
 
         return committees;
     }
 
-    private static List<ReportCommitteeWithFreeTextDto> GetMarketOrientatedMembershipData(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
+    private static IEnumerable<ReportCommitteeWithFreeTextDto> GetMarketOrientatedMembershipData(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
     {
         return committees
             .Select(c => new ReportCommitteeWithFreeTextDto
@@ -1350,17 +1402,16 @@ public class ReportService : IReportService
                 Name = c.GetDescription(),
                 FreeText = string.Join(", ",
                     c.Memberships
-                    .OrderBy(m => m.Function!.Sort)
-                    .ThenBy(m => m.Surname)
-                    .ThenBy(m => m.GivenName)
-                    .Select(m => $"{m.Surname} {m.GivenName}, {m.Function!.GetText()}, {m.MaximumEmploymentLevel}%")
+                        .OrderBy(m => m.Function!.Sort)
+                        .ThenBy(m => m.Surname)
+                        .ThenBy(m => m.GivenName)
+                        .Select(m => $"{m.Surname} {m.GivenName}, {m.Function!.GetText()}, {m.MaximumEmploymentLevel}%")
                 )
             })
-            .OrderBy(c => c.Name)
-            .ToList();
+            .OrderBy(c => c.Name);
     }
 
-    private static List<ReportCommitteeWithFreeTextDto> GetLongerMembershipData(IEnumerable<ReportCommitteeWithMemberDetailDto> committees)
+    private static IEnumerable<ReportCommitteeWithFreeTextDto> GetLongerMembershipData(IEnumerable<ReportCommitteeWithMemberDetailDto> committees)
     {
         return committees
             .Select(c => new ReportCommitteeWithFreeTextDto
@@ -1368,15 +1419,14 @@ public class ReportService : IReportService
                 Name = c.Name,
                 FreeText = string.Join(", ",
                     c.Members!
-                    .OrderBy(m => m.Surname)
-                    .Select(m => $"{m.Surname} {m.GivenName}")
+                        .OrderBy(m => m.Surname)
+                        .Select(m => $"{m.Surname} {m.GivenName}")
                 )
             })
-            .OrderBy(c => c.Name)
-            .ToList();
+            .OrderBy(c => c.Name);
     }
 
-    private static List<ReportCommitteeWithMemberDetailDto> GetCommitteesAndMembers(IEnumerable<ReportGeneralElectionCommitteeDto> committees, ReportMembershipType type, TermOfOfficeDate? termOfOffice = null)
+    private static IEnumerable<ReportCommitteeWithMemberDetailDto> GetCommitteesAndMembers(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
     {
         return committees
             .Select(c => new ReportCommitteeWithMemberDetailDto
@@ -1384,78 +1434,78 @@ public class ReportService : IReportService
                 Name = c.GetDescription(),
                 MemberCount = c.ActiveMemberCount
             })
-            .OrderBy(c => c.Name)
-            .ToList();
+            .OrderBy(c => c.Name);
     }
 
-    private static IEnumerable<ReportMembershipDto> GetMembershipsByType(ReportGeneralElectionCommitteeDto committee, ReportMembershipType type, TermOfOfficeDate? termOfOffice = null)
+    private IEnumerable<ReportMembershipDto> GetMembershipsByType(ReportGeneralElectionCommitteeDto committee, ReportMembershipType type, TermOfOfficeDate? termOfOffice = null)
     {
-        if (type == ReportMembershipType.ShorterDuty)
+        return type switch
         {
-            return committee.Memberships.Where(m => m.EndDate < termOfOffice!.EndDate).Select(membership => new ReportMembershipDto
-            {
-                Surname = membership.Person!.Surname,
-                GivenName = membership.Person!.GivenName,
-                Type = ReportMembershipType.ShorterDuty,
-                Justification = membership.JustificationShorterDuty,
-                FreeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_ShorterDutyText, membership.BeginDate.ToShortDateString(), membership.EndDate.ToShortDateString())
-            });
-        }
-        else if (type == ReportMembershipType.FederalAssembly)
-        {
-            return committee.Memberships.Where(m => m.Person != null && m.Person!.FederalAssembly).Select(membership => new ReportMembershipDto
-            {
-                Surname = membership.Person!.Surname,
-                GivenName = membership.Person!.GivenName,
-                Type = ReportMembershipType.FederalAssembly,
-                Function = membership.Person.CouncilId == Council.CouncilOfStateId && membership.Person.GenderId == Gender.FemaleGuid ? BusinessTexts.CouncilOfStateFemale :
-                    membership.Person.CouncilId == Council.CouncilOfStateId && membership.Person.GenderId == Gender.MaleGuid ? BusinessTexts.CouncilOfStateMale :
-                    membership.Person.CouncilId == Council.NationalCouncilId && membership.Person.GenderId == Gender.FemaleGuid ? BusinessTexts.NationalCouncilFemale :
-                    membership.Person.CouncilId == Council.NationalCouncilId && membership.Person.GenderId == Gender.MaleGuid ? BusinessTexts.NationalCouncilMale : string.Empty,
-                Justification = membership.JustificationMemberInFederalAssembly,
-            });
-        }
-        else if (type == ReportMembershipType.FederalDuty)
-        {
-            return committee.Memberships.Where(m => m.Person != null && m.Person!.FederalDuty).Select(membership => new ReportMembershipDto
-            {
-                Surname = membership.Person!.Surname,
-                GivenName = membership.Person!.GivenName,
-                Type = ReportMembershipType.FederalDuty,
-                Function = membership.Person!.Gender!.Uri == Gender.Female ? string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetFemaleText(CultureInfo.CurrentUICulture)).Order()) : string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetText(CultureInfo.CurrentUICulture)).Order()),
-                Justification = membership.JustificationMemberInFederalDuty,
-            });
-        }
-        else if (type == ReportMembershipType.MarketOrientated)
-        {
-            return committee.Memberships.Select(membership => new ReportMembershipDto
+            ReportMembershipType.ShorterDuty => committee.Memberships
+                .Where(m => m.EndDate < termOfOffice!.EndDate)
+                .Select(membership => new ReportMembershipDto
+                {
+                    Surname = membership.Person!.Surname,
+                    GivenName = membership.Person!.GivenName,
+                    Type = ReportMembershipType.ShorterDuty,
+                    Justification = ReportExportHtmlSanitizer.Sanitize(membership.JustificationShorterDuty).CleanText,
+                    HasOpenJustificationChanges = ReportExportHtmlSanitizer.Sanitize(membership.JustificationShorterDuty).HasOpenChanges,
+                    JustificationUrl = BuildMembershipJustificationUrl(committee.Id, membership.Id),
+                    FreeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.Report_ShorterDutyText, membership.BeginDate.ToShortDateString(), membership.EndDate.ToShortDateString())
+                }),
+
+            ReportMembershipType.FederalAssembly => committee.Memberships
+                .Where(m => m.Person != null && m.Person!.FederalAssembly)
+                .Select(membership => new ReportMembershipDto
+                {
+                    Surname = membership.Person!.Surname,
+                    GivenName = membership.Person!.GivenName,
+                    Type = ReportMembershipType.FederalAssembly,
+                    Function = membership.Person.CouncilId == Council.CouncilOfStateId && membership.Person.GenderId == Gender.FemaleGuid ? BusinessTexts.CouncilOfStateFemale : membership.Person.CouncilId == Council.CouncilOfStateId && membership.Person.GenderId == Gender.MaleGuid ? BusinessTexts.CouncilOfStateMale : membership.Person.CouncilId == Council.NationalCouncilId && membership.Person.GenderId == Gender.FemaleGuid ? BusinessTexts.NationalCouncilFemale : membership.Person.CouncilId == Council.NationalCouncilId && membership.Person.GenderId == Gender.MaleGuid ? BusinessTexts.NationalCouncilMale : string.Empty,
+                    Justification = ReportExportHtmlSanitizer.Sanitize(membership.JustificationMemberInFederalAssembly).CleanText,
+                    HasOpenJustificationChanges = ReportExportHtmlSanitizer.Sanitize(membership.JustificationMemberInFederalAssembly).HasOpenChanges,
+                    JustificationUrl = BuildMembershipJustificationUrl(committee.Id, membership.Id),
+                }),
+
+            ReportMembershipType.FederalDuty => committee.Memberships
+                .Where(m => m.Person != null && m.Person!.FederalDuty)
+                .Select(membership => new ReportMembershipDto
+                {
+                    Surname = membership.Person!.Surname,
+                    GivenName = membership.Person!.GivenName,
+                    Type = ReportMembershipType.FederalDuty,
+                    Function = membership.Person!.Gender!.Uri == Gender.Female ? string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetFemaleText(CultureInfo.CurrentUICulture)).Order()) : string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetText(CultureInfo.CurrentUICulture)).Order()),
+                    Justification = ReportExportHtmlSanitizer.Sanitize(membership.JustificationMemberInFederalDuty).CleanText,
+                    HasOpenJustificationChanges = ReportExportHtmlSanitizer.Sanitize(membership.JustificationMemberInFederalDuty).HasOpenChanges,
+                    JustificationUrl = BuildMembershipJustificationUrl(committee.Id, membership.Id),
+                }),
+
+            ReportMembershipType.MarketOrientated => committee.Memberships.Select(membership => new ReportMembershipDto
             {
                 Surname = membership.Person!.Surname,
                 GivenName = membership.Person!.GivenName,
                 Type = ReportMembershipType.MarketOrientated,
                 Function = membership.Function!.GetText(),
-                FreeText = $"{membership.MaximumEmploymentLevel} %",
-            });
-        }
-        else if (type == ReportMembershipType.CompetenceProfile)
-        {
-            return committee.Memberships.Where(m => m.Person != null && !string.IsNullOrWhiteSpace(m.RequirementsProfile)).Select(membership =>
-                new ReportMembershipDto
+                FreeText = $"{membership.MaximumEmploymentLevel} %"
+            }),
+
+            ReportMembershipType.CompetenceProfile => committee.Memberships
+                .Where(m => m.Person != null && !string.IsNullOrWhiteSpace(m.RequirementsProfile))
+                .Select(membership => new ReportMembershipDto
                 {
                     Surname = membership.Person!.Surname,
                     GivenName = membership.Person!.GivenName,
                     Type = ReportMembershipType.CompetenceProfile,
                     Function = membership.Function!.GetText(),
-                    FreeText = membership.RequirementsProfile != null ? Regex.Replace(membership.RequirementsProfile.ToString(), "<.*?>", string.Empty) : string.Empty,
-                    FreeText2 = membership.Person!.Gender!.Uri == Gender.Female ? string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetFemaleText(CultureInfo.CurrentUICulture)).Order()) :
-                        string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetText(CultureInfo.CurrentUICulture)).Order()),
-                    FreeText3 = membership.Person!.Employer,
-                });
-        }
-        else
-        {
-            return new List<ReportMembershipDto>();
-        }
+                    FreeText = ReportExportHtmlSanitizer.Sanitize(membership.RequirementsProfile).CleanText,
+                    HasOpenJustificationChanges = ReportExportHtmlSanitizer.Sanitize(membership.RequirementsProfile).HasOpenChanges,
+                    JustificationUrl = BuildMembershipJustificationUrl(committee.Id, membership.Id),
+                    FreeText2 = membership.Person!.Gender!.Uri == Gender.Female ? string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetFemaleText(CultureInfo.CurrentUICulture)).Order()) : string.Join(" / ", membership.Person!.Occupations.Select(o => o.GetText(CultureInfo.CurrentUICulture)).Order()),
+                    FreeText3 = membership.Person!.Employer
+                }),
+
+            _ => []
+        };
     }
 
     private static IEnumerable<MultipleMembershipsDto> GetPersonsWithMultipleMemberships(IEnumerable<ReportGeneralElectionCommitteeDto> committees)
@@ -1478,11 +1528,11 @@ public class ReportService : IReportService
         return dtoList;
     }
 
-    private static List<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFutureByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
+    private IEnumerable<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFutureByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
         IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers, IEnumerable<Department> departments)
     {
         // which members we have in the future?
-        var reportGeneralElectionCommitteeDtos = geCommitteesWithMembers.ToList();
+        var reportGeneralElectionCommitteeDtos = geCommitteesWithMembers.ToArray();
         var futureLookup =
             reportGeneralElectionCommitteeDtos
                 .SelectMany(fc => fc.Memberships.Select(m => new
@@ -1501,7 +1551,7 @@ public class ReportService : IReportService
                     Memberships = c.Memberships
                         .Where(m => futureLookup.Contains(
                             new { c.CommitteeId, m.PersonId }))
-                        .ToList(),
+                        .ToArray(),
                     TermOfOfficeDateId = c.TermOfOfficeDateId,
                     TermOfOfficeDate = c.TermOfOfficeDate,
                     IsValidated = c.IsValidated,
@@ -1513,11 +1563,11 @@ public class ReportService : IReportService
                     DepartmentId = c.DepartmentId,
                     Department = c.Department,
                     OfficeId = c.OfficeId,
-                    Office = c.Office,
+                    Office = c.Office
                 })
                 // If a committee has no relevant members → remove it
                 .Where(c => c.Memberships.Count != 0)
-                .ToList();
+                .ToArray();
 
         // Combine past/present with the future..
         var allCommittees = filteredPresentCommittees.Concat(reportGeneralElectionCommitteeDtos);
@@ -1530,16 +1580,19 @@ public class ReportService : IReportService
                 {
                     var person = g.First().Person!; // get the Person object from first membership in the group
                     var totalDurationYears = g.Sum(m => MembershipTermCalculator.CalculateEstimatedTermInYears(m.BeginDate, m.EndDate));
+                    var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(g.First().JustificationLongerDuty);
 
                     return new
                     {
                         Person = person,
                         TotalDurationYears = totalDurationYears,
-                        Justification = g.First().JustificationLongerDuty
+                        Justification = justificationSanitization.CleanText,
+                        justificationSanitization.HasOpenChanges,
+                        JustificationUrl = BuildMembershipJustificationUrl(c.Id, g.First().Id)
                     };
                 })
                 .Where(m => m.TotalDurationYears >= 12)
-                .ToList();
+                .ToArray();
 
             return new
             {
@@ -1550,7 +1603,7 @@ public class ReportService : IReportService
 
         var groupedByDepartment = committeesWithQualifiedMembers
             .GroupBy(c => c.Committee.Department)
-            .ToList();
+            .ToArray();
 
         var result = departments.Select(dept =>
         {
@@ -1558,38 +1611,40 @@ public class ReportService : IReportService
             var committeesInDepartment = groupedByDepartment
                 .Where(g => g.Key!.Id == dept.Id)
                 .SelectMany(g => g)
-                .ToList();
+                .ToArray();
 
             // Map committees with filtered members
             var committeesDto = committeesInDepartment.Select(cwm => new ReportCommitteeWithMemberDetailDto
             {
                 Name = cwm.Committee.GetDescription(),
-                MemberCount = cwm.QualifiedMembers.Count,
+                MemberCount = cwm.QualifiedMembers.Length,
                 Members = cwm.QualifiedMembers.Select(m => new ReportMembershipDto
                 {
                     Surname = m.Person.Surname,
                     GivenName = m.Person.GivenName,
                     FreeText = $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
-                    Justification = m.Justification
-                }).ToList()
+                    Justification = m.Justification,
+                    HasOpenJustificationChanges = m.HasOpenChanges,
+                    JustificationUrl = m.JustificationUrl
+                }).ToArray()
             })
-                .ToList();
+                .ToArray();
 
             return new ReportDepartmentWithCommitteesAndMembersDto
             {
                 Name = dept.GetText(),
                 Committees = committeesDto
             };
-        }).ToList();
+        });
 
         return result;
     }
 
-    private static List<ReportCommitteeWithMemberDetailDto> SummarizeMembershipsFromPresentAndFuture(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
+    private static IEnumerable<ReportCommitteeWithMemberDetailDto> SummarizeMembershipsFromPresentAndFuture(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
         IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers)
     {
         // which members we have in the future?
-        var reportGeneralElectionCommitteeDtos = geCommitteesWithMembers.ToList();
+        var reportGeneralElectionCommitteeDtos = geCommitteesWithMembers.ToArray();
         var futureLookup =
             reportGeneralElectionCommitteeDtos
                 .SelectMany(fc => fc.Memberships.Select(m => new
@@ -1608,7 +1663,7 @@ public class ReportService : IReportService
                     Memberships = c.Memberships
                         .Where(m => futureLookup.Contains(
                             new { c.CommitteeId, m.PersonId }))
-                        .ToList(),
+                        .ToArray(),
                     TermOfOfficeDateId = c.TermOfOfficeDateId,
                     TermOfOfficeDate = c.TermOfOfficeDate,
                     IsValidated = c.IsValidated,
@@ -1620,11 +1675,11 @@ public class ReportService : IReportService
                     DepartmentId = c.DepartmentId,
                     Department = c.Department,
                     OfficeId = c.OfficeId,
-                    Office = c.Office,
+                    Office = c.Office
                 })
                 // If a committee has no relevant members → remove it
                 .Where(c => c.Memberships.Count != 0)
-                .ToList();
+                .ToArray();
 
         // Combine past/present with the future..
         var allCommittees = filteredPresentCommittees.Concat(reportGeneralElectionCommitteeDtos);
@@ -1646,7 +1701,7 @@ public class ReportService : IReportService
                     };
                 })
                 .Where(m => m.TotalDurationYears >= 12)
-                .ToList();
+                .ToArray();
 
             return new
             {
@@ -1659,17 +1714,31 @@ public class ReportService : IReportService
         var committeesDto = committeesWithQualifiedMembers.Select(cwm => new ReportCommitteeWithMemberDetailDto
         {
             Name = cwm.Committee.GetDescription(),
-            MemberCount = cwm.QualifiedMembers.Count,
+            MemberCount = cwm.QualifiedMembers.Length,
             Members = cwm.QualifiedMembers.Select(m => new ReportMembershipDto
             {
                 Surname = m.Person.Surname,
                 GivenName = m.Person.GivenName,
-                FreeText = $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
-            }).ToList()
+                FreeText = $"{m.TotalDurationYears} {BusinessTexts.Report_Years}"
+            }).ToArray()
         })
-        .Where(cwm => cwm.MemberCount > 0)
-        .ToList();
+            .Where(cwm => cwm.MemberCount > 0);
 
         return committeesDto;
+    }
+
+    private string BuildCommitteeJustificationUrl(Guid committeeId)
+    {
+        return $"{_configuration["FrontendUrl"]}/general-election/committees/{committeeId}?tab=justifications";
+    }
+
+    private string BuildMembershipJustificationUrl(Guid committeeId, Guid membershipId)
+    {
+        return $"{_configuration["FrontendUrl"]}/general-election/committees/{committeeId}/membership-candidate/{membershipId}";
+    }
+
+    private string BuildGeneralMeasuresJustificationUrl()
+    {
+        return $"{_configuration["FrontendUrl"]}/administration/generalMeasures";
     }
 }
