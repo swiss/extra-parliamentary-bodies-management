@@ -4,7 +4,7 @@ import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {MatCard, MatCardContent} from '@angular/material/card';
 import {ActivatedRoute} from '@angular/router';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
-import {catchError, combineLatest, EMPTY, distinctUntilChanged, map, startWith, switchMap} from 'rxjs';
+import {catchError, EMPTY, distinctUntilChanged, map, merge, shareReplay, skip, startWith, switchMap} from 'rxjs';
 import {CommitteeOverviewBasicDataComponent} from '../../../../committees/committee-details/committee-overview/committee-overview-basic-data/committee-overview-basic-data.component';
 import {GeneralElectionCommitteeDetailsService} from '../ge-committee-details.service';
 
@@ -21,7 +21,7 @@ export class GeneralElectionCommitteeOverviewComponent {
         startWith({lang: this.translateService.getCurrentLang()}),
         map(lang => lang.lang),
         distinctUntilChanged(),
-        takeUntilDestroyed()
+        shareReplay({bufferSize: 1, refCount: true})
     );
 
     constructor(
@@ -29,9 +29,11 @@ export class GeneralElectionCommitteeOverviewComponent {
         private readonly route: ActivatedRoute,
         private readonly translateService: TranslateService
     ) {
-        const loading$ = combineLatest([this.route.paramMap, this.currentLanguage$, this.geCommitteeDetailsService.reload$]);
-
-        loading$
+        // Reload on language changes and explicit reloads (skip initial BehaviorSubject emit)
+        merge(
+            this.currentLanguage$.pipe(skip(1)), // Skip initial language to avoid double-load with guard
+            this.geCommitteeDetailsService.reload$.pipe(skip(1)) // Skip initial BehaviorSubject emit
+        )
             .pipe(
                 switchMap(() =>
                     this.geCommitteeDetailsService.generalElectionCommitteeDetails(this.route.snapshot.paramMap.get('id')!).pipe(catchError(() => EMPTY))
