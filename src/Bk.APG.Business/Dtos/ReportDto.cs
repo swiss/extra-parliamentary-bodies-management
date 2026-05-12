@@ -1,5 +1,11 @@
 namespace Bk.APG.Business.Dtos;
 
+
+public class ReportDepartmentDto
+{
+    public required string Name { get; set; }
+}
+
 public class ReportDepartmentWithCommitteeTypeDto
 {
     public required string Name { get; set; }
