@@ -10,7 +10,7 @@ public class AppendixFederalCouncilDto
     public required int MissingGender { get; set; }
     public required int MissingLanguage { get; set; }
     public required int NumberOfMultipleMembershipsPersons { get; set; }
-    public IEnumerable<ReportDepartmentWithCommitteesDto>? DisbandedCommittees { get; set; }
+    public IEnumerable<ReportDepartmentDto>? DisbandedCommittees { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteesDto>? ReleasedCommittees { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteesDto>? UnreleasedCommittees { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteesDto>? VacanciesCommittees { get; set; }

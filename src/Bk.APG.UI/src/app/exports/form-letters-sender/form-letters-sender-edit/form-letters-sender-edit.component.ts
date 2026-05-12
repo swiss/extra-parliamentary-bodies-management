@@ -63,7 +63,7 @@ export class FormLettersSenderEditComponent {
             next: async () => {
                 this.formLettersSenderService.reload$.next();
                 this.form().markAsPristine();
-                await this.router.navigate([]);
+                await this.router.navigate(['general-election', 'exports', 'formLetters']);
                 this.notificationService.success('formLetter.sender.update.success');
             },
             error: () => this.notificationService.error('formLetter.sender.update.error'),
