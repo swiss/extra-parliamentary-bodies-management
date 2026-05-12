@@ -4,7 +4,7 @@ namespace Bk.APG.Business.Dtos;
 
 public class ReportGeneralElectionMembershipDto
 {
-    public int OgdId { get; set; }
+    public Guid Id { get; set; }
     public Person? Person { get; set; }
     public Guid? PersonId { get; set; }
 
@@ -12,13 +12,8 @@ public class ReportGeneralElectionMembershipDto
     public required string Surname { get; set; }
     public required string GivenName { get; set; }
     public required int BirthYear { get; set; }
-    public Language? Language { get; set; }
     public Guid LanguageId { get; set; }
-    public Gender? Gender { get; set; }
     public Guid GenderId { get; set; }
-
-    public Committee? Committee { get; set; }
-    public Guid CommitteeId { get; set; }
     public int? MaximumEmploymentLevel { get; set; }
     public DateOnly BeginDate { get; set; }
     public DateOnly EndDate { get; set; }
@@ -29,18 +24,15 @@ public class ReportGeneralElectionMembershipDto
     public ElectionOffice? ElectionOffice { get; set; }
     public Guid ElectionOfficeId { get; set; }
     public string? OldMembershipAddition { get; set; }
-    public MembershipAddition? MembershipAddition { get; set; }
     public Guid? MembershipAdditionId { get; set; }
     public string? JustificationLongerDuty { get; set; }
     public string? JustificationShorterDuty { get; set; }
     public string? JustificationMemberInFederalDuty { get; set; }
     public string? JustificationMemberInFederalAssembly { get; set; }
     public string? RequirementsProfile { get; set; }
-    public int OldId { get; set; }
     public string? Remarks { get; set; }
     public string? RemarksStatus { get; set; }
     public required bool InCorrelationWithFederalDuty { get; set; }
     public required bool IsDeleted { get; set; }
     public required bool IsSelected { get; set; }
-    public int? NumberOfYears { get; set; }
 }
