@@ -14,6 +14,9 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
     beforeEach(() => {
         const serviceMock = {
             generalElectionCommitteeDetails: jest.fn(),
+            committeeDetails: {
+                set: jest.fn(),
+            },
         };
 
         const routerMock = {
@@ -52,7 +55,23 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
             result.subscribe(value => {
                 expect(value).toBe(true);
                 expect(service.generalElectionCommitteeDetails).toHaveBeenCalledWith('123');
+                expect(service.committeeDetails.set).toHaveBeenCalledWith(mockCommittee);
                 expect(router.navigate).not.toHaveBeenCalled();
+                done();
+            });
+        }
+    });
+
+    it('should set committeeDetails in service when committee exists', done => {
+        const mockCommittee = {id: '123', description: 'Test Committee'} as GeneralElectionCommitteeDetails;
+        (route.paramMap.get as jest.Mock).mockReturnValue('123');
+        service.generalElectionCommitteeDetails.mockReturnValue(of(mockCommittee));
+
+        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route, {} as RouterStateSnapshot));
+
+        if (typeof result === 'object' && 'subscribe' in result) {
+            result.subscribe(() => {
+                expect(service.committeeDetails.set).toHaveBeenCalledWith(mockCommittee);
                 done();
             });
         }
@@ -69,6 +88,7 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
             result.subscribe(value => {
                 expect(value).toBe(false);
                 expect(service.generalElectionCommitteeDetails).toHaveBeenCalledWith('123');
+                expect(service.committeeDetails.set).not.toHaveBeenCalled();
                 expect(router.navigate).toHaveBeenCalledWith(['/general-election/committees']);
                 done();
             });
@@ -87,6 +107,7 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
                 error: err => {
                     expect(err.status).toBe(500);
                     expect(service.generalElectionCommitteeDetails).toHaveBeenCalledWith('123');
+                    expect(service.committeeDetails.set).not.toHaveBeenCalled();
                     expect(router.navigate).not.toHaveBeenCalled();
                     done();
                 },
@@ -104,5 +125,6 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
         expect(result).toBe(mockUrlTree);
         expect(router.createUrlTree).toHaveBeenCalledWith(['/general-election/committees']);
         expect(service.generalElectionCommitteeDetails).not.toHaveBeenCalled();
+        expect(service.committeeDetails.set).not.toHaveBeenCalled();
     });
 });

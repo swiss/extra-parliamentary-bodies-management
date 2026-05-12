@@ -14,7 +14,10 @@ export const GeneralElectionCommitteeExistsGuard: CanActivateFn = route => {
     }
 
     return service.generalElectionCommitteeDetails(committeeId).pipe(
-        map(() => true),
+        map(committeeDetails => {
+            service.committeeDetails.set(committeeDetails);
+            return true;
+        }),
         catchError((error: HttpErrorResponse) => {
             if (error.status === 404) {
                 void router.navigate(['/general-election/committees']);
