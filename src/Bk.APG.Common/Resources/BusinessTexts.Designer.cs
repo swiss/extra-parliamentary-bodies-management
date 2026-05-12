@@ -61,7 +61,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Anhang_Bundesratsantrag.
+        ///   Looks up a localized string similar to Anhang Bundesratsantrag.
         /// </summary>
         public static string AppendixFederalCouncil_Filename {
             get {
@@ -1087,7 +1087,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to APG_Bundesratsbeschluss.
+        ///   Looks up a localized string similar to APG Bundesratsbeschluss.
         /// </summary>
         public static string DecisionFederalCouncil_Filename {
             get {
@@ -1249,7 +1249,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to APG_Serienbrief_Gesamt.
+        ///   Looks up a localized string similar to APG Serienbrief Gesamt.
         /// </summary>
         public static string FormLetterCompleteExport_Filename {
             get {
@@ -1393,6 +1393,15 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to bis.
+        /// </summary>
+        public static string Membership_Until {
+            get {
+                return ResourceManager.GetString("Membership_Until", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nationalrätin.
         /// </summary>
         public static string NationalCouncilFemale {
@@ -1411,7 +1420,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to APG_Bericht_Parlament.
+        ///   Looks up a localized string similar to APG Bericht Parlament.
         /// </summary>
         public static string ParliamentaryReport_Filename {
             get {
@@ -1492,7 +1501,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Liste_Vakanzen.
+        ///   Looks up a localized string similar to Liste Vakanzen.
         /// </summary>
         public static string Vacancies_Report_Filename {
             get {
