@@ -45,11 +45,11 @@ export class FormLettersSenderCreateComponent {
         this.httpApiInterceptorEvents.deactivateNotificationOnNextAPICalls();
 
         this.formLettersSenderService.createFormLettersSender(senderData).subscribe({
-            next: async formLetterSender => {
+            next: async () => {
                 this.form().reset(senderData);
                 this.form().markAsPristine();
                 this.formLettersSenderService.reload$.next();
-                await this.router.navigate(['general-election', 'exports', 'formLettersSenders', formLetterSender.id]);
+                await this.router.navigate(['general-election', 'exports', 'formLetters']);
                 this.notificationService.success('formLetter.sender.create.success');
             },
             error: () => this.notificationService.error('formLetter.sender.create.error'),

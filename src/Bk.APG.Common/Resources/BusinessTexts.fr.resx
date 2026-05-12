@@ -322,10 +322,10 @@
         <value>Organes_extraparlementaires_rapport_Parlement</value>
     </data>
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
-        <value>FR_APG_Bundesratsbeschluss</value>
+        <value>FR_APG Bundesratsbeschluss</value>
     </data>
     <data name="Vacancies_Report_Filename" xml:space="preserve">
-        <value>FR_Liste_Vakanzen</value>
+        <value>FR_Liste Vakanzen</value>
     </data>
     <data name="Information_Note_Filename" xml:space="preserve">
         <value>FR_Informationsnotiz</value>
@@ -358,7 +358,7 @@
         <value>Procédure de sélection : {0}</value>
     </data>
     <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
-        <value>Annexe_proposition_du_Conseil_fédéral</value>
+        <value>Annexe proposition du Conseil fédéral</value>
     </data>
     <data name="Report_ShorterDutyText" xml:space="preserve">
         <value>Nommé par {0} jusqu'à {1}</value>
@@ -469,7 +469,7 @@
         <value>FR_Bitte Datenschutzberater/-in nachtragen.</value>
     </data>
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
-        <value>FR_APG_Serienbrief_Gesamt</value>
+        <value>FR_APG Serienbrief Gesamt</value>
     </data>
     <data name="InformationNoteExport_MemberCount" xml:space="preserve">
         <value>FR_{0} Mitglied(er)</value>
@@ -500,5 +500,8 @@
     </data>
     <data name="Committee_SelfOrganized" xml:space="preserve">
         <value>FR_Selbstorgansisiert</value>
+    </data>
+    <data name="Membership_Until" xml:space="preserve">
+        <value>FR_bis</value>
     </data>
 </root>
