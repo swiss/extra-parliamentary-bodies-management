@@ -19,6 +19,8 @@ public class ReportCommitteeDto
     public string? Justification { get; set; }
     public string? FreeText { get; set; }
     public string? FreeText2 { get; set; }
+    public bool HasOpenJustificationChanges { get; set; }
+    public string? JustificationUrl { get; set; }
 }
 
 public class ReportDepartmentWithCommitteesDto
@@ -31,14 +33,17 @@ public class ReportDepartmentWithCommitteesAndGendersDto
 {
     public required string Name { get; set; }
     public string? Measure { get; set; }
+    public bool HasOpenMeasureChanges { get; set; }
+    public string? MeasureUrl { get; set; }
     public IEnumerable<ReportCommitteeGenderMissingDto>? Committees { get; set; }
 }
 
 public class ReportDepartmentWithCommitteesAndLanguagesDto
 {
     public required string Name { get; set; }
-    public string? Justification { get; set; }
     public string? Measure { get; set; }
+    public bool HasOpenMeasureChanges { get; set; }
+    public string? MeasureUrl { get; set; }
     public IEnumerable<ReportCommitteeLanguageMissingDto>? Committees { get; set; }
 }
 
@@ -56,6 +61,9 @@ public class ReportCommitteeGenderMissingDto
     public string? Justification { get; set; }
     public decimal? FemaleMissingPercentage { get; set; }
     public decimal? MaleMissingPercentage { get; set; }
+    public bool HasOpenJustificationChanges { get; set; }
+    public bool HasOpenMeasureChanges { get; set; }
+    public string? JustificationUrl { get; set; }
 }
 
 public class ReportCommitteeLanguageMissingDto
@@ -70,6 +78,9 @@ public class ReportCommitteeLanguageMissingDto
     public decimal? FrenchPercentage { get; set; }
     public decimal? ItalianPercentage { get; set; }
     public decimal? RomanshPercentage { get; set; }
+    public bool HasOpenJustificationChanges { get; set; }
+    public bool HasOpenMeasureChanges { get; set; }
+    public string? JustificationUrl { get; set; }
 }
 
 public class ReportCommitteeWithMemberDetailDto
@@ -89,7 +100,9 @@ public class ReportMembershipDto
     public string? Justification { get; set; }
     public string? FreeText2 { get; set; }
     public string? FreeText3 { get; set; }
+    public bool HasOpenJustificationChanges { get; set; }
     public ReportMembershipType Type { get; set; }
+    public string? JustificationUrl { get; set; }
 }
 
 public class ReportCommitteeWithFreeTextDto

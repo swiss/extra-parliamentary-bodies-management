@@ -125,7 +125,8 @@ public static class ReportMapper
 
         return new ReportGeneralElectionMembershipDto
         {
-            PersonId = membershipCandidate.Person != null ? membershipCandidate.Person.Id : Guid.Empty,
+            Id = membershipCandidate.Id,
+            PersonId = membershipCandidate.Person?.Id ?? Guid.Empty,
             Person = membershipCandidate.Person,
             Surname = membershipCandidate.Surname,
             GivenName = membershipCandidate.GivenName,
