@@ -361,7 +361,7 @@
         <value>Annexe proposition du Conseil fédéral</value>
     </data>
     <data name="Report_ShorterDutyText" xml:space="preserve">
-        <value>Nommé par {0} jusqu'à {1}</value>
+        <value>nommé par {0} jusqu'à {1}</value>
     </data>
     <data name="Report_Years" xml:space="preserve">
         <value>Années</value>
@@ -502,6 +502,6 @@
         <value>FR_Selbstorgansisiert</value>
     </data>
     <data name="Membership_Until" xml:space="preserve">
-        <value>FR_bis</value>
+        <value>jusqu'à</value>
     </data>
 </root>
