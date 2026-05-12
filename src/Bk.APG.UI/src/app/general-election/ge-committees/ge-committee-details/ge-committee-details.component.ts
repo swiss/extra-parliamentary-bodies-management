@@ -16,7 +16,6 @@ import {GeneralElectionCommitteeOverviewComponent} from './ge-committee-overview
     selector: 'apg-ge-committee-details',
     templateUrl: './ge-committee-details.component.html',
     styleUrl: './ge-committee-details.component.scss',
-    providers: [GeneralElectionCommitteeDetailsService],
     imports: [
         MatTabGroup,
         MatTab,
