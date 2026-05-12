@@ -150,9 +150,9 @@ public class ReportService : IReportService
 
         var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToList();
 
-        var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&
-                                                                           ((c.BeginDate > nextTermOfOfficeDate.BeginDate && c.BeginDate < nextTermOfOfficeDate.EndDate) || (c.EndDate < nextTermOfOfficeDate.EndDate && c.EndDate > nextTermOfOfficeDate.BeginDate))).ToList();
-        var disbandedReportCommittees = disbandedCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
+        //var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&
+        //                                                                   ((c.BeginDate > nextTermOfOfficeDate.BeginDate && c.BeginDate < nextTermOfOfficeDate.EndDate) || (c.EndDate < nextTermOfOfficeDate.EndDate && c.EndDate > nextTermOfOfficeDate.BeginDate))).ToList();
+        //var disbandedReportCommittees = disbandedCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToList();
 
         var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFutureByDepartment(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions, departments);
 
@@ -194,15 +194,19 @@ public class ReportService : IReportService
         var femaleUnderStuffed = extraParliamentaryCommissions.Count(c => c.FemaleUnderStuffed);
         var maleUnderStuffed = extraParliamentaryCommissions.Count(c => c.MaleUnderStuffed);
 
-        // get all committees for GE, which are released and did not end before the current termOfOfficeDate
-        var releasedCommittees = committees.Where(c => c.ReleaseGeneralElection == true && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate)).ToList();
+        // get all committees for GE, which are released and did not end before the current termOfOfficeDate, TODO PP we need the check for the date 
+        var releasedGeneralElectionCommittees = committeesWithMembers.Where(c => c.IsValidated && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate)).ToList();
+        var releasedCommittees = releasedGeneralElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToList();
+
         // same as above, but not released
-        var unreleasedCommittees = committees.Where(c => c.ReleaseGeneralElection == false && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate)).ToList();
+        var unreleasedGeneralElectionCommittees = committeesWithMembers.Where(c => !c.IsValidated && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate)).ToList();
+        var unreleasedCommittees = unreleasedGeneralElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToList();
+
         // number of APKs (!) which are new or have ended before the current termOfOfficeDate
         var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15).ToList();
         var releasedCommitteesDto = GetCommitteesByDepartmentAndTypes(releasedCommittees, departments);
         var unreleasedCommitteesDto = GetCommitteesByDepartmentAndTypes(unreleasedCommittees, departments);
-        var disbandedCommitteesDto = GetCommitteesByDepartment(disbandedReportCommittees, departments, ReportCommitteeType.StandardBehaviour, nextTermOfOfficeDate);
+        var disbandedCommitteesDto = GetDepartmentsOnly(departments);
         var financialImpactsCommitteesDto = GetCommitteesByDepartment(generalElectionCommitteesWithMembers, departments, ReportCommitteeType.StandardBehaviour);
         var vacanciesCommitteesDto = GetCommitteesByDepartment(vacanciesCommittees, departments, ReportCommitteeType.Vacancies);
 
@@ -289,22 +293,22 @@ public class ReportService : IReportService
 
         var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToList();
 
-        var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&
-                                                                           ((c.BeginDate > generalElectionTermOfOfficeDate.BeginDate && c.BeginDate < generalElectionTermOfOfficeDate.EndDate) || (c.EndDate < generalElectionTermOfOfficeDate.EndDate && c.EndDate > generalElectionTermOfOfficeDate.BeginDate))).ToList();
-        var disbandedReportCommittees = disbandedCommittees.Select(c => ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto(c)).ToList();
+        //var disbandedCommittees = _committeeRepository.GetAll().Where(c => c.ExtraParliamentaryCommission &&
+        //                                                                   ((c.BeginDate > generalElectionTermOfOfficeDate.BeginDate && c.BeginDate < generalElectionTermOfOfficeDate.EndDate) || (c.EndDate < generalElectionTermOfOfficeDate.EndDate && c.EndDate > generalElectionTermOfOfficeDate.BeginDate))).ToList();
+        //var disbandedReportCommittees = disbandedCommittees.Select(c => ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto(c)).ToList();
 
         var marketOrientatedCommissions = generalElectionCommitteesWithMembers.Where(c => c.MarketOrientated == true).ToList();
 
         // get all committees for GE, which are released and did not end before the current termOfOfficeDate
-        var releasedCommittees = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == true && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToList();
+        var releasedCommittees = generalElectionCommitteesWithMembers.Where(c => c.IsValidated && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToList();
         // same as above, but not released
-        var unreleasedCommittees = generalElectionCommitteesWithMembers.Where(c => c.ReleaseGeneralElection == false && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToList();
+        var unreleasedCommittees = generalElectionCommitteesWithMembers.Where(c => !c.IsValidated && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate)).ToList();
         // number of APKs (!) which are new or have ended before the current termOfOfficeDate
         var moreThan15MembersCommittees = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission && c.Memberships.Count > 15).ToList();
         var releasedCommitteesDto = GetCommitteesByDepartment(releasedCommittees, departments, ReportCommitteeType.StandardBehaviour);
         var unreleasedCommitteesDto = GetCommitteesByDepartment(unreleasedCommittees, departments, ReportCommitteeType.StandardBehaviour);
-        var disbandedCommitteesDto = GetCommitteesByDepartment(disbandedReportCommittees, departments, ReportCommitteeType.StandardBehaviour);
-        var vacanciesCommittees = generalElectionCommitteesWithMembers.Where(c => c.VacanciesGeneralElection != null);
+        var disbandedCommitteesDto = GetDepartmentsOnly(departments);
+        var vacanciesCommittees = releasedCommittees.Where(c => c.VacanciesGeneralElection != null);
         var selectionProcedureCommittees = generalElectionCommitteesWithMembers.Where(c => c.SelectionProcedure != null);
         var requirementsProfileCommittees = generalElectionCommitteesWithMembers.Where(c => c.Memberships.Any(m => !string.IsNullOrWhiteSpace(m.RequirementsProfile))).ToList();
 
@@ -1310,6 +1314,23 @@ public class ReportService : IReportService
         return departmentList;
     }
 
+    private static List<ReportDepartmentDto> GetDepartmentsOnly(IEnumerable<Department> departments)
+    {
+        var departmentList = new List<ReportDepartmentDto>();
+
+        foreach (var department in departments)
+        {
+            var dto = new ReportDepartmentDto
+            {
+                Name = department.GetText()
+            };
+
+            departmentList.Add(dto);
+        }
+
+        return departmentList;
+    }
+
     private static List<ReportCommitteeWithFreeTextDto> GetNonReleasedCommissions(IEnumerable<ReportGeneralElectionCommitteeDto> nonReleasedCommissions)
     {
         var committees = nonReleasedCommissions
@@ -1535,7 +1556,8 @@ public class ReportService : IReportService
                     {
                         Person = person,
                         TotalDurationYears = totalDurationYears,
-                        Justification = g.First().JustificationLongerDuty
+                        Justification = g.First().JustificationLongerDuty,
+                        g.First().EndDate,
                     };
                 })
                 .Where(m => m.TotalDurationYears >= 12)
@@ -1569,7 +1591,8 @@ public class ReportService : IReportService
                 {
                     Surname = m.Person.Surname,
                     GivenName = m.Person.GivenName,
-                    FreeText = $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
+                    FreeText = m.TotalDurationYears == 16 ? $"{m.TotalDurationYears} {BusinessTexts.Report_Years} ({BusinessTexts.Membership_Until} {m.EndDate})" : $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
+                    // FreeText = $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
                     Justification = m.Justification
                 }).ToList()
             })
