@@ -1501,6 +1501,15 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -.
+        /// </summary>
+        public static string Term_Of_Office_Data_Separator {
+            get {
+                return ResourceManager.GetString("Term_Of_Office_Data_Separator", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Liste Vakanzen.
         /// </summary>
         public static string Vacancies_Report_Filename {
