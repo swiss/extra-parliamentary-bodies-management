@@ -36,7 +36,7 @@ public class ParliamentaryReportDto
 
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? ReleasedCommittees { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? UnreleasedCommittees { get; set; }
-    public IEnumerable<ReportDepartmentWithCommitteesDto>? DisbandedCommittees { get; set; }
+    public IEnumerable<ReportDepartmentDto>? DisbandedCommittees { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteesDto>? FinancialImpactsCommittees { get; set; }
     // will be filled separately, needs other DTO
     public IEnumerable<ReportDepartmentWithCommitteesDto>? VacanciesCommittees { get; set; }

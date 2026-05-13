@@ -169,7 +169,7 @@ describe('FormLettersSenderEditComponent', () => {
         expect(formLettersSenderServiceMock.updateFormLettersSender).toHaveBeenCalled();
         expect(reloadNextSpy).toHaveBeenCalled();
         await fixture.whenStable();
-        expect(routerMock.navigate).toHaveBeenCalledWith([]);
+        expect(routerMock.navigate).toHaveBeenCalledWith(['general-election', 'exports', 'formLetters']);
         expect(notificationServiceMock.success).toHaveBeenCalledWith('formLetter.sender.update.success');
     });
 
