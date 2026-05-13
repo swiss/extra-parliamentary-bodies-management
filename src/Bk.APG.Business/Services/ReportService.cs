@@ -112,8 +112,8 @@ public class ReportService : IReportService
 
         var decisionFederalCouncilReportDto = new DecisionFederalCouncilReportDto
         {
-            TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + " - " + nextTermOfOfficeDate.EndDate?.Year,
-
+            TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + BusinessTexts.Term_Of_Office_Data_Separator + nextTermOfOfficeDate.EndDate?.Year,
+            OnlyReleased = filterDto.ReleasedCommittees,
             NonReleasedCommissions = nonReleasedCommissionsDto,
             MarketOrientatedCommissions = marketOrientatedCommissionsDto,
             MoreThan15MembersCommittees = moreThan15MembersCommitteesDto,
@@ -198,13 +198,13 @@ public class ReportService : IReportService
 
         // get all committees for GE, which are released/validated and did not end before the current termOfOfficeDate
         var releasedGeneralElectionCommittees = committeesWithMembers
-            .Where(c => c.IsValidated && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate))
+            .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .ToArray();
         var releasedCommittees = releasedGeneralElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToArray();
 
         // same as above, but not released/validated
         var unreleasedGeneralElectionCommittees = committeesWithMembers
-            .Where(c => !c.IsValidated && (c.EndDate is null || c.EndDate > nextTermOfOfficeDate.BeginDate))
+            .Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded && c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .ToArray();
         var unreleasedCommittees = unreleasedGeneralElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToArray();
 
@@ -226,7 +226,8 @@ public class ReportService : IReportService
 
         var parliamentaryReportDto = new ParliamentaryReportDto
         {
-            TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + " - " + nextTermOfOfficeDate.EndDate?.Year,
+            TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + BusinessTexts.Term_Of_Office_Data_Separator + nextTermOfOfficeDate.EndDate?.Year,
+            OnlyReleased = filterDto.ReleasedCommittees,
             NumberOfMembers = committees.Sum(c => c.ActiveMemberCount),
             NumberOfCommittees = committees.Length,
             NumberOfAuthoritiesCommissions = committees.Count(c => c.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid),
@@ -288,6 +289,10 @@ public class ReportService : IReportService
         var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
         var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
 
+        // to be able to use the standard repository function we have to cheat here with the released flag!
+        var onlyReleasedCommittees = filterDto.ReleasedCommittees;
+        filterDto.ReleasedCommittees = false;
+
         var reportCommittees = extraParliamentaryCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
@@ -300,14 +305,23 @@ public class ReportService : IReportService
         var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToArray();
         var marketOrientatedCommissions = generalElectionCommitteesWithMembers.Where(c => c.MarketOrientated == true).ToArray();
 
-        // get all committees for GE, which are released and did not end before the current termOfOfficeDate
+        // get all committees for GE, which are in one of the desired states
         var releasedCommittees = generalElectionCommitteesWithMembers
-            .Where(c => c.IsValidated && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate))
             .ToArray();
-        // same as above, but not released
-        var unreleasedCommittees = generalElectionCommitteesWithMembers
-            .Where(c => !c.IsValidated && (c.EndDate is null || c.EndDate > generalElectionTermOfOfficeDate.BeginDate))
-            .ToArray();
+        // unreleased is only relevant, when option "Nur freigegebene" is selected on UI. If not selected, this list should be empty.
+        var unreleasedCommittees = Array.Empty<ReportGeneralElectionCommitteeDto>();
+
+        if (onlyReleasedCommittees)
+        {
+            releasedCommittees = generalElectionCommitteesWithMembers
+                .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
+                .ToArray();
+
+            unreleasedCommittees = generalElectionCommitteesWithMembers
+                .Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded && c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+                .ToArray();
+        }
+
         // number of APKs (!) which are new or have ended before the current termOfOfficeDate
         var moreThan15MembersCommittees = extraParliamentaryCommissions
             .Where(c => c is { Memberships.Count: > 15 })
@@ -364,7 +378,8 @@ public class ReportService : IReportService
 
         var appendixReportDto = new AppendixFederalCouncilDto
         {
-            TermOfOfficeDateRange = generalElectionTermOfOfficeDate.BeginDate.Year + " - " + generalElectionTermOfOfficeDate.EndDate?.Year,
+            TermOfOfficeDateRange = generalElectionTermOfOfficeDate.BeginDate.Year + BusinessTexts.Term_Of_Office_Data_Separator + generalElectionTermOfOfficeDate.EndDate?.Year,
+            OnlyReleased = filterDto.ReleasedCommittees,
             NumberOfMembers = generalElectionCommitteesWithMembers.Sum(c => c.ActiveMemberCount),
             NumberOfCommittees = generalElectionCommitteesWithMembers.Length,
             NumberOfExtraParliamentaryCommissions = extraParliamentaryCommissions.Length,
@@ -441,10 +456,16 @@ public class ReportService : IReportService
         var allNonExtraParliamentaryCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => c is { ExtraParliamentaryCommission: false, IsValidated: true }).ToArray();
 
         // get all committees for GE, which are released and did not end before the current termOfOfficeDate
-        var releasedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated).Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToArray();
+        var releasedCommittees = allGeneralElectionCommittees
+            .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee)
+            .ToArray();
         var releasedCommitteesDto = GetCommitteesByDepartmentAndTypes(releasedCommittees, departments);
+
         // same as above, but not released
-        var unreleasedCommittees = allGeneralElectionCommitteesUnfiltered.Where(c => !c.IsValidated).ToArray();
+        var unreleasedCommittees = allGeneralElectionCommitteesUnfiltered
+            .Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded && c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .ToArray();
         var unreleasedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(unreleasedCommittees, departments, InformationNoteData.Vacancies);
 
         var moreThan12YearsCommittes = allGeneralElectionCommittees.Where(c => c.IsValidated).ToArray();
@@ -527,8 +548,8 @@ public class ReportService : IReportService
 
         var informationNoteDto = new InformationNoteDto
         {
-            TermOfOfficeDateRange = generalElectionTermOfOfficeDate.BeginDate.Year + " - " + generalElectionTermOfOfficeDate.EndDate?.Year,
-            LastTermOfOfficeDateRange = currentTermOfOfficeDate.BeginDate.Year + " - " + currentTermOfOfficeDate.EndDate?.Year,
+            TermOfOfficeDateRange = generalElectionTermOfOfficeDate.BeginDate.Year + BusinessTexts.Term_Of_Office_Data_Separator + generalElectionTermOfOfficeDate.EndDate?.Year,
+            LastTermOfOfficeDateRange = currentTermOfOfficeDate.BeginDate.Year + BusinessTexts.Term_Of_Office_Data_Separator + currentTermOfOfficeDate.EndDate?.Year,
             NumberOfMembers = numberOfSelectedCandidates,
             CurrentYear = DateOnly.FromDateTime(DateTime.Now).Year.ToString(CultureInfo.InvariantCulture),
 
@@ -776,8 +797,8 @@ public class ReportService : IReportService
 
         var vacanciesReportDto = new VacanciesReportDto
         {
-            TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + " - " + nextTermOfOfficeDate.EndDate?.Year,
-
+            TermOfOfficeDateRange = nextTermOfOfficeDate.BeginDate.Year + BusinessTexts.Term_Of_Office_Data_Separator + nextTermOfOfficeDate.EndDate?.Year,
+            OnlyReleased = filterDto.ReleasedCommittees,
             Departments = reportDepartments
         };
 
