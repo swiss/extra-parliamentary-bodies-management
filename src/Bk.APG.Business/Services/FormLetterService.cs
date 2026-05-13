@@ -10,6 +10,11 @@ namespace Bk.APG.Business.Services;
 
 public class FormLetterService : IFormLetterService
 {
+    private const string GeneralElectionTextGerman = "Gesamterneuerungswahl";
+    private const string GeneralElectionTextFrench = "Renouvellement intégral";
+    private const string GeneralElectionTextItalian = "Rinnovo integrale";
+    private const string GeneralElectionTextRomansh = "Renovaziun totala";
+
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IDocumentService _documentServiceInternal;
@@ -21,13 +26,11 @@ public class FormLetterService : IFormLetterService
 
     public FormLetterService(
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
-        ICultureService cultureService,
         ITermOfOfficeDateService termOfOfficeDateService,
         IDocumentService documentServiceInternal,
         ICommitteeRepository committeeRepository,
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         IMasterDataRepository masterDataRepository,
-        IGeneralMeasureRepository generalMeasureRepository,
         IFormLetterSenderRepository formLetterSenderRepository,
         ILogger<ReportService> logger)
     {
@@ -50,11 +53,11 @@ public class FormLetterService : IFormLetterService
         var reportDto = await FillFormLetterDto(filterDto);
 
         var zipStream = new MemoryStream();
-        var maxFileNameLength = 150;
+        const int maxFileNameLength = 150;
 
         if (reportDto.Memberships != null && filterDto.ExportType == "single")
         {
-            var template = "FormLetterGeneralElection";
+            const string template = "FormLetterGeneralElection";
 
             var allMemberships = reportDto.Memberships.ToList();
 
@@ -107,7 +110,7 @@ public class FormLetterService : IFormLetterService
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
-        var template = "FormLetterGeneralElection";
+        const string template = "FormLetterGeneralElection";
 
         var reportDto = await FillFormLetterDto(filterDto);
 
@@ -143,8 +146,8 @@ public class FormLetterService : IFormLetterService
         if (filterDto.ElectionTypeIds != null && filterDto.ElectionTypeIds.Any())
         {
             electionTypeList = electionTypeList
-                       .Where(id => filterDto.ElectionTypeIds.Contains(id))
-                       .ToList();
+                .Where(id => filterDto.ElectionTypeIds.Contains(id))
+                .ToList();
         }
 
         var electionTypeListPresent = electionTypeList.ToList();
@@ -169,134 +172,62 @@ public class FormLetterService : IFormLetterService
 
         var allRecipients = newAndReElections.Concat(endedMemberships).ToList().OrderBy(m => m.Surname).ThenBy(m => m.GivenName);
 
-        if (sender != null && nextTermOfOfficeDate != null && currentTermOfOfficeDate != null)
+        var signaturePictureExists = false;
+        var picBase64 = string.Empty;
+
+        if (sender.SignatureFileReference != null)
         {
-            var signaturePictureExists = false;
-            var picBase64 = string.Empty;
+            using var signatureStream = await _documentServiceInternal.GetDocument(sender.SignatureFileReference.DocumentStorageId);
 
-            if (sender.SignatureFileReference != null)
+            if (signatureStream is { CanSeek: true })
             {
-                using var signatureStream = await _documentServiceInternal.GetDocument(sender.SignatureFileReference.DocumentStorageId ?? string.Empty);
-
-                if (signatureStream != null && signatureStream.CanSeek)
-                {
-                    signatureStream.Position = 0;
-                    picBase64 = Convert.ToBase64String(signatureStream.ToArray());
-                    signaturePictureExists = true;
-                }
+                signatureStream.Position = 0;
+                picBase64 = Convert.ToBase64String(signatureStream.ToArray());
+                signaturePictureExists = true;
             }
-
-            var formLetterReportDto = new FormLetterReportDto
-            {
-                NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
-                NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
-                TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
-                Memberships = allRecipients,
-                HasSignature = signaturePictureExists,
-                SenderSignature = picBase64,
-                SenderOfficeGerman = sender.Office?.DescriptionDe,
-                SenderOfficeFrench = sender.Office?.DescriptionFr,
-                SenderOfficeItalian = sender.Office?.DescriptionIt,
-                SenderName = sender.GivenName + " " + sender.Surname,
-                SenderStreet = sender.StreetGerman,
-                SenderZip = sender.Zip,
-                SenderCity = sender.CityGerman,
-                SenderPhone = sender.Phone,
-                SenderEmail = sender.Email,
-                SenderWebsite = sender.Website,
-            };
-
-            return formLetterReportDto;
         }
-        else
+
+        var formLetterReportDto = new FormLetterReportDto
         {
-            return new FormLetterReportDto();
-        }
+            NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
+            NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
+            TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
+            Memberships = allRecipients,
+            HasSignature = signaturePictureExists,
+            SenderSignature = picBase64,
+            SenderOfficeGerman = sender.Office?.DescriptionDe,
+            SenderOfficeFrench = sender.Office?.DescriptionFr,
+            SenderOfficeItalian = sender.Office?.DescriptionIt,
+            SenderName = sender.GivenName + " " + sender.Surname,
+            SenderStreet = sender.StreetGerman,
+            SenderZip = sender.Zip,
+            SenderCity = sender.CityGerman,
+            SenderPhone = sender.Phone,
+            SenderEmail = sender.Email,
+            SenderWebsite = sender.Website,
+        };
+
+        return formLetterReportDto;
     }
 
     private async Task<List<FormLetterMembershipReportDto>> GetNewAndReelectionMemberships(FormLetterFilterParameters filterDto, List<Guid> electionTypeListFuture, FormLetterSender sender)
     {
-        var generalElectionTextGerman = "Gesamterneuerungswahl";
-        var generalElectionTextFrench = "Renouvellement intégral";
-        var generalElectionTextItalian = "Rinnovo integrale";
-        var generalElectionTextRomansh = "Renovaziun totala";
-
         var formLetterDate = filterDto.FormLetterDate != null ? (DateOnly)filterDto.FormLetterDate! : DateOnly.FromDateTime(DateTime.Today);
-
-        var currentMonthAndYearGerman = formLetterDate.ToString("MMMM yyyy", new CultureInfo("de-CH")) ?? "";
-        var currentMonthAndYearFrench = formLetterDate.ToString("MMMM yyyy", new CultureInfo("fr-CH")) ?? "";
-        var currentMonthAndYearItalian = formLetterDate.ToString("MMMM yyyy", new CultureInfo("it-CH")) ?? "";
-        var currentMonthAndYearRomansh = formLetterDate.ToString("MMMM yyyy", new CultureInfo("rm-CH")) ?? "";
+        var dateLetter = FormatMonthAndYear(formLetterDate);
 
         var allValidMemberships = await _generalElectionCommitteeRepository.GetAllForFormLetter(filterDto, electionTypeListFuture);
 
         var newAndReElections = allValidMemberships
-            .SelectMany(c => c.MembershipCandidates.Where(m => m.PersonId != null && m.Person!.CorrespondenceAddressId != null && m.IsSelected).Select(m => new FormLetterMembershipReportDto
-            {
-                // as the zip file is always named in german, we also name all the committee files with the german name!
-                FileName = c.DescriptionGerman,
-                FormLetterType = m.ElectionTypeId == ElectionType.NewElectionGuid ? FormLetterType.NewElection : FormLetterType.ReElection,
-                FormLetterLanguage = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? FormLetterLanguage.German :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? FormLetterLanguage.French :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? FormLetterLanguage.Italian : FormLetterLanguage.Romansh,
-                SenderDepartment = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.Department!.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.Department!.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.Department!.DescriptionIt : sender.Department!.DescriptionRm,
-                SenderOffice = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.Office?.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.Office?.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.Office?.DescriptionIt : sender.Office?.DescriptionRm,
-                SenderOfficeShort = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.Office?.TextDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.Office?.TextFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.Office?.TextIt : sender.Office?.TextRm,
-                SenderName = sender.GivenName + " " + sender.Surname,
-                SenderFunction = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.SenderFunction!.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.SenderFunction!.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.SenderFunction!.DescriptionIt : sender.SenderFunction!.DescriptionRm,
-                SenderStreet = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.StreetGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.StreetFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.StreetItalian : sender.StreetRomansh,
-                SenderZip = sender.Zip,
-                SenderCity = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.CityGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.CityFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.CityItalian : sender.CityRomansh,
-                Subject = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? generalElectionTextGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? generalElectionTextFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? generalElectionTextItalian : generalElectionTextRomansh,
-                DateLetter = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? currentMonthAndYearGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? currentMonthAndYearFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? currentMonthAndYearItalian : currentMonthAndYearRomansh,
-                CommitteeId = c.CommitteeId,
-                CommitteeName = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? c.DescriptionGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? c.DescriptionFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? c.DescriptionItalian : c.DescriptionRomansh,
-                CorrespondenceLanguageId = m.Person != null ? m.Person!.CorrespondenceLanguageId : Guid.Empty,
-                Function = m.Person!.CorrespondenceLanguageId == Language.GermanGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextDe :
-                    m.Person!.CorrespondenceLanguageId == Language.GermanGuid && m.Person!.GenderId == Gender.FemaleGuid ? m.Function!.TextFemaleDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextFr :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid && m.Person!.GenderId == Gender.FemaleGuid ? m.Function!.TextFemaleFr :
-                m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextIt :
-                m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.GenderId == Gender.FemaleGuid ? m.Function!.TextFemaleIt :
-                m.Person!.CorrespondenceLanguageId == Language.RomanshGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextRm : string.Empty,
-                // Salutation can be null, then we display nothing
-                Salutation = m.Person!.Salutation == null ? string.Empty :
-                    m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? m.Person!.Salutation!.TextDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? m.Person!.Salutation!.TextFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? m.Person!.Salutation!.TextIt :
-                    m.Person!.CorrespondenceLanguageId == Language.RomanshGuid ? m.Person!.Salutation!.TextRm : string.Empty,
-                SalutationText = m.Person!.SalutationText ?? string.Empty,
-                GivenName = m.Person!.GivenName ?? string.Empty,
-                Surname = m.Person!.Surname ?? string.Empty,
-                CompanyName = m.Person!.CorrespondenceAddress!.CompanyName ?? string.Empty,
-                Street = m.Person!.CorrespondenceAddress.Street ?? string.Empty,
-                PoBox = m.Person!.CorrespondenceAddress.PoBox ?? string.Empty,
-                Zip = m.Person!.CorrespondenceAddress!.Zip ?? string.Empty,
-                City = m.Person!.CorrespondenceAddress!.City ?? string.Empty,
-                Country = m.Person!.CorrespondenceAddress.Country == null ? string.Empty : m.Person!.CorrespondenceAddress.Country!.TextDe == "CH" ? string.Empty :
-                    m.Person!.CorrespondenceLanguageId == Language.GermanGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionIt :
-                    m.Person!.CorrespondenceLanguageId == Language.RomanshGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionRm : string.Empty,
-            }))
+            .SelectMany(c => c.MembershipCandidates
+                .Where(m => m.PersonId != null && m.Person!.CorrespondenceAddressId != null && m.IsSelected)
+                .Select(m => MapToFormLetterMembershipDto(
+                    formLetterType: m.ElectionTypeId == ElectionType.NewElectionGuid ? FormLetterType.NewElection : FormLetterType.ReElection,
+                    committeeId: c.CommitteeId,
+                    committeeNames: (c.DescriptionGerman, c.DescriptionFrench, c.DescriptionItalian, c.DescriptionRomansh),
+                    dateLetter: dateLetter,
+                    sender: sender,
+                    person: m.Person!,
+                    function: m.Function!)))
             .ToList();
 
         return newAndReElections;
@@ -304,85 +235,128 @@ public class FormLetterService : IFormLetterService
 
     private async Task<List<FormLetterMembershipReportDto>> GetEndedMemberships(FormLetterFilterParameters filterDto, List<Guid> electionTypeListPresent, FormLetterSender sender)
     {
-        var generalElectionTextGerman = "Gesamterneuerungswahl";
-        var generalElectionTextFrench = "Renouvellement intégral";
-        var generalElectionTextItalian = "Rinnovo integrale";
-        var generalElectionTextRomansh = "Renovaziun totala";
-
-        var currentMonthAndYearGerman = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("de-CH")) ?? "";
-        var currentMonthAndYearFrench = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("fr-CH")) ?? "";
-        var currentMonthAndYearItalian = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("it-CH")) ?? "";
-        var currentMonthAndYearRomansh = DateTime.Now.ToString("MMMM yyyy", new CultureInfo("rm-CH")) ?? "";
+        var dateLetter = FormatMonthAndYear(DateOnly.FromDateTime(DateTime.Now));
 
         var allEndedMemberships = await _committeeRepository.GetAllForFormLetter(filterDto, electionTypeListPresent);
 
         var endedMemberships = allEndedMemberships
-            .SelectMany(c => c.Memberships.Select(m => new FormLetterMembershipReportDto
-            {
-                // as the zip file is always named in german, we also name all the committee files with the german name!
-                FileName = c.DescriptionGerman,
-                FormLetterType = m.ElectionTypeId == ElectionType.RetirementGuid ? FormLetterType.Retire : m.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid ? FormLetterType.MaximumMembershipDuration : FormLetterType.OtherRetirement,
-                FormLetterLanguage = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? FormLetterLanguage.German :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? FormLetterLanguage.French :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? FormLetterLanguage.Italian : FormLetterLanguage.Romansh,
-                SenderDepartment = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.Department!.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.Department!.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.Department!.DescriptionIt : sender.Department!.DescriptionRm,
-                SenderOffice = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.Office?.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.Office?.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.Office?.DescriptionIt : sender.Office?.DescriptionRm,
-                SenderOfficeShort = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.Office?.TextDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.Office?.TextFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.Office?.TextIt : sender.Office?.TextRm,
-                SenderName = sender.GivenName + " " + sender.Surname,
-                SenderFunction = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.SenderFunction!.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.SenderFunction!.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.SenderFunction!.DescriptionIt : sender.SenderFunction!.DescriptionRm,
-                SenderStreet = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.StreetGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.StreetFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.StreetItalian : sender.StreetRomansh,
-                SenderZip = sender.Zip,
-                SenderCity = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? sender.CityGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? sender.CityFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? sender.CityItalian : sender.CityRomansh,
-                Subject = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? generalElectionTextGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? generalElectionTextFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? generalElectionTextItalian : generalElectionTextRomansh,
-                DateLetter = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? currentMonthAndYearGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? currentMonthAndYearFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? currentMonthAndYearItalian : currentMonthAndYearRomansh,
-                CommitteeId = c.Id,
-                CommitteeName = m.Person!.CorrespondenceLanguageId == Language.GermanGuid ? c.DescriptionGerman :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid ? c.DescriptionFrench :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid ? c.DescriptionItalian : c.DescriptionRomansh,
-                CorrespondenceLanguageId = m.Person != null ? m.Person!.CorrespondenceLanguageId : Guid.Empty,
-                Function = m.Person!.CorrespondenceLanguageId == Language.GermanGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextDe :
-                    m.Person!.CorrespondenceLanguageId == Language.GermanGuid && m.Person!.GenderId == Gender.FemaleGuid ? m.Function!.TextFemaleDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextFr :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid && m.Person!.GenderId == Gender.FemaleGuid ? m.Function!.TextFemaleFr :
-                m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextIt :
-                m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.GenderId == Gender.FemaleGuid ? m.Function!.TextFemaleIt :
-                m.Person!.CorrespondenceLanguageId == Language.RomanshGuid && m.Person!.GenderId == Gender.MaleGuid ? m.Function!.TextRm : string.Empty,
-                Salutation = m.Person!.CorrespondenceLanguageId == Language.GermanGuid && m.Person!.Salutation != null ? m.Person!.Salutation!.TextDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid && m.Person!.Salutation != null ? m.Person!.Salutation!.TextFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.Salutation != null ? m.Person!.Salutation!.TextIt :
-                    m.Person!.CorrespondenceLanguageId == Language.RomanshGuid && m.Person!.Salutation != null ? m.Person!.Salutation!.TextRm : string.Empty,
-                SalutationText = m.Person!.SalutationText ?? string.Empty,
-                GivenName = m.Person!.GivenName ?? string.Empty,
-                Surname = m.Person!.Surname ?? string.Empty,
-                CompanyName = m.Person!.CorrespondenceAddress!.CompanyName ?? string.Empty,
-                Street = m.Person!.CorrespondenceAddress.Street ?? string.Empty,
-                PoBox = m.Person!.CorrespondenceAddress.PoBox ?? string.Empty,
-                Zip = m.Person!.CorrespondenceAddress!.Zip ?? string.Empty,
-                City = m.Person!.CorrespondenceAddress!.City ?? string.Empty,
-                Country = m.Person!.CorrespondenceAddress.Country == null ? string.Empty : m.Person!.CorrespondenceAddress.Country!.TextDe == "CH" ? string.Empty :
-                    m.Person!.CorrespondenceLanguageId == Language.GermanGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionDe :
-                    m.Person!.CorrespondenceLanguageId == Language.FrenchGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionFr :
-                    m.Person!.CorrespondenceLanguageId == Language.ItalianGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionIt :
-                    m.Person!.CorrespondenceLanguageId == Language.RomanshGuid && m.Person!.CorrespondenceAddress!.Country != null ? m.Person!.CorrespondenceAddress!.Country!.DescriptionRm : string.Empty,
-            }))
+            .SelectMany(c => c.Memberships
+                .Select(m => MapToFormLetterMembershipDto(
+                    formLetterType: m.ElectionTypeId == ElectionType.RetirementGuid ? FormLetterType.Retire :
+                        m.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid ? FormLetterType.MaximumMembershipDuration : FormLetterType.OtherRetirement,
+                    committeeId: c.Id,
+                    committeeNames: (c.DescriptionGerman, c.DescriptionFrench, c.DescriptionItalian, c.DescriptionRomansh),
+                    dateLetter: dateLetter,
+                    sender: sender,
+                    person: m.Person!,
+                    function: m.Function!)))
             .ToList();
 
         return endedMemberships;
+    }
+
+    private static (string De, string Fr, string It, string Rm) FormatMonthAndYear(DateOnly date) => (
+        date.ToString("MMMM yyyy", new CultureInfo("de-CH")),
+        date.ToString("MMMM yyyy", new CultureInfo("fr-CH")),
+        date.ToString("MMMM yyyy", new CultureInfo("it-CH")),
+        date.ToString("MMMM yyyy", new CultureInfo("rm-CH"))
+    );
+
+    private static FormLetterMembershipReportDto MapToFormLetterMembershipDto(
+        FormLetterType formLetterType,
+        Guid committeeId,
+        (string De, string? Fr, string? It, string? Rm) committeeNames,
+        (string De, string Fr, string It, string Rm) dateLetter,
+        FormLetterSender sender,
+        Person person,
+        Function function)
+    {
+        return new FormLetterMembershipReportDto
+        {
+            // as the zip file is always named in german, we also name all the committee files with the german name!
+            FileName = committeeNames.De,
+            FormLetterType = formLetterType,
+            FormLetterLanguage = GetFormLetterLanguage(),
+            SenderDepartment = GetText(sender.Department!.DescriptionDe, sender.Department!.DescriptionFr, sender.Department!.DescriptionIt, sender.Department!.DescriptionRm),
+            SenderOffice = GetText(sender.Office?.DescriptionDe, sender.Office?.DescriptionFr, sender.Office?.DescriptionIt, sender.Office?.DescriptionRm),
+            SenderOfficeShort = GetText(sender.Office?.TextDe, sender.Office?.TextFr, sender.Office?.TextIt, sender.Office?.TextRm),
+            SenderName = sender.GivenName + " " + sender.Surname,
+            SenderFunction = GetText(sender.SenderFunction!.DescriptionDe, sender.SenderFunction!.DescriptionFr, sender.SenderFunction!.DescriptionIt, sender.SenderFunction!.DescriptionRm),
+            SenderStreet = GetText(sender.StreetGerman, sender.StreetFrench, sender.StreetItalian, sender.StreetRomansh),
+            SenderZip = sender.Zip,
+            SenderCity = GetText(sender.CityGerman, sender.CityFrench, sender.CityItalian, sender.CityRomansh),
+            Subject = GetText(GeneralElectionTextGerman, GeneralElectionTextFrench, GeneralElectionTextItalian, GeneralElectionTextRomansh),
+            DateLetter = GetText(dateLetter.De, dateLetter.Fr, dateLetter.It, dateLetter.Rm),
+            CommitteeId = committeeId,
+            CommitteeName = GetText(committeeNames.De, committeeNames.Fr, committeeNames.It, committeeNames.Rm),
+            CorrespondenceLanguageId = person.CorrespondenceLanguageId,
+            Function = person.GenderId == Gender.MaleGuid
+                ? GetText(function.TextDe, function.TextFr, function.TextIt, function.TextRm)
+                : GetText(function.TextFemaleDe, function.TextFemaleFr, function.TextFemaleIt, function.TextFemaleRm),
+            Salutation = GetText(person.Salutation?.TextDe, person.Salutation?.TextFr, person.Salutation?.TextIt, person.Salutation?.TextRm),
+            SalutationText = person.SalutationText ?? string.Empty,
+            GivenName = person.GivenName,
+            Surname = person.Surname,
+            CompanyName = person.CorrespondenceAddress!.CompanyName ?? string.Empty,
+            Street = person.CorrespondenceAddress.Street ?? string.Empty,
+            PoBox = person.CorrespondenceAddress.PoBox ?? string.Empty,
+            Zip = person.CorrespondenceAddress!.Zip ?? string.Empty,
+            City = person.CorrespondenceAddress!.City ?? string.Empty,
+            Country = person.CorrespondenceAddress.Country == null
+                ? string.Empty
+                : person.CorrespondenceAddress.Country!.TextDe == "CH"
+                    ? string.Empty
+                    : GetText(person.CorrespondenceAddress?.Country?.DescriptionDe, person.CorrespondenceAddress?.Country?.DescriptionFr, person.CorrespondenceAddress?.Country?.DescriptionIt, person.CorrespondenceAddress?.Country?.DescriptionRm),
+        };
+
+        FormLetterLanguage GetFormLetterLanguage()
+        {
+            if (person.CorrespondenceLanguageId == Language.GermanGuid)
+            {
+                return FormLetterLanguage.German;
+            }
+
+            if (person.CorrespondenceLanguageId == Language.FrenchGuid)
+            {
+                return FormLetterLanguage.French;
+            }
+
+            if (person.CorrespondenceLanguageId == Language.ItalianGuid)
+            {
+                return FormLetterLanguage.Italian;
+            }
+
+            if (person.CorrespondenceLanguageId == Language.RomanshGuid)
+            {
+                return FormLetterLanguage.Romansh;
+            }
+
+            return FormLetterLanguage.German;
+        }
+
+        string GetText(string? germanText, string? frenchText, string? italianText, string? romanshText)
+        {
+            if (person.CorrespondenceLanguageId == Language.GermanGuid)
+            {
+                return germanText ?? string.Empty;
+            }
+
+            if (person.CorrespondenceLanguageId == Language.FrenchGuid)
+            {
+                return frenchText ?? string.Empty;
+            }
+
+            if (person.CorrespondenceLanguageId == Language.ItalianGuid)
+            {
+                return italianText ?? string.Empty;
+            }
+
+            if (person.CorrespondenceLanguageId == Language.RomanshGuid)
+            {
+                return romanshText ?? string.Empty;
+            }
+
+            return germanText ?? string.Empty;
+        }
     }
 }
