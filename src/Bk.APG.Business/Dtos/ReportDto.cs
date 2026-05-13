@@ -1,8 +1,12 @@
 namespace Bk.APG.Business.Dtos;
 
-public class ReportDepartmentWithCommitteeTypeDto
+public class ReportDepartmentDto
 {
     public required string Name { get; set; }
+}
+
+public class ReportDepartmentWithCommitteeTypeDto : ReportDepartmentDto
+{
     public IEnumerable<ReportCommitteeTypeDto>? CommitteeTypes { get; set; }
 }
 
@@ -23,33 +27,29 @@ public class ReportCommitteeDto
     public string? JustificationUrl { get; set; }
 }
 
-public class ReportDepartmentWithCommitteesDto
+public class ReportDepartmentWithCommitteesDto : ReportDepartmentDto
 {
-    public required string Name { get; set; }
     public IEnumerable<ReportCommitteeDto>? Committees { get; set; }
 }
 
-public class ReportDepartmentWithCommitteesAndGendersDto
+public class ReportDepartmentWithCommitteesAndGendersDto : ReportDepartmentDto
 {
-    public required string Name { get; set; }
     public string? Measure { get; set; }
     public bool HasOpenMeasureChanges { get; set; }
     public string? MeasureUrl { get; set; }
     public IEnumerable<ReportCommitteeGenderMissingDto>? Committees { get; set; }
 }
 
-public class ReportDepartmentWithCommitteesAndLanguagesDto
+public class ReportDepartmentWithCommitteesAndLanguagesDto : ReportDepartmentDto
 {
-    public required string Name { get; set; }
     public string? Measure { get; set; }
     public bool HasOpenMeasureChanges { get; set; }
     public string? MeasureUrl { get; set; }
     public IEnumerable<ReportCommitteeLanguageMissingDto>? Committees { get; set; }
 }
 
-public class ReportDepartmentWithCommitteesAndMembersDto
+public class ReportDepartmentWithCommitteesAndMembersDto : ReportDepartmentDto
 {
-    public required string Name { get; set; }
     public IEnumerable<ReportCommitteeWithMemberDetailDto>? Committees { get; set; }
 }
 
