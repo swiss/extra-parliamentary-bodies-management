@@ -3,7 +3,7 @@ namespace Bk.APG.Business.Dtos;
 public class DecisionFederalCouncilReportDto
 {
     public required string TermOfOfficeDateRange { get; set; }
-
+    public required bool OnlyReleased { get; set; }
     public IEnumerable<ReportCommitteeWithFreeTextDto>? NonReleasedCommissions { get; set; }
     public IEnumerable<ReportCommitteeWithFreeTextDto>? MarketOrientatedCommissions { get; set; }
     public IEnumerable<ReportCommitteeWithMemberDetailDto>? MoreThan15MembersCommittees { get; set; }
