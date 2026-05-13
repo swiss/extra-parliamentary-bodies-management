@@ -325,13 +325,13 @@
         <value>Die maximiale Mitgliedschafts-Dauer für dieses Mitglied wurde erreicht: </value>
     </data>
     <data name="ParliamentaryReport_Filename" xml:space="preserve">
-        <value>APG_Bericht_Parlament</value>
-    </data>
+        <value>APG Bericht Parlament</value>
+    </data> 
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
-        <value>APG_Bundesratsbeschluss</value>
+        <value>APG Bundesratsbeschluss</value>
     </data>
     <data name="Vacancies_Report_Filename" xml:space="preserve">
-        <value>Liste_Vakanzen</value>
+        <value>Liste Vakanzen</value>
     </data>
     <data name="Information_Note_Filename" xml:space="preserve">
         <value>Informationsnotiz</value>
@@ -364,7 +364,7 @@
         <value>Auswahlverfahren: {0}</value>
     </data>
     <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
-        <value>Anhang_Bundesratsantrag</value>
+        <value>Anhang Bundesratsantrag</value>
     </data>
     <data name="Report_ShorterDutyText" xml:space="preserve">
         <value>gewählt von {0} bis {1}</value>
@@ -475,7 +475,7 @@
         <value>Bitte Datenschutzberater/-in nachtragen.</value>
     </data>
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
-        <value>APG_Serienbrief_Gesamt</value>
+        <value>APG Serienbrief Gesamt</value>
     </data>
     <data name="InformationNoteExport_MemberCount" xml:space="preserve">
         <value>{0} Mitglied(er)</value>
@@ -506,5 +506,8 @@
     </data>
     <data name="Committee_SelfOrganized" xml:space="preserve">
         <value>Selbstorgansisiert</value>
+    </data>
+    <data name="Membership_Until" xml:space="preserve">
+        <value>bis</value>
     </data>
 </root>

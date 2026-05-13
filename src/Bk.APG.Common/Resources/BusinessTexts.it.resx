@@ -319,16 +319,16 @@
         <value>Questo membro ha raggiunto la durata massima del mandato: </value>
     </data>
     <data name="ParliamentaryReport_Filename" xml:space="preserve">
-        <value>Organi extraparlamentari_rapporto_Parlamento</value>
+        <value>Organi extraparlamentari rapporto Parlamento</value>
     </data>
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
-        <value>IT_APG_Bundesratsbeschluss</value>
+        <value>IT APG_Bundesratsbeschluss</value>
     </data>
     <data name="Vacancies_Report_Filename" xml:space="preserve">
-        <value>IT_Liste_Vakanzen</value>
+        <value>IT Liste Vakanzen</value>
     </data>
     <data name="Information_Note_Filename" xml:space="preserve">
-        <value>IT_Informationsnotiz</value>
+        <value>IT Informationsnotiz</value>
     </data>    
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Consigliera nazionale</value>
@@ -394,7 +394,7 @@
         <value>IT_Bitte die fehlenden Begründungen für die GEW nachtragen.</value>
     </data>
     <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
-        <value>IT_Anhang_Bundesratsantrag</value>
+        <value>IT_Anhang Bundesratsantrag</value>
     </data>
     <data name="CandidateList_BeginDate" xml:space="preserve">
         <value>IT_Startdatum</value>
@@ -469,9 +469,12 @@
         <value>IT_Bitte Datenschutzberater/-in nachtragen.</value>
     </data>
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
-        <value>IT_APG_Serienbrief_Gesamt</value>
+        <value>IT_APG Serienbrief Gesamt</value>
     </data>
     <data name="Committee_SelfOrganized" xml:space="preserve">
         <value>IT_Selbstorgansisiert</value>
+    </data>
+    <data name="Membership_Until" xml:space="preserve">
+        <value>IT_bis</value>
     </data>
 </root>
