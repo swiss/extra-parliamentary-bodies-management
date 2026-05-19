@@ -926,5 +926,6 @@
   "recipients.filter.pdf.label": "FR_PDF generieren",
   "recipients.filter.formLetterExportDate.label": "FR_Brief-Datum",
   "openDataStack.title": "Open Data Stack",
-  "candidateList.hasActiveTasks": "FR_Es gibt noch offene Aufgaben"
+  "candidateList.hasActiveTasks": "FR_Es gibt noch offene Aufgaben",
+  "committee.helpTooltip.selfOrganized": "Indiquez «Oui» si l'élection des présidentes et présidents ainsi que des vice-présidentes et vice-présidents n'est pas effectuée par le Conseil fédéral ou par un département, mais organisée par l'organe lui-même."
 }
