@@ -926,5 +926,6 @@
   "recipients.filter.pdf.label": "IT_PDF generieren",
   "recipients.filter.formLetterExportDate.label": "IT_Brief-Datum",
   "openDataStack.title": "Open Data Stack",
-  "candidateList.hasActiveTasks": "IT_Es gibt noch offene Aufgaben"
+  "candidateList.hasActiveTasks": "IT_Es gibt noch offene Aufgaben",
+  "committee.helpTooltip.selfOrganized": "Indicare «Sì» se l'elezione delle presidenti e dei presidenti nonché delle vicepresidenti e dei vicepresidenti non è effettuata dal Consiglio federale o da un dipartimento, ma è organizzata dall'organo stesso."
 }
