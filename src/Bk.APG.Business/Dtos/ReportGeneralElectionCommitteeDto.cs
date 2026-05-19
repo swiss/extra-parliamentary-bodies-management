@@ -58,6 +58,7 @@ public class ReportGeneralElectionCommitteeDto
     public string? LinkHomepageRomansh { get; set; }
     public required bool IsValidated { get; set; }
     public string? SelectionProcedure { get; set; }
+    public Guid? CandidateListStateId { get; set; }
 
     public ICollection<ReportGeneralElectionMembershipDto> Memberships { get; set; } = new List<ReportGeneralElectionMembershipDto>();
 
