@@ -477,4 +477,7 @@
     <data name="Membership_Until" xml:space="preserve">
         <value>IT_bis</value>
     </data>
+    <data name="Term_Of_Office_Data_Separator" xml:space="preserve">
+        <value>-</value>
+    </data>
 </root>
