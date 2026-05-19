@@ -3,6 +3,7 @@ namespace Bk.APG.Business.Dtos;
 public class ParliamentaryReportDto
 {
     public required string TermOfOfficeDateRange { get; set; }
+    public required bool OnlyReleased { get; set; }
     public required int NumberOfMembers { get; set; }
     public required int NumberOfCommittees { get; set; }
     // Behördenkommission

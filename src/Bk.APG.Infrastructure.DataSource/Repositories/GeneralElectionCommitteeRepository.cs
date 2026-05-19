@@ -113,7 +113,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
     {
         var committees = await _dataContext.GeneralElectionCommittees
-            .Where(x => !filterDto.ReleasedCommittees || x.IsValidated)
+            .Where(x => !filterDto.ReleasedCommittees || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)

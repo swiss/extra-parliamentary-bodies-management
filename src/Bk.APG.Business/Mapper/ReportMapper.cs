@@ -58,7 +58,8 @@ public static class ReportMapper
             MeasuresLanguages = committee.MeasuresLanguages,
             Memberships = committee.MembershipCandidates.Select(FromMembershipCandidateToReportMembershipDto).ToList(),
             IsDeleted = false,
-            IsValidated = committee.IsValidated
+            IsValidated = committee.IsValidated,
+            CandidateListStateId = committee.CandidateListStateId,
         };
     }
 
