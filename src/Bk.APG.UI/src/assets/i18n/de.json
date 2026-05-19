@@ -926,5 +926,6 @@
   "recipients.filter.pdf.label": "PDF generieren",
   "recipients.filter.formLetterExportDate.label": "Brief-Datum",
   "openDataStack.title": "Open Data Stack",
-  "candidateList.hasActiveTasks": "Es gibt noch offene Aufgaben"
+  "candidateList.hasActiveTasks": "Es gibt noch offene Aufgaben",
+  "committee.helpTooltip.selfOrganized": "Setzen Sie „Ja“, wenn die Wahl von Präsidentinnen und Präsidenten bzw. Vizepräsidentinnen und Vizepräsidenten nicht durch den Bundesrat oder ein Departement erfolgt, sondern vom Gremium selbst organisiert wird."
 }
