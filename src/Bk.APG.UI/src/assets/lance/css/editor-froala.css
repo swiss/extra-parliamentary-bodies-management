@@ -4,6 +4,10 @@
   font-size: .875em;
 }
 
+.quicktips-tooltip .lance-tooltip:not(:first-child) {
+  margin-top: 5px;
+}
+
 .quicktips-tooltip .lance-tooltip .lance-tt-header {
   display: flex;
   justify-content: space-between;
@@ -26,8 +30,8 @@
 
 .quicktips-tooltip .lance-tooltip .lance-tt-header .lance-tt-user {
   flex-grow: 1;
-  max-width: 4vw;
-  max-height: 1em;
+  max-width: 6vw;
+  max-height: 1.5em;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -39,7 +43,7 @@
   font-weight: normal;
   max-height: 3em;
   padding: 2px 5px;
-  max-width: 11vw;
+  max-width: 10vw;
   width: fit-content;
   overflow: hidden;
   display: inline-block;

@@ -77,14 +77,14 @@ Written by (David *)Frenkiel - https://github.com/imdfl
 	}
 
 	&.flite-cstyle-mark {
-		:not(td,.mce-footnote,li).flite-container-only {
+		:not(td,.mce-footnote,li,img,span).flite-container-only {
 			border-width: inherit;
 		}
 	}
 
 	&.flite-cstyle-mark,
 	&.flite-cstyle-bordermark {
-		:not(td,.mce-footnote,li).flite-container-only {
+		:not(td,.mce-footnote,li,img,span).flite-container-only {
 			&::before {
 				position: relative;
 				top: -8px;

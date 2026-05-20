@@ -10,6 +10,7 @@
   --comment-text-info-small-font-size: 0.75em;
   --comment-text-font-size: 0.875em;
   --comment-text-color: #161616;
+  --comment-text-bg-color: white;
   --button-bg-color: #f0f0ee;
   --button-text-color: #0a0a0a;
   --button-border-color: rgba(128, 128, 128, 0.5);
@@ -77,9 +78,11 @@
 @keyframes fadeIn {
   from {
     opacity: 0;
+    transform: translate(0, -8px);
   }
   to {
     opacity: 1;
+    transform: translate(0, 0);
   }
 }
 
@@ -98,6 +101,7 @@
   margin-bottom: 2px;
   padding: 1px 3px;
   font-weight: normal;
+  cursor: pointer;
 }
 
 .lance-ui-container .annotations-header .annotations-menu .ui-menu label span {
@@ -113,6 +117,7 @@
 
 .lance-ui-container .annotations-header .annotations-menu.menu-open .ui-menu input[type='radio'] {
   outline: none;
+  cursor: pointer;
 }
 
 .lance-ui-container .annotations-header .comments-search-container {
@@ -153,6 +158,11 @@
   opacity: 1;
 }
 
+.lance-ui-container .annotations-header .comments-search-container[data-has-text='true'] .cancel-search:hover {
+  transform-origin: center center;
+  transform: scale(1.15);
+}
+
 /************************************/
 .lance-content-scroller {
   display: block;
@@ -160,6 +170,7 @@
   overflow-y: hidden;
   border: 1px solid var(--ui-border-med-color);
   flex: 1 1 0;
+  scrollbar-width: thin;
 }
 
 .lance-content-scroller:hover, .lance-content-scroller:focus-within {
@@ -295,6 +306,7 @@
   border: 1px solid var(--ui-border-med-color);
   border-radius: 3px;
   color: var(--comment-text-color);
+  background: var(--comment-text-bg-color);
   font-size: var(--comment-text-font-size);
   width: 100%;
   padding: 1px 5px;
@@ -346,7 +358,7 @@
 }
 
 .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper > .annotation-ui[data-selected='true'] .comment-ui .comment-user-details {
-  max-width: 40%;
+  max-width: 50%;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -534,7 +546,6 @@
 }
 
 .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-user-details {
-  display: inline-block;
   vertical-align: top;
   max-width: 90%;
   flex-grow: 0;
@@ -610,6 +621,7 @@
 .lance-content-scroller .lance-annotations-container > .annotation-ui-wrapper .comment-ui .comment-edit-links {
   display: none;
   white-space: nowrap;
+  flex-wrap: nowrap;
   text-align: right;
   flex-grow: 1;
   justify-content: flex-end;
@@ -682,7 +694,7 @@
 }
 
 .lance-content-scroller .lance-annotations-container:not([disabled]):not([readonly]) {
-  margin-right: 15px;
+  margin-right: 6px;
 }
 
 .lance-content-scroller .lance-annotations-container:empty:before {
@@ -695,11 +707,11 @@
 
 .lance-content-scroller.annotations-aligned.has-selection .lance-annotations-container > .annotation-ui-wrapper[data-selected='true'] {
   position: relative;
-  margin-left: 8px;
+  margin-left: 6px;
 }
 
 .lance-content-scroller.annotations-aligned.has-selection .lance-annotations-container > .annotation-ui-wrapper[data-selected='false'] {
-  margin-left: 14px;
+  margin-left: 4px;
 }
 
 .lance-content-scroller.annotations-aligned > .annotation-ui-wrapper {

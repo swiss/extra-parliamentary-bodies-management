@@ -42,6 +42,10 @@ $ann-bg-color: #f9e9ac;
 	&[data-selected='true'] {
 		background-image: var(--marker-bg-image-selected);
 	}
+
+	&.invisible {
+		display: none;
+	}
 }
 
 .lance-annotation-class {

@@ -67,3 +67,7 @@
   transform-origin: center;
   transform: scale(0.75);
 }
+
+.tox svg.loopindex-button image {
+  width: 100%;
+}
