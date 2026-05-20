@@ -68,11 +68,11 @@ Written by (David *)Frenkiel - https://github.com/imdfl
   border: none;
 }
 
-.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only {
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li, img, span).flite-container-only {
   border-width: inherit;
 }
 
-.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li).flite-container-only::before {
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li, img, span).flite-container-only::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li, img, span).flite-container-only::before {
   position: relative;
   top: -8px;
   left: -3px;
@@ -83,11 +83,11 @@ Written by (David *)Frenkiel - https://github.com/imdfl
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only.ice-del::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li).flite-container-only.ice-del::before {
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li, img, span).flite-container-only.ice-del::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li, img, span).flite-container-only.ice-del::before {
   color: var(--del-border-color);
 }
 
-.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li).flite-container-only.ice-ins::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li).flite-container-only.ice-ins::before {
+.FLITE-Tracking.flite-cstyle-mark :not(td, .mce-footnote, li, img, span).flite-container-only.ice-ins::before, .FLITE-Tracking.flite-cstyle-bordermark :not(td, .mce-footnote, li, img, span).flite-container-only.ice-ins::before {
   color: var(--ins-border-color);
 }
 
