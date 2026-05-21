@@ -28,10 +28,12 @@ $font-family: Roboto,
 
 	--comment-text-font-size: 0.875em;
 	--comment-text-color: rgb(22, 22, 22);
+	--comment-text-bg-color: rgb(255, 255, 255);
 
 	--button-bg-color: rgb(240, 240, 238);
 	--button-text-color: rgb(10, 10, 10);
 	--button-border-color: rgba(128, 128, 128, 0.5);
+	// TODO consider using   --brand-color-light: color-mix(in oklab, var(--brand-color), white 30%);
 	--button-border-style: solid;
 	--button-border-width: 1px;
 	--button-border-radius: 4px;
@@ -82,10 +84,12 @@ $font-family: Roboto,
 				@keyframes fadeIn {
 					from {
 						opacity: 0;
+	    				transform: translate(0, -8px);
 					}
 
 					to {
 						opacity: 1;
+	    				transform: translate(0, 0);
 					}
 				}
 
@@ -119,6 +123,7 @@ $font-family: Roboto,
 					margin-bottom: 2px;
 					padding: 1px 3px;
 					font-weight: normal;
+					cursor: pointer;
 
 					span {
 						vertical-align: text-bottom;
@@ -135,6 +140,7 @@ $font-family: Roboto,
 
 					input[type='radio'] {
 						outline: none;
+						cursor: pointer;
 					}
 				}
 			}
@@ -171,12 +177,21 @@ $font-family: Roboto,
 				font-family: monospace;
 				font-size: 16px;
 				animation: opacity 1;
+
+
 			}
 
 			&[data-has-text='true'] {
 				.cancel-search {
 					cursor: pointer;
 					opacity: 1;
+
+					&:hover {
+						// background: rgba(239, 68, 68, 0.2);
+						// border-color: rgba(239, 68, 68, 0.4);
+						transform-origin: center center;
+						transform: scale(1.15);
+					}
 
 				}
 			}
@@ -192,6 +207,7 @@ $font-family: Roboto,
 	overflow-y: hidden;
 	border: 1px solid var(--ui-border-med-color);
 	flex: 1 1 0;
+	scrollbar-width: thin;
 
 	&:hover,
 	&:focus-within {
@@ -293,16 +309,19 @@ $font-family: Roboto,
 				[data-controls='0'].comment-custom-container {
 					display: none;
 				}
+
 				.comment-custom-container {
 					display: flex;
 					justify-content: space-between;
 					align-items: center;
 					padding-top: 2px;
 					border-top: 1px solid var(--button-border-color);
+
 					.custom-label {
 						font-size: 0.8em;
 						font-weight: bold;
 					}
+
 					.comment-custom-controls {
 						display: flex;
 						justify-content: flex-end;
@@ -326,6 +345,7 @@ $font-family: Roboto,
 					border: 1px solid var(--ui-border-med-color);
 					border-radius: 3px;
 					color: var(--comment-text-color);
+					background: var(--comment-text-bg-color);
 					font-size: var(--comment-text-font-size);
 					width: 100%;
 					padding: 1px 5px;
@@ -379,7 +399,7 @@ $font-family: Roboto,
 						}
 
 						.comment-user-details {
-							max-width: 40%;
+							max-width: 50%;
 							overflow: hidden;
 							text-overflow: ellipsis;
 						}
@@ -600,7 +620,6 @@ $font-family: Roboto,
 				.comment-top {
 					width: 100%;
 					max-width: 100%;
-					;
 					display: flex;
 					flex-wrap: nowrap;
 				}
@@ -628,7 +647,6 @@ $font-family: Roboto,
 
 
 				.comment-user-details {
-					display: inline-block;
 					vertical-align: top;
 					max-width: 90%;
 					flex-grow: 0;
@@ -707,6 +725,7 @@ $font-family: Roboto,
 				.comment-edit-links {
 					display: none;
 					white-space: nowrap;
+					flex-wrap: nowrap;
 					text-align: right;
 					flex-grow: 1;
 					justify-content: flex-end;
@@ -823,7 +842,7 @@ $font-family: Roboto,
 
 			&:not([readonly]) {
 				// border: 1px solid var(--ui-border-med-color);
-				margin-right: 15px;
+				margin-right: 6px;
 			}
 		}
 
@@ -845,11 +864,11 @@ $font-family: Roboto,
 			.lance-annotations-container {
 				>.annotation-ui-wrapper[data-selected='true'] {
 					position: relative;
-					margin-left: 8px;
+					margin-left: 6px;
 				}
 
 				>.annotation-ui-wrapper[data-selected='false'] {
-					margin-left: 14px;
+					margin-left: 4px;
 				}
 			}
 		}

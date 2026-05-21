@@ -39,6 +39,10 @@
   background-image: var(--marker-bg-image-selected);
 }
 
+.lance-annotation-pin-class.invisible {
+  display: none;
+}
+
 .lance-annotation-class {
   background-color: var(--ann-bg-color);
   border-width: 1px;
