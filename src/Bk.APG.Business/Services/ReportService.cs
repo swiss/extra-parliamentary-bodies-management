@@ -156,7 +156,7 @@ public class ReportService : IReportService
         var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToArray();
-        var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFutureByDepartment(currentReportExtraParliamentaryCommissions, extraParliamentaryCommissions, departments).ToArray();
+        var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFutureByDepartment(committeesWithMembers, departments).ToArray();
 
         var memberCountWith12OrMoreYears = membersWith12OrMoreYears
             .SelectMany(d => d.Committees!)
@@ -297,6 +297,8 @@ public class ReportService : IReportService
 
         var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
 
+
+
         // to be able to use the same functions, we map here the GeneralElection data to normal data!
         var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
@@ -347,7 +349,8 @@ public class ReportService : IReportService
         var missingGenderMembersCommitteesCount = missingGenderMembersCommitteesDto.SelectMany(c => c.Committees!).Count();
         var missingItalianAndFrenchMembersCommitteesCount = missingItalianAndFrenchMembersCommitteesDto.SelectMany(c => c.Committees!).Count();
 
-        var committeesWithMembersWithLongerDutyDto = SummarizeMembershipsFromPresentAndFutureByDepartment(reportCommittees, extraParliamentaryCommissions, departments);
+        // var committeesWithMembersWithLongerDutyDto = SummarizeMembershipsFromPresentAndFutureByDepartment(reportCommittees, extraParliamentaryCommissions, departments);
+        var committeesWithMembersWithLongerDutyDto = SummarizeMembershipsFromPresentAndFutureByDepartment(generalElectionCommittees, departments);
 
         var committeesWithMembersWithShorterDutyDto = GetCommitteesAndMembersByDepartment(generalElectionCommitteesWithMembers, departments, ReportMembershipType.ShorterDuty, generalElectionTermOfOfficeDate);
 
@@ -1589,82 +1592,62 @@ public class ReportService : IReportService
         return dtoList;
     }
 
-    private IEnumerable<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFutureByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
-        IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers, IEnumerable<Department> departments)
+    private IEnumerable<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFutureByDepartment(IEnumerable<GeneralElectionCommittee> committees,
+        IEnumerable<Department> departments)
     {
-        // which members we have in the future?
-        var reportGeneralElectionCommitteeDtos = geCommitteesWithMembers.ToArray();
-        var futureLookup =
-            reportGeneralElectionCommitteeDtos
-                .SelectMany(fc => fc.Memberships.Select(m => new
-                {
-                    fc.CommitteeId,
-                    m.PersonId
-                }))
-                .ToHashSet();
-
-        // select only the members in the past, which are also in the future...
-        var filteredPresentCommittees =
-            committees
-                .Select(c => new ReportGeneralElectionCommitteeDto
-                {
-                    CommitteeId = c.CommitteeId,
-                    Memberships = c.Memberships
-                        .Where(m => futureLookup.Contains(
-                            new { c.CommitteeId, m.PersonId }))
-                        .ToArray(),
-                    TermOfOfficeDateId = c.TermOfOfficeDateId,
-                    TermOfOfficeDate = c.TermOfOfficeDate,
-                    IsValidated = c.IsValidated,
-                    IsDeleted = c.IsDeleted,
-                    DescriptionGerman = c.DescriptionGerman,
-                    DescriptionFrench = c.DescriptionFrench,
-                    DescriptionItalian = c.DescriptionItalian,
-                    DescriptionRomansh = c.DescriptionRomansh,
-                    DepartmentId = c.DepartmentId,
-                    Department = c.Department,
-                    OfficeId = c.OfficeId,
-                    Office = c.Office
-                })
-                // If a committee has no relevant members → remove it
-                .Where(c => c.Memberships.Count != 0)
-                .ToArray();
-
-        // Combine past/present with the future..
-        var allCommittees = filteredPresentCommittees.Concat(reportGeneralElectionCommitteeDtos);
-
-        var committeesWithQualifiedMembers = allCommittees.Select(c =>
+        var filteredCommittees = committees
+        .Select(c => new GeneralElectionCommittee
         {
-            var membersWithDuration = c.Memberships
-                .GroupBy(m => m.PersonId)
-                .Select(g =>
-                {
-                    var person = g.First().Person!; // get the Person object from first membership in the group
-                    var totalDurationYears = g.Sum(m => MembershipTermCalculator.CalculateEstimatedTermInYears(m.BeginDate, m.EndDate));
-                    var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(g.First().JustificationLongerDuty);
+            Id = c.Id,
+            Modified = c.Modified,
+            ModifiedBy = c.ModifiedBy,
+            Created = c.Created,
+            CreatedBy = c.CreatedBy,
+            BeginDate = c.BeginDate,
+            EndDate = c.EndDate,
+            TermOfOfficeDateId = c.TermOfOfficeDateId,
+            CommitteeId = c.CommitteeId,
+            DepartmentId = c.DepartmentId,
+            Department = c.Department,
+            OfficeId = c.OfficeId,
+            Office = c.Office,
+            CommitteeLevelId = c.CommitteeLevelId,
+            CommitteeLevel = c.CommitteeLevel,
+            CommitteeTypeId = c.CommitteeTypeId,
+            CommitteeType = c.CommitteeType,
+            IsDeleted = c.IsDeleted,
+            DescriptionGerman = c.DescriptionGerman,
+            DescriptionFrench = c.DescriptionFrench,
+            DescriptionItalian = c.DescriptionItalian,
+            DescriptionRomansh = c.DescriptionRomansh,
+            JustificationMembers = c.JustificationMembers,
+            JustificationGenders = c.JustificationGenders,
+            JustificationLanguages = c.JustificationLanguages,
+            MarketOrientated = c.MarketOrientated,
+            MeasuresGenders = c.MeasuresGenders,
+            MeasuresLanguages = c.MeasuresLanguages,
+            RemarksBaseData = c.RemarksBaseData,
+            RemarksBaseDataAdmin = c.RemarksBaseDataAdmin,
+            IsValidated = c.IsValidated,
+            WasValidatedOnce = c.WasValidatedOnce,
+            IsFederalCouncilProposalDirty = c.IsFederalCouncilProposalDirty,
+            VacanciesGeneralElection = c.VacanciesGeneralElection,
+            SelectionProcedure = c.SelectionProcedure,
+            CandidateListStateId = c.CandidateListStateId,
+            AssignedToRole = c.AssignedToRole,
+            SelfOrganized = c.SelfOrganized,
+            MembershipCandidates = c.MembershipCandidates
+                .Where(m => m.EstimatedTermOfOffice >= 12)
+                .ToList()
+            })
+        .Where(c => c.ExtraParliamentaryCommission)
+        .Where(c => c.MembershipCandidates.Count > 0)
+        .ToList();
 
-                    return new
-                    {
-                        Person = person,
-                        TotalDurationYears = totalDurationYears,
-                        Justification = justificationSanitization.CleanText,
-                        justificationSanitization.HasOpenChanges,
-                        JustificationUrl = BuildMembershipJustificationUrl(c.Id, g.First().Id),
-                        g.First().EndDate,
-                    };
-                })
-                .Where(m => m.TotalDurationYears >= 12)
-                .ToArray();
+        var generalElectionCommitteesWithMembers = filteredCommittees.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
-            return new
-            {
-                Committee = c,
-                QualifiedMembers = membersWithDuration
-            };
-        });
-
-        var groupedByDepartment = committeesWithQualifiedMembers
-            .GroupBy(c => c.Committee.Department)
+        var groupedByDepartment = generalElectionCommitteesWithMembers
+            .GroupBy(c => c.Department)
             .ToArray();
 
         var result = departments.Select(dept =>
@@ -1677,19 +1660,19 @@ public class ReportService : IReportService
 
             // Map committees with filtered members, only when there are members
             var committeesDto = committeesInDepartment
-                .Where(cwm => cwm.QualifiedMembers.Length > 0)
+                .Where(cwm => cwm.Memberships.Count > 0)
                 .Select(cwm => new ReportCommitteeWithMemberDetailDto
                 {
-                    Name = cwm.Committee.GetDescription(),
-                    MemberCount = cwm.QualifiedMembers.Length,
-                    Members = cwm.QualifiedMembers.Select(m => new ReportMembershipDto
+                    Name = cwm.GetDescription(),
+                    MemberCount = cwm.Memberships.Count,
+                    Members = cwm.Memberships.Select(m => new ReportMembershipDto
                     {
-                        Surname = m.Person.Surname,
-                        GivenName = m.Person.GivenName,
-                        FreeText = m.TotalDurationYears == 16 ? $"{m.TotalDurationYears} {BusinessTexts.Report_Years} ({BusinessTexts.Membership_Until} {m.EndDate})" : $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
-                        Justification = m.Justification,
-                        HasOpenJustificationChanges = m.HasOpenChanges,
-                        JustificationUrl = m.JustificationUrl
+                        Surname = m.Person!.Surname,
+                        GivenName = m.Person!.GivenName,
+                        FreeText = m.EstimatedTermOfOffice == 16 ? $"{m.EstimatedTermOfOffice} {BusinessTexts.Report_Years} ({BusinessTexts.Membership_Until} {m.EndDate})" : $"{m.EstimatedTermOfOffice} {BusinessTexts.Report_Years}",
+                        Justification = ReportExportHtmlSanitizer.Sanitize(m.JustificationLongerDuty).CleanText,
+                        HasOpenJustificationChanges = ReportExportHtmlSanitizer.Sanitize(m.JustificationLongerDuty).HasOpenChanges,
+                        JustificationUrl = BuildMembershipJustificationUrl(cwm.Id, m.Id),
                     })
                 .ToArray()
                 })
@@ -1704,6 +1687,124 @@ public class ReportService : IReportService
 
         return result;
     }
+
+
+    //private IEnumerable<ReportDepartmentWithCommitteesAndMembersDto> SummarizeMembershipsFromPresentAndFutureByDepartment(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
+    //    IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers, IEnumerable<Department> departments)
+    //{
+    //    // which members we have in the future?
+    //    var reportGeneralElectionCommitteeDtos = geCommitteesWithMembers.ToArray();
+    //    var futureLookup =
+    //        reportGeneralElectionCommitteeDtos
+    //            .SelectMany(fc => fc.Memberships.Select(m => new
+    //            {
+    //                fc.CommitteeId,
+    //                m.PersonId
+    //            }))
+    //            .ToHashSet();
+
+    //    // select only the members in the past, which are also in the future...
+    //    var filteredPresentCommittees =
+    //        committees
+    //            .Select(c => new ReportGeneralElectionCommitteeDto
+    //            {
+    //                CommitteeId = c.CommitteeId,
+    //                Memberships = c.Memberships
+    //                    .Where(m => futureLookup.Contains(
+    //                        new { c.CommitteeId, m.PersonId }))
+    //                    .ToArray(),
+    //                TermOfOfficeDateId = c.TermOfOfficeDateId,
+    //                TermOfOfficeDate = c.TermOfOfficeDate,
+    //                IsValidated = c.IsValidated,
+    //                IsDeleted = c.IsDeleted,
+    //                DescriptionGerman = c.DescriptionGerman,
+    //                DescriptionFrench = c.DescriptionFrench,
+    //                DescriptionItalian = c.DescriptionItalian,
+    //                DescriptionRomansh = c.DescriptionRomansh,
+    //                DepartmentId = c.DepartmentId,
+    //                Department = c.Department,
+    //                OfficeId = c.OfficeId,
+    //                Office = c.Office
+    //            })
+    //            // If a committee has no relevant members → remove it
+    //            .Where(c => c.Memberships.Count != 0)
+    //            .ToArray();
+
+    //    // Combine past/present with the future..
+    //    var allCommittees = filteredPresentCommittees.Concat(reportGeneralElectionCommitteeDtos);
+
+    //    var committeesWithQualifiedMembers = allCommittees.Select(c =>
+    //    {
+    //        var membersWithDuration = c.Memberships
+    //            .GroupBy(m => m.PersonId)
+    //            .Select(g =>
+    //            {
+    //                var person = g.First().Person!; // get the Person object from first membership in the group
+    //                // TODO PP: nimmt offenbar die neusten Daten nicht dazu
+    //                var totalDurationYears = g.Sum(m => MembershipTermCalculator.CalculateEstimatedTermInYears(m.BeginDate, m.EndDate));
+    //                var justificationSanitization = ReportExportHtmlSanitizer.Sanitize(g.First().JustificationLongerDuty);
+
+    //                return new
+    //                {
+    //                    Person = person,
+    //                    TotalDurationYears = totalDurationYears,
+    //                    Justification = justificationSanitization.CleanText,
+    //                    justificationSanitization.HasOpenChanges,
+    //                    JustificationUrl = BuildMembershipJustificationUrl(c.Id, g.First().Id),
+    //                    g.First().EndDate,
+    //                };
+    //            })
+    //            .Where(m => m.TotalDurationYears >= 12)
+    //            .ToArray();
+
+    //        return new
+    //        {
+    //            Committee = c,
+    //            QualifiedMembers = membersWithDuration
+    //        };
+    //    });
+
+    //    var groupedByDepartment = committeesWithQualifiedMembers
+    //        .GroupBy(c => c.Committee.Department)
+    //        .ToArray();
+
+    //    var result = departments.Select(dept =>
+    //    {
+    //        // Get all committees in this department (even if empty)
+    //        var committeesInDepartment = groupedByDepartment
+    //            .Where(g => g.Key!.Id == dept.Id)
+    //            .SelectMany(g => g)
+    //            .ToArray();
+
+    //        // Map committees with filtered members, only when there are members
+    //        var committeesDto = committeesInDepartment
+    //            .Where(cwm => cwm.QualifiedMembers.Length > 0)
+    //            .Select(cwm => new ReportCommitteeWithMemberDetailDto
+    //            {
+    //                Name = cwm.Committee.GetDescription(),
+    //                MemberCount = cwm.QualifiedMembers.Length,
+    //                Members = cwm.QualifiedMembers.Select(m => new ReportMembershipDto
+    //                {
+    //                    Surname = m.Person.Surname,
+    //                    GivenName = m.Person.GivenName,
+    //                    FreeText = m.TotalDurationYears == 16 ? $"{m.TotalDurationYears} {BusinessTexts.Report_Years} ({BusinessTexts.Membership_Until} {m.EndDate})" : $"{m.TotalDurationYears} {BusinessTexts.Report_Years}",
+    //                    Justification = m.Justification,
+    //                    HasOpenJustificationChanges = m.HasOpenChanges,
+    //                    JustificationUrl = m.JustificationUrl
+    //                })
+    //            .ToArray()
+    //            })
+    //        .ToArray();
+
+    //        return new ReportDepartmentWithCommitteesAndMembersDto
+    //        {
+    //            Name = dept.GetText(),
+    //            Committees = committeesDto
+    //        };
+    //    });
+
+    //    return result;
+    //}
 
     private static IEnumerable<ReportCommitteeWithMemberDetailDto> SummarizeMembershipsFromPresentAndFuture(IEnumerable<ReportGeneralElectionCommitteeDto> committees,
         IEnumerable<ReportGeneralElectionCommitteeDto> geCommitteesWithMembers)
