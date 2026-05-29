@@ -35,4 +35,5 @@ public class ReportGeneralElectionMembershipDto
     public required bool InCorrelationWithFederalDuty { get; set; }
     public required bool IsDeleted { get; set; }
     public required bool IsSelected { get; set; }
+    public required int EstimatedTermOfOffice { get; set; }
 }
