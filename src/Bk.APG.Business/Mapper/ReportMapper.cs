@@ -193,7 +193,6 @@ public static class ReportMapper
             InCorrelationWithFederalDuty = membership.InCorrelationWithFederalDuty,
             IsDeleted = false,
             IsSelected = true,
-            // TODO PP Calculate?
             EstimatedTermOfOffice = 0
         };
     }

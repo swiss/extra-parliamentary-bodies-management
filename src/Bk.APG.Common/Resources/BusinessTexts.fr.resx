@@ -322,7 +322,7 @@
         <value>Organes_extraparlementaires_rapport_Parlement</value>
     </data>
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
-        <value>FR_APG Bundesratsbeschluss</value>
+        <value>APG dispositif de la décision</value>
     </data>
     <data name="Vacancies_Report_Filename" xml:space="preserve">
         <value>FR_Liste Vakanzen</value>
@@ -506,5 +506,11 @@
     </data>
     <data name="Term_Of_Office_Data_Separator" xml:space="preserve">
         <value> à </value>
+    </data>
+    <data name="Office_Central" xml:space="preserve">
+        <value>FR_zentral</value>
+    </data>
+    <data name="Office_Decentral" xml:space="preserve">
+        <value>FR_dezentral</value>
     </data>
 </root>
