@@ -513,4 +513,10 @@
     <data name="Term_Of_Office_Data_Separator" xml:space="preserve">
         <value>-</value>
     </data>
+    <data name="Office_Central" xml:space="preserve">
+        <value>zentral</value>
+    </data>
+    <data name="Office_Decentral" xml:space="preserve">
+        <value>dezentral</value>
+    </data>    
 </root>

@@ -154,7 +154,8 @@ public static class ReportMapper
             RemarksStatus = membershipCandidate.RemarksStatus,
             InCorrelationWithFederalDuty = membershipCandidate.InCorrelationWithFederalDuty,
             IsDeleted = false,
-            IsSelected = membershipCandidate.IsSelected
+            IsSelected = membershipCandidate.IsSelected,
+            EstimatedTermOfOffice = membershipCandidate.EstimatedTermOfOffice
         };
     }
 
@@ -191,7 +192,8 @@ public static class ReportMapper
             RemarksStatus = membership.RemarksStatus,
             InCorrelationWithFederalDuty = membership.InCorrelationWithFederalDuty,
             IsDeleted = false,
-            IsSelected = true
+            IsSelected = true,
+            EstimatedTermOfOffice = 0
         };
     }
 }
