@@ -1420,6 +1420,24 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to zentral.
+        /// </summary>
+        public static string Office_Central {
+            get {
+                return ResourceManager.GetString("Office_Central", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to dezentral.
+        /// </summary>
+        public static string Office_Decentral {
+            get {
+                return ResourceManager.GetString("Office_Decentral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to APG Bericht Parlament.
         /// </summary>
         public static string ParliamentaryReport_Filename {
