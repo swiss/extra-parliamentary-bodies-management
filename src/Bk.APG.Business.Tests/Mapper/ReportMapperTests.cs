@@ -73,6 +73,7 @@ internal class ReportMapperTests
             Assert.That(dto.Remarks, Is.EqualTo(candidate.Remarks));
             Assert.That(dto.RemarksStatus, Is.EqualTo(candidate.RemarksStatus));
             Assert.That(dto.IsSelected, Is.EqualTo(candidate.IsSelected));
+            Assert.That(dto.EstimatedTermOfOffice, Is.EqualTo(candidate.EstimatedTermOfOffice));
         });
     }
 
@@ -98,6 +99,7 @@ internal class ReportMapperTests
             Assert.That(dto.Remarks, Is.EqualTo(membership.Remarks));
             Assert.That(dto.RemarksStatus, Is.EqualTo(membership.RemarksStatus));
             Assert.That(dto.IsSelected, Is.EqualTo(true));
+            Assert.That(dto.EstimatedTermOfOffice, Is.EqualTo(0));
         });
     }
 
