@@ -514,9 +514,9 @@
         <value>-</value>
     </data>
     <data name="Office_Central" xml:space="preserve">
-        <value>zentral</value>
+        <value>zentrale Bundesverwaltung</value>
     </data>
     <data name="Office_Decentral" xml:space="preserve">
-        <value>dezentral</value>
+        <value>dezentrale Bundesverwaltung</value>
     </data>    
 </root>
