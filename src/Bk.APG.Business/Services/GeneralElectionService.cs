@@ -258,10 +258,10 @@ public class GeneralElectionService : IGeneralElectionService
         var correctEndDate = membershipCandidate.EndDate;
 
         if ((committee.CommitteeTypeId == CommitteeType.AuthoritiesCommissionGuid || committee.CommitteeTypeId == CommitteeType.AdministrationCommissionGuid) &&
-            (!membershipCandidate.InCorrelationWithFederalDuty || (membershipCandidate.InCorrelationWithFederalDuty && isPersonInFederalDuty)))
+            (!membershipCandidate.InCorrelationWithFederalDuty))
         {
             // if all these conditions match, we have to check for the maximum duration of 16 years. So if current duration is smaller than 12 years, membership will continue.
-            // If bigger than 12 years, the end date has to be set accordingly.
+            // If bigger than 12 years, the end date has to be set accordingly. InCorrelationWithFederalDuty members can go on unlimited...
             var personMemberships = await _membershipRepository.GetAllMembershipsForCommitteeAndPerson(committee.CommitteeId, (Guid)membershipCandidate.PersonId!);
 
             var totalDays = 0;

@@ -397,67 +397,67 @@
         <value>L'adresse ne s'affiche que si la personne possède un mandat actif.</value>
     </data>
     <data name="CandidateList_BeginDate" xml:space="preserve">
-        <value>FR_Startdatum</value>
+        <value>Date de début</value>
     </data>
     <data name="CandidateList_BirthYear" xml:space="preserve">
-        <value>FR_Jahrgang</value>
+        <value>Année de naissance</value>
     </data>
     <data name="CandidateList_City" xml:space="preserve">
-        <value>FR_Ort</value>
+        <value>Lieu</value>
     </data>
     <data name="CandidateList_Committee" xml:space="preserve">
-        <value>FR_Gremium</value>
+        <value>Organe</value>
     </data>
     <data name="CandidateList_ElectionType" xml:space="preserve">
-        <value>FR_Status</value>
+        <value>Statut</value>
     </data>
     <data name="CandidateList_Email" xml:space="preserve">
-        <value>FR_E-Mail</value>
+        <value>Adresse électronique</value>
     </data>
     <data name="CandidateList_EndDate" xml:space="preserve">
-        <value>FR_Enddatum</value>
+        <value>Date de fin</value>
     </data>
     <data name="CandidateList_Function" xml:space="preserve">
-        <value>FR_Funktion</value>
+        <value>Fonction</value>
     </data>
     <data name="CandidateList_Gender" xml:space="preserve">
-        <value>FR_Geschlecht</value>
+        <value>Sexe</value>
     </data>
     <data name="CandidateList_GivenName" xml:space="preserve">
-        <value>FR_Vorname</value>
+        <value>Prénom</value>
     </data>
     <data name="CandidateList_Interests" xml:space="preserve">
-        <value>FR_Interessenbindungen</value>
+        <value>Liens d'intérêts</value>
     </data>
     <data name="CandidateList_Language" xml:space="preserve">
-        <value>FR_Sprache</value>
+        <value>Langue</value>
     </data>
     <data name="CandidateList_MembershipAddition" xml:space="preserve">
-        <value>FR_Mitgliederzusatz</value>
+        <value>Complément d'informations sur le membre</value>
     </data>
     <data name="CandidateList_Occupation" xml:space="preserve">
-        <value>FR_Beruf</value>
+        <value>Profession</value>
     </data>
     <data name="CandidateList_Office" xml:space="preserve">
-        <value>FR_Verwaltungsstelle</value>
+        <value>Unité administrative</value>
     </data>
     <data name="CandidateList_Phone" xml:space="preserve">
-        <value>FR_Telefon</value>
+        <value>Téléphone</value>
     </data>
     <data name="CandidateList_Remarks" xml:space="preserve">
-        <value>FR_Bemerkungen</value>
+        <value>Remarque</value>
     </data>
     <data name="CandidateList_RemarkStatus" xml:space="preserve">
         <value>FR_Vertretung</value>
     </data>
     <data name="CandidateList_Surname" xml:space="preserve">
-        <value>FR_Name</value>
+        <value>Nom</value>
     </data>
     <data name="CandidateList_Title" xml:space="preserve">
-        <value>FR_Titel</value>
+        <value>Titre</value>
     </data>
     <data name="CandidateList" xml:space="preserve">
-        <value>FR_Wahlvorschlag</value>
+        <value>Liste de candidats</value>
     </data>
     <data name="GeneralElection_PersonData_TaskDescription" xml:space="preserve">
         <value>FR_Bitte die Personendaten nachtragen.</value>
@@ -508,9 +508,9 @@
         <value> à </value>
     </data>
     <data name="Office_Central" xml:space="preserve">
-        <value>FR_zentral</value>
+        <value>FR_zentrale Bundesverwaltung</value>
     </data>
     <data name="Office_Decentral" xml:space="preserve">
-        <value>FR_dezentral</value>
+        <value>FR_dezentrale Bundesverwaltung</value>
     </data>
 </root>
