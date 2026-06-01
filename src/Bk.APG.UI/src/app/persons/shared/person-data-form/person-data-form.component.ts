@@ -251,11 +251,13 @@ export class PersonDataFormComponent implements OnInit {
 
                 // Update validators for address fields based on activeAddress state
                 this.personForm.controls.officeAddress.controls.street.updateValueAndValidity();
+                this.personForm.controls.officeAddress.controls.poBox.updateValueAndValidity();
                 this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
                 this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
                 this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
                 this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.street.updateValueAndValidity();
+                this.personForm.controls.privateAddress.controls.poBox.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
                 this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
@@ -318,14 +320,22 @@ export class PersonDataFormComponent implements OnInit {
             .pipe(takeUntilDestroyed())
             .subscribe(() => this.personForm.controls.legislaturePeriodIds.updateValueAndValidity({emitEvent: false}));
 
-        this.personForm.controls.privateAddress.controls.street.valueChanges
+        this.personForm.controls.privateAddress.controls.street.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+            this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity({emitEvent: false});
+            this.personForm.controls.privateAddress.controls.poBox.updateValueAndValidity({emitEvent: false});
+        });
+        this.personForm.controls.privateAddress.controls.poBox.valueChanges
             .pipe(takeUntilDestroyed())
-            .subscribe(() => this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity({emitEvent: false}));
+            .subscribe(() => this.personForm.controls.privateAddress.controls.street.updateValueAndValidity({emitEvent: false}));
 
-        this.personForm.controls.officeAddress.controls.street.valueChanges
+        this.personForm.controls.officeAddress.controls.poBox.valueChanges
             .pipe(takeUntilDestroyed())
-            .subscribe(() => this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity({emitEvent: false}));
+            .subscribe(() => this.personForm.controls.officeAddress.controls.street.updateValueAndValidity({emitEvent: false}));
 
+        this.personForm.controls.officeAddress.controls.street.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
+            this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity({emitEvent: false});
+            this.personForm.controls.officeAddress.controls.poBox.updateValueAndValidity({emitEvent: false});
+        });
         this.personForm.controls.languageId.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
             this.personForm.controls.correspondenceLanguageId.setValue(value);
             this.refreshCorrespondenceLanguageState();
@@ -396,6 +406,7 @@ export class PersonDataFormComponent implements OnInit {
         // Subscribe to activeAddress changes to update validators
         this.personForm.controls.officeAddress.controls.activeAddress.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
             this.personForm.controls.officeAddress.controls.street.updateValueAndValidity();
+            this.personForm.controls.officeAddress.controls.poBox.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
@@ -404,6 +415,7 @@ export class PersonDataFormComponent implements OnInit {
 
         this.personForm.controls.privateAddress.controls.activeAddress.valueChanges.pipe(takeUntilDestroyed()).subscribe(() => {
             this.personForm.controls.privateAddress.controls.street.updateValueAndValidity();
+            this.personForm.controls.privateAddress.controls.poBox.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
             this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
@@ -433,32 +445,24 @@ export class PersonDataFormComponent implements OnInit {
         if (selection === 'privateAddress') {
             this.personForm.controls.privateAddress.patchValue({activeAddress: true});
             this.personForm.controls.officeAddress.patchValue({activeAddress: false});
-            // Update validators for both addresses
-            this.personForm.controls.privateAddress.controls.street.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.countryId.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.street.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
         } else if (selection === 'officeAddress') {
             this.personForm.controls.officeAddress.patchValue({activeAddress: true});
             this.personForm.controls.privateAddress.patchValue({activeAddress: false});
-            // Update validators for both addresses
-            this.personForm.controls.officeAddress.controls.street.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.street.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
-            this.personForm.controls.privateAddress.controls.countryId.updateValueAndValidity();
         }
+        // Update validators for both addresses
+        this.personForm.controls.officeAddress.controls.street.updateValueAndValidity();
+        this.personForm.controls.officeAddress.controls.poBox.updateValueAndValidity();
+        this.personForm.controls.officeAddress.controls.zip.updateValueAndValidity();
+        this.personForm.controls.officeAddress.controls.city.updateValueAndValidity();
+        this.personForm.controls.officeAddress.controls.cantonId.updateValueAndValidity();
+        this.personForm.controls.officeAddress.controls.countryId.updateValueAndValidity();
+        this.personForm.controls.privateAddress.controls.street.updateValueAndValidity();
+        this.personForm.controls.privateAddress.controls.poBox.updateValueAndValidity();
+        this.personForm.controls.privateAddress.controls.zip.updateValueAndValidity();
+        this.personForm.controls.privateAddress.controls.city.updateValueAndValidity();
+        this.personForm.controls.privateAddress.controls.cantonId.updateValueAndValidity();
+        this.personForm.controls.privateAddress.controls.countryId.updateValueAndValidity();
+
         this.personForm.markAsDirty();
     }
 
@@ -847,8 +851,18 @@ export class PersonDataFormComponent implements OnInit {
 
         // Office address validators - all fields required when active
         form.controls.officeAddress.controls.street.setValidators(
-            conditionalValidator(() => form.controls.officeAddress.controls.activeAddress.value, Validators.required)
+            conditionalValidator(
+                () => form.controls.officeAddress.controls.activeAddress.value && !form.controls.officeAddress.controls.poBox.value,
+                Validators.required
+            )
         );
+        form.controls.officeAddress.controls.poBox.setValidators(
+            conditionalValidator(
+                () => form.controls.officeAddress.controls.activeAddress.value && !form.controls.officeAddress.controls.street.value,
+                Validators.required
+            )
+        );
+
         form.controls.officeAddress.controls.zip.setValidators(
             conditionalValidator(() => form.controls.officeAddress.controls.activeAddress.value, Validators.required)
         );
@@ -864,8 +878,18 @@ export class PersonDataFormComponent implements OnInit {
 
         // Private address validators - all fields required when active
         form.controls.privateAddress.controls.street.setValidators(
-            conditionalValidator(() => form.controls.privateAddress.controls.activeAddress.value, Validators.required)
+            conditionalValidator(
+                () => form.controls.privateAddress.controls.activeAddress.value && !form.controls.privateAddress.controls.poBox.value,
+                Validators.required
+            )
         );
+        form.controls.privateAddress.controls.poBox.setValidators(
+            conditionalValidator(
+                () => form.controls.privateAddress.controls.activeAddress.value && !form.controls.privateAddress.controls.street.value,
+                Validators.required
+            )
+        );
+
         form.controls.privateAddress.controls.zip.setValidators(
             conditionalValidator(() => form.controls.privateAddress.controls.activeAddress.value, Validators.required)
         );
