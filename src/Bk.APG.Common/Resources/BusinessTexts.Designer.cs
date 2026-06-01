@@ -1420,7 +1420,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to zentral.
+        ///   Looks up a localized string similar to zentrale Bundesverwaltung.
         /// </summary>
         public static string Office_Central {
             get {
@@ -1429,7 +1429,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to dezentral.
+        ///   Looks up a localized string similar to dezentrale Bundesverwaltung.
         /// </summary>
         public static string Office_Decentral {
             get {
