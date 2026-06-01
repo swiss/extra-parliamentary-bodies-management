@@ -13,6 +13,7 @@ public static class ReportMapper
         {
             // we want it to be the original CommitteeID!
             Id = committee.CommitteeId,
+            Committee = committee.Committee,
             BeginDate = committee.BeginDate,
             EndDate = committee.EndDate,
             DescriptionGerman = committee.DescriptionGerman,

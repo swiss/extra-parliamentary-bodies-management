@@ -121,7 +121,8 @@ public class ReportVacanciesDetailDto
 public enum ReportMembershipType
 {
     ShorterDuty,
-    FederalAssembly,
+    FederalAssemblyCurrent,
+    FederalAssemblyFuture,
     FederalDuty,
     MarketOrientated,
     CompetenceProfile,
