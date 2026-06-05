@@ -142,6 +142,9 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .ThenInclude(item => item.Person)
             .ThenInclude(item => item!.Council)
             .Include(item => item.MembershipCandidates)
+            .ThenInclude(item => item.Person)
+            .ThenInclude(item => item!.LegislaturePeriods)
+            .Include(item => item.MembershipCandidates)
             .ThenInclude(item => item!.GeneralElectionCommittee)
             .FilterGeneralElectionCommitteeByPermission(departmentId, officeId, committeeId)
             .Where(c => !filterDto.CommitteesWithActiveMembership || c.MembershipCandidates.Count > 0)
@@ -157,6 +160,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 EndDate = c.EndDate,
                 TermOfOfficeDateId = c.TermOfOfficeDateId,
                 CommitteeId = c.CommitteeId,
+                Committee = c.Committee,
                 DepartmentId = c.DepartmentId,
                 Department = c.Department,
                 OfficeId = c.OfficeId,
@@ -188,7 +192,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 SelfOrganized = c.SelfOrganized,
                 MembershipCandidates = c.MembershipCandidates.ToList()
             })
-            .OrderBy(c => c.DescriptionGerman)
+            .OrderBy(c => c.Committee!.CommitteeNumber)
             .ToListAsync();
 
         return committees;
