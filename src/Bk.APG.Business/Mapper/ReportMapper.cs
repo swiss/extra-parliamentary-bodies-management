@@ -13,6 +13,7 @@ public static class ReportMapper
         {
             // we want it to be the original CommitteeID!
             Id = committee.CommitteeId,
+            CommitteeNumber = committee.Committee!.CommitteeNumber,
             Committee = committee.Committee,
             BeginDate = committee.BeginDate,
             EndDate = committee.EndDate,
@@ -71,6 +72,7 @@ public static class ReportMapper
         return new ReportGeneralElectionCommitteeDto
         {
             Id = committee.Id,
+            CommitteeNumber = committee.CommitteeNumber,
             BeginDate = committee.BeginDate,
             EndDate = committee.EndDate,
             DescriptionGerman = committee.DescriptionGerman,

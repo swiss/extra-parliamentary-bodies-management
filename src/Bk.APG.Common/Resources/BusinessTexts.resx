@@ -336,6 +336,9 @@
     <data name="Information_Note_Filename" xml:space="preserve">
         <value>Informationsnotiz</value>
     </data>
+    <data name="CompareList_FileName" xml:space="preserve">
+        <value>Vergleichsliste GEW</value>
+    </data>    
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Nationalrätin</value>
     </data>

@@ -9,7 +9,7 @@ public interface ICommitteeRepository
     Task<Committee> GetById(Guid id);
     void CreateForMigration(Committee committee);
     Task<PagedResult<Committee>> GetAll(PagingParameters pagingParameters, CommitteeFilterParameters? filterParameters, string? sort, SortDirection? sortDirection);
-    Task<IEnumerable<Committee>> GetAllForExport(Guid departmentId, Guid officeId, Guid committeeId, CommitteeExportFilterParametersDto? filter);
+    Task<IEnumerable<Committee>> GetAllForExport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto? filter);
     Task<IEnumerable<Committee>> GetAllForGeneralElection(Guid departmentId, Guid officeId, Guid committeeId);
     Task<IEnumerable<Committee>> GetAllForGeneralElectionWithActiveMembers(Guid departmentId, Guid officeId, Guid committeeId);
     Task<IEnumerable<Committee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds);

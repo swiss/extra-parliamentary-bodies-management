@@ -329,7 +329,10 @@
     </data>
     <data name="Information_Note_Filename" xml:space="preserve">
         <value>IT Informationsnotiz</value>
-    </data>    
+    </data>
+    <data name="CompareList_FileName" xml:space="preserve">
+        <value>IT_Vergleichsliste GEW</value>
+    </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Consigliera nazionale</value>
     </data>
