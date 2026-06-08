@@ -130,7 +130,7 @@ public class CommitteeRepository : ICommitteeRepository
         };
     }
 
-    public async Task<IEnumerable<Committee>> GetAllForExport(Guid departmentId, Guid officeId, Guid committeeId, CommitteeExportFilterParametersDto? filter)
+    public async Task<IEnumerable<Committee>> GetAllForExport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto? filter)
     {
         var committees = await _dataContext.Committees
             .Where(x => x.BeginDate <= DateOnly.FromDateTime(DateTime.Now) && (x.EndDate == null || x.EndDate >= DateOnly.FromDateTime(DateTime.Now)))
@@ -265,6 +265,11 @@ public class CommitteeRepository : ICommitteeRepository
                 LinkHomepageItalian = c.LinkHomepageItalian,
                 LinkHomepageRomansh = c.LinkHomepageRomansh,
                 MembershipAdditionsInGeneralElection = c.MembershipAdditionsInGeneralElection,
+                Memberships = c.Memberships
+                    .Where(m => m.BeginDate <= filterDto.AnalysisDate1 &&
+                                m.EndDate >= filterDto.AnalysisDate1 &&
+                                m.ElectionOfficeId != ElectionOffice.OtherGuid)
+                    .ToList(),
             })
             .OrderBy(c => c.DescriptionGerman)
             .ToListAsync();

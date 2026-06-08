@@ -114,6 +114,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     {
         var committees = await _dataContext.GeneralElectionCommittees
             .Where(x => !filterDto.ReleasedCommittees || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .Include(item => item.Committee)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -370,6 +371,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllWithPermissionCheck(Guid departmentId, Guid officeId, Guid committeeId)
     {
         return await _dataContext.GeneralElectionCommittees
+            .Include(item => item.Committee)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)

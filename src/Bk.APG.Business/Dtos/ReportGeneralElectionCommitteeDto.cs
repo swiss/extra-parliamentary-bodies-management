@@ -8,6 +8,7 @@ public class ReportGeneralElectionCommitteeDto
 {
     // This DTO, even though called GeneralElection, can also be used for normal committees!
     public Guid Id { get; init; }
+    public int CommitteeNumber { get; set; }
     public DateOnly BeginDate { get; set; }
     public DateOnly? EndDate { get; set; }
 
