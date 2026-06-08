@@ -340,6 +340,15 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Vergleichsliste GEW.
+        /// </summary>
+        public static string CompareList_FileName {
+            get {
+                return ResourceManager.GetString("CompareList_FileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ständeratin.
         /// </summary>
         public static string CouncilOfStateFemale {
