@@ -330,6 +330,9 @@
     <data name="Information_Note_Filename" xml:space="preserve">
         <value>FR_Informationsnotiz</value>
     </data>
+    <data name="CompareList_FileName" xml:space="preserve">
+        <value>FR_Vergleichsliste GEW</value>
+    </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Conseillère nationale</value>
     </data>
