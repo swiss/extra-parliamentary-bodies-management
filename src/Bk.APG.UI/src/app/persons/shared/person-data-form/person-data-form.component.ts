@@ -27,7 +27,7 @@ import {conditionalValidator} from '@shared/form-validators/conditional.validato
 import {TEL_PATTERN} from '@shared/form-validators/validation-patterns';
 import {isEmptyId} from '@shared/id-util';
 import {MasterDataService} from '@shared/master-data.service';
-import {catchError, combineLatest, debounceTime, filter, forkJoin, map, merge, of, Subject, switchMap, takeUntil} from 'rxjs';
+import {catchError, combineLatest, debounceTime, filter, forkJoin, map, merge, of, Subject, switchMap} from 'rxjs';
 import {AuthService} from '../../../auth/auth.service';
 import {ConfigsService} from '../../../configs.service';
 import {HelpTooltipComponent} from '../../../shared/help-tooltip/help-tooltip.component';
@@ -66,7 +66,6 @@ type AddressControlId = 'officeAddress' | 'privateAddress';
         MatChipGrid,
         MatChipInput,
         MatChipRow,
-        MatAutocomplete,
         MatIcon,
         FormsModule,
         NgClass,
@@ -130,7 +129,7 @@ export class PersonDataFormComponent implements OnInit {
     selectedLegislaturePeriodTexts = computed(() => {
         const legislaturePeriodIds = this.personModification()?.legislaturePeriodIds;
         const legislaturePeriods = this.masterDataService.legislaturePeriods();
-        if (!!legislaturePeriodIds?.length || !!legislaturePeriods?.length) {
+        if (!!legislaturePeriodIds?.length && !!legislaturePeriods?.length) {
             return legislaturePeriods
                 .filter(legislaturePeriod => legislaturePeriodIds?.includes(legislaturePeriod.id))
                 .map(legislaturePeriod => legislaturePeriod.text)
@@ -185,15 +184,15 @@ export class PersonDataFormComponent implements OnInit {
         protected readonly configsService: ConfigsService,
         private readonly translateService: TranslateService
     ) {
-        this.authService.isDepartmentUser$.pipe(takeUntil(this.unsubscribe)).subscribe(isDepartment => {
+        this.authService.isDepartmentUser$.pipe(takeUntilDestroyed()).subscribe(isDepartment => {
             this.isDepartment = isDepartment;
         });
 
-        this.authService.isOfficeUser$.pipe(takeUntil(this.unsubscribe)).subscribe(isOffice => {
+        this.authService.isOfficeUser$.pipe(takeUntilDestroyed()).subscribe(isOffice => {
             this.isOffice = isOffice;
         });
 
-        this.authService.isSecretariatUser$.pipe(takeUntil(this.unsubscribe)).subscribe(isSecretariat => {
+        this.authService.isSecretariatUser$.pipe(takeUntilDestroyed()).subscribe(isSecretariat => {
             this.isSecretariat = isSecretariat;
         });
 
@@ -377,7 +376,7 @@ export class PersonDataFormComponent implements OnInit {
                 .generateSalutation(params.genderId, params.correspondenceLanguageId, params.surname, params.title ?? '')
                 .subscribe(salutationText => {
                     this.personForm.controls.salutationText.setValue(salutationText, {emitEvent: false});
-                    this.personModification()!.salutationText = salutationText;
+                    this.personModification.update(personModification => (personModification ? {...personModification, salutationText} : personModification));
                 });
         });
 
@@ -398,7 +397,7 @@ export class PersonDataFormComponent implements OnInit {
         });
 
         this.personForm.controls.occupations.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
-            if (value && value.length >= 3 && typeof value === 'string') {
+            if (typeof value === 'string' && value.length >= 3) {
                 this.masterDataService.getOccupationsByName(value).subscribe(result => this.filteredOccupationDb.set(result));
             }
         });
