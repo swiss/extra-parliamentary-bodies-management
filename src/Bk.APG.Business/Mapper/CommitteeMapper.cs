@@ -226,19 +226,6 @@ public static class CommitteeMapper
         };
     }
 
-    public static CommitteeExportFilterParametersDto ToCommitteeExportFilterParametersDto(RequestAndReportsFilterParametersDto? filterDto)
-    {
-        return new CommitteeExportFilterParametersDto
-        {
-            DepartmentIds = filterDto?.DepartmentIds,
-            OfficeIds = filterDto?.OfficeIds,
-            CommitteeTypeIds = filterDto?.CommitteeTypeIds,
-            ReportType = filterDto?.ReportType,
-            AnalysisDate1 = filterDto?.AnalysisDate1,
-            AnalysisDate2 = filterDto?.AnalysisDate2,
-        };
-    }
-
     public static DimensionItem ToDimensionItem(Committee committee)
     {
         ArgumentNullException.ThrowIfNull(committee);
