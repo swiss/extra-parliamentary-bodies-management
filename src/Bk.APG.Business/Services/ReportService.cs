@@ -15,6 +15,7 @@ public class ReportService : IReportService
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly ICultureService _cultureService;
     private readonly IElectoralListService _electoralListService;
+    private readonly ICompareListService _compareListService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
@@ -28,6 +29,7 @@ public class ReportService : IReportService
         ICultureService cultureService,
         ITermOfOfficeDateService termOfOfficeDateService,
         IElectoralListService electoralListService,
+        ICompareListService compareListService,
         IEiamAssignmentService eiamAssignmentService,
         ICommitteeRepository committeeRepository,
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
@@ -41,6 +43,7 @@ public class ReportService : IReportService
         _cultureService = cultureService;
         _electoralListService = electoralListService;
         _eiamAssignmentService = eiamAssignmentService;
+        _compareListService = compareListService;
         _committeeRepository = committeeRepository;
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _masterDataRepository = masterDataRepository;
@@ -64,6 +67,7 @@ public class ReportService : IReportService
             ReportType.DecisionFederalCouncil => await GenerateDecisionFederalCouncilReport(filterDto),
             ReportType.Vacancies => await GenerateVacanciesReport(filterDto),
             ReportType.InformationNoteGeneralElection => await GenerateInformationNote(filterDto),
+            ReportType.CompareListGeneralElection => await _compareListService.GenerateDocument(filterDto),
             _ => await GenerateParliamentaryReport(filterDto)
         };
     }
@@ -803,6 +807,7 @@ public class ReportService : IReportService
 
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
 
+        // PP Machts... Funktioniert der noch nach Einschränkung Mitgliedschaft
         var committees = (await _committeeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
 
         var generalElectionCommittees = committees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
@@ -961,7 +966,7 @@ public class ReportService : IReportService
 
             var filteredCommittees = committees
                 .Where(c => c.DepartmentId == department.Id)
-                .OrderBy(c => c.Committee!.CommitteeNumber)
+                .OrderBy(c => c.CommitteeNumber)
                 .ToArray();
 
             var committeeList = new List<ReportCommitteeDto>();
