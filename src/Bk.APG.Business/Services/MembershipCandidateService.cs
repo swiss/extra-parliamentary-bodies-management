@@ -599,10 +599,7 @@ public class MembershipCandidateService : IMembershipCandidateService
                 }
 
                 // if an office executes the task, the one from the secretariat has to be completed as well
-                if (secretariatTask is not null)
-                {
-                    secretariatTask.WorklistTaskStateId = WorklistTaskState.Completed;
-                }
+                secretariatTask.WorklistTaskStateId = WorklistTaskState.Completed;
 
                 break;
             case Role.Office:
@@ -682,7 +679,7 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         if (targetStage > currentStage)
         {
-            /* Set all inactive tasks in the hierarchy up to the current stage 
+            /* Set all inactive tasks in the hierarchy up to the current stage
              * (Secretariat → Office → Department → Admin) to Completed */
 
             var assignmentInChain = activeTask.AssignedTo;
