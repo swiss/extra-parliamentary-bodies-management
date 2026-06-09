@@ -42,6 +42,12 @@
       <None Update="Templates\Appendix_FederalCouncil_German.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\Compare_List_French.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\Compare_List_German.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="Templates\ElectoralList_Internet.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>

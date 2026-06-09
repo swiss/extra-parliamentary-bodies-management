@@ -231,6 +231,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Select(c => new Committee
             {
                 Id = c.Id,
+                CommitteeNumber = c.CommitteeNumber,
                 Modified = c.Modified,
                 ModifiedBy = c.ModifiedBy,
                 Created = c.Created,

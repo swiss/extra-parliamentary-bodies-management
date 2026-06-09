@@ -58,15 +58,15 @@ public class InformationNoteDto
     public decimal? PreviousExpectedGenderPercentage { get; set; }
     public decimal? CurrentFemalePercentage { get; set; }
     public decimal? PreviousFemalePercentage { get; set; }
-    public required int UnderstuffedFemaleCommittees { get; set; }
-    public required int HeavyUnderstuffedFemaleCommittees { get; set; }
-    public required int PreviousHeavyUnderstuffedFemaleCommittees { get; set; }
+    public required int UnderstaffedFemaleCommittees { get; set; }
+    public required int HeavyUnderstaffedFemaleCommittees { get; set; }
+    public required int PreviousHeavyUnderstaffedFemaleCommittees { get; set; }
 
     public decimal? CurrentMalePercentage { get; set; }
     public decimal? PreviousMalePercentage { get; set; }
-    public required int UnderstuffedMaleCommittees { get; set; }
-    public required int HeavyUnderstuffedMaleCommittees { get; set; }
-    public required int PreviousHeavyUnderstuffedMaleCommittees { get; set; }
+    public required int UnderstaffedMaleCommittees { get; set; }
+    public required int HeavyUnderstaffedMaleCommittees { get; set; }
+    public required int PreviousHeavyUnderstaffedMaleCommittees { get; set; }
 
     public decimal? CurrentGermanPercentage { get; set; }
     public decimal? PreviousGermanPercentage { get; set; }
@@ -112,8 +112,8 @@ public class InformationNoteDto
     public decimal? CurrentItalianThresholdFederalAgenciesCommittees { get; set; }
     public decimal? CurrentRomanshThresholdFederalAgenciesCommittees { get; set; }
 
-    public required int UnderstuffedFemaleManagementCommittees { get; set; }
-    public required int UnderstuffedMaleManagementCommittees { get; set; }
+    public required int UnderstaffedFemaleManagementCommittees { get; set; }
+    public required int UnderstaffedMaleManagementCommittees { get; set; }
 
     public required int TotalMembersWith3Memberships { get; set; }
     public required int FemaleMembersWith3Memberships { get; set; }
@@ -133,8 +133,8 @@ public class InformationNoteDto
 
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? ReleasedCommitteesByDepartmentAndType { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? UnreleasedCommitteesByDepartmentAndType { get; set; }
-    public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? GenderUnderstuffedCommitteesByDepartmentAndType { get; set; }
-    public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? LanguageUnderstuffedCommitteesByDepartmentAndType { get; set; }
+    public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? GenderUnderstaffedCommitteesByDepartmentAndType { get; set; }
+    public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? LanguageUnderstaffedCommitteesByDepartmentAndType { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteesDto>? LongerDutyCommitteesByDepartmentAndType { get; set; }
 
     public IEnumerable<InformationNoteNonExtraParliamentaryCommitteeDepartmentDto>? NonExtraParliamentCommitteesByDepartmentAndType { get; set; }

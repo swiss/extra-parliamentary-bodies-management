@@ -197,8 +197,8 @@ public class ReportService : IReportService
         var frenchMissing = extraParliamentaryCommissions.Count(c => c is { FrenchCount: 0, ItalianCount: > 0 });
         var italianMissing = extraParliamentaryCommissions.Count(c => c is { ItalianCount: 0, FrenchCount: > 0 });
 
-        var femaleUnderStuffed = extraParliamentaryCommissions.Count(c => c.FemaleUnderStuffed);
-        var maleUnderStuffed = extraParliamentaryCommissions.Count(c => c.MaleUnderStuffed);
+        var femaleUnderStaffed = extraParliamentaryCommissions.Count(c => c.FemaleUnderStaffed);
+        var maleUnderStaffed = extraParliamentaryCommissions.Count(c => c.MaleUnderStaffed);
 
         // get all committees for GE, which are released/validated and did not end before the current termOfOfficeDate
         var releasedGeneralElectionCommittees = committeesWithMembers
@@ -243,8 +243,8 @@ public class ReportService : IReportService
             MoreThan15Members = generalElectionCommitteesWithMembers.Count(c => c is { ExtraParliamentaryCommission: true, Memberships.Count: > 15 }),
             FemalePercentage = totalMembers > 0 ? Math.Round((decimal)femaleCount / totalMembers * 100, 2) : 0,
             MalePercentage = totalMembers > 0 ? Math.Round((decimal)maleCount / totalMembers * 100, 2) : 0,
-            FemaleUnderStuffed = femaleUnderStuffed,
-            MaleUnderStuffed = maleUnderStuffed,
+            FemaleUnderStaffed = femaleUnderStaffed,
+            MaleUnderStaffed = maleUnderStaffed,
             FrenchMissing = frenchMissing,
             ItalianMissing = italianMissing,
             FrenchAndItalianMissing = frenchAndItalianMissing,
@@ -489,11 +489,11 @@ public class ReportService : IReportService
         var moreThan12YearsCommittes = allGeneralElectionCommittees.Where(c => c.IsValidated).ToArray();
         var moreThan12YearsCommitteesDto = GetCommitteesByDepartmentForMembershipDuration(moreThan12YearsCommittes, departments);
 
-        var genderUnderstuffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.FemaleUnderStaffed || c.MaleUnderStaffed)).ToArray();
-        var genderUnderstuffedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(genderUnderstuffedCommittees, departments, InformationNoteData.Genders);
+        var genderUnderstaffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.FemaleUnderStaffed || c.MaleUnderStaffed)).ToArray();
+        var genderUnderstaffedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(genderUnderstaffedCommittees, departments, InformationNoteData.Genders);
 
-        var languageUnderstuffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.ItalianUnderStaffed || c.FrenchUnderStaffed)).ToArray();
-        var languageUnderstuffedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(languageUnderstuffedCommittees, departments, InformationNoteData.Languages);
+        var languageUnderstaffedCommittees = allGeneralElectionCommittees.Where(c => c.IsValidated && (c.ItalianUnderStaffed || c.FrenchUnderStaffed)).ToArray();
+        var languageUnderstaffedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(languageUnderstaffedCommittees, departments, InformationNoteData.Languages);
 
         var allCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected);
         var allFemaleCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.GenderId == Gender.FemaleGuid);
@@ -614,14 +614,14 @@ public class ReportService : IReportService
             PreviousFemalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFemaleMembers / allMembers * 100, 2),
             ExpectedGenderPercentage = (decimal?)(managementCommitteeType != null ? managementCommitteeType.FemaleThreshold : 0),
             PreviousExpectedGenderPercentage = previousExpectedGenderPercentage,
-            UnderstuffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleUnderStaffed),
-            HeavyUnderstuffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
-            PreviousHeavyUnderstuffedFemaleCommittees = extraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
+            UnderstaffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleUnderStaffed),
+            HeavyUnderstaffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
+            PreviousHeavyUnderstaffedFemaleCommittees = extraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
             CurrentMalePercentage = Math.Round((decimal)allMaleCandidates / allCandidates * 100, 2),
             PreviousMalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allMaleMembers / allMembers * 100, 2),
-            UnderstuffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleUnderStaffed),
-            HeavyUnderstuffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
-            PreviousHeavyUnderstuffedMaleCommittees = extraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
+            UnderstaffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleUnderStaffed),
+            HeavyUnderstaffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
+            PreviousHeavyUnderstaffedMaleCommittees = extraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
             CurrentGermanPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allGermanCandidates / allCandidates * 100, 2),
             PreviousGermanPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allGermanMembers / allMembers * 100, 2),
             CurrentFrenchPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allFrenchCandidates / allCandidates * 100, 2),
@@ -684,8 +684,8 @@ public class ReportService : IReportService
             CurrentItalianThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allItalianCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
             CurrentRomanshThresholdFederalAgenciesCommittees = allCandidatesFederalAgenciesCommittees == 0 ? 0 : Math.Round((decimal)allRomanshCandidatesFederalAgenciesCommittees / allCandidatesFederalAgenciesCommittees * 100, 2),
 
-            UnderstuffedFemaleManagementCommittees = allManagementCommittees.Count(c => c is { FemaleUnderStaffed: true, IsValidated: true }),
-            UnderstuffedMaleManagementCommittees = allManagementCommittees.Count(c => c is { MaleUnderStaffed: true, IsValidated: true }),
+            UnderstaffedFemaleManagementCommittees = allManagementCommittees.Count(c => c is { FemaleUnderStaffed: true, IsValidated: true }),
+            UnderstaffedMaleManagementCommittees = allManagementCommittees.Count(c => c is { MaleUnderStaffed: true, IsValidated: true }),
 
             TotalMembersWith3Memberships = multipleMemberships.Count(m => m.MembershipCount == 3),
             FemaleMembersWith3Memberships = multipleMemberships.Count(m => m.MembershipCount == 3 && m.GenderId == Gender.FemaleGuid),
@@ -705,8 +705,8 @@ public class ReportService : IReportService
 
             ReleasedCommitteesByDepartmentAndType = releasedCommitteesDto,
             UnreleasedCommitteesByDepartmentAndType = unreleasedCommitteesDto,
-            GenderUnderstuffedCommitteesByDepartmentAndType = genderUnderstuffedCommitteesDto,
-            LanguageUnderstuffedCommitteesByDepartmentAndType = languageUnderstuffedCommitteesDto,
+            GenderUnderstaffedCommitteesByDepartmentAndType = genderUnderstaffedCommitteesDto,
+            LanguageUnderstaffedCommitteesByDepartmentAndType = languageUnderstaffedCommitteesDto,
             LongerDutyCommitteesByDepartmentAndType = moreThan12YearsCommitteesDto,
             NonExtraParliamentCommitteesByDepartmentAndType = nonExtraParliamentaryCommitteesDto,
 
