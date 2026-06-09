@@ -96,10 +96,10 @@ public class Committee : EntityBase
     public double MaleQuota => ActiveMemberCount > 0 ? Math.Round((double)MaleCount / ActiveMemberCount * 100, 2) : 0;
 
     [NotMapped]
-    public bool FemaleUnderStuffed => ActiveMemberCount > 0 && ((double)FemaleCount / ActiveMemberCount * 100) < CommitteeType!.FemaleThreshold;
+    public bool FemaleUnderStaffed => ActiveMemberCount > 0 && ((double)FemaleCount / ActiveMemberCount * 100) < CommitteeType!.FemaleThreshold;
 
     [NotMapped]
-    public bool MaleUnderStuffed => ActiveMemberCount > 0 && ((double)MaleCount / ActiveMemberCount * 100) < CommitteeType!.MaleThreshold;
+    public bool MaleUnderStaffed => ActiveMemberCount > 0 && ((double)MaleCount / ActiveMemberCount * 100) < CommitteeType!.MaleThreshold;
 
     [NotMapped]
     public int FemalePresidentCount => Memberships.Count(x => x is { IsActive: true, Person.Gender.Uri: Gender.Female, Function.Uri: Function.PresidentUri, IsDeleted: false, HasOtherElectionOffice: false });
@@ -180,10 +180,10 @@ public class Committee : EntityBase
     public int MaleCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Gender.Uri: Gender.Male, IsDeleted: false, HasOtherElectionOffice: false });
 
     [NotMapped]
-    public bool FemaleUnderStuffedFuture => ActiveMemberCountFuture > 0 && 100 / ActiveMemberCountFuture * FemaleCount < CommitteeType!.FemaleThreshold;
+    public bool FemaleUnderStaffedFuture => ActiveMemberCountFuture > 0 && 100 / ActiveMemberCountFuture * FemaleCount < CommitteeType!.FemaleThreshold;
 
     [NotMapped]
-    public bool MaleUnderStuffedFuture => ActiveMemberCountFuture > 0 && 100 / ActiveMemberCountFuture * MaleCount < CommitteeType!.MaleThreshold;
+    public bool MaleUnderStaffedFuture => ActiveMemberCountFuture > 0 && 100 / ActiveMemberCountFuture * MaleCount < CommitteeType!.MaleThreshold;
 
     [NotMapped]
     public int GermanCountFuture => Memberships.Count(x => x is { IsFuture: true, Person.Language.Uri: Language.GermanUri, IsDeleted: false, HasOtherElectionOffice: false });
