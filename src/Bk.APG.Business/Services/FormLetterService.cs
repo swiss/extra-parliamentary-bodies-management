@@ -22,7 +22,7 @@ public class FormLetterService : IFormLetterService
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly IFormLetterSenderRepository _formLetterSenderRepository;
-    private readonly ILogger<ReportService> _logger;
+    private readonly ILogger<FormLetterService> _logger;
 
     public FormLetterService(
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
@@ -32,7 +32,7 @@ public class FormLetterService : IFormLetterService
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         IMasterDataRepository masterDataRepository,
         IFormLetterSenderRepository formLetterSenderRepository,
-        ILogger<ReportService> logger)
+        ILogger<FormLetterService> logger)
     {
         _documentService = documentService;
         _termOfOfficeDateService = termOfOfficeDateService;
@@ -70,17 +70,37 @@ public class FormLetterService : IFormLetterService
 
                 var first = group.First();
 
-                var reducedDataDto = reportDto;
-                reducedDataDto.Memberships = allMemberships;
+                var reducedMembersDto = allMemberships
+                    .Where(m => m.CommitteeId == currentCommitteeId)
+                    .OrderBy(m => m.Surname)
+                    .ThenBy(m => m.GivenName)
+                    .ToList();
 
-                var reducedMembersDto = reducedDataDto.Memberships.Where(m => m.CommitteeId == currentCommitteeId).OrderBy(m => m.Surname).ThenBy(m => m.GivenName);
-                reducedDataDto.Memberships = reducedMembersDto;
+                var reducedDataDto = new FormLetterReportDto
+                {
+                    SenderOfficeGerman = reportDto.SenderOfficeGerman,
+                    SenderOfficeFrench = reportDto.SenderOfficeFrench,
+                    SenderOfficeItalian = reportDto.SenderOfficeItalian,
+                    SenderName = reportDto.SenderName,
+                    SenderStreet = reportDto.SenderStreet,
+                    SenderZip = reportDto.SenderZip,
+                    SenderCity = reportDto.SenderCity,
+                    SenderPhone = reportDto.SenderPhone,
+                    SenderEmail = reportDto.SenderEmail,
+                    SenderWebsite = reportDto.SenderWebsite,
+                    SenderSignature = reportDto.SenderSignature,
+                    HasSignature = reportDto.HasSignature,
+                    NextTermOfOfficeBeginDate = reportDto.NextTermOfOfficeBeginDate,
+                    NextTermOfOfficeEndDate = reportDto.NextTermOfOfficeEndDate,
+                    TermOfOfficeEndDate = reportDto.TermOfOfficeEndDate,
+                    Memberships = reducedMembersDto,
+                };
 
                 var fileName = first.FileName.Replace(" ", "_", StringComparison.InvariantCultureIgnoreCase);
 
                 if (fileName.Length > maxFileNameLength)
                 {
-                    fileName = fileName.Substring(0, maxFileNameLength);
+                    fileName = fileName[..maxFileNameLength];
                 }
 
                 if (filterDto.ExportFileType == "word")
@@ -181,8 +201,10 @@ public class FormLetterService : IFormLetterService
 
             if (signatureStream is { CanSeek: true })
             {
-                signatureStream.Position = 0;
-                picBase64 = Convert.ToBase64String(signatureStream.ToArray());
+                picBase64 = signatureStream.TryGetBuffer(out var buffer)
+                    ? Convert.ToBase64String(buffer.Array!, buffer.Offset, buffer.Count)
+                    : Convert.ToBase64String(signatureStream.ToArray());
+
                 signaturePictureExists = true;
             }
         }
@@ -255,12 +277,15 @@ public class FormLetterService : IFormLetterService
         return endedMemberships;
     }
 
-    private static (string De, string Fr, string It, string Rm) FormatMonthAndYear(DateOnly date) => (
-        date.ToString("MMMM yyyy", new CultureInfo("de-CH")),
-        date.ToString("MMMM yyyy", new CultureInfo("fr-CH")),
-        date.ToString("MMMM yyyy", new CultureInfo("it-CH")),
-        date.ToString("MMMM yyyy", new CultureInfo("rm-CH"))
-    );
+    private static (string De, string Fr, string It, string Rm) FormatMonthAndYear(DateOnly date)
+    {
+        return (
+            date.ToString("MMMM yyyy", new CultureInfo("de-CH")),
+            date.ToString("MMMM yyyy", new CultureInfo("fr-CH")),
+            date.ToString("MMMM yyyy", new CultureInfo("it-CH")),
+            date.ToString("MMMM yyyy", new CultureInfo("rm-CH"))
+        );
+    }
 
     private static FormLetterMembershipReportDto MapToFormLetterMembershipDto(
         FormLetterType formLetterType,
