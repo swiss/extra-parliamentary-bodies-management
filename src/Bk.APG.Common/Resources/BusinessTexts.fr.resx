@@ -331,7 +331,7 @@
         <value>FR_Informationsnotiz</value>
     </data>
     <data name="CompareList_FileName" xml:space="preserve">
-        <value>FR_Vergleichsliste GEW</value>
+        <value>FR_Vergleichsliste GEW Überprüfung</value>
     </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Conseillère nationale</value>
@@ -515,5 +515,23 @@
     </data>
     <data name="Office_Decentral" xml:space="preserve">
         <value>FR_dezentrale Bundesverwaltung</value>
+    </data>
+    <data name="Compare_List_Language_Missing" xml:space="preserve">
+        <value>FR_nicht vertreten</value>
+    </data>
+    <data name="Compare_List_Language_OK" xml:space="preserve">
+        <value>FR_Keine Untervertretung</value>
+    </data>
+    <data name="Compare_List_Women" xml:space="preserve">
+        <value>FR_Frauen</value>
+    </data>
+    <data name="Compare_List_Woman" xml:space="preserve">
+        <value>FR_Frau</value>
+    </data>
+    <data name="Compare_List_Men" xml:space="preserve">
+        <value>FR_Männer</value>
+    </data>
+    <data name="Compare_List_Man" xml:space="preserve">
+        <value>FR_Mann</value>
     </data>
 </root>
