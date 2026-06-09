@@ -222,9 +222,9 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         var allCommittees = committees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture())).ToList();
 
-        // here we have to select the present committees as well, when filterDto ElectionType contains one of the 3 retire types or none are selected at all..
-        if (filterParameters.ElectionTypeIds == null || (filterParameters.ElectionTypeIds != null && (filterParameters.ElectionTypeIds.Contains(ElectionType.MaximumMembershipDurationGuid) ||
-            filterParameters.ElectionTypeIds.Contains(ElectionType.RetirementGuid) || filterParameters.ElectionTypeIds.Contains(ElectionType.OtherRetirementReasonGuid))))
+        // here we have to select the present committees as well, when filterDto ElectionType contains one of the 3 retire types or none are selected at all.
+        if (filterParameters.ElectionTypeIds == null || filterParameters.ElectionTypeIds.Contains(ElectionType.MaximumMembershipDurationGuid) ||
+            filterParameters.ElectionTypeIds.Contains(ElectionType.RetirementGuid) || filterParameters.ElectionTypeIds.Contains(ElectionType.OtherRetirementReasonGuid))
         {
             var currentCommittees = await _committeeService.GetCommitteesWithRetiredMembers(filter, electionTypeListPresent);
 

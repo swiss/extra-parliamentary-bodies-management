@@ -1,2 +1,3 @@
 This file can be left empty.
-It is only used for the github publication and is automatically populated by a github actions workflow.
+It is only used for the GitHub publication and is automatically populated by a GitHub Actions workflow.
+
