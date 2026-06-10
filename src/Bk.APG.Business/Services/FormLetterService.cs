@@ -93,7 +93,7 @@ public class FormLetterService : IFormLetterService
                     NextTermOfOfficeBeginDate = reportDto.NextTermOfOfficeBeginDate,
                     NextTermOfOfficeEndDate = reportDto.NextTermOfOfficeEndDate,
                     TermOfOfficeEndDate = reportDto.TermOfOfficeEndDate,
-                    Memberships = reducedMembersDto,
+                    Memberships = reducedMembersDto
                 };
 
                 var fileName = first.FileName.Replace(" ", "_", StringComparison.InvariantCultureIgnoreCase);
@@ -226,7 +226,7 @@ public class FormLetterService : IFormLetterService
             SenderCity = sender.CityGerman,
             SenderPhone = sender.Phone,
             SenderEmail = sender.Email,
-            SenderWebsite = sender.Website,
+            SenderWebsite = sender.Website
         };
 
         return formLetterReportDto;
@@ -323,15 +323,15 @@ public class FormLetterService : IFormLetterService
             GivenName = person.GivenName,
             Surname = person.Surname,
             CompanyName = person.CorrespondenceAddress!.CompanyName ?? string.Empty,
-            Street = person.CorrespondenceAddress.Street ?? string.Empty,
-            PoBox = person.CorrespondenceAddress.PoBox ?? string.Empty,
+            Street = person.CorrespondenceAddress!.Street ?? string.Empty,
+            PoBox = person.CorrespondenceAddress!.PoBox ?? string.Empty,
             Zip = person.CorrespondenceAddress!.Zip ?? string.Empty,
             City = person.CorrespondenceAddress!.City ?? string.Empty,
-            Country = person.CorrespondenceAddress.Country == null
+            Country = person.CorrespondenceAddress!.Country == null
                 ? string.Empty
-                : person.CorrespondenceAddress.Country!.TextDe == "CH"
+                : person.CorrespondenceAddress.Country.TextDe == "CH"
                     ? string.Empty
-                    : GetText(person.CorrespondenceAddress?.Country?.DescriptionDe, person.CorrespondenceAddress?.Country?.DescriptionFr, person.CorrespondenceAddress?.Country?.DescriptionIt, person.CorrespondenceAddress?.Country?.DescriptionRm),
+                    : GetText(person.CorrespondenceAddress.Country.DescriptionDe, person.CorrespondenceAddress.Country.DescriptionFr, person.CorrespondenceAddress.Country.DescriptionIt, person.CorrespondenceAddress.Country.DescriptionRm)
         };
 
         FormLetterLanguage GetFormLetterLanguage()
