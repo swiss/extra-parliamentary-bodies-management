@@ -48,7 +48,7 @@ public class UidService : IUidService, IHealthCheck
 
         var result = await _publicService.SearchAsync(request, config);
 
-        if (result != null && result.uidEntitySearchResultItem is not null)
+        if (result is { uidEntitySearchResultItem: not null })
         {
             var filteredUidResult = result.uidEntitySearchResultItem
                 .Where(uid => uid.rating > minimalMatchQuality && _allowedLegalForms.Contains(uid.organisation.organisation.organisationIdentification.legalForm) &&
