@@ -148,7 +148,7 @@ export class ConfigsService {
                     postLogoutRedirectUri: `${c.keyCloakRedirectUrl}/logout`,
                     unauthorizedRoute: `${c.keyCloakRedirectUrl}/unauthorized`,
                     clientId: c.keyCloakClientId,
-                    scope: 'openid',
+                    scope: 'openid offline_access',
                     responseType: 'code',
                     ignoreNonceAfterRefresh: true,
                     useRefreshToken: true,
