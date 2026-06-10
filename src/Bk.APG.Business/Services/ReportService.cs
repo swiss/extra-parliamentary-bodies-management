@@ -144,16 +144,13 @@ public class ReportService : IReportService
         var otherReportCommitteeTypes = otherCommitteeTypes.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
-        var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
+        var committeesWithMembers = (await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
 
         var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         generalElectionCommitteesWithMembers = await ReplaceSelfOrganisedMemberFunctions(generalElectionCommitteesWithMembers);
 
         var vacanciesCommittees = generalElectionCommitteesWithMembers.Where(c => c.VacanciesGeneralElection > 0).ToArray();
-
-        var currentExtraParliamentaryCommissions = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
-        var currentReportExtraParliamentaryCommissions = currentExtraParliamentaryCommissions.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var extraParliamentaryCommissions = generalElectionCommitteesWithMembers.Where(c => c.ExtraParliamentaryCommission).ToArray();
         var membersWith12OrMoreYears = SummarizeMembershipsFromPresentAndFutureByDepartment(committeesWithMembers, departments).ToArray();
@@ -288,17 +285,11 @@ public class ReportService : IReportService
         var legislaturePeriods = await _masterDataRepository.GetLegislaturePeriods();
         var nextLegislaturePeriod = legislaturePeriods.FirstOrDefault(lp => lp.StartDate < generalElectionTermOfOfficeDate.BeginDate && lp.EndDate > generalElectionTermOfOfficeDate.BeginDate);
 
-        // present data, needed for one part of the report!
-        var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
-        var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
-
         // to be able to use the standard repository function we have to cheat here with the released flag!
         var onlyReleasedCommittees = filterDto.ReleasedCommittees;
         filterDto.ReleasedCommittees = false;
 
-        var reportCommittees = extraParliamentaryCommittees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
-
-        var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
+        var generalElectionCommittees = (await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
 
         // to be able to use the same functions, we map here the GeneralElection data to normal data!
         var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
@@ -719,15 +710,11 @@ public class ReportService : IReportService
         // this whole block is necessary because of self organized committees, all functions are made to members there (BKDO-2475)
         var memberFunction = await _masterDataRepository.GetById<Function>(Function.MemberGuid);
 
-        foreach (var committee in generalElectionCommittees)
+        foreach (var membership in generalElectionCommittees
+                     .Where(committee => committee.SelfOrganized.HasValue && committee.SelfOrganized.Value)
+                     .SelectMany(committee => committee.Memberships))
         {
-            if (committee.SelfOrganized == true)
-            {
-                foreach (var m in committee.Memberships)
-                {
-                    m.Function = memberFunction;
-                }
-            }
+            membership.Function = memberFunction;
         }
 
         return generalElectionCommittees;
@@ -1328,10 +1315,10 @@ public class ReportService : IReportService
 
             foreach (var committee in filteredCommittees.Where(c => c.Memberships.Count != 0 && c.ActiveMemberCount > 0))
             {
-                var germanMembers = committee.Memberships.Where(m => m.IsSelected && !m.IsDeleted).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.GermanId));
-                var frenchMembers = committee.Memberships.Where(m => m.IsSelected && !m.IsDeleted).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.FrenchId));
-                var italianMembers = committee.Memberships.Where(m => m.IsSelected && !m.IsDeleted).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.ItalianId));
-                var romanshMembers = committee.Memberships.Where(m => m.IsSelected && !m.IsDeleted).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.RomanshId));
+                var germanMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.GermanId));
+                var frenchMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.FrenchId));
+                var italianMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.ItalianId));
+                var romanshMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.RomanshId));
 
                 var german = Math.Round((decimal)germanMembers / committee.ActiveMemberCount * 100, 2);
                 var french = Math.Round((decimal)frenchMembers / committee.ActiveMemberCount * 100, 2);
@@ -1415,19 +1402,7 @@ public class ReportService : IReportService
 
     private static List<ReportDepartmentDto> GetDepartmentsOnly(IEnumerable<Department> departments)
     {
-        var departmentList = new List<ReportDepartmentDto>();
-
-        foreach (var department in departments)
-        {
-            var dto = new ReportDepartmentDto
-            {
-                Name = department.GetText()
-            };
-
-            departmentList.Add(dto);
-        }
-
-        return departmentList;
+        return departments.Select(department => new ReportDepartmentDto { Name = department.GetText() }).ToList();
     }
 
     private static IEnumerable<ReportCommitteeWithFreeTextDto> GetNonReleasedCommissions(IEnumerable<ReportGeneralElectionCommitteeDto> nonReleasedCommissions)
@@ -1528,7 +1503,7 @@ public class ReportService : IReportService
 
             ReportMembershipType.FederalAssemblyCurrent => committee.Memberships
                 // only members NOT belonging in the legislature periode of next GeneralElection
-                .Where(m => m.Person != null && m.Person.FederalAssembly && !m.Person.LegislaturePeriods.Any(lp => lp.Id == legislaturePeriodId))
+                .Where(m => m.Person is { FederalAssembly: true } && m.Person.LegislaturePeriods.All(lp => lp.Id != legislaturePeriodId))
                 .OrderBy(m => m.Person!.Surname)
                 .ThenBy(m => m.Person!.GivenName)
                 .Select(membership => new ReportMembershipDto
@@ -1545,7 +1520,7 @@ public class ReportService : IReportService
 
             ReportMembershipType.FederalAssemblyFuture => committee.Memberships
                // only members belonging in the legislature periode of next GeneralElection
-               .Where(m => m.Person != null && m.Person.FederalAssembly && m.Person.LegislaturePeriods.Any(lp => lp.Id == legislaturePeriodId))
+               .Where(m => m.Person is { FederalAssembly: true } && m.Person.LegislaturePeriods.Any(lp => lp.Id == legislaturePeriodId))
                 .OrderBy(m => m.Person!.Surname)
                 .ThenBy(m => m.Person!.GivenName)
                 .Select(membership => new ReportMembershipDto
