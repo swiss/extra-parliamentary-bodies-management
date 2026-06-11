@@ -107,9 +107,8 @@ volumes:
   apg-minio-data:
 ```
 
-This docker file contains a reference to a reference to a KeyCloak real export file which will be imported when KeyCloak is initialized.
+This docker file contains a reference to a KeyCloak realm export file which will be imported when KeyCloak is initialized.
 An example export can be found here: https://github.com/swiss/extra-parliamentary-bodies-management/blob/main/etc/apg-docker/keycloak-realms/bk-apg-realm.json
-
 
 ## Add user secrets
 
@@ -125,18 +124,51 @@ You can add user secrets (see: https://learn.microsoft.com/en-us/aspnet/core/sec
     "Username": "postgres",
     "Password": "postgres"
   },
-  "Sparql": {
-    "Username": "your_lindas_user",
-    "Password": "your_lindas_password"
-  },
   "Post": {
     "Username": "your_post_user",
     "Password": "your_post_password"
   },
   "DocumentService": {
     "ClientId": "your_document_service_client_id",
-    "ClientSecret": "your_document_service_secret"
-  }
+    "ClientSecret": "your_document_service_secret",
+    "Url": "your_document_service_url",
+    "TokenUrl": "your_document_service_token_url"
+  },
+  "Frontend": {
+    "FroalaKey": "your_froala_key",
+    "OpenDataStack": {
+      "BaseUrl": "your_opendata_stack_base_url",
+    }
+  },
+  "OgdS3": {
+    "access_key": "your_ogds3_access_key",
+    "secret_access_key": "your_ogds3_secret_access_key",
+    "s3_endpoint": "your_ogds3_endpoint",
+    "BaseUrl": "your_ogds3_base_url"
+  },
+  "S3": {
+    "access_key": "minioadmin",
+    "secret_access_key": "minioadmin"
+  },
+  "OpenDataStack": {
+    "BaseUrl": "your_opendata_stack_base_url"
+  },
+  "Sparql": {
+    "MasterDataProxy": {
+      "Address": "your_proxy_address"
+    }
+  },
+  "SparqlTargets": {
+    "Targets": {
+      "LindasNext": {
+        "Username": "your_lindas_next_user",
+        "Password": "your_lindas_next_password",
+        "Proxy": {
+          "Address": "your_proxy_address"
+        }
+      }
+    }
+  },
 }
 ```
 

@@ -198,14 +198,7 @@ public class PersonService : IPersonService
 
         existingEntry.CorrespondenceLanguageId = updateDto.CorrespondenceLanguageId;
 
-        if (updateDto.SalutationId == null)
-        {
-            existingEntry.SalutationId = updateDto.GenderId == Gender.MaleGuid ? Salutation.ManGuid : Salutation.WomanGuid;
-        }
-        else
-        {
-            existingEntry.SalutationId = updateDto.SalutationId;
-        }
+        existingEntry.SalutationId = updateDto.SalutationId ?? (updateDto.GenderId == Gender.MaleGuid ? Salutation.ManGuid : Salutation.WomanGuid);
 
         existingEntry.CouncilId = updateDto.CouncilId;
         existingEntry.OfficeId = updateDto.OfficeId;
@@ -395,7 +388,7 @@ public class PersonService : IPersonService
         if (birthYear.ToString(CultureInfo.InvariantCulture)[2] != birthYear.ToString(CultureInfo.InvariantCulture)[3])
         {
             var birthYearWithLastDigitsExchanged = birthYear.ToString(CultureInfo.InvariantCulture).Substring(0, 2) + birthYear.ToString(CultureInfo.InvariantCulture)[3] + birthYear.ToString(CultureInfo.InvariantCulture)[2];
-            var personsWithSimilarBirthYear = await _personRepository.GetPersonsByBirthYear(Convert.ToInt32(birthYearWithLastDigitsExchanged, CultureInfo.InvariantCulture), 0);
+            var personsWithSimilarBirthYear = await _personRepository.GetPersonsByBirthYear(Convert.ToInt32(birthYearWithLastDigitsExchanged, CultureInfo.InvariantCulture));
 
             personsInBirthYearRange.AddRange(personsWithSimilarBirthYear.Where(pNew => !personsInBirthYearRange.Select(p => p.Id).Contains(pNew.Id)));
         }

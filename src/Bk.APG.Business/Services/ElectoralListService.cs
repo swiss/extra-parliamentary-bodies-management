@@ -51,15 +51,11 @@ public class ElectoralListService : IElectoralListService
         var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToList();
 
         // this whole block is necessary because of self organized committees, all functions are made to members there (BKDO-2475)
-        foreach (var committee in generalElectionCommitteesWithMembers)
+        foreach (var membership in generalElectionCommitteesWithMembers
+                     .Where(committee => committee.SelfOrganized.HasValue && committee.SelfOrganized.Value)
+                     .SelectMany(committee => committee.Memberships))
         {
-            if (committee.SelfOrganized == true)
-            {
-                foreach (var m in committee.Memberships)
-                {
-                    m.Function = memberFunction;
-                }
-            }
+            membership.Function = memberFunction;
         }
 
         // This lookup is used for other memberships of a person which does not belong to the current committee.

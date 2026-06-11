@@ -1,10 +1,10 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {inject} from '@angular/core';
-import {CanActivateFn, Router} from '@angular/router';
+import {ActivatedRouteSnapshot, Router} from '@angular/router';
 import {catchError, map, of, throwError} from 'rxjs';
 import {GeneralElectionCommitteeDetailsService} from './ge-committee-details/ge-committee-details.service';
 
-export const GeneralElectionCommitteeExistsGuard: CanActivateFn = route => {
+export const GeneralElectionCommitteeExistsGuard = (route: ActivatedRouteSnapshot) => {
     const router = inject(Router);
     const service = inject(GeneralElectionCommitteeDetailsService);
     const committeeId = route.paramMap.get('id');
