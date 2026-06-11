@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -41,17 +42,20 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<GeneralElectionCommittee> GetForCandidateListExport(Guid committeeId, IEnumerable<Guid> membershipCandidateIds)
     {
+        var candidateIds = membershipCandidateIds.ToHashSet();
+        var includeAllCandidates = candidateIds.Count == 0;
+
         var generalElectionCommittee = await GetGeneralElectionCommittees()
             .Include(y => y.MembershipCandidates
-                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
                     .ThenInclude(mc => mc.Person)
                     .ThenInclude(p => p!.Interests)
             .Include(y => y.MembershipCandidates
-                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
                     .ThenInclude(mc => mc.Person)
                     .ThenInclude(p => p!.CorrespondenceAddress)
             .Include(y => y.MembershipCandidates
-                .Where(mc => !membershipCandidateIds.Any() || membershipCandidateIds.Contains(mc.Id)))
+                .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
                     .ThenInclude(mc => mc.Person)
                     .ThenInclude(p => p!.Occupations)
             .AsNoTracking()
@@ -112,8 +116,10 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
         var committees = await _dataContext.GeneralElectionCommittees
-            .Where(x => !filterDto.ReleasedCommittees || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .Where(IsCommitteeReleasedPredicate(filterDto.ReleasedCommittees))
             .Include(item => item.Committee)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
@@ -197,6 +203,14 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .ToListAsync();
 
         return committees;
+    }
+
+    private static Expression<Func<GeneralElectionCommittee, bool>> IsCommitteeReleasedPredicate(bool releasedCommittees)
+    {
+        return x =>
+            !releasedCommittees
+            || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded
+            || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
     }
 
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetterPreview(GeneralElectionCommitteeExportFilterParameters filterDto, List<Guid> electionTypesIds)
@@ -415,9 +429,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task DeleteAll()
     {
-        var allEntities = _dataContext.GeneralElectionCommittees.ToList();
-        _dataContext.GeneralElectionCommittees.RemoveRange(allEntities);
-        await _dataContext.SaveChangesAsync();
+        await _dataContext.GeneralElectionCommittees.ExecuteDeleteAsync();
     }
 
     public async Task<GeneralElectionCommittee> GetByCommitteeIdForUpdate(Guid committeeId, uint? updateDtoRowVersion = null)

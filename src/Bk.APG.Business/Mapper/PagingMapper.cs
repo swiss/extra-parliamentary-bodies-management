@@ -13,8 +13,8 @@ public static class PagingMapper
 
         return new PagingParameters
         {
-            PageIndex = dto.PageIndex.Value,
-            PageSize = dto.PageSize.Value
+            PageIndex = dto.PageIndex.GetValueOrDefault(),
+            PageSize = dto.PageSize.GetValueOrDefault()
         };
     }
 }
