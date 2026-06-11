@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "00.SolutionItems", "00.Solu
 		..\.trivyignore = ..\.trivyignore
 		..\image_version.json = ..\image_version.json
 		..\CHANGELOG.md = ..\CHANGELOG.md
+		..\GETTING-STARTED.md = ..\GETTING-STARTED.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "30.Business", "30.Business", "{3842F429-3A52-4A30-99EB-4DBF90797AE9}"
