@@ -1,6 +1,6 @@
 import {HttpErrorResponse} from '@angular/common/http';
 import {TestBed} from '@angular/core/testing';
-import {ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree} from '@angular/router';
+import {ActivatedRouteSnapshot, Router, UrlTree} from '@angular/router';
 import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
 import {of, throwError} from 'rxjs';
 import {GeneralElectionCommitteeDetailsService} from './ge-committee-details/ge-committee-details.service';
@@ -49,7 +49,7 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
         (route.paramMap.get as jest.Mock).mockReturnValue('123');
         service.generalElectionCommitteeDetails.mockReturnValue(of(mockCommittee));
 
-        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route, {} as RouterStateSnapshot));
+        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route));
 
         if (typeof result === 'object' && 'subscribe' in result) {
             result.subscribe(value => {
@@ -67,7 +67,7 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
         (route.paramMap.get as jest.Mock).mockReturnValue('123');
         service.generalElectionCommitteeDetails.mockReturnValue(of(mockCommittee));
 
-        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route, {} as RouterStateSnapshot));
+        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route));
 
         if (typeof result === 'object' && 'subscribe' in result) {
             result.subscribe(() => {
@@ -82,7 +82,7 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
         (route.paramMap.get as jest.Mock).mockReturnValue('123');
         service.generalElectionCommitteeDetails.mockReturnValue(throwError(() => error));
 
-        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route, {} as RouterStateSnapshot));
+        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route));
 
         if (typeof result === 'object' && 'subscribe' in result) {
             result.subscribe(value => {
@@ -100,7 +100,7 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
         (route.paramMap.get as jest.Mock).mockReturnValue('123');
         service.generalElectionCommitteeDetails.mockReturnValue(throwError(() => error));
 
-        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route, {} as RouterStateSnapshot));
+        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route));
 
         if (typeof result === 'object' && 'subscribe' in result) {
             result.subscribe({
@@ -120,7 +120,7 @@ describe('GeneralElectionCommitteeExistsGuard', () => {
         const mockUrlTree = {} as UrlTree;
         router.createUrlTree.mockReturnValue(mockUrlTree);
 
-        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route, {} as RouterStateSnapshot));
+        const result = TestBed.runInInjectionContext(() => GeneralElectionCommitteeExistsGuard(route));
 
         expect(result).toBe(mockUrlTree);
         expect(router.createUrlTree).toHaveBeenCalledWith(['/general-election/committees']);
