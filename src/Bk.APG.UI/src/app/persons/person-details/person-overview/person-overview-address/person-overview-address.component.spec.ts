@@ -1,5 +1,4 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {AddressDetails} from '@api/AddressDetails';
 import {TranslatePipe} from '@ngx-translate/core';
 import {MockPipe} from 'ng-mocks';
 import {PersonOverviewAddressComponent} from './person-overview-address.component';
@@ -29,7 +28,7 @@ describe('PersonsAddressDetailComponent', () => {
             zip: '12345',
             city: 'New York',
             canton: 'NY',
-        } as AddressDetails);
+        });
         fixture.detectChanges();
         expect(component.zipCity()).toBe('US-12345 New York (NY)');
     });
@@ -39,7 +38,7 @@ describe('PersonsAddressDetailComponent', () => {
             zip: '12345',
             city: 'New York',
             canton: 'NY',
-        } as AddressDetails);
+        });
         fixture.detectChanges();
         expect(component.zipCity()).toBe('12345 New York (NY)');
     });
@@ -49,7 +48,8 @@ describe('PersonsAddressDetailComponent', () => {
             country: 'US',
             zip: '12345',
             city: 'New York',
-        } as AddressDetails);
+        });
+
         fixture.detectChanges();
         expect(component.zipCity()).toBe('US-12345 New York');
     });
@@ -58,13 +58,13 @@ describe('PersonsAddressDetailComponent', () => {
         fixture.componentRef.setInput('addressDetail', {
             zip: '12345',
             city: 'New York',
-        } as AddressDetails);
+        });
         fixture.detectChanges();
         expect(component.zipCity()).toBe('12345 New York');
     });
 
     it('should compute zipCity correctly with empty fields', () => {
-        fixture.componentRef.setInput('addressDetail', {} as AddressDetails);
+        fixture.componentRef.setInput('addressDetail', {});
         fixture.detectChanges();
         expect(component.zipCity()).toBe('');
     });
@@ -75,7 +75,7 @@ describe('PersonsAddressDetailComponent', () => {
             zip: '10115',
             city: 'Berlin',
             canton: '',
-        } as AddressDetails);
+        });
         fixture.detectChanges();
         expect(component.zipCity()).toBe('DE-10115 Berlin');
 
@@ -84,7 +84,7 @@ describe('PersonsAddressDetailComponent', () => {
             zip: '10115',
             city: 'Berlin',
             canton: 'BE',
-        } as AddressDetails);
+        });
         fixture.detectChanges();
         expect(component.zipCity()).toBe('DE-10115 Berlin (BE)');
     });
@@ -95,7 +95,7 @@ describe('PersonsAddressDetailComponent', () => {
             zip: '75001',
             city: 'Paris',
             canton: 'IDF',
-        } as AddressDetails);
+        });
         fixture.detectChanges();
         expect(component.zipCity()).toBe('FR-75001 Paris (IDF)');
     });

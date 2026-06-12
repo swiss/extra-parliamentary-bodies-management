@@ -125,7 +125,7 @@ describe('CommitteeTypeEditComponent', () => {
                 frenchThresholdPercentage: 30,
                 italianThresholdPercentage: 30,
                 romanshThresholdPercentage: 5,
-            } as CommitteeTypeUpdate;
+            };
 
             component.save();
 
