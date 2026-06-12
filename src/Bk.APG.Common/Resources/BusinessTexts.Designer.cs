@@ -340,6 +340,69 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to nicht vertreten.
+        /// </summary>
+        public static string Compare_List_Language_Missing {
+            get {
+                return ResourceManager.GetString("Compare_List_Language_Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keine Untervertretung.
+        /// </summary>
+        public static string Compare_List_Language_OK {
+            get {
+                return ResourceManager.GetString("Compare_List_Language_OK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mann.
+        /// </summary>
+        public static string Compare_List_Man {
+            get {
+                return ResourceManager.GetString("Compare_List_Man", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Männer.
+        /// </summary>
+        public static string Compare_List_Men {
+            get {
+                return ResourceManager.GetString("Compare_List_Men", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Frau.
+        /// </summary>
+        public static string Compare_List_Woman {
+            get {
+                return ResourceManager.GetString("Compare_List_Woman", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Frauen.
+        /// </summary>
+        public static string Compare_List_Women {
+            get {
+                return ResourceManager.GetString("Compare_List_Women", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vergleichsliste GEW Überprüfung.
+        /// </summary>
+        public static string CompareList_FileName {
+            get {
+                return ResourceManager.GetString("CompareList_FileName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ständeratin.
         /// </summary>
         public static string CouncilOfStateFemale {

@@ -159,28 +159,22 @@ public static class CommitteeQueryExtensions
         return query;
     }
 
-    public static IQueryable<Committee> FilterCommitteeByPermission(this IQueryable<Committee> query, Guid departmentId, Guid officeId, Guid committeeId, CommitteeExportFilterParametersDto? filterDto = null)
+    public static IQueryable<Committee> FilterCommitteeByPermission(this IQueryable<Committee> query, Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto? filterDto = null)
     {
         if (filterDto != null)
         {
-            if (filterDto.ReportType != null)
+            var reportIsGeneralElectionOnly = false;
+
+            if (filterDto.DocumentType == ReportType.Vacancies)
             {
-                var reportIsGeneralElectionOnly = false;
+                reportIsGeneralElectionOnly = true;
+                query = query.Where(c => c.VacanciesGeneralElection > 0);
+            }
+            // TODO, other report type will have to be added here.
 
-                if (Enum.TryParse<ReportType>(filterDto.ReportType, out var parsedReportType))
-                {
-                    if (parsedReportType == ReportType.Vacancies)
-                    {
-                        reportIsGeneralElectionOnly = true;
-                        query = query.Where(c => c.VacanciesGeneralElection > 0);
-                    }
-                    // TODO, other report type will have to be added here.
-
-                    if (reportIsGeneralElectionOnly)
-                    {
-                        query = query.Where(c => c.CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && c.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid);
-                    }
-                }
+            if (reportIsGeneralElectionOnly)
+            {
+                query = query.Where(c => c.CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && c.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid);
             }
 
             if (filterDto.DepartmentIds is not null && filterDto.DepartmentIds.Any())
