@@ -31,7 +31,7 @@ public class CommitteesController : ControllerBase
     }
 
     [HttpGet("listExport")]
-    public async Task<ActionResult> GetAllForExport([FromQuery] RequestAndReportsFilterParametersDto? filterParameters)
+    public async Task<ActionResult> GetAllForExport([FromQuery] ReportFilterParametersDto? filterParameters)
     {
         var committees = await _committeeService.GetCommitteeListForExport(filterParameters);
         return Ok(committees);
