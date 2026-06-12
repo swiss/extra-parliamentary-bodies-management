@@ -5,7 +5,6 @@ import {MatButton} from '@angular/material/button';
 import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle} from '@angular/material/dialog';
 import {MatInput} from '@angular/material/input';
 import {MatError, MatFormField, MatLabel, MatOption, MatSelect} from '@angular/material/select';
-import {CandidateListForward} from '@api/CandidateListForward';
 import {EiamAssignment} from '@api/EiamAssignment';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ObButtonDirective, ObErrorMessagesDirective, ObMatErrorDirective, ObNotificationService} from '@oblique/oblique';
@@ -61,15 +60,13 @@ export class CandidateListForwardDialogComponent implements OnInit {
             return;
         }
 
-        this.candidateListService
-            .forwardCandidateList(this.data.committeeId, {candidateIds: this.data.candidateIds, ...this.form.getRawValue()} as CandidateListForward)
-            .subscribe({
-                next: () => {
-                    this.detailsService.reload$.next();
-                    this.notificationService.success('generalElection.committee.candidateList.forward.success');
-                },
-                error: () => this.notificationService.error('generalElection.committee.candidateList.forward.error'),
-            });
+        this.candidateListService.forwardCandidateList(this.data.committeeId, {candidateIds: this.data.candidateIds, ...this.form.getRawValue()}).subscribe({
+            next: () => {
+                this.detailsService.reload$.next();
+                this.notificationService.success('generalElection.committee.candidateList.forward.success');
+            },
+            error: () => this.notificationService.error('generalElection.committee.candidateList.forward.error'),
+        });
     }
 
     private buildForm() {
