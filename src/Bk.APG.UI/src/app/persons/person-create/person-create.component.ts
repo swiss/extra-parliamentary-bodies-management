@@ -33,7 +33,7 @@ export class PersonCreateComponent {
             return;
         }
 
-        const personToCreate = this.formComponent().buildPersonModification() as PersonCreate;
+        const personToCreate = this.formComponent().buildPersonModification();
 
         this.personsService.createPerson(personToCreate).subscribe({
             next: async p => {

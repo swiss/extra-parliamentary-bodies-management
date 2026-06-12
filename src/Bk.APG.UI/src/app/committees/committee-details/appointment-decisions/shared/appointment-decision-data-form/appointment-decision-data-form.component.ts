@@ -97,12 +97,7 @@ export class AppointmentDecisionDataFormComponent {
             .pipe(debounceTime(300), takeUntilDestroyed())
             .subscribe(() => {
                 const formValues = {...this.appointmentDecisionForm.getRawValue(), documents: this.documentsForm.getRawValue()};
-                this.appointmentDecisionModification.update(
-                    value =>
-                        ({...value, ...(formValues as AppointmentDecisionCreate | AppointmentDecisionUpdate)}) as
-                            | AppointmentDecisionCreate
-                            | AppointmentDecisionUpdate
-                );
+                this.appointmentDecisionModification.update(value => ({...value, ...(formValues as AppointmentDecisionCreate | AppointmentDecisionUpdate)}));
             });
 
         effect(() => {
