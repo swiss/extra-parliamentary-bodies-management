@@ -16,7 +16,7 @@ describe('PersonsService', () => {
     } as unknown as jest.Mocked<HttpClient>;
 
     beforeEach(() => {
-        service = new PersonsService(httpClientMock as unknown as HttpClient);
+        service = new PersonsService(httpClientMock);
     });
 
     afterEach(() => {
@@ -46,7 +46,7 @@ describe('PersonsService', () => {
         };
         httpClientMock.get.mockReturnValue(of(mockResponse));
 
-        const response = await firstValueFrom(service.getPersonList(paging, {} as PersonFilterParameters, sort));
+        const response = await firstValueFrom(service.getPersonList(paging, {}, sort));
 
         expect(response).toBeTruthy();
         expect(response.total).toEqual(100);

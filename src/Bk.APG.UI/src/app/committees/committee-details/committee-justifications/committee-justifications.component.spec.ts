@@ -131,7 +131,7 @@ describe('CommitteeJustificationsComponent', () => {
                 id: '999',
                 justificationGenders: 'justificationGenders',
                 rowVersion: 123,
-            } as CommitteeJustificationUpdate;
+            };
 
             component.save();
 

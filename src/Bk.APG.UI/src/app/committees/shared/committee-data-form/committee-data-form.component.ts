@@ -199,7 +199,7 @@ export class CommitteeDataFormComponent implements OnInit {
 
         this.committeeForm.valueChanges.pipe(debounceTime(300), takeUntilDestroyed()).subscribe(() => {
             const formValues = this.committeeForm.getRawValue(); // getRawValue because we need the disabled values as well
-            this.committeeModification.update(value => ({...value, ...(formValues as CommitteeUpdate | CommitteeCreate)}) as CommitteeUpdate | CommitteeCreate);
+            this.committeeModification.update(value => ({...value, ...(formValues as CommitteeUpdate | CommitteeCreate)}));
 
             if (
                 !this.isUpdateMode &&
