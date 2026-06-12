@@ -7,7 +7,7 @@ namespace Bk.APG.Business.Services;
 public interface ICommitteeService
 {
     Task<PagedResultDto<CommitteeListDto>> GetCommitteeList(PagingParametersDto paging, CommitteeFilterParametersDto? filter, string? sort, SortDirection? sortDirection);
-    Task<IEnumerable<CommitteeListDto>> GetCommitteeListForExport(RequestAndReportsFilterParametersDto? filterParameters);
+    Task<IEnumerable<CommitteeListDto>> GetCommitteeListForExport(ReportFilterParametersDto? filterParameters);
     Task<IEnumerable<Committee>> GetCommitteesForGeneralElection();
     Task<IEnumerable<Committee>> GetCommitteesWithRetiredMembers(GeneralElectionCommitteeExportFilterParametersDto? filter, List<Guid> electionTypeIds);
     Task<CommitteeDetailDto> GetCommitteeDetail(Guid id, bool ignoreGeneralElectionPart = false);

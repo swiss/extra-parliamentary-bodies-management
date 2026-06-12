@@ -19,8 +19,8 @@ public class ParliamentaryReportDto
     public required int NumberOfExtraParliamentaryCommissions { get; set; }
     public required decimal FemalePercentage { get; set; }
     public required decimal MalePercentage { get; set; }
-    public required int FemaleUnderStuffed { get; set; }
-    public required int MaleUnderStuffed { get; set; }
+    public required int FemaleUnderStaffed { get; set; }
+    public required int MaleUnderStaffed { get; set; }
     public required int FrenchMissing { get; set; }
     public required int ItalianMissing { get; set; }
     public required int FrenchAndItalianMissing { get; set; }
