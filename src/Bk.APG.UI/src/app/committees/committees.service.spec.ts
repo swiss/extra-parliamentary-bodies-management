@@ -50,7 +50,7 @@ describe('CommitteesService', () => {
         };
         httpClientMock.get.mockReturnValue(of(mockResponse));
 
-        const response = await firstValueFrom(service.getCommitteeList(paging, {} as CommitteeFilterParameters, sort));
+        const response = await firstValueFrom(service.getCommitteeList(paging, {}, sort));
 
         expect(response).toBeTruthy();
         expect(response.total).toEqual(100);

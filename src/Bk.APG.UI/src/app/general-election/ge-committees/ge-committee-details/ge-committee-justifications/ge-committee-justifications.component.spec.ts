@@ -132,7 +132,7 @@ describe('GeCommitteeJustificationsComponent', () => {
                 selectionProcedure: 'selectionProcedure',
                 justificationGenders: 'justificationGenders',
                 rowVersion: 123,
-            } as GeneralElectionCommitteeJustificationUpdate;
+            };
 
             component.save();
 
