@@ -6,7 +6,6 @@ import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, Mat
 import {MatInput} from '@angular/material/input';
 import {MatError, MatFormField, MatLabel, MatOption, MatSelect} from '@angular/material/select';
 import {EiamAssignment} from '@api/EiamAssignment';
-import {ReadyForProposalForward} from '@api/ReadyForProposalForward';
 import {TranslatePipe} from '@ngx-translate/core';
 import {ObButtonDirective, ObErrorMessagesDirective, ObMatErrorDirective, ObNotificationService} from '@oblique/oblique';
 import {GeneralElectionCommitteeDetailsService} from '../../ge-committee-details.service';
@@ -62,7 +61,7 @@ export class ReadyForProposalForwardDialogComponent implements OnInit {
 
         this.dialogRef.close();
 
-        this.dataService.forwardReadyForProposal(this.data.committeeId, this.form.getRawValue() as ReadyForProposalForward).subscribe({
+        this.dataService.forwardReadyForProposal(this.data.committeeId, this.form.getRawValue()).subscribe({
             next: () => {
                 this.detailsService.reload$.next();
                 this.notificationService.success('generalElection.committee.data.readyForProposal.forward.success');
