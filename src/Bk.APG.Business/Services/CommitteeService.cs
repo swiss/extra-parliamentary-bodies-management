@@ -99,13 +99,11 @@ public class CommitteeService : ICommitteeService
         };
     }
 
-    public async Task<IEnumerable<CommitteeListDto>> GetCommitteeListForExport(RequestAndReportsFilterParametersDto? filterParameters = null)
+    public async Task<IEnumerable<CommitteeListDto>> GetCommitteeListForExport(ReportFilterParametersDto? filterParameters = null)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
-        var filterParameterDto = CommitteeMapper.ToCommitteeExportFilterParametersDto(filterParameters);
-
-        var committees = await _committeeRepository.GetAllForExport(departmentId, officeId, committeeId, filterParameterDto);
+        var committees = await _committeeRepository.GetAllForExport(departmentId, officeId, committeeId, filterParameters);
 
         var mappedCommittees = committees.Select(committee => CommitteeMapper.ToCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
 

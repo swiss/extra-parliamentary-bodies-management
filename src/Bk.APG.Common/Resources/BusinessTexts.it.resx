@@ -329,7 +329,10 @@
     </data>
     <data name="Information_Note_Filename" xml:space="preserve">
         <value>IT Informationsnotiz</value>
-    </data>    
+    </data>
+    <data name="CompareList_FileName" xml:space="preserve">
+        <value>IT_Vergleichsliste GEW Überprüfung</value>
+    </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Consigliera nazionale</value>
     </data>
@@ -485,5 +488,23 @@
     </data>
     <data name="Office_Decentral" xml:space="preserve">
         <value>IT_dezentral</value>
+    </data>
+    <data name="Compare_List_Language_Missing" xml:space="preserve">
+        <value>IT_nicht vertreten</value>
+    </data>
+    <data name="Compare_List_Language_OK" xml:space="preserve">
+        <value>IT_Keine Untervertretung</value>
+    </data>
+    <data name="Compare_List_Women" xml:space="preserve">
+        <value>IT_Frauen</value>
+    </data>
+    <data name="Compare_List_Woman" xml:space="preserve">
+        <value>IT_Frau</value>
+    </data>
+    <data name="Compare_List_Men" xml:space="preserve">
+        <value>IT_Männer</value>
+    </data>
+    <data name="Compare_List_Man" xml:space="preserve">
+        <value>IT_Mann</value>
     </data>
 </root>
