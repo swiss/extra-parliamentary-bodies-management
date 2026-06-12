@@ -8,6 +8,7 @@ public class ReportGeneralElectionCommitteeDto
 {
     // This DTO, even though called GeneralElection, can also be used for normal committees!
     public Guid Id { get; init; }
+    public int CommitteeNumber { get; set; }
     public DateOnly BeginDate { get; set; }
     public DateOnly? EndDate { get; set; }
 
@@ -97,10 +98,10 @@ public class ReportGeneralElectionCommitteeDto
     public int MaleCount => Memberships.Count(x => x is { IsSelected: true, Person.Gender.Uri: Gender.Male, IsDeleted: false });
 
     [NotMapped]
-    public bool FemaleUnderStuffed => ActiveMemberCount > 0 && 100 / ActiveMemberCount * FemaleCount < CommitteeType!.FemaleThreshold;
+    public bool FemaleUnderStaffed => ActiveMemberCount > 0 && 100 / ActiveMemberCount * FemaleCount < CommitteeType!.FemaleThreshold;
 
     [NotMapped]
-    public bool MaleUnderStuffed => ActiveMemberCount > 0 && 100 / ActiveMemberCount * MaleCount < CommitteeType!.MaleThreshold;
+    public bool MaleUnderStaffed => ActiveMemberCount > 0 && 100 / ActiveMemberCount * MaleCount < CommitteeType!.MaleThreshold;
 
     [NotMapped]
     public int GermanCount => Memberships.Count(x => x is { IsSelected: true, Person.Language.Uri: Language.GermanUri, IsDeleted: false });

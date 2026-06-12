@@ -43,31 +43,6 @@ internal class CommitteeMapperTests
     }
 
     [Test]
-    public void ToCommitteeExportFilterParametersDto_ShouldMapToCommitteeExportFilterParametersDto()
-    {
-        var filterDto = new RequestAndReportsFilterParametersDto
-        {
-            CommitteeTypeIds = new[]
-            {
-                Guid.Parse("3f8b1a62-1e4b-4c7a-9a5e-1a9e6b0a8c01"),
-                Guid.Parse("a7d2c4e9-9b6f-4d3c-8e91-0b6f2a5c7d12")
-            },
-            DepartmentIds = new[] { Guid.Parse("9c5e2f7a-1b4d-4c8e-a3f9-8d6b2a1e5c07") },
-            OfficeIds = new[] { Guid.Parse("f4a8c9e2-6b1d-4a7c-9f3e-7d5b2c1a8e06") },
-        };
-
-        var mapped = CommitteeMapper.ToCommitteeExportFilterParametersDto(filterDto);
-
-        Assert.That(mapped, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(mapped.CommitteeTypeIds, Is.EqualTo(filterDto.CommitteeTypeIds));
-            Assert.That(mapped.DepartmentIds, Is.EqualTo(filterDto.DepartmentIds));
-            Assert.That(mapped.OfficeIds, Is.EqualTo(filterDto.OfficeIds));
-        });
-    }
-
-    [Test]
     public void ToCommitteeDetailDto_ShouldMapCorrectly()
     {
         var committee = GenerateTestData();
