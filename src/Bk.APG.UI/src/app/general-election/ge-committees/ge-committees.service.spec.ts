@@ -6,7 +6,6 @@ import {GeneralElectionCommitteeFilterParameters} from '@api/GeneralElectionComm
 import {GeneralElectionCommitteeList} from '@api/GeneralElectionCommitteeList';
 import {PagedResult} from '@api/PagedResult';
 import {PagingParameters} from '@api/PagingParameters';
-import {RecipientsFilterParameters} from '@api/RecipientsFilterParameters';
 import {SortParameter} from '@api/SortParameter';
 import {Subject} from 'rxjs';
 import {GeneralElectionCommitteesService} from './ge-committees.service';
@@ -51,7 +50,7 @@ describe('GeneralElectionCommitteesService', () => {
                     statusProposal: 'true',
                     modified: new Date(2025, 1, 1),
                     modifiedBy: 'test',
-                } as GeneralElectionCommitteeList,
+                },
                 {
                     id: '2',
                     committeeType: 'type',
@@ -79,7 +78,7 @@ describe('GeneralElectionCommitteesService', () => {
             direction: 'asc',
         };
 
-        service.getGeneralElectionCommitteeList(paging, {} as GeneralElectionCommitteeFilterParameters, sort).subscribe(result => {
+        service.getGeneralElectionCommitteeList(paging, {}, sort).subscribe(result => {
             expect(result).toEqual(mockPagedResult);
         });
 
@@ -144,7 +143,7 @@ describe('GeneralElectionCommitteesService', () => {
                 statusProposal: 'true',
                 modified: new Date(2025, 1, 1),
                 modifiedBy: 'test',
-            } as GeneralElectionCommitteeList,
+            },
             {
                 id: '2',
                 committeeType: 'type',
@@ -161,7 +160,7 @@ describe('GeneralElectionCommitteesService', () => {
             } as GeneralElectionCommitteeList,
         ];
 
-        service.getGeneralElectionCommitteeListForRecipientExport({} as RecipientsFilterParameters).subscribe(result => {
+        service.getGeneralElectionCommitteeListForRecipientExport({}).subscribe(result => {
             expect(result).toEqual(committeeList);
         });
 
@@ -187,7 +186,7 @@ describe('GeneralElectionCommitteesService', () => {
                 statusProposal: 'true',
                 modified: new Date(2025, 1, 1),
                 modifiedBy: 'test',
-            } as GeneralElectionCommitteeList,
+            },
             {
                 id: '2',
                 committeeType: 'type',

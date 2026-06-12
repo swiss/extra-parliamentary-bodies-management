@@ -122,7 +122,7 @@ export class GeneralElectionCommitteeDataFormComponent {
 
         this.committeeForm.valueChanges.pipe(debounceTime(300), takeUntilDestroyed()).subscribe(() => {
             const formValues = this.committeeForm.getRawValue(); // getRawValue because we need the disabled values as well
-            this.committeeModification.update(value => ({...value, ...(formValues as GeneralElectionCommitteeUpdate)}) as GeneralElectionCommitteeUpdate);
+            this.committeeModification.update(value => ({...value, ...(formValues as GeneralElectionCommitteeUpdate)}));
         });
 
         effect(() => {
