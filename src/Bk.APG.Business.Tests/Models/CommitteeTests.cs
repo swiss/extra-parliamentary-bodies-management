@@ -530,10 +530,10 @@ internal class CommitteeTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(committee.FemaleUnderStuffed, Is.False);
-            Assert.That(committee.MaleUnderStuffed, Is.True);
-            Assert.That(committee.FemaleUnderStuffedFuture, Is.False);
-            Assert.That(committee.MaleUnderStuffedFuture, Is.True);
+            Assert.That(committee.FemaleUnderStaffed, Is.False);
+            Assert.That(committee.MaleUnderStaffed, Is.True);
+            Assert.That(committee.FemaleUnderStaffedFuture, Is.False);
+            Assert.That(committee.MaleUnderStaffedFuture, Is.True);
         });
 
         committee.Memberships.Add(membershipFutureMale);
@@ -547,8 +547,8 @@ internal class CommitteeTests
             Assert.That(committee.MaleCountFuture, Is.EqualTo(1));
             Assert.That(committee.FemaleCount, Is.EqualTo(1));
             Assert.That(committee.MaleCount, Is.EqualTo(1));
-            Assert.That(committee.MaleUnderStuffed, Is.False);
-            Assert.That(committee.MaleUnderStuffedFuture, Is.False);
+            Assert.That(committee.MaleUnderStaffed, Is.False);
+            Assert.That(committee.MaleUnderStaffedFuture, Is.False);
         });
     }
 
