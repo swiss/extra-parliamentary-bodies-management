@@ -3,7 +3,6 @@ import {TestBed} from '@angular/core/testing';
 import {PagedResult} from '@api/PagedResult';
 import {PagingParameters} from '@api/PagingParameters';
 import {SortParameter} from '@api/SortParameter';
-import {WorklistFilterParameters} from '@api/WorklistFilterParameters';
 import {WorklistTask} from '@api/WorklistTask';
 import {WorklistService} from './worklist.service';
 
@@ -60,7 +59,7 @@ describe('WorklistService', () => {
             direction: 'asc',
         };
 
-        service.getWorklistTasks(paging, sort, {} as WorklistFilterParameters).subscribe(result => {
+        service.getWorklistTasks(paging, sort, {}).subscribe(result => {
             expect(result).toEqual(mockPagedResult);
         });
 

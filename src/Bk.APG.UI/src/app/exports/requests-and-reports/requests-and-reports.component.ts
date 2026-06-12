@@ -104,7 +104,7 @@ export class RequestsAndReportsComponent {
 
         if (!this.isGeneralElection) {
             this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([_, curr]) => {
-                this.onFilter({...curr} as RequestsAndReportsFilterParameters);
+                this.onFilter({...curr});
             });
 
             combineLatest([
@@ -185,7 +185,7 @@ export class RequestsAndReportsComponent {
     }
 
     onFilter(searchQuery: RequestsAndReportsFilterParameters) {
-        this.filterValue = {...searchQuery} as RequestsAndReportsFilterParameters;
+        this.filterValue = {...searchQuery};
         this.reload$.next();
     }
 
