@@ -13,7 +13,7 @@ describe('MembershipsService', () => {
     } as unknown as jest.Mocked<HttpClient>;
 
     beforeEach(() => {
-        service = new MembershipsService(httpClientMock as unknown as HttpClient);
+        service = new MembershipsService(httpClientMock);
     });
 
     afterEach(() => {
