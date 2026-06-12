@@ -120,7 +120,7 @@ export class RecipientsComponent {
 
         if (this.isGeneralElection) {
             this.form.valueChanges.pipe(startWith(this.form.value), takeUntilDestroyed()).subscribe(curr => {
-                this.onFilter({...curr} as RecipientsFilterParameters);
+                this.onFilter({...curr});
             });
 
             combineLatest([
