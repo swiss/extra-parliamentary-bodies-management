@@ -103,7 +103,23 @@ public class CommitteeService : ICommitteeService
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
-        var committees = await _committeeRepository.GetAllForExport(departmentId, officeId, committeeId, filterParameters);
+        var committees = new List<Committee>();
+
+        if (filterParameters?.DocumentType == ReportType.CompareListGeneralElection)
+        {
+            var committeesListDate1 = await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1);
+
+            var committeesListDate2 = await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate2);
+
+            var committeesList = committeesListDate1.Concat(committeesListDate2).DistinctBy(c => c.Id).ToList();
+
+            committees.AddRange(generateCommitteeListForCompareList(committeesList));
+        }
+        else
+        {
+            var committeesList = await _committeeRepository.GetAllForExport(departmentId, officeId, committeeId, filterParameters);
+            committees.AddRange(committeesList);
+        }
 
         var mappedCommittees = committees.Select(committee => CommitteeMapper.ToCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
 
@@ -1183,5 +1199,60 @@ public class CommitteeService : ICommitteeService
         }
 
         return statisticDto;
+    }
+
+    private static List<Committee> generateCommitteeListForCompareList(List<Committee> committeesListDate)
+    {
+        // we have to find all committees which require a justification in both lists and return the matches unique...
+        var hits = new List<Committee>();
+
+        foreach (var committee in committeesListDate)
+        {
+            var activeMemberCountOld = committee.Memberships.Count;
+            var currentCommitteeType = committee.CommitteeType;
+
+            if (committee.Memberships.Any(m => m.Person!.FederalDuty))
+            {
+                hits.Add(committee);
+                continue;
+            }
+
+            if (committee.Memberships.Any(m => m.Person!.FederalAssembly))
+            {
+                hits.Add(committee);
+                continue;
+            }
+
+            if ((activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.GenderId == Gender.FemaleGuid) / activeMemberCountOld * 100) < currentCommitteeType!.FemaleThreshold) ||
+                (activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid) / activeMemberCountOld * 100) < currentCommitteeType!.MaleThreshold)
+                )
+            {
+                hits.Add(committee);
+                continue;
+            }
+
+            if (currentCommitteeType != null && currentCommitteeType.GermanMinimalThreshold is not null)
+            {
+                if ((activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) < currentCommitteeType!.GermanMinimalThreshold) ||
+                    (activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) < currentCommitteeType!.FrenchMinimalThreshold) ||
+                    (activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) < currentCommitteeType!.ItalianMinimalThreshold))
+                {
+                    hits.Add(committee);
+                    continue;
+                }
+            }
+            else
+            {
+                if ((activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountOld * 100) < currentCommitteeType!.GermanThresholdPercentage) ||
+                    (activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountOld * 100) < currentCommitteeType!.FrenchThresholdPercentage) ||
+                    (activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountOld * 100) < currentCommitteeType!.ItalianThresholdPercentage))
+                {
+                    hits.Add(committee);
+                    continue;
+                }
+            }
+        }
+
+        return hits;
     }
 }

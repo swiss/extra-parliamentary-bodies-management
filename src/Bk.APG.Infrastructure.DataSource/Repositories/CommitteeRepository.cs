@@ -207,9 +207,12 @@ public class CommitteeRepository : ICommitteeRepository
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<Committee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
+    public async Task<IEnumerable<Committee>> GetByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? reportDate)
     {
         var committees = await _dataContext.Committees
+            // we only want GeneralElection commmittes, which are active at the reportDate.
+            .Where(c => c.CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && c.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid)
+            .Where(x => x.BeginDate <= reportDate && (x.EndDate == null || x.EndDate >= reportDate))
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -225,6 +228,8 @@ public class CommitteeRepository : ICommitteeRepository
             .ThenInclude(item => item!.Function)
             .Include(item => item.Memberships)
             .ThenInclude(item => item!.ElectionType)
+            .Include(item => item.Memberships)
+            .ThenInclude(item => item.Committee)
             .Include(item => item.MembershipAdditionsInGeneralElection)
             .FilterCommitteeByReportFilterParametersDto(filterDto, departmentId, officeId, committeeId)
             .AsSplitQuery()
@@ -238,7 +243,10 @@ public class CommitteeRepository : ICommitteeRepository
                 CreatedBy = c.CreatedBy,
                 BeginDate = c.BeginDate,
                 EndDate = c.EndDate,
+                TermOfOfficeDate = c.TermOfOfficeDate,
                 TermOfOfficeDateId = c.TermOfOfficeDateId,
+                TermOfOffice = c.TermOfOffice,
+                TermOfOfficeId = c.TermOfOfficeId,
                 DepartmentId = c.DepartmentId,
                 Department = c.Department,
                 OfficeId = c.OfficeId,
@@ -267,8 +275,8 @@ public class CommitteeRepository : ICommitteeRepository
                 LinkHomepageRomansh = c.LinkHomepageRomansh,
                 MembershipAdditionsInGeneralElection = c.MembershipAdditionsInGeneralElection,
                 Memberships = c.Memberships
-                    .Where(m => m.BeginDate <= filterDto.AnalysisDate1 &&
-                                m.EndDate >= filterDto.AnalysisDate1 &&
+                    .Where(m => m.BeginDate <= reportDate &&
+                                m.EndDate >= reportDate &&
                                 m.ElectionOfficeId != ElectionOffice.OtherGuid)
                     .ToList(),
             })
