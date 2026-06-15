@@ -111,14 +111,14 @@ export class MasterDataService {
     public getOfficeByName(officeName: string): Observable<Office[]> {
         const params = new HttpParams().set('officeName', officeName);
 
-        return this.http.get<Office[]>('/api/masterData/offices/search', {params});
+        return this.http.get<Office[]>('/api/master-data/offices/search', {params});
     }
 
     public getOccupationsByName(occupation: string): Observable<Occupation[]> {
         const params = new HttpParams().set('occupation', occupation);
 
-        return this.http.get<Occupation[]>('/api/masterData/occupations/search', {params});
+        return this.http.get<Occupation[]>('/api/master-data/occupations/search', {params});
     }
 
-    private readonly getMasterData = () => this.http.get<any>('/api/masterData');
+    private readonly getMasterData = () => this.http.get<any>('/api/master-data');
 }

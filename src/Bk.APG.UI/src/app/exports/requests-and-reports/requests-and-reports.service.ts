@@ -31,7 +31,7 @@ export class RequestsAndReportsService {
             releasedCommittees: filterParameters.releasedCommittees,
         };
 
-        return this.http.post('/api/Report/download', body, {
+        return this.http.post('/api/reports/download', body, {
             headers,
             observe: 'response' as const,
             responseType: 'blob' as const,

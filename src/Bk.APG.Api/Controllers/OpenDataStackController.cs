@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/open-data-stack")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
 public class OpenDataStackController : ControllerBase
 {

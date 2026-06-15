@@ -7,15 +7,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-public class ReportController : ControllerBase
+[Route("api/reports")]
+public class ReportsController : ControllerBase
 {
     private const string WordMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
 
     private readonly IReportService _reportService;
     private readonly IFormLetterService _formLetterService;
 
-    public ReportController(IReportService parliamentaryReportService, IFormLetterService formLetterService)
+    public ReportsController(IReportService parliamentaryReportService, IFormLetterService formLetterService)
     {
         _reportService = parliamentaryReportService;
         _formLetterService = formLetterService;
@@ -29,7 +29,7 @@ public class ReportController : ControllerBase
         return File(content, WordMimeType, fileName);
     }
 
-    [HttpPost("downloadFormLetter")]
+    [HttpPost("download/form-letter")]
     public async Task<ActionResult> GenerateReportFormLetter([FromBody, Required] FormLetterFilterParameters filterDto)
     {
         ArgumentNullException.ThrowIfNull(filterDto);
