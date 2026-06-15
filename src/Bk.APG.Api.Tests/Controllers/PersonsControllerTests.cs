@@ -13,13 +13,14 @@ internal class PersonsControllerTests
     private readonly IPersonService _personService = Substitute.For<IPersonService>();
     private readonly IMembershipService _membershipService = Substitute.For<IMembershipService>();
     private readonly ISalutationGeneratorService _salutationGeneratorService = Substitute.For<ISalutationGeneratorService>();
+    private readonly IInterestService _interestService = Substitute.For<IInterestService>();
 
     private PersonsController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new PersonsController(_personService, _membershipService, _salutationGeneratorService);
+        _controller = new PersonsController(_personService, _membershipService, _salutationGeneratorService, _interestService);
     }
 
     [TearDown]
@@ -28,6 +29,7 @@ internal class PersonsControllerTests
         _personService.ClearSubstitute();
         _membershipService.ClearSubstitute();
         _salutationGeneratorService.ClearSubstitute();
+        _interestService.ClearSubstitute();
     }
 
     [Test]
@@ -243,5 +245,60 @@ internal class PersonsControllerTests
         Assert.That(okResult, Is.Not.Null);
         Assert.That(okResult.StatusCode, Is.EqualTo(200));
         Assert.That(okResult.Value, Is.EqualTo("Foo Bar"));
+    }
+
+    [Test]
+    public async Task GetInterests_WhenCalled_ShouldCallServiceAndReturnResult()
+    {
+        var personId = Guid.NewGuid();
+
+        var interests = new Faker<InterestUpdateDto>().Generate(10);
+
+        _interestService
+            .GetInterestsForUpdateByPersonId(personId)
+            .Returns(interests);
+
+        var response = await _controller.GetInterests(personId);
+
+        Assert.That(response, Is.Not.Null);
+        var responseObject = response as OkObjectResult;
+
+        Assert.That(responseObject, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(responseObject.StatusCode, Is.EqualTo(200));
+            Assert.That(responseObject.Value, Is.EqualTo(interests));
+        });
+    }
+
+    [Test]
+    public async Task UpdateInterests_WhenCalled_ShouldCallServiceAndReturnResult()
+    {
+        var guid = Guid.NewGuid();
+        var updateDtos = new List<InterestUpdateDto>();
+        var updateDto = new InterestUpdateDto
+        {
+            Id = guid,
+            PersonId = Guid.NewGuid(),
+            Text = "my old text",
+            InterestText = "my new text",
+            InterestCommitteeId = Guid.NewGuid(),
+            InterestFunctionId = Guid.NewGuid(),
+            InterestLegalFormId = Guid.NewGuid(),
+            LegalFormId = Guid.NewGuid(),
+            RowVersion = 666
+        };
+
+        updateDtos.Add(updateDto);
+
+        var response = await _controller.UpdateInterests(guid, updateDtos.ToArray());
+
+        await _interestService.ReceivedWithAnyArgs().UpdateInterests(Arg.Is(guid), Arg.Is(updateDtos.ToArray()));
+
+        Assert.That(response, Is.Not.Null);
+        var responseObject = response as OkObjectResult;
+
+        Assert.That(responseObject, Is.Not.Null);
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
     }
 }

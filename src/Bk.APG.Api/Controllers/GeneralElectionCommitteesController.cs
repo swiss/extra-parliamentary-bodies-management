@@ -10,7 +10,7 @@ namespace Bk.APG.Api.Controllers;
 [ApiController]
 [Route("api/general-election/committees")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
-public class GeneralElectionCommitteeController : ControllerBase
+public class GeneralElectionCommitteesController : ControllerBase
 {
     private const string ExcelMimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 
@@ -18,7 +18,7 @@ public class GeneralElectionCommitteeController : ControllerBase
     private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
     private readonly IEiamAssignmentService _eiamAssignmentService;
 
-    public GeneralElectionCommitteeController(IMembershipCandidateService membershipCandidateService,
+    public GeneralElectionCommitteesController(IMembershipCandidateService membershipCandidateService,
         IGeneralElectionCommitteeService generalElectionCommitteeService,
         IEiamAssignmentService eiamAssignmentService)
     {
@@ -27,7 +27,7 @@ public class GeneralElectionCommitteeController : ControllerBase
         _eiamAssignmentService = eiamAssignmentService;
     }
 
-    [HttpPost("getDuplicateMembershipCandidate")]
+    [HttpPost("duplicate-membership-candidates")]
     public async Task<ActionResult> GetDuplicateMembershipCandidate([FromBody, Required] MembershipCandidateCreateDto dto)
     {
         ArgumentNullException.ThrowIfNull(dto);
@@ -104,7 +104,7 @@ public class GeneralElectionCommitteeController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("recipient")]
+    [HttpGet("recipients")]
     public async Task<IActionResult> GetGeneralElectionCommitteesForRecipientExport([FromQuery] GeneralElectionCommitteeExportFilterParametersDto? filterParameters)
     {
         var result = await _generalElectionCommitteeService.GetGeneralElectionCommitteeListForRecipientExport(filterParameters);
@@ -184,7 +184,7 @@ public class GeneralElectionCommitteeController : ControllerBase
     }
 
     [HttpGet]
-    [Route("checkUnfinishedCommittees")]
+    [Route("unfinished")]
     public async Task<IActionResult> CheckUnfinishedCommittees()
     {
         var unfinishedCommitteesList = await _generalElectionCommitteeService.GetAllUnfinishedCommittees();

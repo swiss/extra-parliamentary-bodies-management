@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class AddressControllerTests
+internal class AddressesControllerTests
 {
     private readonly IAddressService _addressService = Substitute.For<IAddressService>();
 
-    private AddressController _controller = null!;
+    private AddressesController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new AddressController(_addressService);
+        _controller = new AddressesController(_addressService);
     }
 
     [TearDown]
