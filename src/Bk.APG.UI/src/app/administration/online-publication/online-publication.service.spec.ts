@@ -30,12 +30,12 @@ describe('OnlinePublicationService', () => {
 
         expect(response).toBeTruthy();
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/apgGeneralSettings');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/apg-general-settings');
     });
 
     it('should update general settings value', () => {
         service.setOgdExportSetting(true);
 
-        expect(httpClientMock.put).toHaveBeenCalledWith('/api/apgGeneralSettings', true);
+        expect(httpClientMock.put).toHaveBeenCalledWith('/api/apg-general-settings', true);
     });
 });

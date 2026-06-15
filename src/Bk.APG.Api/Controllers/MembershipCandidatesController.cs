@@ -8,12 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/general-election/membership-candidate")]
-public class MembershipCandidateController : ControllerBase
+[Route("api/general-election/membership-candidates")]
+public class MembershipCandidatesController : ControllerBase
 {
     private readonly IMembershipCandidateService _membershipCandidateService;
 
-    public MembershipCandidateController(IMembershipCandidateService membershipCandidateService)
+    public MembershipCandidatesController(IMembershipCandidateService membershipCandidateService)
     {
         _membershipCandidateService = membershipCandidateService;
     }

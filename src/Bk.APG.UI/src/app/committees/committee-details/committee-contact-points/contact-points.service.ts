@@ -15,24 +15,24 @@ export class ContactPointsService {
     constructor(private readonly http: HttpClient) {}
 
     getContactPointList(committeeId: string): Observable<ContactPointList[]> {
-        return this.http.get<ContactPointList[]>(`/api/contactpoints/${committeeId}/list`);
+        return this.http.get<ContactPointList[]>(`/api/contact-points/${committeeId}/list`);
     }
 
     getContactPointForUpdate(contactPointId: string): Observable<ContactPointUpdate> {
-        return this.http.get<ContactPointUpdate>(`/api/contactpoints/${contactPointId}/update`);
+        return this.http.get<ContactPointUpdate>(`/api/contact-points/${contactPointId}/update`);
     }
 
     getContactPointForCreate(committeeId: string): Observable<ContactPointCreate> {
-        return this.http.get<ContactPointCreate>(`/api/contactpoints/${committeeId}/create`);
+        return this.http.get<ContactPointCreate>(`/api/contact-points/${committeeId}/create`);
     }
 
     updateContactPoint(contactPoint: ContactPointUpdate): Observable<ContactPointUpdate> {
-        return this.http.put<ContactPointUpdate>(`/api/contactpoints/${contactPoint.id}`, contactPoint);
+        return this.http.put<ContactPointUpdate>(`/api/contact-points/${contactPoint.id}`, contactPoint);
     }
 
-    createContactPoint = (contactPoint: ContactPointCreate) => this.http.post<ContactPointDetail>('/api/contactpoints', contactPoint);
+    createContactPoint = (contactPoint: ContactPointCreate) => this.http.post<ContactPointDetail>('/api/contact-points', contactPoint);
 
     deleteContactPoint(contactPointId: string): Observable<ContactPointList[]> {
-        return this.http.delete<ContactPointList[]>(`/api/contactpoints/${contactPointId}`);
+        return this.http.delete<ContactPointList[]>(`/api/contact-points/${contactPointId}`);
     }
 }

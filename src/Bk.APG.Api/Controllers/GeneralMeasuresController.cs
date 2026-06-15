@@ -8,7 +8,7 @@ using IAuthorizationService = Bk.APG.Business.Services.IAuthorizationService;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/general-measures")]
 [Authorize(Policy = APGPolicies.RequireAdminDepartmentRole)]
 public class GeneralMeasuresController : ControllerBase
 {

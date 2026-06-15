@@ -8,17 +8,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class WorklistTaskControllerTests
+internal class WorklistTasksControllerTests
 {
     private readonly IWorklistTaskService _worklistTaskService = Substitute.For<IWorklistTaskService>();
     private readonly IGeneralElectionService _generalElectionService = Substitute.For<IGeneralElectionService>();
 
-    private WorklistTaskController _controller = null!;
+    private WorklistTasksController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new WorklistTaskController(_worklistTaskService, _generalElectionService);
+        _controller = new WorklistTasksController(_worklistTaskService, _generalElectionService);
     }
 
     [TearDown]
