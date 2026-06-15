@@ -15,15 +15,15 @@ export class GeneralElectionCommitteeCandidateListService {
     constructor(private readonly http: HttpClient) {}
 
     partialUpdateMembershipCandidate(membershipCandidateId: string, membershipCandidatePartialUpdate: MembershipCandidatePartialUpdate): Observable<void> {
-        return this.http.patch<void>(`/api/general-election/membership-candidate/${membershipCandidateId}`, membershipCandidatePartialUpdate);
+        return this.http.patch<void>(`/api/general-election/membership-candidates/${membershipCandidateId}`, membershipCandidatePartialUpdate);
     }
 
     createMembershipCandidate(membershipCandidateCreate: MembershipCandidateCreate): Observable<MembershipCandidateDetail> {
-        return this.http.post<MembershipCandidateDetail>(`/api/general-election/membership-candidate`, membershipCandidateCreate);
+        return this.http.post<MembershipCandidateDetail>(`/api/general-election/membership-candidates`, membershipCandidateCreate);
     }
 
     deleteMembershipCandidate(membershipCandidateId: string): Observable<void> {
-        return this.http.delete<void>(`/api/general-election/membership-candidate/${membershipCandidateId}`);
+        return this.http.delete<void>(`/api/general-election/membership-candidates/${membershipCandidateId}`);
     }
 
     getAssignmentsForCandidateListForward(committeeId: string) {
@@ -48,7 +48,7 @@ export class GeneralElectionCommitteeCandidateListService {
     }
 
     getDuplicateMembershipCandidate(dto: MembershipCandidateCreate) {
-        return this.http.post<MembershipCandidateDetail | null>('/api/general-election/committees/getDuplicateMembershipCandidate', dto);
+        return this.http.post<MembershipCandidateDetail | null>('/api/general-election/committees/duplicate-membership-candidates', dto);
     }
 
     generateExport(committeeId: string, membershipCandidateIds: string[]): Observable<HttpResponse<Blob>> {

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/info")]
+[Route("api/information")]
 public class InformationController : ControllerBase
 {
     private const string ApplicationVersionEnvVariableName = "APPLICATION_VERSION";

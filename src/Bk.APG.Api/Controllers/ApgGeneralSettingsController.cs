@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/apgGeneralSettings")]
+[Route("api/apg-general-settings")]
 [Authorize(Policy = APGPolicies.RequireAdminRole)]
 public class ApgGeneralSettingsController : ControllerBase
 {
@@ -33,7 +33,7 @@ public class ApgGeneralSettingsController : ControllerBase
         return Ok(settings);
     }
 
-    [HttpPost("ogdExport")]
+    [HttpPost("ogd-export")]
     public async Task<ActionResult> TriggerPublication()
     {
         await _ogdExportService.Export();

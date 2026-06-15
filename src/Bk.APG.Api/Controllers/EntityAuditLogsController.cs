@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/entity-audit-logs")]
 [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
-public class EntityAuditLogController : ControllerBase
+public class EntityAuditLogsController : ControllerBase
 {
     private readonly IEntityAuditLogService _entityAuditLogService;
 
-    public EntityAuditLogController(IEntityAuditLogService entityAuditLogService)
+    public EntityAuditLogsController(IEntityAuditLogService entityAuditLogService)
     {
         _entityAuditLogService = entityAuditLogService;
     }

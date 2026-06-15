@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/memberships")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
 public class MembershipsController : ControllerBase
 {
