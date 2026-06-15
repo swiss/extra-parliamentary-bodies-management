@@ -233,6 +233,7 @@ internal class CommitteeServiceTests
         _committeeRepository.GetByIdForUpdate(_committee.Id, _committee.RowVersion).Returns(_committee);
         _committeeRepository.GetAllForGeneralElection(_zeroGuid, _zeroGuid, _zeroGuid).Returns(new List<Committee>().Append(_committee));
         _committeeRepository.GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid, Arg.Any<ReportFilterParametersDto>()).Returns(new List<Committee>().Append(_committee));
+        _committeeRepository.GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, Arg.Any<ReportFilterParametersDto>(), Arg.Any<DateOnly>()).Returns(new List<Committee>().Append(_committee));
 
         _committeeService = new CommitteeService(
             _committeeRepository,
@@ -303,7 +304,7 @@ internal class CommitteeServiceTests
     }
 
     [Test]
-    public async Task GetCommitteeListForExport_ShouldReturnData()
+    public async Task GetCommitteeListForVacanciesExport_ShouldReturnData()
     {
         var filterDto = new ReportFilterParametersDto
         {
@@ -318,6 +319,29 @@ internal class CommitteeServiceTests
         var committees = await _committeeService.GetCommitteeListForExport(filterDto);
 
         await _committeeRepository.Received(1).GetAllForExport(_zeroGuid, _zeroGuid, _zeroGuid, Arg.Any<ReportFilterParametersDto>());
+
+        Assert.That(committees, Is.Not.Null);
+        Assert.That(committees.Count, Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task GetCommitteeListForCompareListExport_ShouldReturnData()
+    {
+        var filterDto = new ReportFilterParametersDto
+        {
+            DocumentType = ReportType.CompareListGeneralElection,
+            AnalysisDate1 = new DateOnly(2024, 01, 01),
+            AnalysisDate2 = new DateOnly(2026, 04, 01),
+            DepartmentIds = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            }
+        };
+
+        var committees = await _committeeService.GetCommitteeListForExport(filterDto);
+
+        await _committeeRepository.Received(2).GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, Arg.Any<ReportFilterParametersDto>(), Arg.Any<DateOnly>());
 
         Assert.That(committees, Is.Not.Null);
         Assert.That(committees.Count, Is.EqualTo(1));
