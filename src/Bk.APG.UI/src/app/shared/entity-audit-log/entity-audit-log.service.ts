@@ -22,6 +22,6 @@ export class EntityAuditLogService {
         params = appendSort(params, sort);
         params = appendMany(params, 'relatedEntityIds', relatedEntityIds);
 
-        return this.http.get<PagedResult<EntityAuditLog>>(`/api/entityAuditLog/${entityId}`, {params});
+        return this.http.get<PagedResult<EntityAuditLog>>(`/api/entity-audit-logs/${entityId}`, {params});
     }
 }

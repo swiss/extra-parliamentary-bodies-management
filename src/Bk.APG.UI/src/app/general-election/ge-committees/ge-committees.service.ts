@@ -64,11 +64,11 @@ export class GeneralElectionCommitteesService {
 
         params = this.appendExportFilter(params, filter);
 
-        return this.http.get<GeneralElectionCommitteeList[]>('/api/general-election/committees/recipient', {params});
+        return this.http.get<GeneralElectionCommitteeList[]>('/api/general-election/committees/recipients', {params});
     }
 
     getUnfinishedGeneralElectionCommitteeList(): Observable<GeneralElectionCommitteeList[]> {
-        return this.http.get<GeneralElectionCommitteeList[]>('/api/general-election/committees/checkUnfinishedCommittees');
+        return this.http.get<GeneralElectionCommitteeList[]>('/api/general-election/committees/unfinished');
     }
 
     appendExportFilter = (params: HttpParams, filterParameter?: RecipientsFilterParameters | null): HttpParams => {

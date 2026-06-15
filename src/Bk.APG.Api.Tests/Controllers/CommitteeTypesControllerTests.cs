@@ -7,16 +7,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class CommitteeTypeControllerTests
+internal class CommitteeTypesControllerTests
 {
     private readonly ICommitteeTypeService _committeeTypeService = Substitute.For<ICommitteeTypeService>();
 
-    private CommitteeTypeController _controller = null!;
+    private CommitteeTypesController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new CommitteeTypeController(_committeeTypeService);
+        _controller = new CommitteeTypesController(_committeeTypeService);
     }
 
     [TearDown]

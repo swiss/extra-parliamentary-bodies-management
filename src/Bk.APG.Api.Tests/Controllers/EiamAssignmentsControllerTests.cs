@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class EiamAssignmentControllerTests
+internal class EiamAssignmentsControllerTests
 {
     private readonly IEiamAssignmentService _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
 
-    private EiamAssignmentController _controller = null!;
+    private EiamAssignmentsController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new EiamAssignmentController(_eiamAssignmentService);
+        _controller = new EiamAssignmentsController(_eiamAssignmentService);
     }
 
     [TearDown]

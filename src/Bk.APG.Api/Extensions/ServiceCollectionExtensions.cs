@@ -67,7 +67,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IWorklistTaskService, WorklistTaskService>();
         services.AddScoped<IMembershipCandidateService, MembershipCandidateService>();
         services.AddScoped<IGeneralElectionCommitteeService, GeneralElectionCommitteeService>();
-        services.AddScoped<IOccupationService, OccupationService>();
         services.AddScoped<IEiamAssignmentService, EiamAssignmentService>();
         services.AddScoped<IReportService, ReportService>();
         services.AddScoped<IGeneralMeasureService, GeneralMeasureService>();
