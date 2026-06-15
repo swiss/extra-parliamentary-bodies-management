@@ -13,6 +13,9 @@ public class CommitteeConfiguration : EntityBaseConfiguration<Committee>
         builder.Property(c => c.CommitteeNumber)
             .ValueGeneratedOnAdd();
 
+        builder.HasIndex(c => c.CommitteeNumber)
+            .IsUnique();
+
         builder.Property(c => c.OgdId)
             .ValueGeneratedOnAdd();
 
