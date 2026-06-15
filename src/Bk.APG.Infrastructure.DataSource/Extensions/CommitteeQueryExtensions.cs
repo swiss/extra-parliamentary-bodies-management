@@ -170,7 +170,6 @@ public static class CommitteeQueryExtensions
                 reportIsGeneralElectionOnly = true;
                 query = query.Where(c => c.VacanciesGeneralElection > 0);
             }
-            // TODO, other report type will have to be added here.
 
             if (reportIsGeneralElectionOnly)
             {
