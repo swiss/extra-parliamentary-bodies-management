@@ -38,7 +38,7 @@ describe('MasterDataService', () => {
         const httpGetSpy = jest.spyOn(httpClientMock, 'get');
 
         translateServiceMock.onLangChange.subscribe(() => {
-            expect(httpGetSpy).toHaveBeenCalledWith('/api/masterData');
+            expect(httpGetSpy).toHaveBeenCalledWith('/api/master-data');
         });
     }));
 
@@ -58,7 +58,7 @@ describe('MasterDataService', () => {
         const expectedParams = new HttpParams().set('officeName', 'myId');
 
         expect(httpClientMock.get).toHaveBeenCalledWith(
-            '/api/masterData/offices/search',
+            '/api/master-data/offices/search',
             expect.objectContaining({
                 params: expectedParams,
             })

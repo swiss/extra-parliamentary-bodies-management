@@ -7,17 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class AppointmentDecisionControllerTests
+internal class AppointmentDecisionsControllerTests
 {
     private readonly IAppointmentDecisionService _appointmentDecisionService = Substitute.For<IAppointmentDecisionService>();
     private readonly IDocumentService _documentService = Substitute.For<IDocumentService>();
 
-    private AppointmentDecisionController _controller = null!;
+    private AppointmentDecisionsController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new AppointmentDecisionController(_appointmentDecisionService, _documentService);
+        _controller = new AppointmentDecisionsController(_appointmentDecisionService, _documentService);
     }
 
     [TearDown]

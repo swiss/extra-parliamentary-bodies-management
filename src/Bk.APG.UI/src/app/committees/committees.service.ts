@@ -90,11 +90,11 @@ export class CommitteesService {
 
     getCommitteeMembers = (id: string) => this.http.get<MembershipList>(`/api/committees/${id}/members`);
 
-    createMember = (membership: MembershipCreate) => this.http.post<MembershipDetails>('/api/committees/member', membership);
+    createMember = (membership: MembershipCreate) => this.http.post<MembershipDetails>('/api/committees/members', membership);
 
     getCommitteesByDescription(desc: string) {
         const params = new HttpParams().set('desc', desc);
-        return this.http.get<CommitteeDetails[]>(`/api/committees/getByDescription`, {params});
+        return this.http.get<CommitteeDetails[]>(`/api/committees/get-by-description`, {params});
     }
 
     getCommitteeJustificationForUpdate = (id: string) => this.http.get<CommitteeJustificationUpdate>(`/api/committees/${id}/justifications`);
@@ -133,6 +133,6 @@ export class CommitteesService {
             params = append(params, 'isUpdateMode', validationRequest?.isUpdateMode);
         }
 
-        return this.http.get<CommitteeMembershipValidationResult>(`/api/committees/${id}/checkMemberships`, {params});
+        return this.http.get<CommitteeMembershipValidationResult>(`/api/committees/${id}/check-memberships`, {params});
     }
 }

@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/appointmentDecisions")]
+[Route("api/appointment-decisions")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
-public class AppointmentDecisionController : ControllerBase
+public class AppointmentDecisionsController : ControllerBase
 {
     private readonly IAppointmentDecisionService _appointmentDecisionService;
     private readonly IDocumentService _documentService;
 
-    public AppointmentDecisionController(IAppointmentDecisionService appointmentDecisionService, IDocumentService documentService)
+    public AppointmentDecisionsController(IAppointmentDecisionService appointmentDecisionService, IDocumentService documentService)
     {
         _appointmentDecisionService = appointmentDecisionService;
         _documentService = documentService;

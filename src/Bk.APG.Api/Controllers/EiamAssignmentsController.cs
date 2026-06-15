@@ -8,11 +8,11 @@ namespace Bk.APG.Api.Controllers;
 [ApiController]
 [Route("api/eiam-assignments")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
-public class EiamAssignmentController : ControllerBase
+public class EiamAssignmentsController : ControllerBase
 {
     private readonly IEiamAssignmentService _eiamAssignmentService;
 
-    public EiamAssignmentController(IEiamAssignmentService eiamAssignmentService)
+    public EiamAssignmentsController(IEiamAssignmentService eiamAssignmentService)
     {
         _eiamAssignmentService = eiamAssignmentService;
     }

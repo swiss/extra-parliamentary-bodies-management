@@ -35,7 +35,7 @@ describe('RecipientsService', () => {
             electionTypes: ['elect1', 'elect2'],
             formLetterSender: 'id',
         } as RecipientsFilterParameters;
-        const expectedUrl = '/api/Report/downloadFormLetter';
+        const expectedUrl = '/api/reports/download/form-letter';
 
         const response = {body: new Blob()} as unknown;
         httpClientMock.post.mockReturnValue(of(response));

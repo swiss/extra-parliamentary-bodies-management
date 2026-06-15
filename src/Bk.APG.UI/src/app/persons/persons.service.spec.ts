@@ -86,7 +86,7 @@ describe('PersonsService', () => {
             .append('birthYearRange', 5);
 
         expect(httpClientMock.get).toHaveBeenCalledWith(
-            '/api/persons/getSimilarPersons',
+            '/api/persons/similar',
             expect.objectContaining({
                 params: expectedParams,
             })
@@ -201,7 +201,7 @@ describe('PersonsService', () => {
         const expectedParams = new HttpParams().set('name', 'test');
 
         expect(httpClientMock.get).toHaveBeenCalledWith(
-            '/api/persons/getByName',
+            '/api/persons/get-by-name',
             expect.objectContaining({
                 params: expectedParams,
             })

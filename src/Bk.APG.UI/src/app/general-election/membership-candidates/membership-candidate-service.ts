@@ -10,10 +10,10 @@ export class MembershipCandidateService {
     constructor(private readonly http: HttpClient) {}
 
     getMembershipCandidateForUpdate(id: string): Observable<MembershipCandidateUpdate> {
-        return this.http.get<MembershipCandidateUpdate>(`/api/general-election/membership-candidate/${id}/update`);
+        return this.http.get<MembershipCandidateUpdate>(`/api/general-election/membership-candidates/${id}/update`);
     }
 
     updateMembershipCandidate(membershipCandidate: MembershipCandidateUpdate): Observable<void> {
-        return this.http.put<void>(`/api/general-election/membership-candidate/${membershipCandidate.id}`, membershipCandidate);
+        return this.http.put<void>(`/api/general-election/membership-candidates/${membershipCandidate.id}`, membershipCandidate);
     }
 }

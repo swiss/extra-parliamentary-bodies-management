@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class ContactPointControllerTests
+internal class ContactPointsControllerTests
 {
     private readonly IContactPointService _contactPointService = Substitute.For<IContactPointService>();
 
-    private ContactPointController _controller = null!;
+    private ContactPointsController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new ContactPointController(_contactPointService);
+        _controller = new ContactPointsController(_contactPointService);
     }
 
     [TearDown]

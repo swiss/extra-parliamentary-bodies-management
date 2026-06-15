@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/committees")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
 public class CommitteesController : ControllerBase
 {
@@ -113,14 +113,14 @@ public class CommitteesController : ControllerBase
         return Ok(members);
     }
 
-    [HttpGet("getByDescription")]
+    [HttpGet("get-by-description")]
     public async Task<ActionResult> GetByDescription([FromQuery, Required] string desc)
     {
         var result = await _committeeService.GetByDescription(desc);
         return Ok(result);
     }
 
-    [HttpPost("member")]
+    [HttpPost("members")]
     public async Task<ActionResult> CreateMember([FromBody, Required] MembershipCreateDto createDto)
     {
         var membership = await _membershipService.CreateMembership(createDto);
@@ -128,7 +128,7 @@ public class CommitteesController : ControllerBase
         return Ok(membership);
     }
 
-    [HttpGet("{id:guid}/checkMemberships")]
+    [HttpGet("{id:guid}/check-memberships")]
     public async Task<ActionResult> CheckMemberships([FromRoute] Guid id, [FromQuery, Required] CommitteeMembershipValidationRequestDto validateDto)
     {
         var validationResults = await _committeeService.ValidateCommittee(id, validateDto);

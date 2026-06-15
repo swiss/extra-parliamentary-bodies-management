@@ -25,7 +25,7 @@ describe('DataAnalysisService', () => {
     });
 
     it('should call HttpClient.get with correct URL, headers, and options', () => {
-        const exportType: ExportType = 'committee-type';
+        const exportType: ExportType = 'committee-types';
         const date = new Date('2024-01-01T00:00:00.000Z');
         const expectedUrl = `/api/data-analysis/${exportType}/2024-01-01`;
         const expectedHeaders = new HttpHeaders().set('Accept', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -46,7 +46,7 @@ describe('DataAnalysisService', () => {
     });
 
     it('should set Accept header to Excel MIME type', () => {
-        const exportType: ExportType = 'person';
+        const exportType: ExportType = 'persons';
         const date = new Date();
         httpClientMock.get.mockReturnValue(of({} as unknown));
 
@@ -59,7 +59,7 @@ describe('DataAnalysisService', () => {
     });
 
     it('should set responseType to blob and observe to response', () => {
-        const exportType: ExportType = 'membership';
+        const exportType: ExportType = 'memberships';
         const date = new Date();
         httpClientMock.get.mockReturnValue(of({} as unknown));
 
