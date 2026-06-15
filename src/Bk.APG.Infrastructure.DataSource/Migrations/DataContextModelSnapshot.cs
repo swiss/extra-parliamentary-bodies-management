@@ -992,6 +992,10 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                     b.HasIndex("CommitteeLevelId")
                         .HasDatabaseName("ix_committees_committee_level_id");
 
+                    b.HasIndex("CommitteeNumber")
+                        .IsUnique()
+                        .HasDatabaseName("ix_committees_committee_number");
+
                     b.HasIndex("CommitteeTypeId")
                         .HasDatabaseName("ix_committees_committee_type_id");
 
