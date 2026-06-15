@@ -46,7 +46,7 @@ public class ElectoralListService : IElectoralListService
 
         var allOtherCommittees = _committeeRepository.GetAll().Where(c => c.BeginDate <= evaluationDate && c.EndDate >= evaluationDate && c.TermOfOfficeId != TermOfOffice.Period4YearsInGeneralElectionGuid);
 
-        var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
+        var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto);
 
         var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToList();
 
