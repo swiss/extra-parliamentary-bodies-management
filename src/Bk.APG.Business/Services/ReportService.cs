@@ -81,7 +81,7 @@ public class ReportService : IReportService
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
 
         var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
-        var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId);
+        var committeesWithMembers = await _generalElectionCommitteeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto);
 
         var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
@@ -148,7 +148,7 @@ public class ReportService : IReportService
         var otherReportCommitteeTypes = otherCommitteeTypes.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
         var committees = (await _committeeRepository.GetAllForGeneralElection(departmentId, officeId, committeeId)).ToArray();
-        var committeesWithMembers = (await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
+        var committeesWithMembers = (await _generalElectionCommitteeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto)).ToArray();
 
         var generalElectionCommitteesWithMembers = committeesWithMembers.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
@@ -293,7 +293,7 @@ public class ReportService : IReportService
         var onlyReleasedCommittees = filterDto.ReleasedCommittees;
         filterDto.ReleasedCommittees = false;
 
-        var generalElectionCommittees = (await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
+        var generalElectionCommittees = (await _generalElectionCommitteeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto)).ToArray();
 
         // to be able to use the same functions, we map here the GeneralElection data to normal data!
         var generalElectionCommitteesWithMembers = generalElectionCommittees.Select(ReportMapper.FromGeneralElectionCommitteeToReportGeneralElectionCommitteeDto).ToArray();
@@ -445,7 +445,7 @@ public class ReportService : IReportService
         var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
         var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
 
-        var allGeneralElectionCommittees = (await _generalElectionCommitteeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
+        var allGeneralElectionCommittees = (await _generalElectionCommitteeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto)).ToArray();
         var allGeneralElectionCommitteesUnfiltered = (await _generalElectionCommitteeRepository.GetAllWithPermissionCheck(departmentId, officeId, committeeId)).ToArray();
 
         if (filterDto.CommitteesWithActiveMembership)
@@ -794,7 +794,7 @@ public class ReportService : IReportService
 
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
 
-        var committees = (await _committeeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
+        var committees = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1)).ToArray();
 
         var generalElectionCommittees = committees.Select(ReportMapper.FromCommitteeToReportGeneralElectionCommitteeDto).ToArray();
 
