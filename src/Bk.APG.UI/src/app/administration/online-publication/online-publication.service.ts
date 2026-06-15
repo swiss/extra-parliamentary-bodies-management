@@ -9,14 +9,14 @@ export class OnlinePublicationService {
     constructor(private readonly http: HttpClient) {}
 
     setOgdExportSetting(enableOnlinePublication: boolean) {
-        return this.http.put('/api/apgGeneralSettings', enableOnlinePublication);
+        return this.http.put('/api/apg-general-settings', enableOnlinePublication);
     }
 
     getOgdExportSetting(): Observable<boolean> {
-        return this.http.get<boolean>('/api/apgGeneralSettings');
+        return this.http.get<boolean>('/api/apg-general-settings');
     }
 
     triggerPublication(): Observable<void> {
-        return this.http.post<void>('/api/apgGeneralSettings/ogdExport', null);
+        return this.http.post<void>('/api/apg-general-settings/ogd-export', null);
     }
 }

@@ -32,7 +32,7 @@ describe('CommitteeTypeService', () => {
         const response = await firstValueFrom(service.getCommitteeTypeList());
         expect(response).toBeTruthy();
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/committeeTypes/list');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/committee-types/list');
     });
 
     it('should get committee type detail', async () => {
@@ -45,7 +45,7 @@ describe('CommitteeTypeService', () => {
         const response = await service.getCommitteeTypeForUpdate('1');
         expect(response).toBeTruthy();
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/committeeTypes/1/update');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/committee-types/1/update');
     });
 
     it('should update committee type', () => {
@@ -64,7 +64,7 @@ describe('CommitteeTypeService', () => {
             romanshThresholdPercentage: 10,
         });
 
-        expect(httpClientMock.put).toHaveBeenCalledWith('/api/committeeTypes/1', {
+        expect(httpClientMock.put).toHaveBeenCalledWith('/api/committee-types/1', {
             id: '1',
             text: 'text',
             femaleThreshold: 15,

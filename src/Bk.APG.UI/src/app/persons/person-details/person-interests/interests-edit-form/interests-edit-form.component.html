@@ -3,10 +3,10 @@
         @if (formArray.length === 0) {
             <div class="noData">{{ 'person.interests.table.noEntries' | translate }}</div>
         }
-        @for (control of formArray.controls; track control; let i = $index) {
+        @for (control of formArray.controls; track $index) {
             <div>
                 @if (interests) {
-                    <apg-interests-edit-form-detail [formGroup]="$any(control)" (interestRemoved)="removeInterest(i)" />
+                    <apg-interests-edit-form-detail [formGroup]="$any(control)" (interestRemoved)="removeInterest($index)" />
                 }
             </div>
         }

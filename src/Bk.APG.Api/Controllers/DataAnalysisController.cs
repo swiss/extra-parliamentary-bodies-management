@@ -17,7 +17,7 @@ public class DataAnalysisController : ControllerBase
         _dataAnalysisService = dataAnalysisService;
     }
 
-    [HttpGet("committee-type/{dataAnalysisDate}")]
+    [HttpGet("committee-types/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateCommitteeTypeExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateCommitteeTypeExport(dataAnalysisDate);
@@ -25,7 +25,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("committee/{dataAnalysisDate}")]
+    [HttpGet("committees/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateCommitteeExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateCommitteeExport(dataAnalysisDate);
@@ -33,7 +33,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("membership/{dataAnalysisDate}")]
+    [HttpGet("memberships/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateMembershipExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateMembershipExport(dataAnalysisDate);
@@ -41,7 +41,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("membershipInterests/{dataAnalysisDate}")]
+    [HttpGet("membership-interests/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateMembershipInterestsExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateMembershipInterestExport(dataAnalysisDate);
@@ -49,7 +49,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("person/{dataAnalysisDate}")]
+    [HttpGet("persons/{dataAnalysisDate}")]
     public async Task<ActionResult> GeneratePersonExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GeneratePersonExport(dataAnalysisDate);
@@ -57,7 +57,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("secretariat/{dataAnalysisDate}")]
+    [HttpGet("secretariats/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateSecretariatExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateContactPointExport(dataAnalysisDate, ContactPointType.SecretariatGuid);
@@ -65,7 +65,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("dataProtectionOfficer/{dataAnalysisDate}")]
+    [HttpGet("data-protection-officers/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateDataProtectionOfficerExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateContactPointExport(dataAnalysisDate, ContactPointType.DataProtectionOfficerGuid);
@@ -73,7 +73,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("region/{dataAnalysisDate}")]
+    [HttpGet("regions/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateRegionExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateRegionExport(dataAnalysisDate);
@@ -81,7 +81,7 @@ public class DataAnalysisController : ControllerBase
         return File(content, ExcelMimeType, fileName);
     }
 
-    [HttpGet("age/{dataAnalysisDate}")]
+    [HttpGet("ages/{dataAnalysisDate}")]
     public async Task<ActionResult> GenerateAgeExport([FromRoute] DateOnly dataAnalysisDate)
     {
         var (fileName, content) = await _dataAnalysisService.GenerateAgeExport(dataAnalysisDate);

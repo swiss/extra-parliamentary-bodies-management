@@ -1,10 +1,10 @@
 export type ExportType =
-    | 'committee-type'
-    | 'committee'
-    | 'membership'
-    | 'membershipInterests'
-    | 'person'
-    | 'age'
-    | 'region'
-    | 'secretariat'
-    | 'dataProtectionOfficer';
+    | 'committee-types'
+    | 'committees'
+    | 'memberships'
+    | 'membership-interests'
+    | 'persons'
+    | 'ages'
+    | 'regions'
+    | 'secretariats'
+    | 'data-protection-officers';
