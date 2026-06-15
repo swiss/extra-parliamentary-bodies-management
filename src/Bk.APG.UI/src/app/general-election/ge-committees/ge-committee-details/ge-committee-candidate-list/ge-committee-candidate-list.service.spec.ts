@@ -29,7 +29,7 @@ describe('GeneralElectionCommitteeCandidateListService', () => {
     it('should partial update membership candidate', async () => {
         service.partialUpdateMembershipCandidate('Foo', {functionId: 'Bar'});
 
-        expect(httpClientMock.patch).toHaveBeenCalledWith('/api/general-election/membership-candidate/Foo', {functionId: 'Bar'});
+        expect(httpClientMock.patch).toHaveBeenCalledWith('/api/general-election/membership-candidates/Foo', {functionId: 'Bar'});
     });
     describe('getAssignmentsForCandidateListForward', () => {
         it('should get assignments for candidate list forward', () => {
@@ -81,7 +81,7 @@ describe('GeneralElectionCommitteeCandidateListService', () => {
             } as MembershipCandidateCreate;
             service.getDuplicateMembershipCandidate(createData);
 
-            expect(httpClientMock.post).toHaveBeenCalledWith('/api/general-election/committees/getDuplicateMembershipCandidate', createData);
+            expect(httpClientMock.post).toHaveBeenCalledWith('/api/general-election/committees/duplicate-membership-candidates', createData);
         });
     });
 

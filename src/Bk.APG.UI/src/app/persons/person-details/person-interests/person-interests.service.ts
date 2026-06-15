@@ -15,11 +15,11 @@ export class PersonInterestsService {
     ) {}
 
     getInterestsByPersonId(personId: string): Observable<InterestUpdate[]> {
-        return this.http.get<InterestUpdate[]>(`/api/person/${personId}/interests`);
+        return this.http.get<InterestUpdate[]>(`/api/persons/${personId}/interests`);
     }
 
     saveInterestForPerson(personId: string, interests: InterestUpdate[]): Observable<InterestUpdate[]> {
-        return this.http.put<InterestUpdate[]>(`/api/person/${personId}/interests`, interests);
+        return this.http.put<InterestUpdate[]>(`/api/persons/${personId}/interests`, interests);
     }
 
     getUidOrganizations(searchText: string): Observable<UidResult[]> {

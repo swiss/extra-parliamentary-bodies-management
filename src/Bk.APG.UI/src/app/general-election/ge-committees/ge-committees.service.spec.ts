@@ -164,7 +164,7 @@ describe('GeneralElectionCommitteesService', () => {
             expect(result).toEqual(committeeList);
         });
 
-        const req = httpMock.expectOne(request => request.url === '/api/general-election/committees/recipient');
+        const req = httpMock.expectOne(request => request.url === '/api/general-election/committees/recipients');
 
         expect(req.request.method).toBe('GET');
         req.flush(committeeList);
@@ -207,7 +207,7 @@ describe('GeneralElectionCommitteesService', () => {
             expect(result).toEqual(committeeList);
         });
 
-        const req = httpMock.expectOne(request => request.url === '/api/general-election/committees/checkUnfinishedCommittees');
+        const req = httpMock.expectOne(request => request.url === '/api/general-election/committees/unfinished');
 
         expect(req.request.method).toBe('GET');
         req.flush(committeeList);

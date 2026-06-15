@@ -38,7 +38,7 @@ describe('RequestsAndReportsService', () => {
             isGeneralElection: true,
             releasedCommittees: true,
         } as RequestsAndReportsFilterParameters;
-        const expectedUrl = '/api/Report/download';
+        const expectedUrl = '/api/reports/download';
 
         const response = {body: new Blob()} as unknown;
         httpClientMock.post.mockReturnValue(of(response));

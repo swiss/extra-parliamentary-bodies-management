@@ -6,11 +6,11 @@ namespace Bk.APG.Api.Controllers;
 
 [ApiController]
 [Route("api/addresses")]
-public class AddressController : ControllerBase
+public class AddressesController : ControllerBase
 {
     private readonly IAddressService _addressService;
 
-    public AddressController(IAddressService addressService)
+    public AddressesController(IAddressService addressService)
     {
         _addressService = addressService;
     }

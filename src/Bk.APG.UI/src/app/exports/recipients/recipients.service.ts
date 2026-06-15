@@ -7,8 +7,6 @@ import {Observable} from 'rxjs';
     providedIn: 'root',
 })
 export class RecipientsService {
-    private static readonly WORD_ACCEPT_HEADER = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-
     constructor(private readonly http: HttpClient) {}
 
     generateReport(filterParameters: RecipientsFilterParameters): Observable<HttpResponse<Blob>> {
@@ -29,7 +27,7 @@ export class RecipientsService {
             formLetterDate: filterParameters.formLetterExportDate || null,
         };
 
-        return this.http.post('/api/Report/downloadFormLetter', body, {
+        return this.http.post('/api/reports/download/form-letter', body, {
             headers,
             observe: 'response' as const,
             responseType: 'blob' as const,
