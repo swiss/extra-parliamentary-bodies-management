@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/form-letter-senders")]
 [Authorize(Policy = APGPolicies.RequireAdminDepartmentRole)]
-public class FormLetterSenderController : ControllerBase
+public class FormLetterSendersController : ControllerBase
 {
     private readonly IFormLetterSenderService _formLetterSenderService;
 
-    public FormLetterSenderController(IFormLetterSenderService formLetterSenderService)
+    public FormLetterSendersController(IFormLetterSenderService formLetterSenderService)
     {
         _formLetterSenderService = formLetterSenderService;
     }

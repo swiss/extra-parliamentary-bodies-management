@@ -11,12 +11,12 @@ namespace Bk.APG.Api.Controllers;
 [ApiController]
 [Route("api/worklist-tasks")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
-public class WorklistTaskController : ControllerBase
+public class WorklistTasksController : ControllerBase
 {
     private readonly IWorklistTaskService _worklistTaskService;
     private readonly IGeneralElectionService _generalElectionService;
 
-    public WorklistTaskController(IWorklistTaskService worklistTaskService, IGeneralElectionService generalElectionService)
+    public WorklistTasksController(IWorklistTaskService worklistTaskService, IGeneralElectionService generalElectionService)
     {
         _worklistTaskService = worklistTaskService;
         _generalElectionService = generalElectionService;
