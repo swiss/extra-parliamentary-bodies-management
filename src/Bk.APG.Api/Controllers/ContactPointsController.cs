@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/contactpoints")]
+[Route("api/contact-points")]
 [Authorize(Policy = APGPolicies.RequireAllowRole)]
-public class ContactPointController : ControllerBase
+public class ContactPointsController : ControllerBase
 {
     private readonly IContactPointService _contactPointService;
 
-    public ContactPointController(IContactPointService contactPointService)
+    public ContactPointsController(IContactPointService contactPointService)
     {
         _contactPointService = contactPointService;
     }
@@ -50,7 +50,7 @@ public class ContactPointController : ControllerBase
         return Ok();
     }
 
-    [HttpPost()]
+    [HttpPost]
     [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> Create([FromBody, Required] ContactPointCreateDto createDto)
     {

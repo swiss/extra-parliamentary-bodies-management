@@ -35,7 +35,7 @@ describe('AppointmentDecisionService', () => {
         const response = await firstValueFrom(service.getAppointmentDecisionList('1'));
         expect(response).toBeTruthy();
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/appointmentDecisions/1/list');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/appointment-decisions/1/list');
     });
 
     it('should create appointment decision', () => {
@@ -61,11 +61,11 @@ describe('AppointmentDecisionService', () => {
 
         service.createAppointmentDecision(appointmentDecisionCreate);
 
-        expect(httpClientMock.post).toHaveBeenCalledWith('/api/appointmentDecisions', expect.any(FormData));
+        expect(httpClientMock.post).toHaveBeenCalledWith('/api/appointment-decisions', expect.any(FormData));
 
         const [url, body] = (httpClientMock.post as jest.Mock).mock.calls[0];
 
-        expect(url).toBe('/api/appointmentDecisions');
+        expect(url).toBe('/api/appointment-decisions');
         expect(body instanceof FormData).toBe(true);
         expect(body.get('appointmentDecisionDate')).toBe('2025-02-01');
         expect(body.get('appointmentDecisionTypeId')).toBe('2');
@@ -107,11 +107,11 @@ describe('AppointmentDecisionService', () => {
 
         service.updateAppointmentDecision('1', appointmentDecisionUpdate);
 
-        expect(httpClientMock.put).toHaveBeenCalledWith('/api/appointmentDecisions/1', expect.any(FormData));
+        expect(httpClientMock.put).toHaveBeenCalledWith('/api/appointment-decisions/1', expect.any(FormData));
 
         const [url, body] = (httpClientMock.put as jest.Mock).mock.calls[0];
 
-        expect(url).toBe('/api/appointmentDecisions/1');
+        expect(url).toBe('/api/appointment-decisions/1');
         expect(body instanceof FormData).toBe(true);
         expect(body.get('appointmentDecisionDate')).toBe('2025-02-01');
         expect(body.get('appointmentDecisionTypeId')).toBe('2');
@@ -132,7 +132,7 @@ describe('AppointmentDecisionService', () => {
     it('should delete appointment decision', () => {
         service.deleteAppointmentDecision('1');
 
-        expect(httpClientMock.delete).toHaveBeenCalledWith('/api/appointmentDecisions/1');
+        expect(httpClientMock.delete).toHaveBeenCalledWith('/api/appointment-decisions/1');
     });
 
     it('should download a document', () => {
@@ -144,7 +144,7 @@ describe('AppointmentDecisionService', () => {
         });
 
         expect(httpClientMock.get).toHaveBeenCalledWith(
-            '/api/appointmentDecisions/document',
+            '/api/appointment-decisions/document',
             expect.objectContaining({
                 params: expectedParams,
             })
