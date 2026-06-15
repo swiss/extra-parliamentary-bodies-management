@@ -106,4 +106,18 @@ internal class MasterDataControllerTests
         Assert.That(response, Is.Not.Null);
         Assert.That(response.StatusCode, Is.EqualTo(200));
     }
+
+    [Test]
+    public async Task GetOccupationsByName_WhenCalled_ShouldCallServiceAndReturnResult()
+    {
+        var response = await _controller.GetOccupationsByName("clark");
+
+        await _masterDataService.Received().GetOccupationsByName("clark");
+
+        Assert.That(response, Is.Not.Null);
+        var responseObject = response as OkObjectResult;
+
+        Assert.That(responseObject, Is.Not.Null);
+        Assert.That(responseObject.StatusCode, Is.EqualTo(200));
+    }
 }

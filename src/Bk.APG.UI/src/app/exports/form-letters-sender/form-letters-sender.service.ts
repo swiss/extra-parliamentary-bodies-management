@@ -14,29 +14,29 @@ export class FormLettersSenderService {
     constructor(private readonly http: HttpClient) {}
 
     getFormLettersSenderList(): Observable<FormLettersSenderList[]> {
-        return this.http.get<FormLettersSenderList[]>('/api/formLetterSender/list');
+        return this.http.get<FormLettersSenderList[]>('/api/form-letter-senders/list');
     }
 
     getEmptyFormLettersSender(): Observable<FormLettersSenderCreate> {
-        return this.http.get<FormLettersSenderCreate>('/api/formLetterSender/empty');
+        return this.http.get<FormLettersSenderCreate>('/api/form-letter-senders/empty');
     }
 
     getFormLettersSenderForUpdate(id: string): Observable<FormLettersSenderUpdate> {
-        return this.http.get<FormLettersSenderUpdate>(`/api/formLetterSender/${id}/update`);
+        return this.http.get<FormLettersSenderUpdate>(`/api/form-letter-senders/${id}/update`);
     }
 
     createFormLettersSender(sender: FormLettersSenderCreate): Observable<FormLettersSenderUpdate> {
         const formData = this.getFormData(sender);
-        return this.http.post<FormLettersSenderUpdate>('/api/formLetterSender', formData);
+        return this.http.post<FormLettersSenderUpdate>('/api/form-letter-senders', formData);
     }
 
     updateFormLettersSender(sender: FormLettersSenderUpdate): Observable<FormLettersSenderUpdate> {
         const formData = this.getFormData(sender);
-        return this.http.put<FormLettersSenderUpdate>(`/api/formLetterSender/${sender.id}`, formData);
+        return this.http.put<FormLettersSenderUpdate>(`/api/form-letter-senders/${sender.id}`, formData);
     }
 
     deleteFormLettersSender(id: string): Observable<void> {
-        return this.http.delete<void>(`/api/formLetterSender/${id}`);
+        return this.http.delete<void>(`/api/form-letter-senders/${id}`);
     }
 
     private getFormData(sender: FormLettersSenderCreate | FormLettersSenderUpdate): FormData {

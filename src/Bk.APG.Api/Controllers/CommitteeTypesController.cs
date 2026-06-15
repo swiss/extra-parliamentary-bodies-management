@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/committeeTypes")]
+[Route("api/committee-types")]
 [Authorize(Policy = APGPolicies.RequireAdminRole)]
-public class CommitteeTypeController : ControllerBase
+public class CommitteeTypesController : ControllerBase
 {
     private readonly ICommitteeTypeService _committeeTypeService;
 
-    public CommitteeTypeController(ICommitteeTypeService committeeTypeService)
+    public CommitteeTypesController(ICommitteeTypeService committeeTypeService)
     {
         _committeeTypeService = committeeTypeService;
     }
