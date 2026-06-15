@@ -10,18 +10,18 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class GeneralElectionCommitteeControllerTests
+internal class GeneralElectionCommitteesControllerTests
 {
     private readonly IMembershipCandidateService _membershipCandidateService = Substitute.For<IMembershipCandidateService>();
     private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService = Substitute.For<IGeneralElectionCommitteeService>();
     private readonly IEiamAssignmentService _eiamAssignmentService = Substitute.For<IEiamAssignmentService>();
 
-    private GeneralElectionCommitteeController _controller = null!;
+    private GeneralElectionCommitteesController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new GeneralElectionCommitteeController(_membershipCandidateService, _generalElectionCommitteeService, _eiamAssignmentService);
+        _controller = new GeneralElectionCommitteesController(_membershipCandidateService, _generalElectionCommitteeService, _eiamAssignmentService);
     }
 
     [TearDown]

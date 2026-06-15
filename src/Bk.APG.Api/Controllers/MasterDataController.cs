@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/master-data")]
 public class MasterDataController : ControllerBase
 {
     private readonly IMasterDataService _masterDataService;

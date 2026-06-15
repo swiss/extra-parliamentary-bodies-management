@@ -6,16 +6,16 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class MembershipCandidateControllerTests
+internal class MembershipCandidatesControllerTests
 {
     private readonly IMembershipCandidateService _membershipCandidateService = Substitute.For<IMembershipCandidateService>();
 
-    private MembershipCandidateController _controller = null!;
+    private MembershipCandidatesController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new MembershipCandidateController(_membershipCandidateService);
+        _controller = new MembershipCandidatesController(_membershipCandidateService);
     }
 
     [TearDown]

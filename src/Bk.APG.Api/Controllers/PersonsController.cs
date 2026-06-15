@@ -15,12 +15,14 @@ public class PersonsController : ControllerBase
     private readonly IPersonService _personService;
     private readonly IMembershipService _membershipService;
     private readonly ISalutationGeneratorService _salutationGeneratorService;
+    private readonly IInterestService _interestService;
 
-    public PersonsController(IPersonService personService, IMembershipService membershipService, ISalutationGeneratorService salutationGeneratorService)
+    public PersonsController(IPersonService personService, IMembershipService membershipService, ISalutationGeneratorService salutationGeneratorService, IInterestService interestService)
     {
         _personService = personService;
         _membershipService = membershipService;
         _salutationGeneratorService = salutationGeneratorService;
+        _interestService = interestService;
     }
 
     [HttpGet("list")]
@@ -54,7 +56,7 @@ public class PersonsController : ControllerBase
         return Ok(result);
     }
 
-    [HttpGet("getSimilarPersons")]
+    [HttpGet("similar")]
     public async Task<ActionResult> GetSimilarPersons([FromQuery, Required] string surname, [FromQuery, Required] string givenName, [FromQuery, Required] int birthYear, [FromQuery, Required] int birthYearRange)
     {
         var result = await _personService.GetSimilarPersons(surname, givenName, birthYear, birthYearRange);
@@ -95,7 +97,7 @@ public class PersonsController : ControllerBase
         return Ok(memberships);
     }
 
-    [HttpGet("getByName")]
+    [HttpGet("get-by-name")]
     public async Task<ActionResult> GetByName([FromQuery, Required] string name)
     {
         var result = await _personService.GetByName(name);
@@ -107,5 +109,19 @@ public class PersonsController : ControllerBase
     {
         var salutation = await _salutationGeneratorService.CreateSalutationTextForPerson(genderId, correspondenceLanguageId, surname, title);
         return Ok(salutation);
+    }
+
+    [HttpGet("{personId:guid}/interests")]
+    public async Task<ActionResult> GetInterests(Guid personId)
+    {
+        var results = await _interestService.GetInterestsForUpdateByPersonId(personId);
+        return Ok(results);
+    }
+
+    [HttpPut("{personId:guid}/interests")]
+    public async Task<ActionResult> UpdateInterests([FromRoute] Guid personId, [FromBody, Required] InterestUpdateDto[] updateDtos)
+    {
+        var interest = await _interestService.UpdateInterests(personId, updateDtos);
+        return Ok(interest);
     }
 }

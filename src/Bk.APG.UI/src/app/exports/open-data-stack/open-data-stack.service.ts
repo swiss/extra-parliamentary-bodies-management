@@ -9,6 +9,6 @@ export class OpenDataStackService {
     constructor(private readonly http: HttpClient) {}
 
     exchangeToken(): Observable<string> {
-        return this.http.post('/api/opendatastack/token', {}, {responseType: 'text'});
+        return this.http.post('/api/open-data-stack/token', {}, {responseType: 'text'});
     }
 }
