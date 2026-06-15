@@ -7,17 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 namespace Bk.APG.Api.Tests.Controllers;
 
 [TestFixture]
-internal class ReportControllerTests
+internal class ReportsControllerTests
 {
     private readonly IReportService _reportService = Substitute.For<IReportService>();
     private readonly IFormLetterService _formLetterService = Substitute.For<IFormLetterService>();
 
-    private ReportController _controller = null!;
+    private ReportsController _controller = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _controller = new ReportController(_reportService, _formLetterService);
+        _controller = new ReportsController(_reportService, _formLetterService);
     }
 
     [TearDown]

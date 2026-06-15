@@ -186,7 +186,7 @@ describe('CommitteesService', () => {
             .set('isUpdateMode', true);
 
         expect(httpClientMock.get).toHaveBeenCalledWith(
-            '/api/committees/1/checkMemberships',
+            '/api/committees/1/check-memberships',
             expect.objectContaining({
                 params: expectedParams,
             })
@@ -229,7 +229,7 @@ describe('CommitteesService', () => {
         const expectedParams = new HttpParams().set('desc', 'test');
 
         expect(httpClientMock.get).toHaveBeenCalledWith(
-            '/api/committees/getByDescription',
+            '/api/committees/get-by-description',
             expect.objectContaining({
                 params: expectedParams,
             })

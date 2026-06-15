@@ -69,7 +69,7 @@ export class PersonsService {
         params = params.append('birthYear', birthYear);
         params = params.append('birthYearRange', birthYearRange);
 
-        return this.http.get<PersonDetails[]>('/api/persons/getSimilarPersons', {params});
+        return this.http.get<PersonDetails[]>('/api/persons/similar', {params});
     }
 
     getPersonMemberships(id: string) {
@@ -78,7 +78,7 @@ export class PersonsService {
 
     getPersonsByName(name: string) {
         const params = new HttpParams().set('name', name);
-        return this.http.get<PersonDetails[]>(`/api/persons/getByName`, {params});
+        return this.http.get<PersonDetails[]>(`/api/persons/get-by-name`, {params});
     }
 
     generateSalutation(genderId: string, correspondenceLanguageId: string, surname: string, title?: string) {

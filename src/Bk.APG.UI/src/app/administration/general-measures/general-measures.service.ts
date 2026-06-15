@@ -10,18 +10,18 @@ export class GeneralMeasuresService {
     constructor(private readonly http: HttpClient) {}
 
     getGeneralMeasures() {
-        return this.http.get<GeneralMeasure[]>('/api/generalMeasures');
+        return this.http.get<GeneralMeasure[]>('/api/general-measures');
     }
 
     saveGeneralMeasure(generalMeasureUpdate: GeneralMeasureUpdate) {
-        return this.http.put('/api/generalMeasures', generalMeasureUpdate);
+        return this.http.put('/api/general-measures', generalMeasureUpdate);
     }
 
     validate(departmentId: string) {
-        return this.http.post<void>(`/api/generalMeasures/${departmentId}/validate`, {});
+        return this.http.post<void>(`/api/general-measures/${departmentId}/validate`, {});
     }
 
     forward(departmentId: string, message: string, forwardToAdmin: boolean) {
-        return this.http.post<void>(`/api/generalMeasures/${departmentId}/forward`, {message, forwardToAdmin});
+        return this.http.post<void>(`/api/general-measures/${departmentId}/forward`, {message, forwardToAdmin});
     }
 }

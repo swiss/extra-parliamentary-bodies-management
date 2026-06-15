@@ -86,7 +86,7 @@ describe('DataAnalysisComponent', () => {
     });
 
     it('should call dataAnalysisService.generateExport with correct parameters', () => {
-        const exportType = 'committee-type';
+        const exportType = 'committee-types';
         const analysisDate = new Date(2024, 0, 1);
         component.dataAnalysisForm.controls.analysisDate.setValue(analysisDate);
         dataAnalysisServiceMock.generateExport = jest.fn().mockReturnValue(of(new Blob()));
@@ -97,7 +97,7 @@ describe('DataAnalysisComponent', () => {
     });
 
     it('should show info notification when export starts', () => {
-        component.generateExport('committee-type');
+        component.generateExport('committee-types');
 
         expect(notificationServiceMock.info).toHaveBeenCalledWith(
             expect.objectContaining({
@@ -109,7 +109,7 @@ describe('DataAnalysisComponent', () => {
     });
 
     it('should show success notification and update successful exports on success', () => {
-        const exportType = 'committee-type';
+        const exportType = 'committee-types';
 
         component.generateExport(exportType);
 
@@ -124,14 +124,14 @@ describe('DataAnalysisComponent', () => {
     it('should call downloadFileFromHttpResponse on success', () => {
         const downloadSpy = jest.spyOn(fileUtil, 'downloadFileFromHttpResponse').mockImplementation(() => {});
 
-        component.generateExport('committee-type');
+        component.generateExport('committee-types');
 
         expect(downloadSpy).toHaveBeenCalled();
         downloadSpy.mockRestore();
     });
 
     it('should show error notification and update failed exportsand update failed exports on error', () => {
-        const exportType = 'committee-type';
+        const exportType = 'committee-types';
 
         dataAnalysisServiceMock.generateExport = jest.fn().mockReturnValue(throwError(() => new Error('fail')));
 
