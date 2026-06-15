@@ -34,7 +34,7 @@ describe('PersonInterestsService', () => {
         const id = 'myId';
         service.getInterestsByPersonId(id).subscribe(value => (response = value));
 
-        const req = httpMock.expectOne(`/api/person/myId/interests`);
+        const req = httpMock.expectOne(`/api/persons/myId/interests`);
         expect(req.request.method).toEqual('GET');
         req.flush([]);
 
@@ -50,7 +50,7 @@ describe('PersonInterestsService', () => {
 
         service.saveInterestForPerson(personId, updates).subscribe(value => (updatedInterests = value));
 
-        const req = httpMock.expectOne(`/api/person/${personId}/interests`);
+        const req = httpMock.expectOne(`/api/persons/${personId}/interests`);
         expect(req.request.method).toEqual('PUT');
         expect(req.request.body).toBeInstanceOf(Array);
         const body = Object.fromEntries(req.request.body.entries());

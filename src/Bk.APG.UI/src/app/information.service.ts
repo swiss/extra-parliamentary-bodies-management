@@ -13,7 +13,7 @@ export class InformationService {
 
     loadApplicationVersion(): void {
         this.http
-            .get<VersionDto>('/api/info/version')
+            .get<VersionDto>('/api/information/version')
             .pipe(first())
             .subscribe(v => (this.applicationVersion = v.applicationVersion));
     }

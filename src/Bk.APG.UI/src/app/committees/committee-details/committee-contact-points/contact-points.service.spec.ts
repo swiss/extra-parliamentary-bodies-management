@@ -35,7 +35,7 @@ describe('ContactPointsService', () => {
         const response = await firstValueFrom(service.getContactPointList('1'));
         expect(response).toBeTruthy();
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/contactpoints/1/list');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/contact-points/1/list');
     });
 
     it('should get empty contact point for create', async () => {
@@ -48,7 +48,7 @@ describe('ContactPointsService', () => {
         const response = await firstValueFrom(service.getContactPointForCreate('1'));
         expect(response).toBeTruthy();
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/contactpoints/1/create');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/contact-points/1/create');
     });
 
     it('should create contactPoint', () => {
@@ -56,7 +56,7 @@ describe('ContactPointsService', () => {
 
         service.createContactPoint(contactPointCreate);
 
-        expect(httpClientMock.post).toHaveBeenCalledWith('/api/contactpoints', contactPointCreate);
+        expect(httpClientMock.post).toHaveBeenCalledWith('/api/contact-points', contactPointCreate);
     });
 
     it('should get contact point for update', async () => {
@@ -69,7 +69,7 @@ describe('ContactPointsService', () => {
         const response = await firstValueFrom(service.getContactPointForUpdate('1'));
         expect(response).toBeTruthy();
 
-        expect(httpClientMock.get).toHaveBeenCalledWith('/api/contactpoints/1/update');
+        expect(httpClientMock.get).toHaveBeenCalledWith('/api/contact-points/1/update');
     });
 
     it('should update contact point', () => {
@@ -102,7 +102,7 @@ describe('ContactPointsService', () => {
             rowVersion: 666,
         });
 
-        expect(httpClientMock.put).toHaveBeenCalledWith('/api/contactpoints/1', {
+        expect(httpClientMock.put).toHaveBeenCalledWith('/api/contact-points/1', {
             id: '1',
             committeeId: 'IAmAGuid',
             committeeDetailId: 'MeToo',
@@ -135,6 +135,6 @@ describe('ContactPointsService', () => {
     it('should delete contact point', () => {
         service.deleteContactPoint('1');
 
-        expect(httpClientMock.delete).toHaveBeenCalledWith('/api/contactpoints/1');
+        expect(httpClientMock.delete).toHaveBeenCalledWith('/api/contact-points/1');
     });
 });

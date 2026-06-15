@@ -16,35 +16,35 @@ export class AppointmentDecisionService {
     constructor(private readonly http: HttpClient) {}
 
     getAppointmentDecisionList(committeeId: string): Observable<AppointmentDecisionList[]> {
-        return this.http.get<AppointmentDecisionList[]>(`/api/appointmentDecisions/${committeeId}/list`);
+        return this.http.get<AppointmentDecisionList[]>(`/api/appointment-decisions/${committeeId}/list`);
     }
 
     getAppointmentDecisionForCreate(): Observable<AppointmentDecisionCreate> {
-        return this.http.get<AppointmentDecisionCreate>(`/api/appointmentDecisions/create`);
+        return this.http.get<AppointmentDecisionCreate>(`/api/appointment-decisions/create`);
     }
 
     getAppointmentDecisionForUpdate(appointmentDecisionId: string): Observable<AppointmentDecisionUpdate> {
-        return this.http.get<AppointmentDecisionUpdate>(`/api/appointmentDecisions/${appointmentDecisionId}/update`);
+        return this.http.get<AppointmentDecisionUpdate>(`/api/appointment-decisions/${appointmentDecisionId}/update`);
     }
 
     createAppointmentDecision(appointmentDecision: AppointmentDecisionCreate): Observable<AppointmentDecisionList> {
         const formData = this.getFormData(appointmentDecision);
-        return this.http.post<AppointmentDecisionList>('/api/appointmentDecisions', formData);
+        return this.http.post<AppointmentDecisionList>('/api/appointment-decisions', formData);
     }
 
     updateAppointmentDecision(id: string, appointmentDecision: AppointmentDecisionUpdate): Observable<AppointmentDecisionList> {
         const formData = this.getFormData(appointmentDecision);
-        return this.http.put<AppointmentDecisionList>(`/api/appointmentDecisions/${id}`, formData);
+        return this.http.put<AppointmentDecisionList>(`/api/appointment-decisions/${id}`, formData);
     }
 
     deleteAppointmentDecision(appointmentDecisionId: string): Observable<AppointmentDecisionList[]> {
-        return this.http.delete<AppointmentDecisionList[]>(`/api/appointmentDecisions/${appointmentDecisionId}`);
+        return this.http.delete<AppointmentDecisionList[]>(`/api/appointment-decisions/${appointmentDecisionId}`);
     }
 
     downloadFile(id: string): Observable<Blob> {
         const params = new HttpParams().set('id', id);
 
-        return this.http.get(`/api/appointmentDecisions/document`, {params, responseType: 'blob'});
+        return this.http.get(`/api/appointment-decisions/document`, {params, responseType: 'blob'});
     }
 
     private getFormData(appointmentDecision: AppointmentDecisionCreate | AppointmentDecisionUpdate): FormData {
