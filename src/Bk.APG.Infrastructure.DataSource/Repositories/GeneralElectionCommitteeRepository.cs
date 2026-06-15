@@ -114,7 +114,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         };
     }
 
-    public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
+    public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto)
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
