@@ -167,19 +167,19 @@ describe('CommitteesService', () => {
     });
 
     it('should validate membership', () => {
-        const committeeJustificationUpdate = {
-            committeeid: '1',
+        const validationRequest: CommitteeMembershipValidationRequest = {
+            committeeId: '1',
             personId: '2',
             beginDate: new Date(2023, 0, 1),
             endDate: new Date(2024, 11, 31),
             inCorrelationWithFederalDuty: false,
             isUpdateMode: true,
-        } as CommitteeMembershipValidationRequest;
+        };
 
-        service.validateMembership('1', committeeJustificationUpdate);
+        service.validateMembership('1', validationRequest);
 
         const expectedParams = new HttpParams()
-            .set('committeeid', '1')
+            .set('committeeId', '1')
             .set('personId', '2')
             .set('beginDate', '2023-01-01')
             .set('endDate', '2024-12-31')
