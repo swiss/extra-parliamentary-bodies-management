@@ -40,9 +40,6 @@ public class CompareListService : ICompareListService
         _logger.LogInformation("Generating CompareList GeneralElection document");
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
-        var date1 = filterDto.AnalysisDate1;
-        var date2 = filterDto.AnalysisDate2;
-
         var allCommitteeTypes = await _masterDataRepository.GetCommitteeTypes();
         // exclude the committeeTyp "Vertretungen des Bundes"
         allCommitteeTypes = allCommitteeTypes.Where(ct => ct.Id == CommitteeType.AuthoritiesCommissionGuid || ct.Id == CommitteeType.ManagementCommitteeGuid ||
@@ -52,13 +49,9 @@ public class CompareListService : ICompareListService
         // exclude BK, as there are no committees and it should not be in the document
         departments = departments.Where(d => d.Uri != Department.BkUri).ToArray();
 
-        var committeesFromDate1 = (await _committeeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
+        var committeesFromDate1 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1)).ToArray();
 
-        filterDto.AnalysisDate1 = date2;
-
-        var committeesFromDate2 = (await _committeeRepository.GetByFilterForReport(filterDto, departmentId, officeId, committeeId)).ToArray();
-
-        filterDto.AnalysisDate1 = date1;
+        var committeesFromDate2 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate2)).ToArray();
 
         var compareListDto = new CompareListDto
         {
