@@ -16,15 +16,7 @@ public class AddressService : IAddressService
 
     public async Task<IEnumerable<AddressDto>> Search(AddressSearchDto search)
     {
-        try
-        {
-            return await _postService.Search(search);
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Failed to retrieve address search-result from Post API");
-            return [];
-        }
+        return await _postService.Search(search);
     }
 
     public async Task<AddressVerificationResultDto> Verify(AddressSearchDto search)
