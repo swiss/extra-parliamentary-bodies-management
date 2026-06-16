@@ -32,17 +32,15 @@ internal class AddressesControllerTests
         _addressService.Search(Arg.Any<AddressSearchDto>()).Returns([result]);
 
         var response = await _controller.Search(dto);
-
         Assert.That(response, Is.Not.Null);
-        var responseObject = response as OkObjectResult;
 
+        var responseObject = response as OkObjectResult;
         Assert.That(responseObject, Is.Not.Null);
-        var value = (responseObject.Value as IEnumerable<AddressDto>)!.ToList();
-        Assert.Multiple(() =>
-        {
-            Assert.That(value, Is.Not.Null);
-            Assert.That(value.First().Id, Is.EqualTo(result.Id));
-        });
+
+        var responseObjectValue = (responseObject.Value as IEnumerable<AddressDto>)?.ToArray();
+        Assert.That(responseObjectValue, Is.Not.Null);
+        Assert.That(responseObjectValue, Is.Not.Empty);
+        Assert.That(responseObjectValue.First().Id, Is.EqualTo(result.Id));
 
         await _addressService.Received(1).Search(Arg.Is(dto));
     }
