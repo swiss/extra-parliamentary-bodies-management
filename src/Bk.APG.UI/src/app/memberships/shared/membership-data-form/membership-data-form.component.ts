@@ -459,7 +459,7 @@ export class MembershipDataFormComponent implements OnInit {
                 beginDate: this.membershipForm.controls.beginDate.value,
                 endDate: this.membershipForm.controls.endDate.value!,
                 personId: this.personId,
-                committeeid: this.committeeId,
+                committeeId: this.committeeId,
                 inCorrelationWithFederalDuty: this.membershipForm.controls.inCorrelationWithFederalDuty.value,
                 currentMembershipId: this.isUpdateMode ? (this.membershipModification() as MembershipUpdate).id : undefined,
             } as CommitteeMembershipValidationRequest;
@@ -467,7 +467,7 @@ export class MembershipDataFormComponent implements OnInit {
             if (
                 this.isAfterYear2000(this.validationRequest.beginDate) &&
                 this.isAfterYear2000(this.validationRequest.endDate) &&
-                this.validationRequest.committeeid &&
+                this.validationRequest.committeeId &&
                 this.validationRequest.personId
             ) {
                 this.isValidating = true;
@@ -620,7 +620,7 @@ export class MembershipDataFormComponent implements OnInit {
                         beginDate: this.membershipForm.controls.beginDate.value,
                         endDate: this.membershipForm.controls.endDate.value!,
                         personId: this.personId,
-                        committeeid: this.committeeId,
+                        committeeId: this.committeeId,
                         inCorrelationWithFederalDuty: this.membershipForm.controls.inCorrelationWithFederalDuty.value,
                         currentMembershipId: this.isUpdateMode ? (this.membershipModification() as MembershipUpdate).id : undefined,
                     } as CommitteeMembershipValidationRequest;
@@ -628,7 +628,7 @@ export class MembershipDataFormComponent implements OnInit {
                     if (
                         this.isAfterYear2000(this.validationRequest.beginDate) &&
                         this.isAfterYear2000(this.validationRequest.endDate) &&
-                        this.validationRequest.committeeid &&
+                        this.validationRequest.committeeId &&
                         this.validationRequest.personId
                     ) {
                         this.isValidating = true;
