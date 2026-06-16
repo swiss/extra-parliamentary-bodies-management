@@ -105,8 +105,8 @@ export class CommitteesService {
     validateMembership(id: string, validationRequest: CommitteeMembershipValidationRequest) {
         let params = new HttpParams();
 
-        if (validationRequest?.committeeid) {
-            params = append(params, 'committeeid', validationRequest.committeeid);
+        if (validationRequest?.committeeId) {
+            params = append(params, 'committeeId', validationRequest.committeeId);
         }
 
         if (validationRequest?.personId) {

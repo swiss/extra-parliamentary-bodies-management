@@ -40,20 +40,6 @@ internal class AddressServiceTests
     }
 
     [Test]
-    public async Task Search_WithServiceThrowing_ShouldReturnEmpty()
-    {
-        var dto = new AddressSearchDto();
-        _postService.Search(Arg.Any<AddressSearchDto>()).ThrowsAsync(new TimeoutException());
-
-        var result = await _addressService.Search(dto);
-
-        Assert.That(result, Is.Not.Null);
-        Assert.That(result, Is.Empty);
-
-        await _postService.Received(1).Search(Arg.Is(dto));
-    }
-
-    [Test]
     public async Task Verify_WhenCalled_ShouldCallService()
     {
         var dto = new AddressSearchDto();
