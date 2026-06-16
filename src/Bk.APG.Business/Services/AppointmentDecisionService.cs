@@ -102,14 +102,15 @@ public class AppointmentDecisionService : IAppointmentDecisionService
         }
         catch (Exception ex)
         {
-            foreach (var guid in uploadedDocumentIds)
+            _logger.LogError(ex, "Error while creating appointment decision. Remove uploaded documents...");
+
+            foreach (var documentId in uploadedDocumentIds)
             {
-                await _documentService.RemoveDocument(guid);
+                _logger.LogInformation("Remove document {DocumentId}", documentId);
+                await _documentService.RemoveDocument(documentId);
             }
 
-            _logger.LogError(ex, "Error while creating appointment decision");
-
-            throw new AppointmentDecisionCreateException($"Error while creating appointment decision, removed uploaded documentDto items with storage Id: {string.Join(',', uploadedDocumentIds.Select(y => y.ToString()))}");
+            throw;
         }
 
         return await GetById(appointmentDecision.Id);
@@ -187,14 +188,15 @@ public class AppointmentDecisionService : IAppointmentDecisionService
         }
         catch (Exception ex)
         {
-            foreach (var guid in uploadedDocumentIds)
+            _logger.LogError(ex, "Error while updating appointment decision. Remove uploaded documents...");
+
+            foreach (var documentId in uploadedDocumentIds)
             {
-                await _documentService.RemoveDocument(guid);
+                _logger.LogInformation("Remove document {DocumentId}", documentId);
+                await _documentService.RemoveDocument(documentId);
             }
 
-            _logger.LogError(ex, "Error while updating appointment decision");
-
-            throw new AppointmentDecisionUpdateException($"Error while updating appointment decision, removed uploaded documentDto items with storage Id: {string.Join(',', uploadedDocumentIds.Select(y => y.ToString()))}");
+            throw;
         }
 
         return await GetById(appointmentDecision.Id);
@@ -208,42 +210,35 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
         var appointmentDecision = await _appointmentDecisionRepository.GetAppointmentDecisionByIdForUpdate(id);
 
-        try
+        if (appointmentDecision.FileReferenceGerman is not null)
         {
-            if (appointmentDecision.FileReferenceGerman is not null)
-            {
-                _logger.LogInformation("Removing document storage entry DE {FileReferenceId}...", appointmentDecision.FileReferenceGermanId);
+            _logger.LogInformation("Removing document storage entry DE {FileReferenceId}...", appointmentDecision.FileReferenceGermanId);
 
-                await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceGerman.Id);
-            }
-
-            if (appointmentDecision.FileReferenceFrench is not null)
-            {
-                _logger.LogInformation("Removing document storage entry FR {FileReferenceId}...", appointmentDecision.FileReferenceFrenchId);
-
-                await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceFrench.Id);
-            }
-
-            if (appointmentDecision.FileReferenceItalian is not null)
-            {
-                _logger.LogInformation("Removing document storage entry IT {FileReferenceId}...", appointmentDecision.FileReferenceItalianId);
-
-                await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceItalian.Id);
-            }
-
-            if (appointmentDecision.FileReferenceRomansh is not null)
-            {
-                _logger.LogInformation("Removing document storage entry RM {FileReferenceId}...", appointmentDecision.FileReferenceRomanshId);
-
-                await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceRomansh.Id);
-            }
-
-            _appointmentDecisionRepository.Delete(appointmentDecision);
+            await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceGerman.Id);
         }
-        catch (Exception ex)
+
+        if (appointmentDecision.FileReferenceFrench is not null)
         {
-            _logger.LogError(ex, "Error while deleting appointment decision");
+            _logger.LogInformation("Removing document storage entry FR {FileReferenceId}...", appointmentDecision.FileReferenceFrenchId);
+
+            await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceFrench.Id);
         }
+
+        if (appointmentDecision.FileReferenceItalian is not null)
+        {
+            _logger.LogInformation("Removing document storage entry IT {FileReferenceId}...", appointmentDecision.FileReferenceItalianId);
+
+            await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceItalian.Id);
+        }
+
+        if (appointmentDecision.FileReferenceRomansh is not null)
+        {
+            _logger.LogInformation("Removing document storage entry RM {FileReferenceId}...", appointmentDecision.FileReferenceRomanshId);
+
+            await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceRomansh.Id);
+        }
+
+        _appointmentDecisionRepository.Delete(appointmentDecision);
 
         await _appointmentDecisionRepository.CommitChanges();
     }
