@@ -47,12 +47,12 @@ internal class ElectoralListServiceTests
         var committeeDetail = CreateGeneralElectionCommittee();
         using var documentStream = new MemoryStream();
 
-        _generalElectionCommitteeRepository.GetByFilterForReport(_filterDto, _zeroGuid, _zeroGuid, _zeroGuid).Returns([committeeDetail]);
+        _generalElectionCommitteeRepository.GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, _filterDto).Returns([committeeDetail]);
         _documentService.CreateWordFromTemplate(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<string>()).Returns(documentStream);
 
         var (fileName, content) = await _electoralListService.GenerateDocument(_filterDto, listType);
 
-        await _generalElectionCommitteeRepository.Received(1).GetByFilterForReport(_filterDto, _zeroGuid, _zeroGuid, _zeroGuid);
+        await _generalElectionCommitteeRepository.Received(1).GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, _filterDto);
 
         await _documentService.Received(1).CreateWordFromTemplate(
             $"Templates/{listType}.docx",
@@ -84,7 +84,7 @@ internal class ElectoralListServiceTests
         person.Interests = [interest];
         using var documentStream = new MemoryStream();
 
-        _generalElectionCommitteeRepository.GetByFilterForReport(_filterDto, _zeroGuid, _zeroGuid, _zeroGuid).Returns([committeeDetail]);
+        _generalElectionCommitteeRepository.GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, _filterDto).Returns([committeeDetail]);
         _documentService.CreateWordFromTemplate(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<string>()).Returns(documentStream);
 
         ElectoralListDto? capturedData = null!;
@@ -106,7 +106,7 @@ internal class ElectoralListServiceTests
         person.Interests = new List<Interest>();
         using var documentStream = new MemoryStream();
 
-        _generalElectionCommitteeRepository.GetByFilterForReport(_filterDto, _zeroGuid, _zeroGuid, _zeroGuid).Returns([committeeDetail]);
+        _generalElectionCommitteeRepository.GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, _filterDto).Returns([committeeDetail]);
         _documentService.CreateWordFromTemplate(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<string>()).Returns(documentStream);
 
         ElectoralListDto? capturedData = null!;
@@ -128,7 +128,7 @@ internal class ElectoralListServiceTests
 
         _committeeRepository.GetAll().Returns(new List<Committee> { secondCommittee });
 
-        _generalElectionCommitteeRepository.GetByFilterForReport(_filterDto, _zeroGuid, _zeroGuid, _zeroGuid).Returns([committeeDetail]);
+        _generalElectionCommitteeRepository.GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, _filterDto).Returns([committeeDetail]);
         using var documentStream = new MemoryStream();
         _documentService.CreateWordFromTemplate(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<string>()).Returns(documentStream);
 
