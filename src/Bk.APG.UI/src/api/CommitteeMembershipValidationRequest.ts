@@ -1,5 +1,5 @@
 export interface CommitteeMembershipValidationRequest {
-    committeeid: string;
+    committeeId: string;
     personId: string;
     currentMembershipId?: string;
     beginDate: Date;

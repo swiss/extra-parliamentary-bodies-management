@@ -140,30 +140,30 @@ public class CompareListService : ICompareListService
         var currentCommitteeType = committee.CommitteeType;
         var activeMemberCountOld = committee.Memberships.Count;
         var activeMemberCountNew = compareCommittee is not null ? compareCommittee.Memberships.Count : 0;
-        var germanUnderStaffedOld = false;
-        var frenchUnderStaffedOld = false;
-        var italianUnderStaffedOld = false;
+        bool germanUnderStaffedOld;
+        bool frenchUnderStaffedOld;
+        bool italianUnderStaffedOld;
         var germanUnderStaffedNew = false;
         var frenchUnderStaffedNew = false;
         var italianUnderStaffedNew = false;
-        var germanTextOld = string.Empty;
+        string germanTextOld;
         var germanTextNew = string.Empty;
-        var frenchTextOld = string.Empty;
+        string frenchTextOld;
         var frenchTextNew = string.Empty;
-        var italianTextOld = string.Empty;
+        string italianTextOld;
         var italianTextNew = string.Empty;
         var genderPartsOld = new List<string>();
         var genderPartsNew = new List<string>();
         var femaleUnderStaffedNew = false;
         var maleUnderStaffedNew = false;
 
-        var femaleUnderStaffedOld = activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.GenderId == Gender.FemaleGuid) / activeMemberCountOld * 100) < currentCommitteeType!.FemaleThreshold;
-        var maleUnderStaffedOld = activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid) / activeMemberCountOld * 100) < currentCommitteeType!.MaleThreshold;
+        var femaleUnderStaffedOld = activeMemberCountOld > 0 && (double)committee.Memberships.Count(m => m.Person!.GenderId == Gender.FemaleGuid) / activeMemberCountOld * 100 < currentCommitteeType!.FemaleThreshold;
+        var maleUnderStaffedOld = activeMemberCountOld > 0 && (double)committee.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid) / activeMemberCountOld * 100 < currentCommitteeType!.MaleThreshold;
 
         if (compareCommittee != null)
         {
-            femaleUnderStaffedNew = activeMemberCountNew > 0 && ((double)compareCommittee!.Memberships.Count(m => m.Person!.GenderId == Gender.FemaleGuid) / activeMemberCountNew * 100) < currentCommitteeType!.FemaleThreshold;
-            maleUnderStaffedNew = activeMemberCountNew > 0 && ((double)compareCommittee!.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid) / activeMemberCountNew * 100) < currentCommitteeType!.MaleThreshold;
+            femaleUnderStaffedNew = activeMemberCountNew > 0 && (double)compareCommittee.Memberships.Count(m => m.Person!.GenderId == Gender.FemaleGuid) / activeMemberCountNew * 100 < currentCommitteeType!.FemaleThreshold;
+            maleUnderStaffedNew = activeMemberCountNew > 0 && (double)compareCommittee.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid) / activeMemberCountNew * 100 < currentCommitteeType!.MaleThreshold;
         }
 
         if (femaleUnderStaffedOld)
@@ -183,21 +183,21 @@ public class CompareListService : ICompareListService
             genderPartsNew.Add(CreateGenderPercentageText(activeMemberCountNew, compareCommittee!.Memberships.Count(m => m.Person!.GenderId == Gender.MaleGuid), Gender.MaleGuid));
         }
 
-        if (currentCommitteeType != null && currentCommitteeType.GermanMinimalThreshold is not null)
+        if (currentCommitteeType is { GermanMinimalThreshold: not null })
         {
             // we work with minimum number of members
-            germanUnderStaffedOld = activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) < currentCommitteeType!.GermanMinimalThreshold;
-            frenchUnderStaffedOld = activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) < currentCommitteeType!.FrenchMinimalThreshold;
-            italianUnderStaffedOld = activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) < currentCommitteeType!.ItalianMinimalThreshold;
+            germanUnderStaffedOld = activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) < currentCommitteeType.GermanMinimalThreshold;
+            frenchUnderStaffedOld = activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) < currentCommitteeType.FrenchMinimalThreshold;
+            italianUnderStaffedOld = activeMemberCountOld > 0 && committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) < currentCommitteeType.ItalianMinimalThreshold;
             germanTextOld = germanUnderStaffedOld ? $"DE: {BusinessTexts.Compare_List_Language_Missing}" : BusinessTexts.Compare_List_Language_OK;
             frenchTextOld = frenchUnderStaffedOld ? $"FR: {BusinessTexts.Compare_List_Language_Missing}" : BusinessTexts.Compare_List_Language_OK;
             italianTextOld = italianUnderStaffedOld ? $"IT: {BusinessTexts.Compare_List_Language_Missing}" : BusinessTexts.Compare_List_Language_OK;
 
             if (compareCommittee != null)
             {
-                germanUnderStaffedNew = activeMemberCountNew > 0 && compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) < currentCommitteeType!.GermanMinimalThreshold;
-                frenchUnderStaffedNew = activeMemberCountNew > 0 && compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) < currentCommitteeType!.FrenchMinimalThreshold;
-                italianUnderStaffedNew = activeMemberCountNew > 0 && compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) < currentCommitteeType!.ItalianMinimalThreshold;
+                germanUnderStaffedNew = activeMemberCountNew > 0 && compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) < currentCommitteeType.GermanMinimalThreshold;
+                frenchUnderStaffedNew = activeMemberCountNew > 0 && compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) < currentCommitteeType.FrenchMinimalThreshold;
+                italianUnderStaffedNew = activeMemberCountNew > 0 && compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) < currentCommitteeType.ItalianMinimalThreshold;
                 germanTextNew = germanUnderStaffedNew ? $"DE: {BusinessTexts.Compare_List_Language_Missing}" : BusinessTexts.Compare_List_Language_OK;
                 frenchTextNew = frenchUnderStaffedNew ? $"FR: {BusinessTexts.Compare_List_Language_Missing}" : BusinessTexts.Compare_List_Language_OK;
                 italianTextNew = italianUnderStaffedNew ? $"IT: {BusinessTexts.Compare_List_Language_Missing}" : BusinessTexts.Compare_List_Language_OK;
@@ -206,21 +206,21 @@ public class CompareListService : ICompareListService
         else
         {
             // we work with minimal percentage of members
-            germanUnderStaffedOld = activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountOld * 100) < currentCommitteeType!.GermanThresholdPercentage;
-            frenchUnderStaffedOld = activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountOld * 100) < currentCommitteeType!.FrenchThresholdPercentage;
-            italianUnderStaffedOld = activeMemberCountOld > 0 && ((double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountOld * 100) < currentCommitteeType!.ItalianThresholdPercentage;
+            germanUnderStaffedOld = activeMemberCountOld > 0 && (double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountOld * 100 < currentCommitteeType!.GermanThresholdPercentage;
+            frenchUnderStaffedOld = activeMemberCountOld > 0 && (double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountOld * 100 < currentCommitteeType!.FrenchThresholdPercentage;
+            italianUnderStaffedOld = activeMemberCountOld > 0 && (double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountOld * 100 < currentCommitteeType!.ItalianThresholdPercentage;
             germanTextOld = $"DE: {(double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountOld * 100:F2} %";
             frenchTextOld = $"FR: {(double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountOld * 100:F2} %";
             italianTextOld = $"IT: {(double)committee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountOld * 100:F2} %";
 
             if (compareCommittee != null)
             {
-                germanUnderStaffedNew = activeMemberCountNew > 0 && ((double)compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountNew * 100) < currentCommitteeType!.GermanThresholdPercentage;
-                frenchUnderStaffedNew = activeMemberCountNew > 0 && ((double)compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountNew * 100) < currentCommitteeType!.FrenchThresholdPercentage;
-                italianUnderStaffedNew = activeMemberCountNew > 0 && ((double)compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountNew * 100) < currentCommitteeType!.ItalianThresholdPercentage;
-                germanTextNew = $"DE: {(double)compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountNew * 100:F2} %";
-                frenchTextNew = $"FR: {(double)compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountNew * 100:F2} %";
-                italianTextNew = $"IT: {(double)compareCommittee!.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountNew * 100:F2} %";
+                germanUnderStaffedNew = activeMemberCountNew > 0 && (double)compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountNew * 100 < currentCommitteeType!.GermanThresholdPercentage;
+                frenchUnderStaffedNew = activeMemberCountNew > 0 && (double)compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountNew * 100 < currentCommitteeType!.FrenchThresholdPercentage;
+                italianUnderStaffedNew = activeMemberCountNew > 0 && (double)compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountNew * 100 < currentCommitteeType!.ItalianThresholdPercentage;
+                germanTextNew = $"DE: {(double)compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.GermanGuid) / activeMemberCountNew * 100:F2} %";
+                frenchTextNew = $"FR: {(double)compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.FrenchGuid) / activeMemberCountNew * 100:F2} %";
+                italianTextNew = $"IT: {(double)compareCommittee.Memberships.Count(m => m.Person!.LanguageId == Language.ItalianGuid) / activeMemberCountNew * 100:F2} %";
             }
         }
 
@@ -274,17 +274,11 @@ public class CompareListService : ICompareListService
 
     private static string CreateGenderPercentageText(int totalMembers, int membershipCount, Guid genderId)
     {
-        string genderText;
-
-        if (membershipCount == 1)
-        {
-            genderText = genderId == Gender.FemaleGuid ? BusinessTexts.Compare_List_Woman : BusinessTexts.Compare_List_Man;
-        }
-        else
-        {
-            genderText = genderId == Gender.FemaleGuid ? BusinessTexts.Compare_List_Women : BusinessTexts.Compare_List_Men;
-        }
+        var genderText = membershipCount == 1 ? SingleText() : MultiText();
 
         return $"{membershipCount} {genderText} ({(double)membershipCount / totalMembers * 100:F2} %)";
+
+        string SingleText() => genderId == Gender.FemaleGuid ? BusinessTexts.Compare_List_Woman : BusinessTexts.Compare_List_Man;
+        string MultiText() => genderId == Gender.FemaleGuid ? BusinessTexts.Compare_List_Women : BusinessTexts.Compare_List_Men;
     }
 }
