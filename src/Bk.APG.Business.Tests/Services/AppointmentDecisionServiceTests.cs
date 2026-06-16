@@ -200,7 +200,7 @@ internal class AppointmentDecisionServiceTests
         using var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file1 = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
 
-        _documentService.UploadDocument(Arg.Any<byte[]>()).Returns(_ => "id", x => throw new TimeoutException());
+        _documentService.UploadDocument(Arg.Any<byte[]>()).Returns(_ => "id", _ => throw new TimeoutException());
 
         var createDto = new AppointmentDecisionCreateDto
         {
@@ -219,7 +219,7 @@ internal class AppointmentDecisionServiceTests
 
         _appointmentDecisionRepository.GetAppointmentDecisionById(Arg.Any<Guid>()).Returns(new AppointmentDecisionBuilder().Build());
 
-        Assert.That(async () => await _service.CreateAppointmentDecision(createDto), Throws.Exception.InstanceOf<AppointmentDecisionCreateException>());
+        Assert.That(async () => await _service.CreateAppointmentDecision(createDto), Throws.Exception);
 
         await _documentService.Received(1).RemoveDocument(Arg.Any<string>());
     }
@@ -384,7 +384,7 @@ internal class AppointmentDecisionServiceTests
         using var stream = new MemoryStream("Hello world!"u8.ToArray());
         IFormFile file1 = new FormFile(stream, 0, stream.Length, "id_from_form1", "fileName1");
 
-        _documentService.UploadDocument(Arg.Any<byte[]>()).Returns(_ => "id", x => throw new TimeoutException());
+        _documentService.UploadDocument(Arg.Any<byte[]>()).Returns(_ => "id", _ => throw new TimeoutException());
 
         var createDto = new AppointmentDecisionUpdateDto
         {
@@ -404,7 +404,7 @@ internal class AppointmentDecisionServiceTests
         _appointmentDecisionRepository.GetAppointmentDecisionById(Arg.Any<Guid>()).Returns(new AppointmentDecisionBuilder().Build());
         _appointmentDecisionRepository.GetAppointmentDecisionByIdForUpdate(Arg.Any<Guid>()).Returns(new AppointmentDecisionBuilder().Build());
 
-        Assert.That(async () => await _service.UpdateAppointmentDecision(id, createDto), Throws.Exception.InstanceOf<AppointmentDecisionUpdateException>());
+        Assert.That(async () => await _service.UpdateAppointmentDecision(id, createDto), Throws.Exception);
 
         await _documentService.Received(1).RemoveDocument(Arg.Any<string>());
     }

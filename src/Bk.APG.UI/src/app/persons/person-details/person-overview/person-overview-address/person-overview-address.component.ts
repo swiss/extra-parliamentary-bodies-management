@@ -13,6 +13,6 @@ export class PersonOverviewAddressComponent {
     addressDetail = input.required<AddressDetails>();
     zipCity = computed(() => {
         const {country, zip, city, canton} = this.addressDetail();
-        return [`${country ? `${country}-` : ''}${zip ?? ''}`, city, `${canton ? `(${canton})` : ''}`].filter(x => !!x).join(' ');
+        return [`${country?.trim() ? `${country}-` : ''}${zip?.trim() ?? ''}`, city, `${canton?.trim() ? `(${canton})` : ''}`].filter(x => !!x).join(' ');
     });
 }
