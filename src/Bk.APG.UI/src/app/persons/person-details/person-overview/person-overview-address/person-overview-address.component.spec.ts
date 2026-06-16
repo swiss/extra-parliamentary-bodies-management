@@ -3,7 +3,7 @@ import {TranslatePipe} from '@ngx-translate/core';
 import {MockPipe} from 'ng-mocks';
 import {PersonOverviewAddressComponent} from './person-overview-address.component';
 
-describe('PersonsAddressDetailComponent', () => {
+describe('PersonOverviewAddressComponent', () => {
     let component: PersonOverviewAddressComponent;
     let fixture: ComponentFixture<PersonOverviewAddressComponent>;
 
@@ -89,14 +89,14 @@ describe('PersonsAddressDetailComponent', () => {
         expect(component.zipCity()).toBe('DE-10115 Berlin (BE)');
     });
 
-    it('should compute zipCity correctly', () => {
+    it('should compute zipCity correctly when country and canton are blank', () => {
         fixture.componentRef.setInput('addressDetail', {
-            country: 'FR',
+            country: '   ',
             zip: '75001',
             city: 'Paris',
-            canton: 'IDF',
+            canton: '   ',
         });
         fixture.detectChanges();
-        expect(component.zipCity()).toBe('FR-75001 Paris (IDF)');
+        expect(component.zipCity()).toBe('75001 Paris');
     });
 });
