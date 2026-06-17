@@ -14,7 +14,7 @@ public class CompareListService : ICompareListService
     private readonly ICultureService _cultureService;
     private readonly ICommitteeRepository _committeeRepository;
     private readonly IMasterDataRepository _masterDataRepository;
-    private readonly ILogger<ElectoralListService> _logger;
+    private readonly ILogger<CompareListService> _logger;
 
     public CompareListService(
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
@@ -22,7 +22,7 @@ public class CompareListService : ICompareListService
         ICultureService cultureService,
         ICommitteeRepository committeeRepository,
         IMasterDataRepository masterDataRepository,
-        ILogger<ElectoralListService> logger
+        ILogger<CompareListService> logger
     )
     {
         _documentService = documentService;
