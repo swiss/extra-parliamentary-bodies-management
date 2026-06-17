@@ -130,7 +130,7 @@ describe('DataAnalysisComponent', () => {
         downloadSpy.mockRestore();
     });
 
-    it('should show error notification and update failed exports and update failed exports on error', () => {
+    it('should show error notification and update failed exports on error', () => {
         const exportType = 'committee-types';
 
         dataAnalysisServiceMock.generateExport = jest.fn().mockReturnValue(throwError(() => new Error('fail')));
