@@ -27,10 +27,10 @@ jobs:
           dotnet-version: "8.0.x"
 
       - name: Install dotnet tool
-        run: dotnet tool install -g dotnet-project-licenses
+        run: dotnet tool install --global nuget-license
 
       - name: Generate THIRD_PARTY_LICENSES.md
-        run: dotnet-project-licenses --input . --unique --md --outfile THIRD_PARTY_LICENSES.md
+        run: nuget-license --input src/Bk.APG.sln --output Markdown --file-output THIRD_PARTY_LICENSES.md
 
       - name: Commit and push THIRD_PARTY_LICENSES.md
         run: |
