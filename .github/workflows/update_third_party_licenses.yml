@@ -17,14 +17,17 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0 # required for pushing changes
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: "8.0.x"
+
+      - name: Install dependencies
+        run: dotnet restore src/Bk.APG.sln
 
       - name: Install dotnet tool
         run: dotnet tool install --global nuget-license
