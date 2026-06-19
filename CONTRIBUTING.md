@@ -1,4 +1,4 @@
-## How to contribute to fch-apg?
+## How to contribute to extra-parliamentary-bodies-management?
 
 * This project is currently not under a community development phase.
 * GitHub Issues are disabled
