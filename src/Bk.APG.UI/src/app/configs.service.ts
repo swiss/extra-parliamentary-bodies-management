@@ -124,9 +124,8 @@ export interface CountryIdConfig {
 }
 
 export interface OpenDataStackConfig {
-    enabled: boolean;
     baseUrl: string;
-    dashboard: string;
+    initialDashboardId: string;
 }
 
 @Injectable({providedIn: 'root'})
