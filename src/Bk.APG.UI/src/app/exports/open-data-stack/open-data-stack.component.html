@@ -1,3 +1,18 @@
-<h5>{{ 'openDataStack.title' | translate }}</h5>
+<div>
+    <h5>{{ 'openDataStack.title' | translate }}</h5>
 
-<iframe #odsEmbed id="ods-embed" style="width: 100%; height: 800px; border: none"></iframe>
+    <form [formGroup]="dashboardForm">
+        <fieldset>
+            <mat-form-field>
+                <mat-label>Dashboards</mat-label>
+                <mat-select [formControl]="dashboardForm.controls.dashboardId">
+                    @for (dashboard of dashboards(); track dashboard.id) {
+                        <mat-option [value]="dashboard.id">{{ dashboard.title }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </fieldset>
+    </form>
+</div>
+
+<iframe #odsEmbed id="ods-embed" style="width: 100%; height: 800px; border: none" [style.display]="isIframeVisible() ? 'block' : 'none'"></iframe>
