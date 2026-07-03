@@ -64,6 +64,12 @@ export class AppComponent implements OnInit {
                         label: 'navigation.exports.requestsAndReports',
                         isExternal: false,
                     },
+                    {
+                        id: 'data',
+                        url: 'data',
+                        label: 'navigation.exports.data',
+                        isExternal: false,
+                    },
                 ],
             },
         ];
