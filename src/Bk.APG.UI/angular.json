@@ -98,7 +98,7 @@
             "port": 4453,
             "proxyConfig": "proxy.conf.json",
             "headers": {
-              "Content-Security-Policy": "default-src 'none'; script-src 'self'; img-src 'self' data:; form-action 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:9100; frame-src 'self' https://intranet.reporting-a.bk.admin.ch; frame-ancestors 'self';"
+              "Content-Security-Policy": "default-src 'none'; script-src 'self'; img-src 'self' data:; form-action 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' http://localhost:9100 https://*.admin.ch; frame-src 'self' https://*.admin.ch; frame-ancestors 'self';"
             }
           }
         },
