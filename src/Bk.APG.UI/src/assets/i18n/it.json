@@ -18,6 +18,7 @@
   "navigation.persons": "Persone",
   "navigation.committees": "Organi",
   "navigation.exports": "Esportazioni",
+  "navigation.exports.data": "Dati",
   "navigation.exports.dataAnalysis": "Valutazioni",
   "navigation.exports.requestsAndReports": "Richieste e rapporti",
   "navigation.exports.formLetters": "Lettere in serie",
