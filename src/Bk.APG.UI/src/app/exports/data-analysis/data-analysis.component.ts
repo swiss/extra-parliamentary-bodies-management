@@ -1,4 +1,4 @@
-import {Component, Inject, signal, effect, DOCUMENT, inject, computed, Signal} from '@angular/core';
+import {Component, Inject, signal, effect, DOCUMENT, inject} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
@@ -14,8 +14,6 @@ import {today} from '@shared/date-util';
 import {ErrorService} from '@shared/error-service.service';
 import {downloadFileFromHttpResponse} from '@shared/file-util';
 import {defer, finalize} from 'rxjs';
-import {ConfigsService} from '../../../app/configs.service';
-import {OpenDataStackComponent} from '../open-data-stack/open-data-stack.component';
 import {DataAnalysisService} from './data-analysis.service';
 
 @Component({
@@ -38,7 +36,6 @@ import {DataAnalysisService} from './data-analysis.service';
         TranslatePipe,
         ObButtonModule,
         MatButton,
-        OpenDataStackComponent,
     ],
 })
 export class DataAnalysisComponent {
@@ -64,20 +61,15 @@ export class DataAnalysisComponent {
 
     analysisDate = toSignal(this.dataAnalysisForm.controls.analysisDate.valueChanges, {initialValue: today()});
 
-    protected readonly openDataStackEnabled: Signal<boolean>;
-
     protected readonly errorService = inject(ErrorService);
     private readonly dataAnalysisService = inject(DataAnalysisService);
     private readonly interceptorEvents = inject(ObHttpApiInterceptorEvents);
     private readonly notificationService = inject(ObNotificationService);
-    private readonly configsService = inject(ConfigsService);
 
     constructor(
         @Inject(WINDOW) private readonly window: Window,
         @Inject(DOCUMENT) private readonly document: Document
     ) {
-        this.openDataStackEnabled = computed(() => this.configsService.frontendConfig.openDataStack.enabled);
-
         effect(() => {
             this.successfulExports.set([]);
             this.failedExports.set([]);
