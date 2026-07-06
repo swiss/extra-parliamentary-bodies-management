@@ -22,6 +22,14 @@ export const exportsRoutes: Routes = [
         },
     },
     {
+        path: 'data',
+        loadComponent: () => import('./open-data-stack/open-data-stack.component').then(m => m.OpenDataStackComponent),
+        canActivate: [AuthGuard, RoleGuard],
+        data: {
+            allowedRoles: [Role.Allow],
+        },
+    },
+    {
         path: '**',
         redirectTo: 'unknown-route',
     },
