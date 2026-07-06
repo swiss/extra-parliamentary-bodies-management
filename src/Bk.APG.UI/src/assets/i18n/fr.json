@@ -18,6 +18,7 @@
   "navigation.persons": "Personnes",
   "navigation.committees": "Organes",
   "navigation.exports": "Exportations",
+  "navigation.exports.data": "Données",
   "navigation.exports.dataAnalysis": "Fichiers Excel",
   "navigation.exports.requestsAndReports": "Propositions et rapports",
   "navigation.exports.formLetters": "Lettres en série",
