@@ -21,6 +21,7 @@
   "navigation.exports.dataAnalysis": "Auswertungen",
   "navigation.exports.requestsAndReports": "Anträge & Berichte",
   "navigation.exports.formLetters": "Serienbriefe",
+  "navigation.exports.data": "Daten",
   "navigation.administration.committeeTypes": "Gremiumarten",
   "persons.table.header.surname.label": "Name",
   "persons.table.header.givenName.label": "Vorname",
