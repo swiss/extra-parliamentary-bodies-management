@@ -9,6 +9,7 @@ public class MembershipCandidateDetailDto
     public required int BirthYear { get; init; }
     public required string Language { get; init; }
     public required string Gender { get; init; }
+    public required Guid GenderId { get; init; }
     public required string Function { get; init; }
     public required Guid FunctionId { get; init; }
     public required DateOnly BeginDate { get; init; }
