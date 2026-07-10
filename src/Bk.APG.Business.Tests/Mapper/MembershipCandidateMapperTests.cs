@@ -31,6 +31,7 @@ internal class MembershipCandidateMapperTests
             Assert.That(dto.ElectionType, Is.EqualTo(membership.ElectionType!.GetText()));
             Assert.That(dto.ElectionTypeId, Is.EqualTo(membership.ElectionTypeId));
             Assert.That(dto.Gender, Is.EqualTo(membership.Gender!.GetText()));
+            Assert.That(dto.GenderId, Is.EqualTo(membership.Gender!.Id));
             Assert.That(dto.Remarks, Is.EqualTo(membership.Remarks));
             Assert.That(dto.RemarksStatus, Is.EqualTo(membership.RemarksStatus));
             Assert.That(dto.NeedsAttention, Is.EqualTo(membership.NeedsAttention));
