@@ -151,7 +151,7 @@ export class MembershipDataFormComponent implements OnInit {
         const inCorrelationWithFederalDuty = this.formInCorrelationWithFederalDuty() ?? false;
         const estimatedTermOfOffice = this.validationResults().estimatedTermOfOffice ?? 0;
 
-        return extraParliamentaryCommission && !inCorrelationWithFederalDuty && estimatedTermOfOffice > 12;
+        return extraParliamentaryCommission && inCorrelationWithFederalDuty && estimatedTermOfOffice > 12;
     });
 
     private readonly justificationShorterDutyNeeded = computed(() => {
