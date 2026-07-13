@@ -82,6 +82,7 @@ public class CommitteeDetailDto
     // General Election related fields
     public bool IsFederalCouncilProposalDirty { get; set; }
     public bool IsReadyForProposalForCurrentRole { get; set; }
+    public bool IsReadyForProposalFinalized { get; set; }
 
     public ICollection<ContactPointDetailDto> ContactPoints { get; set; } = new List<ContactPointDetailDto>();
 }
