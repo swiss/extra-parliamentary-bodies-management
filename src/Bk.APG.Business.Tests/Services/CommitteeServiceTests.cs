@@ -390,7 +390,7 @@ internal class CommitteeServiceTests
                 .Build()
         }));
 
-        var committeeDetail = await _committeeService.GetCommitteeDetail(_committee.Id, true);
+        var committeeDetail = await _committeeService.GetCommitteeDetail(_committee.Id);
 
         await _committeeRepository.Received(1).GetById(Arg.Any<Guid>());
 
@@ -432,7 +432,7 @@ internal class CommitteeServiceTests
                 .Build()
         }));
 
-        var committeeDetail = await _committeeService.GetCommitteeDetail(committeeId, true);
+        var committeeDetail = await _committeeService.GetCommitteeDetail(committeeId);
 
         await _committeeRepository.Received(1).GetById(Arg.Any<Guid>());
 
