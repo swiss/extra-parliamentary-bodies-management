@@ -46,6 +46,7 @@ import {MatTooltip} from '@angular/material/tooltip';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CandidateListValidationResult} from '@api/CandidateListValidationResult';
 import {DuplicateReason} from '@api/DuplicateReason';
+import {FunctionDto} from '@api/Function';
 import {MembershipCandidateCreate} from '@api/MembershipCandidateCreate';
 import {MembershipCandidateDetail} from '@api/MembershipCandidateDetail';
 import {MembershipCandidatePartialUpdate} from '@api/MembershipCandidatePartialUpdate';
@@ -490,6 +491,10 @@ export class GeneralElectionCommitteeCandidateListComponent implements AfterView
             },
             error: () => this.notificationService.error('committee.details.vacancies.error'),
         });
+    }
+
+    getFunctionText(f: FunctionDto, genderId: string): string {
+        return genderId === this.configsService.frontendConfig.entityIds.gender.femaleId ? f.textFemale : f.text;
     }
 
     protected isNewElection(membershipCandidate: MembershipCandidateDetail) {

@@ -18,6 +18,7 @@ public static class MembershipCandidateMapper
             BirthYear = membershipCandidate.Person is not null ? membershipCandidate.Person.BirthYear : membershipCandidate.BirthYear,
             Language = membershipCandidate.Person is not null ? membershipCandidate.Person.Language!.GetText() : membershipCandidate.Language!.GetText(),
             Gender = membershipCandidate.Person is not null ? membershipCandidate.Person.Gender!.GetText() : membershipCandidate.Gender!.GetText(),
+            GenderId = membershipCandidate.Person is not null ? membershipCandidate.Person.Gender!.Id : membershipCandidate.Gender!.Id,
             Function = membershipCandidate.FunctionName,
             FunctionId = membershipCandidate.FunctionId,
             BeginDate = membershipCandidate.BeginDate,
