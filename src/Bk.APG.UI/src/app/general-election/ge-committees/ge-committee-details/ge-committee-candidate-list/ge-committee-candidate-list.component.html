@@ -393,7 +393,7 @@
                 <mat-form-field [formGroup]="getMembershipCandidateForm(element.id)" subscriptSizing="dynamic">
                     <mat-select formControlName="functionId">
                         @for (function of masterDataService.functions(); track function.id) {
-                            <mat-option [value]="function.id">{{ function.text }}</mat-option>
+                            <mat-option [value]="function.id">{{ getFunctionText(function, element.genderId) }}</mat-option>
                         }
                     </mat-select>
                 </mat-form-field>
@@ -407,7 +407,7 @@
                     <mat-label>{{ 'membership.details.function' | translate }}</mat-label>
                     <mat-select formControlName="functionId">
                         @for (function of masterDataService.functions(); track function.id) {
-                            <mat-option [value]="function.id">{{ function.text }}</mat-option>
+                            <mat-option [value]="function.id">{{ getFunctionText(function, newMembershipCandidateForm.value.genderId) }}</mat-option>
                         }
                     </mat-select>
                 </mat-form-field>
