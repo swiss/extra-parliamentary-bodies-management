@@ -17,4 +17,5 @@ export interface MembershipCandidateDetail {
     remarksStatus?: string;
     isSelected: boolean;
     estimatedTermOfOffice: number;
+    genderId: string;
 }
