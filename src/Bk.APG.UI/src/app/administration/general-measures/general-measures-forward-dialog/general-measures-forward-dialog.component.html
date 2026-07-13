@@ -11,14 +11,7 @@
             </mat-form-field>
             <mat-form-field obErrorMessages>
                 <mat-label>{{ 'generalMeasures.workflow.forward.dialog.message' | translate }}</mat-label>
-                <textarea
-                    required
-                    cdkTextareaAutosize
-                    [cdkAutosizeMinRows]="3"
-                    [cdkAutosizeMaxRows]="15"
-                    matInput
-                    [formControl]="form.controls.message"
-                ></textarea>
+                <textarea cdkTextareaAutosize [cdkAutosizeMinRows]="3" [cdkAutosizeMaxRows]="15" matInput [formControl]="form.controls.message"></textarea>
                 <mat-error />
             </mat-form-field>
         </fieldset>
