@@ -77,9 +77,9 @@ export class WorklistTaskForwardComponent {
     private buildForm() {
         return this.formBuilder.group({
             candidateListDueDate: new FormControl<Date | undefined>(undefined, {nonNullable: true, validators: [Validators.required]}),
-            candidateListDescription: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
+            candidateListDescription: new FormControl(''),
             committeeDueDate: new FormControl<Date | undefined>(undefined, {nonNullable: true, validators: [Validators.required]}),
-            committeeDescription: new FormControl('', {nonNullable: true, validators: [Validators.required]}),
+            committeeDescription: new FormControl(''),
         });
     }
 }
