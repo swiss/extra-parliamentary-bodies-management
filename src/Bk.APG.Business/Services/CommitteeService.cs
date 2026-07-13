@@ -152,7 +152,7 @@ public class CommitteeService : ICommitteeService
         var generalLanguageMeasure = await _generalMeasureRepository.GetGeneralLanguageMeasure(committee.DepartmentId);
         dto.GeneralLanguageMeasure = generalLanguageMeasure?.Description;
 
-        if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && ignoreGeneralElectionPart)
+        if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && !ignoreGeneralElectionPart)
         {
             var generalElection = committee.GeneralElectionCommittees.FirstOrDefault();
             if (generalElection is not null)
