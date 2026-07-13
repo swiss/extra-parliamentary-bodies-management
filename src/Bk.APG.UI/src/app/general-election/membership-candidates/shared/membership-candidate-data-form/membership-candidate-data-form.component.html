@@ -11,7 +11,7 @@
 <form [formGroup]="membershipCandidateForm" id="membershipCandidateDataForm" obUnsavedChanges>
     <fieldset>
         @if (!selectedPerson()) {
-            <div class="input-grid">
+            <div class="input-grid person-grid">
                 <mat-form-field obErrorMessages>
                     <mat-label>{{ 'generalElection.membershipCandidate.surname' | translate }}</mat-label>
                     <input matInput [formControl]="membershipCandidateForm.controls.surname" />
