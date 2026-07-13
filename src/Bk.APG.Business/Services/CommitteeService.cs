@@ -160,6 +160,7 @@ public class CommitteeService : ICommitteeService
                 dto.IsFederalCouncilProposalDirty = committee.GeneralElectionCommittees.FirstOrDefault()?.IsFederalCouncilProposalDirty == true;
                 var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
                 dto.IsReadyForProposalForCurrentRole = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElection.Id)).FirstOrDefault(y => y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal && y.AssignedToId == currentEiamAssignment.Id && y.WorklistTaskStateId == WorklistTaskState.Completed) is not null;
+                dto.IsReadyForProposalFinalized = generalElection.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
             }
         }
 
