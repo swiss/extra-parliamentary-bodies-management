@@ -401,6 +401,46 @@ internal class CommitteeServiceTests
     }
 
     [Test]
+    public async Task GetCommitteeDetail_InGeneralElectionAndReadyForProposalFinalized_ShouldReturnDtoWithGeneralElectionFields()
+    {
+        var committeeId = Guid.NewGuid();
+
+        var committee = new CommitteeBuilder()
+            .WithId(_committeeId)
+            .WithBeginDate(new DateOnly(1976, 1, 1))
+            .WithEndDate(new DateOnly(2030, 12, 31))
+            .WithMaximalMember(5)
+            .WithDepartment(new DepartmentBuilder().Build())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.ReadyForFederalCouncilProposalFinalized).Build())
+            .Build();
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+
+        var assignmentId = Guid.NewGuid();
+        _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(true);
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+
+        var eiamAssignment = new EiamAssignment() { Id = assignmentId, ExternalId = "111", Role = Role.Department };
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(Task.FromResult(eiamAssignment));
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(Arg.Any<Guid>())
+            .Returns(Task.FromResult<IEnumerable<WorklistTask>>(new List<WorklistTask>() {
+                new WorklistTaskBuilder()
+                .WithAssignedTo(eiamAssignment)
+                .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+                .WithWorklistTaskStateId(WorklistTaskState.Completed)
+                .Build()
+        }));
+
+        var committeeDetail = await _committeeService.GetCommitteeDetail(committeeId, true);
+
+        await _committeeRepository.Received(1).GetById(Arg.Any<Guid>());
+
+        Assert.That(committeeDetail, Is.Not.Null);
+        Assert.That(committeeDetail.IsReadyForProposalFinalized, Is.True);
+    }
+
+    [Test]
     public async Task GetCommitteeForUpdate_ForAdmin_ShouldReturnDtoWithEditAllPermission()
     {
         _authorizationService.IsAdmin.Returns(true);

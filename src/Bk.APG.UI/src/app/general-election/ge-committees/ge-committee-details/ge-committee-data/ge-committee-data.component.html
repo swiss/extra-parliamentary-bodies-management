@@ -1,4 +1,6 @@
-@if (!isReadyForProposalForCurrentRole() && isFederalCouncilProposalDirty()) {
+@if (isReadyForProposalFinalized()) {
+    <ob-alert type="info">{{ 'committee.generalElection.running.isFederalCouncilProposalFinalized.hint' | translate }}</ob-alert>
+} @else if (!isReadyForProposalForCurrentRole() && isFederalCouncilProposalDirty()) {
     <ob-alert type="warning">{{ 'committee.generalElection.running.isFederalCouncilProposalDirty.hint' | translate }}</ob-alert>
 }
 <div class="committee-data-header">
