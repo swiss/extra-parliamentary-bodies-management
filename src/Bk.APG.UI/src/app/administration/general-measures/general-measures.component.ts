@@ -121,7 +121,7 @@ export class GeneralMeasuresComponent {
             })
             .afterClosed()
             .pipe(
-                filter((result): result is GeneralMeasuresForwardDialogResult => typeof result?.message === 'string' && result.message.length > 0),
+                filter((result): result is GeneralMeasuresForwardDialogResult => typeof result?.message === 'string'),
                 tap(() => this.httpApiInterceptorEvents.deactivateNotificationOnNextAPICalls()),
                 switchMap(result =>
                     this.generalMeasuresService
