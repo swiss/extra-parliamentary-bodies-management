@@ -928,5 +928,6 @@
   "recipients.filter.formLetterExportDate.label": "IT_Brief-Datum",
   "openDataStack.title": "Open Data Stack",
   "candidateList.hasActiveTasks": "IT_Es gibt noch offene Aufgaben",
-  "committee.helpTooltip.selfOrganized": "Indicare «Sì» se l'elezione delle presidenti e dei presidenti nonché delle vicepresidenti e dei vicepresidenti non è effettuata dal Consiglio federale o da un dipartimento, ma è organizzata dall'organo stesso."
+  "committee.helpTooltip.selfOrganized": "Indicare «Sì» se l'elezione delle presidenti e dei presidenti nonché delle vicepresidenti e dei vicepresidenti non è effettuata dal Consiglio federale o da un dipartimento, ma è organizzata dall'organo stesso.",
+  "committee.generalElection.running.isFederalCouncilProposalFinalized.hint": "IT_Das Gremium wurde bereits durch die BK freigegeben. Änderungen an der Mitgliederliste werden nicht mehr automatisch in die GEW Umgebung übernommen und lösen keine Arbeitsvorratsaufgaben erneut aus. Die Anpassung muss via BK in der GEW Umgebung nachgetragen werden. Für Anpassungen kontaktieren Sie bitte den APG Support (GS in CC). Die Rolle Admin (BK) nimmt die Änderungen in GEW vor und validiert diese direkt."
 }
