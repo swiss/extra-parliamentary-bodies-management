@@ -73,7 +73,7 @@ export class ReadyForProposalForwardDialogComponent implements OnInit {
     private buildForm() {
         return this.formBuilder.group({
             forwardToId: new FormControl('', {nonNullable: true, validators: Validators.required}),
-            description: new FormControl('', {nonNullable: true, validators: Validators.required}),
+            description: new FormControl(''),
         });
     }
 }

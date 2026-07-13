@@ -1,6 +1,6 @@
 import {CdkTextareaAutosize} from '@angular/cdk/text-field';
 import {Component, inject} from '@angular/core';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatButton} from '@angular/material/button';
 import {MatOption} from '@angular/material/core';
 import {MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogRef, MatDialogTitle} from '@angular/material/dialog';
@@ -45,7 +45,7 @@ export interface GeneralMeasuresForwardDialogResult {
 })
 export class GeneralMeasuresForwardDialogComponent {
     form = new FormGroup({
-        message: new FormControl('', {nonNullable: true, validators: Validators.required}),
+        message: new FormControl(''),
     });
 
     protected readonly forwardToAdmin = inject<GeneralMeasuresForwardDialogData>(MAT_DIALOG_DATA).forwardToAdmin;
