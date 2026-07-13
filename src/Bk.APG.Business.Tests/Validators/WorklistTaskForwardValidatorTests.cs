@@ -25,53 +25,6 @@ internal class WorklistTaskForwardValidatorTests
     }
 
     [Test]
-    public void Validate_WithoutRequiredFields_ShouldAddErrorForRequiredFields()
-    {
-        var model = new WorklistTaskForwardDto
-        {
-            CommitteeDueDate = default,
-            CandidateListDueDate = default,
-            CandidateListDescription = string.Empty,
-            CommitteeDescription = string.Empty
-        };
-
-        var result = _validator.TestValidate(model);
-
-        result.ShouldHaveValidationErrorFor(x => x.CandidateListDescription);
-        result.ShouldHaveValidationErrorFor(x => x.CommitteeDescription);
-    }
-
-    [Test]
-    public void Validate_WithNullDescriptions_ShouldAddErrorForDescriptions()
-    {
-        var model = new WorklistTaskForwardDto
-        {
-            CommitteeDueDate = DateOnly.FromDateTime(DateTime.Today).AddDays(14),
-            CandidateListDueDate = DateOnly.FromDateTime(DateTime.Today).AddDays(7),
-            CandidateListDescription = string.Empty,
-            CommitteeDescription = string.Empty
-        };
-
-        var result = _validator.TestValidate(model);
-
-        result.ShouldHaveValidationErrorFor(x => x.CandidateListDescription);
-        result.ShouldHaveValidationErrorFor(x => x.CommitteeDescription);
-    }
-
-    [Test]
-    public void Validate_WithEmptyDescriptions_ShouldAddErrorForDescriptions()
-    {
-        var model = BuildValidModel();
-        model.CandidateListDescription = string.Empty;
-        model.CommitteeDescription = string.Empty;
-
-        var result = _validator.TestValidate(model);
-
-        result.ShouldHaveValidationErrorFor(x => x.CandidateListDescription);
-        result.ShouldHaveValidationErrorFor(x => x.CommitteeDescription);
-    }
-
-    [Test]
     public void Validate_WithValidDescriptions_ShouldNotAddErrorForDescriptions()
     {
         var model = BuildValidModel();

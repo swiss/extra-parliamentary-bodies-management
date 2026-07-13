@@ -1,4 +1,4 @@
 export interface ReadyForProposalForward {
     forwardToId: string;
-    description: string;
+    description: string | null;
 }

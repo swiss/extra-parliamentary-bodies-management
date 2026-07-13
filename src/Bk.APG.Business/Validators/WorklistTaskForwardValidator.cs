@@ -12,13 +12,5 @@ public class WorklistTaskForwardValidator : AbstractValidator<WorklistTaskForwar
 
         RuleFor(x => x.CandidateListDueDate)
             .NotNull();
-
-        RuleFor(x => x.CandidateListDescription)
-            .NotNull()
-            .NotEmpty();
-
-        RuleFor(x => x.CommitteeDescription)
-            .NotNull()
-            .NotEmpty();
     }
 }
