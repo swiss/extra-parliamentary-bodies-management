@@ -82,4 +82,5 @@ export interface CommitteeDetails {
     futureGeneralElectionCommittee: boolean;
     isFederalCouncilProposalDirty?: boolean;
     isReadyForProposalForCurrentRole?: boolean;
+    isReadyForProposalFinalized?: boolean;
 }
