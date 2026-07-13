@@ -1,6 +1,6 @@
 export interface WorklistTaskForward {
     candidateListDueDate: Date;
-    candidateListDescription: string;
+    candidateListDescription: string | null;
     committeeDueDate: Date;
-    committeeDescription: string;
+    committeeDescription: string | null;
 }
