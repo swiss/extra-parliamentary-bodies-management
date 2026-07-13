@@ -14,14 +14,7 @@
 
             <mat-form-field obErrorMessages>
                 <mat-label>{{ 'worklist.task.description' | translate }}</mat-label>
-                <textarea
-                    required
-                    cdkTextareaAutosize
-                    [cdkAutosizeMinRows]="3"
-                    [cdkAutosizeMaxRows]="15"
-                    matInput
-                    [formControl]="form.controls.description"
-                ></textarea>
+                <textarea cdkTextareaAutosize [cdkAutosizeMinRows]="3" [cdkAutosizeMaxRows]="15" matInput [formControl]="form.controls.description"></textarea>
                 <mat-error />
             </mat-form-field>
         </fieldset>

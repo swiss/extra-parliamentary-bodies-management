@@ -1,4 +1,7 @@
 @if (committeeDetailsService.committeeDetails(); as committeeDetails) {
+    @if (committeeDetails.isReadyForProposalFinalized) {
+        <ob-alert type="info">{{ 'committee.generalElection.running.isFederalCouncilProposalFinalized.hint' | translate }}</ob-alert>
+    }
     @if (!committeeDetails.isReadyForProposalForCurrentRole && committeeDetails.isFederalCouncilProposalDirty) {
         <ob-alert type="warning">{{ 'committee.generalElection.running.isFederalCouncilProposalDirty.hint' | translate }}</ob-alert>
     }
