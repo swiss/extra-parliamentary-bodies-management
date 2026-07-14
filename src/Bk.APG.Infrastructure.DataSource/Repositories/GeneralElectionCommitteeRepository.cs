@@ -50,6 +50,17 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
                     .ThenInclude(mc => mc.Person)
                     .ThenInclude(p => p!.Interests)
+                    .ThenInclude(i => i!.LegalForm)
+            .Include(y => y.MembershipCandidates
+                .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
+                    .ThenInclude(mc => mc.Person)
+                    .ThenInclude(p => p!.Interests)
+                    .ThenInclude(i => i!.InterestCommittee)
+            .Include(y => y.MembershipCandidates
+                .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
+                    .ThenInclude(mc => mc.Person)
+                    .ThenInclude(p => p!.Interests)
+                    .ThenInclude(i => i!.InterestFunction)
             .Include(y => y.MembershipCandidates
                 .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
                     .ThenInclude(mc => mc.Person)
