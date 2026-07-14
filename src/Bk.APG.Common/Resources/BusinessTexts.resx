@@ -540,4 +540,13 @@
     <data name="Compare_List_Man" xml:space="preserve">
         <value>Mann</value>
     </data>
+    <data name="CandidateList_FedaralDuty" xml:space="preserve">
+        <value>Im Bundesdienst</value>
+    </data>
+    <data name="CandidateList_FedaralAssembly" xml:space="preserve">
+        <value>Mitglied der Bundesversammlung</value>
+    </data>
+    <data name="CandidateList_EmploymentLevel" xml:space="preserve">
+        <value>Beschäftigungsgrad in Prozent</value>
+    </data>
 </root>
