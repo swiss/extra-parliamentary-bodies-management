@@ -1781,7 +1781,7 @@ internal class MembershipCandidateServiceTests
     }
 
     [Test]
-    public async Task ValidateCandidateList_SelectedCandidateWithMembershipValidationIssue_ShouldActivateTask()
+    public async Task ValidateCandidateList_SelectedCandidateWithMembershipValidationIssue_ShouldActivateTaskAndDeactivateReadyForFederalCouncilProposalTask()
     {
         var committeeId = Guid.NewGuid();
         var candidateId = Guid.NewGuid();
@@ -1831,14 +1831,22 @@ internal class MembershipCandidateServiceTests
             .WithGeneralElectionCommittee(generalElectionCommittee)
             .Build();
 
+        var membershipReadyForFederalCouncilProposalTask = new WorklistTaskBuilder()
+          .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+          .WithWorklistTaskStateId(WorklistTaskState.Active)
+          .WithMembershipCandidateId(candidateId)
+          .WithGeneralElectionCommittee(generalElectionCommittee)
+          .Build();
+
         _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
-        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([membershipTask]);
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id).Returns([membershipTask, membershipReadyForFederalCouncilProposalTask]);
 
         var validationResult = await _service.ValidateCandidateList(committeeId, new List<Guid> { candidateId }, true);
 
         using (Assert.EnterMultipleScope())
         {
             Assert.That(membershipTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Active));
+            Assert.That(membershipReadyForFederalCouncilProposalTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Inactive));
             Assert.That(validationResult.PersonsWithMembershipValidationIssues, Has.Count.EqualTo(1));
         }
 
