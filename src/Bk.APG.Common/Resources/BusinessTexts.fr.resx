@@ -534,4 +534,13 @@
     <data name="Compare_List_Man" xml:space="preserve">
         <value>FR_Mann</value>
     </data>
+    <data name="CandidateList_FedaralDuty" xml:space="preserve">
+        <value>Au service de la Confédération</value>
+    </data>
+    <data name="CandidateList_FedaralAssembly" xml:space="preserve">
+        <value>Membre de l'Assemblée fédérale</value>
+    </data>
+    <data name="CandidateList_EmploymentLevel" xml:space="preserve">
+        <value>Taux d'occupation en %</value>
+    </data>
 </root>

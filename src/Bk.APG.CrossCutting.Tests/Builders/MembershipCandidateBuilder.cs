@@ -25,7 +25,7 @@ public class MembershipCandidateBuilder
     private Gender? _gender;
     private Guid _personId;
     private Person? _person;
-    private readonly int? _maximumEmploymentLevel;
+    private int? _maximumEmploymentLevel;
     private DateOnly _beginDate;
     private DateOnly _endDate;
     private Guid _electionTypeId;
@@ -238,6 +238,12 @@ public class MembershipCandidateBuilder
     public MembershipCandidateBuilder WithRemarksStatus(string remarksStatus)
     {
         _remarksStatus = remarksStatus;
+        return this;
+    }
+
+    public MembershipCandidateBuilder WithMaximumEmploymentLevel(int maximumEmploymentLevel)
+    {
+        _maximumEmploymentLevel = maximumEmploymentLevel;
         return this;
     }
 
