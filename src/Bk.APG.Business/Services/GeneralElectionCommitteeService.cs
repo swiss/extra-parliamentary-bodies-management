@@ -437,7 +437,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
             BusinessTexts.CandidateList_City,
             BusinessTexts.CandidateList_Phone,
             BusinessTexts.CandidateList_Email,
-            BusinessTexts.CandidateList_Interests
+            BusinessTexts.CandidateList_Interests,
+            BusinessTexts.CandidateList_FedaralDuty,
+            BusinessTexts.CandidateList_FedaralAssembly,
+            BusinessTexts.CandidateList_EmploymentLevel,
         ];
 
         var bodyCells = await GetCandidateListData(id, membershipCandidateIds);
@@ -494,7 +497,18 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
                 new() { Text = candidate.Person?.CorrespondenceAddress?.City ?? string.Empty }, // Ort
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Phone ?? string.Empty }, // Telefon
                 new() { Text = candidate.Person?.CorrespondenceAddress?.Email ?? string.Empty }, // E-Mail
-                new() { Text = string.Join(";", candidate.Person?.Interests?.Where(y => !string.IsNullOrWhiteSpace(y.InterestText)).Select(y => y.InterestText) ?? Enumerable.Empty<string>()) } // Interessenbindungen
+                new()
+                {
+                    Text = string.Join(
+                        ";" + Environment.NewLine,
+                        candidate.Person?.Interests?
+                            .Where(i => !string.IsNullOrWhiteSpace(i.InterestText))
+                            .Select(i => $"{i.InterestText} - {i.LegalForm?.GetText()} ({i.InterestCommittee?.GetText()}):{i.InterestFunction?.GetText()}")
+                            ?? Enumerable.Empty<string>())
+                }, // Interessenbindungen
+                new() { Text = candidate.Person?.FederalDuty == true ? BusinessTexts.Common_Yes : BusinessTexts.Common_No }, // Im Bundesdienst
+                new() { Text = candidate.Person?.FederalAssembly == true ? BusinessTexts.Common_Yes : BusinessTexts.Common_No }, // Mitglied der Bundesversammlung
+                NumberCell(candidate.MaximumEmploymentLevel.GetValueOrDefault()) // Beschäftigungsgrad
             } as IList<Cell>).ToList();
 
         return bodyCells;

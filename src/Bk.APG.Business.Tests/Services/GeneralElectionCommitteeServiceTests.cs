@@ -4,6 +4,7 @@ using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
+using Bk.APG.Common.Resources;
 using Bk.APG.CrossCutting;
 using Bk.APG.CrossCutting.Exception;
 using Bk.APG.CrossCutting.Tests.Builders;
@@ -508,11 +509,13 @@ public class GeneralElectionCommitteeServiceTests
                     .WithBeginDate(new DateOnly(2025, 1, 1))
                     .WithEndDate(new DateOnly(2025, 12, 31))
                     .WithFunction(new FunctionBuilder().Build())
+                    .WithMaximumEmploymentLevel(10)
                     .WithPerson(
                         new PersonBuilder()
                             .WithGender(new GenderBuilder().Build())
                             .WithLanguage(new LanguageBuilder().Build())
                             .WithBirthYear(2000)
+                            .WithFederalAssembly(true)
                             .WithCorrespondenceAddress(new AddressBuilder()
                                 .WithCity("Zurich")
                                 .WithEmail("test@test.ch")
@@ -571,7 +574,10 @@ public class GeneralElectionCommitteeServiceTests
             Assert.That(dataRow[16].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.City));
             Assert.That(dataRow[17].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Phone));
             Assert.That(dataRow[18].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().Person!.CorrespondenceAddress!.Email));
-            Assert.That(dataRow[19].Text, Is.EqualTo(string.Join(";", geCommittee.MembershipCandidates.First().Person!.Interests.Select(y => y.InterestText))));
+            Assert.That(dataRow[19].Text, Is.EqualTo(string.Join(";", geCommittee.MembershipCandidates.First().Person!.Interests.Select(i => $"{i.InterestText} - {i.LegalForm?.GetText()} ({i.InterestCommittee?.GetText()}):{i.InterestFunction?.GetText()}"))));
+            Assert.That(dataRow[20].Text, Is.EqualTo(BusinessTexts.Common_No));
+            Assert.That(dataRow[21].Text, Is.EqualTo(BusinessTexts.Common_Yes));
+            Assert.That(dataRow[22].Text, Is.EqualTo(geCommittee.MembershipCandidates.First().MaximumEmploymentLevel.GetValueOrDefault().ToString(CultureInfo.InvariantCulture)));
         });
     }
 
