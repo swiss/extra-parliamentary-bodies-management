@@ -142,11 +142,38 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Beschäftigungsgrad in Prozent.
+        /// </summary>
+        public static string CandidateList_EmploymentLevel {
+            get {
+                return ResourceManager.GetString("CandidateList_EmploymentLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enddatum.
         /// </summary>
         public static string CandidateList_EndDate {
             get {
                 return ResourceManager.GetString("CandidateList_EndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mitglied der Bundesversammlung.
+        /// </summary>
+        public static string CandidateList_FedaralAssembly {
+            get {
+                return ResourceManager.GetString("CandidateList_FedaralAssembly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Im Bundesdienst.
+        /// </summary>
+        public static string CandidateList_FedaralDuty {
+            get {
+                return ResourceManager.GetString("CandidateList_FedaralDuty", resourceCulture);
             }
         }
         
