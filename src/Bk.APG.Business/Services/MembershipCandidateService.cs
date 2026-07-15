@@ -85,7 +85,7 @@ public class MembershipCandidateService : IMembershipCandidateService
 
             validationResult.AreContactPointsMissing = await CheckContactPointsAndCreateTasks(generalElectionCommittee);
 
-            await ActivateReadyForProposalTasks(generalElectionCommittee, validationResult);
+            await ActivateOrDeactivateReadyForProposalTasks(generalElectionCommittee, validationResult);
 
             await _generalElectionCommitteeRepository.CommitChanges();
 
@@ -99,7 +99,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         return validationResult;
     }
 
-    private async Task ActivateReadyForProposalTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
+    private async Task ActivateOrDeactivateReadyForProposalTasks(GeneralElectionCommittee generalElectionCommittee, CandidateListValidationResultDto validationResult)
     {
         var readyForProposalTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
             .Where(x => x.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal).ToList();
@@ -111,6 +111,13 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         if (!validationResult.AllValidationsPassed)
         {
+            foreach (var task in readyForProposalTasks)
+            {
+                task.WorklistTaskStateId = WorklistTaskState.Inactive;
+                task.Modified = DateTime.UtcNow;
+                task.ModifiedBy = "System";
+            }
+
             return;
         }
 
@@ -216,7 +223,7 @@ public class MembershipCandidateService : IMembershipCandidateService
             {
                 if (membershipTask is null || membershipTask.WorklistTaskStateId == WorklistTaskState.Completed)
                 {
-                    return;
+                    continue;
                 }
 
                 membershipTask.WorklistTaskStateId = WorklistTaskState.Completed;
@@ -838,6 +845,9 @@ public class MembershipCandidateService : IMembershipCandidateService
         membershipCandidate.ModifiedBy = _authorizationService.GetCurrentUserName();
 
         await _membershipCandidateRepository.CommitChanges();
+
+        await RevalidateCandidateListIfNeeded(membershipCandidate);
+
         _logger.LogInformation("Updated membership candidate {MembershipCandidateId}", id);
     }
 
@@ -906,9 +916,19 @@ public class MembershipCandidateService : IMembershipCandidateService
             _logger.LogError(message);
             throw new BusinessValidationException(message);
         }
-
         await _membershipCandidateRepository.Delete(membershipCandidate);
+
+        await RevalidateCandidateListIfNeeded(membershipCandidate);
+
         _logger.LogInformation("Deleted membership candidate {MembershipCandidateId}", id);
+    }
+
+    private async Task RevalidateCandidateListIfNeeded(MembershipCandidate membershipCandidate)
+    {
+        if (membershipCandidate.GeneralElectionCommittee is not null && membershipCandidate.GeneralElectionCommittee.CandidateListStateId == CandidateListState.Validated)
+        {
+            await ValidateCandidateList(membershipCandidate.GeneralElectionCommittee.CommitteeId, membershipCandidate.GeneralElectionCommittee.MembershipCandidates.Where(y => y.IsSelected).Select(y => y.Id), true);
+        }
     }
 
     private static void UpdateCandidateSelection(IEnumerable<MembershipCandidate> candidates, IEnumerable<Guid> selectedCandidateIds)
