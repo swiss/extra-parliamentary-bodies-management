@@ -91,11 +91,32 @@ export class GeneralElectionCommitteeMembershipsComponent {
     }
 
     private prepareData(members: CommitteeMember[], sort: Sort) {
-        return members.sort((a, b) => this.compare(a, b, sort));
+        return [...members].sort((a, b) => this.compare(a, b, sort));
     }
 
     private compare(a: CommitteeMember, b: CommitteeMember, sort: Sort) {
         const key = sort.active as keyof CommitteeMember;
-        return (a[key] < b[key] ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
+        const valueA = a[key];
+        const valueB = b[key];
+
+        if (valueA == null && valueB == null) {
+            return 0;
+        }
+        if (valueA == null) {
+            return -1 * (sort.direction === 'asc' ? 1 : -1);
+        }
+        if (valueB == null) {
+            return 1 * (sort.direction === 'asc' ? 1 : -1);
+        }
+
+        if (typeof valueA === 'string' && typeof valueB === 'string') {
+            return valueA.localeCompare(valueB, undefined, {sensitivity: 'accent'}) * (sort.direction === 'asc' ? 1 : -1);
+        }
+
+        if (valueA === valueB) {
+            return 0;
+        }
+
+        return (valueA < valueB ? -1 : 1) * (sort.direction === 'asc' ? 1 : -1);
     }
 }
