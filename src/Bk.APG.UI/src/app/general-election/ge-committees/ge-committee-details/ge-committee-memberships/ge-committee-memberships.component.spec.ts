@@ -76,4 +76,49 @@ describe('GeneralElectionCommitteeMembershipsComponent', () => {
 
         expect(routerMock.navigate).toHaveBeenCalledWith(['general-election', 'committees', '123', 'membership-candidate', 'candidate-1']);
     });
+
+    it('should sort active members by surname when sort changes', () => {
+        component.membershipList.set({
+            committeeQuotas: {} as never,
+            activeMemberships: [
+                {
+                    id: '1',
+                    surname: 'Zimmer',
+                    givenName: 'A',
+                    gender: 'm',
+                    language: 'de',
+                    function: 'Member',
+                    employmentLevel: '50',
+                    beginDate: new Date('2026-01-01'),
+                    endDate: new Date('2026-12-31'),
+                    electionType: 'General',
+                    hasMembershipAddition: false,
+                    isActive: true,
+                    isFuture: false,
+                    needsAttention: false,
+                },
+                {
+                    id: '2',
+                    surname: 'Anderson',
+                    givenName: 'B',
+                    gender: 'f',
+                    language: 'fr',
+                    function: 'President',
+                    employmentLevel: '100',
+                    beginDate: new Date('2026-01-01'),
+                    endDate: new Date('2026-12-31'),
+                    electionType: 'General',
+                    hasMembershipAddition: true,
+                    isActive: true,
+                    isFuture: false,
+                    needsAttention: false,
+                },
+            ],
+            inactiveMemberships: [],
+        });
+
+        component.sortData({active: 'surname', direction: 'asc'}, component.activeMembersSort);
+
+        expect(component.activeMembersData().map(member => member.surname)).toEqual(['Anderson', 'Zimmer']);
+    });
 });
