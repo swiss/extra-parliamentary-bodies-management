@@ -165,7 +165,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .Include(item => item.MembershipCandidates)
             .ThenInclude(item => item!.GeneralElectionCommittee)
             .FilterGeneralElectionCommitteeByPermission(departmentId, officeId, committeeId)
-            .Where(c => !filterDto.CommitteesWithActiveMembership || c.MembershipCandidates.Count > 0)
+            .Where(c => !filterDto.CommitteesWithActiveMembership || c.MembershipCandidates.Any(m => m.IsSelected))
             .AsSplitQuery()
             .Select(c => new GeneralElectionCommittee
             {
