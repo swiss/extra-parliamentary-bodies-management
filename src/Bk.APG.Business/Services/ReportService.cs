@@ -1625,6 +1625,7 @@ public class ReportService : IReportService
             EndDate = c.EndDate,
             TermOfOfficeDateId = c.TermOfOfficeDateId,
             CommitteeId = c.CommitteeId,
+            Committee = c.Committee,
             DepartmentId = c.DepartmentId,
             Department = c.Department,
             OfficeId = c.OfficeId,
