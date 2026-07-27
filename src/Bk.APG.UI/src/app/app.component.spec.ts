@@ -19,10 +19,12 @@ import {InformationService} from './information.service';
 describe('AppComponent', () => {
     let component: AppComponent;
     let fixture: ComponentFixture<AppComponent>;
+    const onLangChangeSubject = new Subject<{lang: string}>();
 
     const translateServiceMock = {
         getCurrentLang: jest.fn(() => 'de'),
         use: jest.fn(),
+        onLangChange: onLangChangeSubject.asObservable(),
     };
     const isAuthenticated$ = new BehaviorSubject<boolean>(true);
     const userName$ = new BehaviorSubject<string>('test_name');
@@ -157,8 +159,20 @@ describe('AppComponent', () => {
     });
 
     it('should call froalaService.initializePlugins on initialization', async () => {
-        await component.ngOnInit();
+        fixture.detectChanges();
+        await fixture.whenStable();
 
         expect(froalaServiceMock.initializePlugins).toHaveBeenCalledTimes(1);
+    });
+
+    it('should reinitialize froala plugins when language changes', async () => {
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        onLangChangeSubject.next({lang: 'fr'});
+        fixture.detectChanges();
+        await fixture.whenStable();
+
+        expect(froalaServiceMock.initializePlugins).toHaveBeenCalledTimes(2);
     });
 });
