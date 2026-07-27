@@ -1,5 +1,5 @@
 import {DecimalPipe, NgClass} from '@angular/common';
-import {Component, computed, input} from '@angular/core';
+import {Component, computed, input, SecurityContext} from '@angular/core';
 import {MatCard, MatCardContent} from '@angular/material/card';
 import {DomSanitizer} from '@angular/platform-browser';
 import {CommitteeDetails} from '@api/CommitteeDetails';
@@ -31,35 +31,39 @@ export class CommitteeJustificationsOverviewComponent {
     });
 
     justificationMembers = computed(() =>
-        this.committeeDetails()?.justificationMembers !== undefined
-            ? this.sanitizer.bypassSecurityTrustHtml(this.committeeDetails()!.justificationMembers!)
-            : this.none()
+        this.committeeDetails()?.justificationMembers !== undefined ? this.sanitizeHtml(this.committeeDetails()!.justificationMembers!) : this.none()
     );
 
     justificationGenders = computed(() =>
-        this.committeeDetails()?.justificationGenders !== undefined
-            ? this.sanitizer.bypassSecurityTrustHtml(this.committeeDetails()!.justificationGenders!)
-            : this.none()
+        this.committeeDetails()?.justificationGenders !== undefined ? this.sanitizeHtml(this.committeeDetails()!.justificationGenders!) : this.none()
     );
 
     measuresGenders = computed(() =>
-        this.committeeDetails()?.measuresGenders !== undefined ? this.sanitizer.bypassSecurityTrustHtml(this.committeeDetails()!.measuresGenders!) : this.none()
+        this.committeeDetails()?.measuresGenders !== undefined ? this.sanitizeHtml(this.committeeDetails()!.measuresGenders!) : this.none()
     );
 
     justificationLanguages = computed(() =>
-        this.committeeDetails()?.justificationLanguages !== undefined
-            ? this.sanitizer.bypassSecurityTrustHtml(this.committeeDetails()!.justificationLanguages!)
-            : this.none()
+        this.committeeDetails()?.justificationLanguages !== undefined ? this.sanitizeHtml(this.committeeDetails()!.justificationLanguages!) : this.none()
     );
 
     measuresLanguages = computed(() =>
-        this.committeeDetails()?.measuresLanguages !== undefined
-            ? this.sanitizer.bypassSecurityTrustHtml(this.committeeDetails()!.measuresLanguages!)
-            : this.none()
+        this.committeeDetails()?.measuresLanguages !== undefined ? this.sanitizeHtml(this.committeeDetails()!.measuresLanguages!) : this.none()
+    );
+
+    generalGenderMeasure = computed(() =>
+        this.committeeDetails()?.generalGenderMeasure != null ? this.sanitizeHtml(this.committeeDetails()!.generalGenderMeasure!) : this.none()
+    );
+
+    generalLanguageMeasure = computed(() =>
+        this.committeeDetails()?.generalLanguageMeasure != null ? this.sanitizeHtml(this.committeeDetails()!.generalLanguageMeasure!) : this.none()
     );
 
     constructor(
         private readonly translateService: TranslateService,
         private readonly sanitizer: DomSanitizer
     ) {}
+
+    private sanitizeHtml(value: string): string {
+        return this.sanitizer.sanitize(SecurityContext.HTML, value) ?? '';
+    }
 }
