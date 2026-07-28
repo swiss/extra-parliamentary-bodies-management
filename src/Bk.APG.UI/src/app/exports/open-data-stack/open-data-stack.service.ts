@@ -36,12 +36,14 @@ export class OpenDataStackService {
             })
             .pipe(
                 map(response =>
-                    response.result.map(dashboard => ({
-                        id: dashboard.id,
-                        title: dashboard.dashboard_title,
-                        status: dashboard.status,
-                        embedRedirect: `/superset/dashboard/${dashboard.id}/?standalone=2`,
-                    }))
+                    response.result
+                        .map(dashboard => ({
+                            id: dashboard.id,
+                            title: dashboard.dashboard_title,
+                            status: dashboard.status,
+                            embedRedirect: `/superset/dashboard/${dashboard.id}/?standalone=2`,
+                        }))
+                        .sort((a, b) => a.title.localeCompare(b.title))
                 )
             );
     }
