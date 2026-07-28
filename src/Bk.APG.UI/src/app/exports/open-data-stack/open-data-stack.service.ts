@@ -12,6 +12,11 @@ interface OpenDataStackDashboardResponse {
             id: string;
             dashboard_title: string;
             status: string;
+            tags: [
+                {
+                    name: string;
+                },
+            ];
         },
     ];
 }
@@ -29,7 +34,7 @@ export class OpenDataStackService {
         return this.http.post('/api/open-data-stack/token', {}, {responseType: 'text'});
     }
 
-    getDashboards(): Observable<OpenDataStackDashboard[]> {
+    getDashboards(language: string): Observable<OpenDataStackDashboard[]> {
         return this.http
             .get<OpenDataStackDashboardResponse>(`${this.configService.frontendConfig.openDataStack.baseUrl}/api/v1/dashboard/?q=(page_size:100)`, {
                 withCredentials: true,
@@ -42,7 +47,9 @@ export class OpenDataStackService {
                             title: dashboard.dashboard_title,
                             status: dashboard.status,
                             embedRedirect: `/superset/dashboard/${dashboard.id}/?standalone=2`,
+                            tags: dashboard.tags.map(tag => tag.name),
                         }))
+                        .filter(dashboard => dashboard.status === 'published' && dashboard.tags.includes(language))
                         .sort((a, b) => a.title.localeCompare(b.title))
                 )
             );
