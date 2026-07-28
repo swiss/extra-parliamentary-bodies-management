@@ -442,7 +442,7 @@
         <value>Sprache</value>
     </data>
     <data name="CandidateList_MembershipAddition" xml:space="preserve">
-        <value>Mitgliederzusatz</value>
+        <value>Mitgliedzusatz</value>
     </data>
     <data name="CandidateList_Occupation" xml:space="preserve">
         <value>Beruf</value>
@@ -454,7 +454,7 @@
         <value>Telefon</value>
     </data>
     <data name="CandidateList_Remarks" xml:space="preserve">
-        <value>Bemerkungen</value>
+        <value>Bemerkung</value>
     </data>
     <data name="CandidateList_RemarkStatus" xml:space="preserve">
         <value>Vertretung</value>
