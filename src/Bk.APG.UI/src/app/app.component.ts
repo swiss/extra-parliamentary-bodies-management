@@ -1,9 +1,9 @@
-import {Component, computed, OnInit, signal} from '@angular/core';
+import {Component, computed, effect, Injector, OnInit, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {MatAnchor, MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
-import {TranslatePipe} from '@ngx-translate/core';
+import {LangChangeEvent, TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ObHttpApiInterceptorConfig, ObINavigationLink, ObMasterLayoutConfig, ObMasterLayoutModule} from '@oblique/oblique';
 import {FroalaService} from '@shared/froala.service';
 import {AuthService} from './auth/auth.service';
@@ -110,6 +110,9 @@ export class AppComponent implements OnInit {
 
         return navigationLinks;
     });
+    private readonly languageChange = toSignal(this.translateService.onLangChange, {
+        initialValue: {lang: this.translateService.getCurrentLang()} as LangChangeEvent,
+    });
 
     constructor(
         private readonly config: ObMasterLayoutConfig,
@@ -118,7 +121,9 @@ export class AppComponent implements OnInit {
         readonly configsService: ConfigsService,
         readonly httpApiInterceptorConfig: ObHttpApiInterceptorConfig,
         protected readonly generalElectionService: GeneralElectionService,
-        private readonly froalaService: FroalaService
+        private readonly froalaService: FroalaService,
+        private readonly translateService: TranslateService,
+        private readonly injector: Injector
     ) {
         this.myAccountHref = configsService.frontendConfig.eiamMyAccountUrl;
         this.authService.isAuthenticated$.subscribe(value => this.isAuthenticated.set(value));
@@ -134,7 +139,14 @@ export class AppComponent implements OnInit {
     }
 
     async ngOnInit(): Promise<void> {
-        await this.froalaService.initializePlugins();
+        effect(
+            () => {
+                this.languageChange();
+                void this.froalaService.initializePlugins();
+            },
+            {injector: this.injector}
+        );
+
         this.initializeScrollToTop();
     }
 
