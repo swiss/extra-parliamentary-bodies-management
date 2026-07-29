@@ -322,16 +322,16 @@
         <value>Organi extraparlamentari rapporto Parlamento</value>
     </data>
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
-        <value>IT APG_Bundesratsbeschluss</value>
+        <value>APG decisione del Consiglio federale</value>
     </data>
     <data name="Vacancies_Report_Filename" xml:space="preserve">
-        <value>IT Liste Vakanzen</value>
+        <value>Lista delle vacanze</value>
     </data>
     <data name="Information_Note_Filename" xml:space="preserve">
-        <value>IT Informationsnotiz</value>
+        <value>Nota informativa</value>
     </data>
     <data name="CompareList_FileName" xml:space="preserve">
-        <value>IT_Vergleichsliste GEW Überprüfung</value>
+        <value>Lista di confronto verifica RI</value>
     </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Consigliera nazionale</value>
@@ -388,124 +388,124 @@
         <value>L'indirizzo viene visualizzato solo se la persona è un membro attivo.</value>
     </data>
     <data name="CandidateListValidationError_MinimumMembers" xml:space="preserve">
-        <value>IT_Es sind zu wenige Personen aus dem Wahlvorschlag für die Validierung selektiert. Die minimale Mitgliederanzahl {0} ist unterschritten. Bitte selektieren Sie mehr Personen und validieren Sie Ihre Selektion nochmal.</value>
+        <value>Sono state selezionate troppe poche persone dalla proposta di elezione per la convalida. Il numero minimo di membri {0} è inferiore al limite. Selezionare più persone e convalidare di nuovo la selezione.</value>
     </data>
     <data name="CandidateListValidationError_MaximumMembers" xml:space="preserve">
-        <value>IT_Es sind zu viele Personen aus dem Wahlvorschlag für die Validierung selektiert. Die maximale Mitgliederanzahl {0} ist überschritten. Bitte selektieren Sie weniger Personen und validieren Sie Ihre Selektion nochmal.</value>
+        <value>Sono state selezionate troppe persone dalla proposta di elezione per la convalida. Il numero massimo di membri {0} è stato superato. Selezionare meno persone e convalidare di nuovo la selezione.</value>
     </data>
     <data name="GeneralElection_MissingJustifications_TaskDescription" xml:space="preserve">
-        <value>IT_Bitte die fehlenden Begründungen für die GEW nachtragen.</value>
+        <value>Si prega di aggiungere le motivazioni mancanti per il RI.</value>
     </data>
     <data name="AppendixFederalCouncil_Filename" xml:space="preserve">
-        <value>IT_Anhang Bundesratsantrag</value>
+        <value>Allegato proposta del Consiglio federale</value>
     </data>
     <data name="CandidateList_BeginDate" xml:space="preserve">
-        <value>IT_Startdatum</value>
+        <value>Data di inizio</value>
     </data>
     <data name="CandidateList_BirthYear" xml:space="preserve">
-        <value>IT_Jahrgang</value>
+        <value>Anno</value>
     </data>
     <data name="CandidateList_City" xml:space="preserve">
-        <value>IT_Ort</value>
+        <value>Luogo</value>
     </data>
     <data name="CandidateList_Committee" xml:space="preserve">
-        <value>IT_Gremium</value>
+        <value>Organo</value>
     </data>
     <data name="CandidateList_ElectionType" xml:space="preserve">
-        <value>IT_Status</value>
+        <value>Status</value>
     </data>
     <data name="CandidateList_Email" xml:space="preserve">
-        <value>IT_E-Mail</value>
+        <value>Indirizzo e-mail</value>
     </data>
     <data name="CandidateList_EndDate" xml:space="preserve">
-        <value>IT_Enddatum</value>
+        <value>Data di fine</value>
     </data>
     <data name="CandidateList_Function" xml:space="preserve">
-        <value>IT_Funktion</value>
+        <value>Funzione</value>
     </data>
     <data name="CandidateList_Gender" xml:space="preserve">
-        <value>IT_Geschlecht</value>
+        <value>Sesso</value>
     </data>
     <data name="CandidateList_GivenName" xml:space="preserve">
-        <value>IT_Vorname</value>
+        <value>Nome</value>
     </data>
     <data name="CandidateList_Interests" xml:space="preserve">
-        <value>IT_Interessenbindungen</value>
+        <value>Relazioni di interesse</value>
     </data>
     <data name="CandidateList_Language" xml:space="preserve">
-        <value>IT_Sprache</value>
+        <value>Lingua</value>
     </data>
     <data name="CandidateList_MembershipAddition" xml:space="preserve">
-        <value>IT_Mitgliederzusatz</value>
+        <value>Informazioni aggiuntive sui membri</value>
     </data>
     <data name="CandidateList_Occupation" xml:space="preserve">
-        <value>IT_Beruf</value>
+        <value>Professione</value>
     </data>
     <data name="CandidateList_Office" xml:space="preserve">
-        <value>IT_Verwaltungsstelle</value>
+        <value>Servizio amministrativo</value>
     </data>
     <data name="CandidateList_Phone" xml:space="preserve">
-        <value>IT_Telefon</value>
+        <value>Numero di telefono</value>
     </data>
     <data name="CandidateList_Remarks" xml:space="preserve">
-        <value>IT_Bemerkungen</value>
+        <value>Osservazione</value>
     </data>
     <data name="CandidateList_RemarkStatus" xml:space="preserve">
-        <value>IT_Vertretung</value>
+        <value>Rappresentante</value>
     </data>
     <data name="CandidateList_Surname" xml:space="preserve">
-        <value>IT_Name</value>
+        <value>Cognome</value>
     </data>
     <data name="CandidateList_Title" xml:space="preserve">
-        <value>IT_Titel</value>
+        <value>Titolo</value>
     </data>
     <data name="CandidateList" xml:space="preserve">
-        <value>IT_Wahlvorschlag</value>
+        <value>Proposta di candidatura</value>
     </data>
     <data name="GeneralElection_PersonData_TaskDescription" xml:space="preserve">
-        <value>IT_Bitte die Personendaten nachtragen.</value>
+        <value>Si prega di completare i dati personali.</value>
     </data>
     <data name="GeneralElection_MissingSecretariat_TaskDescription" xml:space="preserve">
-        <value>IT_Bitte das fehlende Sekretariat nachtragen.</value>
+        <value>Si prega di indicare la segreteria mancante.</value>
     </data>
     <data name="GeneralElection_MissingDataProtectionOfficer_TaskDescription" xml:space="preserve">
-        <value>IT_Bitte Datenschutzberater/-in nachtragen.</value>
+        <value>Si prega di indicare il consulente per la protezione dei dati.</value>
     </data>
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
-        <value>IT_APG Serienbrief Gesamt</value>
+        <value>Modello di lettera standard organo extraparlamentare (versione completa)</value>
     </data>
     <data name="Committee_SelfOrganized" xml:space="preserve">
-        <value>IT_Selbstorgansisiert</value>
+        <value>Auto-organizzato</value>
     </data>
     <data name="Membership_Until" xml:space="preserve">
-        <value>IT_bis</value>
+        <value>fino a</value>
     </data>
     <data name="Term_Of_Office_Data_Separator" xml:space="preserve">
         <value>-</value>
     </data>
     <data name="Office_Central" xml:space="preserve">
-        <value>IT_zentral</value>
+        <value>Amministrazione federale centrale</value>
     </data>
     <data name="Office_Decentral" xml:space="preserve">
-        <value>IT_dezentral</value>
+        <value>Amministrazione federale decentralizzata</value>
     </data>
     <data name="Compare_List_Language_Missing" xml:space="preserve">
-        <value>IT_nicht vertreten</value>
+        <value>non rappresentato/a</value>
     </data>
     <data name="Compare_List_Language_OK" xml:space="preserve">
-        <value>IT_Keine Untervertretung</value>
+        <value>Nessuna sottorappresentazione</value>
     </data>
     <data name="Compare_List_Women" xml:space="preserve">
-        <value>IT_Frauen</value>
+        <value>Donne</value>
     </data>
     <data name="Compare_List_Woman" xml:space="preserve">
-        <value>IT_Frau</value>
+        <value>Donna</value>
     </data>
     <data name="Compare_List_Men" xml:space="preserve">
-        <value>IT_Männer</value>
+        <value>Uomini</value>
     </data>
     <data name="Compare_List_Man" xml:space="preserve">
-        <value>IT_Mann</value>
+        <value>Uomo</value>
     </data>
     <data name="CandidateList_FedaralDuty" xml:space="preserve">
         <value>Al servizio della Confederazione</value>
@@ -515,5 +515,32 @@
     </data>
     <data name="CandidateList_EmploymentLevel" xml:space="preserve">
         <value>Tasso di occupazione in percentuale</value>
+    </data>
+    <data name="InformationNoteExport_MemberCount" xml:space="preserve">
+        <value>{0} membro(i)</value>
+    </data>
+    <data name="InformationNoteExport_FederalMemberCount" xml:space="preserve">
+        <value>{0} membro(i) al servizio della Confederazione</value>
+    </data>
+    <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
+        <value>{0} membro(i), di cui {1} al servizio della Confederazione</value>
+    </data>
+    <data name="InformationNoteExport_Vacancies" xml:space="preserve">
+        <value>{0} vacanza(e)</value>
+    </data>
+    <data name="InformationNoteExport_Male" xml:space="preserve">
+        <value>{0} % uomini</value>
+    </data>
+    <data name="InformationNoteExport_Female" xml:space="preserve">
+        <value>{0} % donne</value>
+    </data>
+    <data name="InformationNoteExport_FrenchAndItalianMissing" xml:space="preserve">
+        <value>Francese e italiano non rappresentati</value>
+    </data>
+    <data name="InformationNoteExport_FrenchMissing" xml:space="preserve">
+        <value>Francese non rappresentato</value>
+    </data>
+    <data name="InformationNoteExport_ItalianMissing" xml:space="preserve">
+        <value>Italiano non rappresentato</value>
     </data>
 </root>
