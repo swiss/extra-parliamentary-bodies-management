@@ -318,6 +318,8 @@ public class ReportService : IReportService
             unreleasedCommittees = generalElectionCommitteesWithMembers
                 .Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded && c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
                 .ToArray();
+
+            generalElectionCommitteesWithMembers = releasedCommittees;
         }
 
         // number of APKs (!) which are new or have ended before the current termOfOfficeDate
@@ -1319,10 +1321,22 @@ public class ReportService : IReportService
 
             foreach (var committee in filteredCommittees.Where(c => c.Memberships.Count != 0 && c.ActiveMemberCount > 0))
             {
-                var germanMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.GermanId));
-                var frenchMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.FrenchId));
-                var italianMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.ItalianId));
-                var romanshMembers = committee.Memberships.Where(m => m is { IsSelected: true, IsDeleted: false }).Select(m => m.Person!).Count(p => p.LanguageId == Guid.Parse(Language.RomanshId));
+                var germanMembers = committee.Memberships
+                    .Where(m => m is { IsSelected: true, IsDeleted: false, Person: not null })
+                    .Select(m => m.Person!)
+                    .Count(p => p.LanguageId == Guid.Parse(Language.GermanId));
+                var frenchMembers = committee.Memberships
+                    .Where(m => m is { IsSelected: true, IsDeleted: false, Person: not null })
+                    .Select(m => m.Person!)
+                    .Count(p => p.LanguageId == Guid.Parse(Language.FrenchId));
+                var italianMembers = committee.Memberships
+                    .Where(m => m is { IsSelected: true, IsDeleted: false, Person: not null })
+                    .Select(m => m.Person!)
+                    .Count(p => p.LanguageId == Guid.Parse(Language.ItalianId));
+                var romanshMembers = committee.Memberships
+                    .Where(m => m is { IsSelected: true, IsDeleted: false, Person: not null })
+                    .Select(m => m.Person!)
+                    .Count(p => p.LanguageId == Guid.Parse(Language.RomanshId));
 
                 var german = Math.Round((decimal)germanMembers / committee.ActiveMemberCount * 100, 2);
                 var french = Math.Round((decimal)frenchMembers / committee.ActiveMemberCount * 100, 2);
@@ -1595,7 +1609,7 @@ public class ReportService : IReportService
         var dtoList = committees
             .SelectMany(c => c.Memberships.Select(m => new { m.Person, CommitteeName = c.GetDescription() }))
             .GroupBy(x => x.Person)
-            .Where(g => g.Count() >= 3)
+            .Where(g => g.Key is not null && g.Count() >= 3)
             .Select(g => new MultipleMembershipsDto
             {
                 Surname = g.Key!.Surname,
