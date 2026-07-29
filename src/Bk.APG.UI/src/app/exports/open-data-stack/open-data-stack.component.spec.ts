@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MockPipe} from 'ng-mocks';
-import {of} from 'rxjs';
+import {of, Subject} from 'rxjs';
 import {ConfigsService} from '../../configs.service';
 import {OpenDataStackComponent} from './open-data-stack.component';
 import {OpenDataStackService} from './open-data-stack.service';
@@ -10,6 +10,7 @@ describe('OpenDataStackComponent', () => {
     let component: OpenDataStackComponent;
     let fixture: ComponentFixture<OpenDataStackComponent>;
     let openDataStackServiceMock: jest.Mocked<OpenDataStackService>;
+    let languageChange$: Subject<{lang: string}>;
 
     const baseUrl = 'https://ods.example.com';
     const initialDashboardId = 'foo';
@@ -25,9 +26,13 @@ describe('OpenDataStackComponent', () => {
 
     const translateServiceMock = {
         getCurrentLang: jest.fn(() => 'de'),
+        onLangChange: new Subject<{lang: string}>(),
     };
 
     beforeEach(async () => {
+        languageChange$ = new Subject<{lang: string}>();
+        translateServiceMock.onLangChange = languageChange$;
+
         openDataStackServiceMock = {
             exchangeToken: jest.fn().mockReturnValue(of('test-token')),
             getDashboards: jest.fn().mockReturnValue(of([])),
@@ -90,6 +95,7 @@ describe('OpenDataStackComponent', () => {
 
         const secondOnLoad = iframe.onload;
         secondOnLoad?.call(iframe, new Event('load'));
+        fixture.detectChanges();
 
         expect(openDataStackServiceMock.getDashboards).toHaveBeenCalledTimes(1);
         expect(iframe.onload).toBeNull();
@@ -161,5 +167,41 @@ describe('OpenDataStackComponent', () => {
         component.ngAfterViewInit();
 
         expect(openDataStackServiceMock.exchangeToken).toHaveBeenCalledTimes(callsBefore + 1);
+    });
+
+    it('should reload dashboards with the new language and clear iframe when language changes', () => {
+        openDataStackServiceMock.getDashboards
+            .mockReturnValueOnce(
+                of([
+                    {
+                        id: 'dashboard-1',
+                        title: 'Dashboard 1',
+                        status: 'published',
+                        embedRedirect: '/superset/dashboard/dashboard-1/?standalone=2',
+                    },
+                ])
+            )
+            .mockReturnValueOnce(of([]));
+
+        fixture.detectChanges();
+
+        const iframe = fixture.nativeElement.querySelector('#ods-embed') as HTMLIFrameElement;
+        Object.defineProperty(iframe, 'contentWindow', {
+            value: {postMessage: jest.fn()},
+            configurable: true,
+        });
+
+        iframe.onload?.call(iframe, new Event('load'));
+        iframe.onload?.call(iframe, new Event('load'));
+        fixture.detectChanges();
+
+        expect(iframe.style.display).toBe('block');
+        expect(openDataStackServiceMock.getDashboards).toHaveBeenNthCalledWith(1, 'de');
+
+        languageChange$.next({lang: 'fr'});
+        fixture.detectChanges();
+
+        expect(openDataStackServiceMock.getDashboards).toHaveBeenNthCalledWith(2, 'fr');
+        expect(iframe.style.display).toBe('none');
     });
 });
