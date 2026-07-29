@@ -6,6 +6,7 @@ import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatSelect} from '@angular/material/select';
 import {OpenDataStackDashboard} from '@api/OpenDataStackDashboard';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
+import {map} from 'rxjs';
 import {ConfigsService} from '../../configs.service';
 import {OpenDataStackService} from './open-data-stack.service';
 
@@ -31,6 +32,8 @@ export class OpenDataStackComponent implements AfterViewInit {
     private readonly translateService = inject(TranslateService);
 
     private readonly selectedDashboard: Signal<string | null>;
+    private readonly currentLanguage: Signal<string>;
+    private readonly canLoadDashboards = signal(false);
 
     @ViewChild('odsEmbed')
     private readonly iframeRef?: ElementRef<HTMLIFrameElement>;
@@ -41,11 +44,25 @@ export class OpenDataStackComponent implements AfterViewInit {
         });
 
         this.selectedDashboard = toSignal(this.dashboardForm.controls.dashboardId.valueChanges, {initialValue: this.dashboardForm.controls.dashboardId.value});
+        this.currentLanguage = toSignal(this.translateService.onLangChange.pipe(map(event => event.lang)), {
+            initialValue: this.translateService.getCurrentLang(),
+        });
 
         effect(() => {
             if (this.selectedDashboard()) {
                 this.onDashboardChange();
             }
+        });
+
+        effect(() => {
+            if (!this.canLoadDashboards()) {
+                return;
+            }
+
+            // Clear currently displayed dashboard while loading translated dashboard list.
+            this.isIframeVisible.set(false);
+            this.dashboardForm.controls.dashboardId.setValue(null);
+            this.loadDashboards(this.currentLanguage());
         });
     }
 
@@ -66,15 +83,15 @@ export class OpenDataStackComponent implements AfterViewInit {
 
                 // Wait for the auth redirect/reload before loading dashboards.
                 iframe.onload = () => {
-                    this.loadDashboards();
+                    this.canLoadDashboards.set(true);
                     iframe.onload = null;
                 };
             };
         });
     }
 
-    private loadDashboards(): void {
-        this.openDataStackService.getDashboards(this.translateService.getCurrentLang()).subscribe(dashboards => {
+    private loadDashboards(language: string): void {
+        this.openDataStackService.getDashboards(language).subscribe(dashboards => {
             this.dashboards.set(dashboards);
             if (dashboards.length > 0) {
                 this.dashboardForm.controls.dashboardId.setValue(dashboards[0].id);
