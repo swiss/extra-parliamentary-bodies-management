@@ -322,16 +322,16 @@
         <value>Organes_extraparlementaires_rapport_Parlement</value>
     </data>
     <data name="DecisionFederalCouncil_Filename" xml:space="preserve">
-        <value>APG dispositif de la décision</value>
+        <value>APG décision du Conseil fédéral</value>
     </data>
     <data name="Vacancies_Report_Filename" xml:space="preserve">
-        <value>FR_Liste Vakanzen</value>
+        <value>Liste des vacances</value>
     </data>
     <data name="Information_Note_Filename" xml:space="preserve">
-        <value>FR_Informationsnotiz</value>
+        <value>Note d'information</value>
     </data>
     <data name="CompareList_FileName" xml:space="preserve">
-        <value>FR_Vergleichsliste GEW Überprüfung</value>
+        <value>Liste de comparaison vérification RI</value>
     </data>
     <data name="NationalCouncilFemale" xml:space="preserve">
         <value>Conseillère nationale</value>
@@ -451,7 +451,7 @@
         <value>Remarque</value>
     </data>
     <data name="CandidateList_RemarkStatus" xml:space="preserve">
-        <value>FR_Vertretung</value>
+        <value>Représentation</value>
     </data>
     <data name="CandidateList_Surname" xml:space="preserve">
         <value>Nom</value>
@@ -463,46 +463,46 @@
         <value>Liste de candidats</value>
     </data>
     <data name="GeneralElection_PersonData_TaskDescription" xml:space="preserve">
-        <value>FR_Bitte die Personendaten nachtragen.</value>
+        <value>Veuillez saisir les données personnelles.</value>
     </data>
     <data name="GeneralElection_MissingSecretariat_TaskDescription" xml:space="preserve">
-        <value>FR_Bitte das fehlende Sekretariat nachtragen.</value>
+        <value>Veuillez saisir le secrétariat qui fait défaut.</value>
     </data>
     <data name="GeneralElection_MissingDataProtectionOfficer_TaskDescription" xml:space="preserve">
-        <value>FR_Bitte Datenschutzberater/-in nachtragen.</value>
+        <value>Veuillez saisir le conseiller/la conseillère à la protection des données.</value>
     </data>
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
-        <value>FR_APG Serienbrief Gesamt</value>
+        <value>organes extraparlementaires lettre en série total</value>
     </data>
     <data name="InformationNoteExport_MemberCount" xml:space="preserve">
-        <value>FR_{0} Mitglied(er)</value>
+        <value>{0} membre(s)</value>
     </data>
     <data name="InformationNoteExport_FederalMemberCount" xml:space="preserve">
-        <value>FR_{0} Mitglied(er) im Bundesdienst</value>
+        <value>{0} membre(s) au service de la Confédération</value>
     </data>
     <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
-        <value>FR_{0} Mitglied(er), davon {1} im Bundesdienst</value>
+        <value>{0} membre(s), dont {1} au service de la Confédération</value>
     </data>
     <data name="InformationNoteExport_Vacancies" xml:space="preserve">
-        <value>FR_{0} Vakanz(en)</value>
+        <value>{0} vacance(s)</value>
     </data>
     <data name="InformationNoteExport_Male" xml:space="preserve">
-        <value>FR_{0} % Männer</value>
+        <value>{0} % d'hommes</value>
     </data>
     <data name="InformationNoteExport_Female" xml:space="preserve">
-        <value>FR_{0} % Frauen</value>
+        <value>{0} % de femmes</value>
     </data>
     <data name="InformationNoteExport_FrenchAndItalianMissing" xml:space="preserve">
-        <value>FR_Französisch und Italienisch nicht vertreten</value>
+        <value>Le français et l'italien ne sont pas représentés.</value>
     </data>
     <data name="InformationNoteExport_FrenchMissing" xml:space="preserve">
-        <value>FR_Französisch nicht vertreten</value>
+        <value>Le français n'est pas représenté.</value>
     </data>
     <data name="InformationNoteExport_ItalianMissing" xml:space="preserve">
-        <value>FR_Italienisch nicht vertreten</value>
+        <value>L'italien n'est pas représenté.</value>
     </data>
     <data name="Committee_SelfOrganized" xml:space="preserve">
-        <value>FR_Selbstorgansisiert</value>
+        <value>Auto-organisé</value>
     </data>
     <data name="Membership_Until" xml:space="preserve">
         <value>jusqu'à</value>
@@ -511,28 +511,28 @@
         <value> à </value>
     </data>
     <data name="Office_Central" xml:space="preserve">
-        <value>FR_zentrale Bundesverwaltung</value>
+        <value>administration fédérale centrale</value>
     </data>
     <data name="Office_Decentral" xml:space="preserve">
-        <value>FR_dezentrale Bundesverwaltung</value>
+        <value>administration fédérale décentralisée</value>
     </data>
     <data name="Compare_List_Language_Missing" xml:space="preserve">
-        <value>FR_nicht vertreten</value>
+        <value>non représenté(e)</value>
     </data>
     <data name="Compare_List_Language_OK" xml:space="preserve">
-        <value>FR_Keine Untervertretung</value>
+        <value>Pas de sous-représentation</value>
     </data>
     <data name="Compare_List_Women" xml:space="preserve">
-        <value>FR_Frauen</value>
+        <value>Femmes</value>
     </data>
     <data name="Compare_List_Woman" xml:space="preserve">
-        <value>FR_Frau</value>
+        <value>Femme</value>
     </data>
     <data name="Compare_List_Men" xml:space="preserve">
-        <value>FR_Männer</value>
+        <value>Hommes</value>
     </data>
     <data name="Compare_List_Man" xml:space="preserve">
-        <value>FR_Mann</value>
+        <value>Homme</value>
     </data>
     <data name="CandidateList_FedaralDuty" xml:space="preserve">
         <value>Au service de la Confédération</value>
