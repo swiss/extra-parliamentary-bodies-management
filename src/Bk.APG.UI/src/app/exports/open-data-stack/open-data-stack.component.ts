@@ -5,7 +5,7 @@ import {MatOption} from '@angular/material/core';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
 import {MatSelect} from '@angular/material/select';
 import {OpenDataStackDashboard} from '@api/OpenDataStackDashboard';
-import {TranslatePipe} from '@ngx-translate/core';
+import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {ConfigsService} from '../../configs.service';
 import {OpenDataStackService} from './open-data-stack.service';
 
@@ -28,6 +28,7 @@ export class OpenDataStackComponent implements AfterViewInit {
     private readonly configsService = inject(ConfigsService);
     private readonly openDataStackService = inject(OpenDataStackService);
     private readonly formBuilder = inject(FormBuilder);
+    private readonly translateService = inject(TranslateService);
 
     private readonly selectedDashboard: Signal<string | null>;
 
@@ -73,7 +74,7 @@ export class OpenDataStackComponent implements AfterViewInit {
     }
 
     private loadDashboards(): void {
-        this.openDataStackService.getDashboards().subscribe(dashboards => {
+        this.openDataStackService.getDashboards(this.translateService.getCurrentLang()).subscribe(dashboards => {
             this.dashboards.set(dashboards);
             if (dashboards.length > 0) {
                 this.dashboardForm.controls.dashboardId.setValue(dashboards[0].id);
