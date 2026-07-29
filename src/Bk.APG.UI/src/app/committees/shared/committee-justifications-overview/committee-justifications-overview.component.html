@@ -44,7 +44,7 @@
                     </tr>
                     <tr>
                         <td class="heading-text">{{ 'committee.generalMeasure' | translate }}</td>
-                        <td [innerHTML]="committee.generalGenderMeasure ?? ('common.none' | translate)"></td>
+                        <td [innerHTML]="generalGenderMeasure()"></td>
                     </tr>
                 </table>
             }
@@ -92,7 +92,7 @@
                     </tr>
                     <tr>
                         <td class="heading-text">{{ 'committee.generalMeasure' | translate }}</td>
-                        <td [innerHTML]="committee.generalLanguageMeasure ?? ('common.none' | translate)"></td>
+                        <td [innerHTML]="generalLanguageMeasure()"></td>
                     </tr>
                 </table>
             }
