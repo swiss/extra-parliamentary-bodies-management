@@ -121,6 +121,7 @@ public class CommitteesController : ControllerBase
     }
 
     [HttpPost("members")]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> CreateMember([FromBody, Required] MembershipCreateDto createDto)
     {
         var membership = await _membershipService.CreateMembership(createDto);

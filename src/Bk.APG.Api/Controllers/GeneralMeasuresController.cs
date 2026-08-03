@@ -30,6 +30,7 @@ public class GeneralMeasuresController : ControllerBase
     }
 
     [HttpPut]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<IActionResult> UpdateGeneralMeasure([FromBody] GeneralMeasureUpdateDto generalMeasureUpdate)
     {
         ArgumentNullException.ThrowIfNull(generalMeasureUpdate);
@@ -49,6 +50,7 @@ public class GeneralMeasuresController : ControllerBase
     }
 
     [HttpPost("{departmentId:guid}/forward")]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<IActionResult> Forward(Guid departmentId, [FromBody] GeneralMeasureForwardDto forwardDto)
     {
         ArgumentNullException.ThrowIfNull(forwardDto);
