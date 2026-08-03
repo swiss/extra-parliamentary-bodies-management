@@ -45,6 +45,7 @@ public class GeneralElectionCommitteesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     [Route("{committeeId:guid}/candidate-list/forward")]
     public async Task<IActionResult> ForwardCandidateList(Guid committeeId, [FromBody] CandidateListForwardDto forwardDto)
     {
@@ -61,6 +62,7 @@ public class GeneralElectionCommitteesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     [Route("{committeeId:guid}/ready-for-proposal/forward")]
     public async Task<IActionResult> ForwardReadyForProposal(Guid committeeId, [FromBody] ReadyForProposalForwardDto forwardDto)
     {
@@ -78,6 +80,7 @@ public class GeneralElectionCommitteesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentRole)]
     [Route("{committeeId:guid}/candidate-list/validate")]
     public async Task<IActionResult> ValidateCandidateList(Guid committeeId, [FromBody] CandidateListValidationRequest candidateListValidationRequest)
     {
@@ -88,6 +91,7 @@ public class GeneralElectionCommitteesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     [Route("{committeeId:guid}/candidate-list/save")]
     public async Task<IActionResult> SaveCandidateList(Guid committeeId, [FromBody] IEnumerable<Guid> candidateIds)
     {
