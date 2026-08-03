@@ -63,6 +63,7 @@ public class WorklistTasksController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> Update([FromRoute] Guid id, [FromBody, Required] WorklistTaskUpdateDto updateDto)
     {
         ArgumentNullException.ThrowIfNull(updateDto);

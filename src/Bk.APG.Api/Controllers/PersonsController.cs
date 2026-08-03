@@ -119,6 +119,7 @@ public class PersonsController : ControllerBase
     }
 
     [HttpPut("{personId:guid}/interests")]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<ActionResult> UpdateInterests([FromRoute] Guid personId, [FromBody, Required] InterestUpdateDto[] updateDtos)
     {
         var interest = await _interestService.UpdateInterests(personId, updateDtos);
