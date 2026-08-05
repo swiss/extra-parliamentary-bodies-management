@@ -5,7 +5,6 @@ namespace Bk.APG.Business.Repositories;
 
 public interface IMembershipRepository
 {
-    void CreateForMigration(Membership membership);
     Task<IEnumerable<Membership>> GetAllByPersonId(Guid personId);
     Task<IEnumerable<Membership>> GetAllByCommitteeId(Guid committeeId);
     IEnumerable<Membership> GetAllActiveForOgdExport();
