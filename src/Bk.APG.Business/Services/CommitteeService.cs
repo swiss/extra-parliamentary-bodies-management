@@ -111,9 +111,13 @@ public class CommitteeService : ICommitteeService
 
             var committeesListDate2 = await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate2);
 
-            var committeesList = committeesListDate1.Concat(committeesListDate2).DistinctBy(c => c.Id).ToList();
+            var newCommittees = (await _committeeRepository.GetNewCommitteesByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1, filterParameters.AnalysisDate2)).ToArray();
 
-            committees.AddRange(generateCommitteeListForCompareList(committeesList));
+            var formerCommittees = (await _committeeRepository.GetFormerCommitteesByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1, filterParameters.AnalysisDate2)).ToArray();
+
+            var committeesList = committeesListDate1.Concat(committeesListDate2).Concat(formerCommittees).Concat(newCommittees).DistinctBy(c => c.Id).ToList();
+
+            committees.AddRange(GenerateCommitteeListForCompareList(committeesList));
         }
         else
         {
@@ -1202,7 +1206,7 @@ public class CommitteeService : ICommitteeService
         return statisticDto;
     }
 
-    private static List<Committee> generateCommitteeListForCompareList(List<Committee> committeesListDate)
+    private static List<Committee> GenerateCommitteeListForCompareList(List<Committee> committeesListDate)
     {
         // we have to find all committees which require a justification in both lists and return the matches unique...
         var hits = new List<Committee>();

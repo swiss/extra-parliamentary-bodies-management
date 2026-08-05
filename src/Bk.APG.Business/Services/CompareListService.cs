@@ -56,8 +56,13 @@ public class CompareListService : ICompareListService
         departments = departments.Where(d => d.Uri != Department.BkUri).ToArray();
 
         var committeesFromDate1 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1)).ToArray();
-
         var committeesFromDate2 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate2)).ToArray();
+
+        var newCommittees = (await _committeeRepository.GetNewCommitteesByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1, filterDto.AnalysisDate2)).ToArray();
+        var formerCommittees = (await _committeeRepository.GetFormerCommitteesByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1, filterDto.AnalysisDate2)).ToArray();
+
+        var newCommitteesList = newCommittees.Select(FillNewCommitteeDto).ToArray();
+        var formerCommitteesList = formerCommittees.Select(FillFormerCommitteeDto).ToArray();
 
         var compareListDto = new CompareListDto
         {
@@ -86,6 +91,9 @@ public class CompareListService : ICompareListService
         }
 
         compareListDto.CommitteeTypes = compareCommitteeTypeList;
+
+        compareListDto.NewCommittees = newCommitteesList!;
+        compareListDto.FormerCommittees = formerCommitteesList!;
 
         var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == Language.French ? "Compare_List_French" : "Compare_List_German";
 
@@ -285,6 +293,33 @@ public class CompareListService : ICompareListService
         }
 
         return null;
+    }
+
+    private static CompareListNewCommitteeDto? FillNewCommitteeDto(Committee committee)
+    {
+        var compareListNewCommittee = new CompareListNewCommitteeDto()
+        {
+            Id = committee.Id,
+            Name = committee.GetDescription(),
+            StartDate = committee.BeginDate,
+            MemberCount = committee.ActiveMemberCount.ToString(CultureInfo.InvariantCulture),
+            GenderQuota = $"F: {committee.FemaleCount} ({ committee.FemaleQuota }%), M: {committee.MaleCount} ({committee.MaleQuota}%)",
+            LanguageQuota = $"D: {committee.GermanCount} ({committee.GermanQuota}%), F: {committee.FrenchCount} ({committee.FrenchQuota}%), I: {committee.ItalianCount} ({committee.ItalianQuota}%)",
+        };
+
+        return compareListNewCommittee;
+    }
+
+    private static CompareListFormerCommitteeDto? FillFormerCommitteeDto(Committee committee)
+    {
+        var compareListFormerCommittee = new CompareListFormerCommitteeDto()
+        {
+            Id = committee.Id,
+            Name = committee.GetDescription(),
+            EndDate = (DateOnly)committee.EndDate!,
+        };
+
+        return compareListFormerCommittee;
     }
 
     private static bool IsGenderUnderStaffed(ICollection<Membership> memberships, int activeMemberCount, Guid genderId, double threshold)

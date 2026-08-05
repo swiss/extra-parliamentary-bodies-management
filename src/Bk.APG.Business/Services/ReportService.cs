@@ -784,7 +784,6 @@ public class ReportService : IReportService
         return departmentList;
     }
 
-
     private async Task<(string fileName, Stream content)> GenerateVacanciesReport(ReportFilterParametersDto filterDto)
     {
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
