@@ -15,11 +15,6 @@ public class MembershipRepository : IMembershipRepository
         _dataContext = dataContext;
     }
 
-    public void CreateForMigration(Membership membership)
-    {
-        _dataContext.Memberships.Add(membership);
-    }
-
     public async Task<IEnumerable<Membership>> GetAllByPersonId(Guid personId)
     {
         var list = await _dataContext.Memberships
