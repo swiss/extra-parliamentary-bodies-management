@@ -62,6 +62,11 @@ public class ContactPointService : IContactPointService
     {
         var committee = await _committeeRepository.GetById(committeeId);
 
+        if (!await _authorizationService.HasAccessToCommittee(committee))
+        {
+            throw new AuthorizationException($"Not permitted to access committee {committeeId} with this role");
+        }
+
         return new ContactPointCreateDto
         {
             CommitteeId = committee.Id,
@@ -76,6 +81,12 @@ public class ContactPointService : IContactPointService
     public async Task<ContactPointDetailDto> Create(ContactPointCreateDto createDto)
     {
         ArgumentNullException.ThrowIfNull(createDto);
+
+        var committee = await _committeeRepository.GetById(createDto.CommitteeId);
+        if (!await _authorizationService.HasAccessToCommittee(committee))
+        {
+            throw new AuthorizationException($"Not permitted to create contact point in committee {createDto.CommitteeId} with this role");
+        }
 
         createDto.ContactPointTypeId = await _masterDataService.GetContactPointGuidFromContactPointUri(createDto.ContactPointTypeUri);
 
@@ -106,6 +117,12 @@ public class ContactPointService : IContactPointService
         ArgumentNullException.ThrowIfNull(updateDto);
 
         _logger.LogInformation("Update contact point {ContactPointId}", id);
+
+        var committee = await _committeeRepository.GetById(updateDto.CommitteeId);
+        if (!await _authorizationService.HasAccessToCommittee(committee))
+        {
+            throw new AuthorizationException($"Not permitted to update contact point in committee {updateDto.CommitteeId} with this role");
+        }
 
         updateDto.ContactPointTypeId = await _masterDataService.GetContactPointGuidFromContactPointUri(updateDto.ContactPointTypeUri);
 
