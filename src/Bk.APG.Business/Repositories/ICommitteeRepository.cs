@@ -14,6 +14,8 @@ public interface ICommitteeRepository
     Task<IEnumerable<Committee>> GetAllForGeneralElectionWithActiveMembers(Guid departmentId, Guid officeId, Guid committeeId);
     Task<IEnumerable<Committee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds);
     Task<IEnumerable<Committee>> GetByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? reportDate);
+    Task<IEnumerable<Committee>> GetNewCommitteesByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? startDate, DateOnly? endDate);
+    Task<IEnumerable<Committee>> GetFormerCommitteesByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? startDate, DateOnly? endDate);
     Task<Committee> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null);
     IEnumerable<Committee> GetAll();
     Task CommitChanges();

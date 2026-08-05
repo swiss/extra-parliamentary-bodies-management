@@ -231,7 +231,7 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.Memberships)
             .ThenInclude(item => item.Committee)
             .Include(item => item.MembershipAdditionsInGeneralElection)
-            .FilterCommitteeByReportFilterParametersDto(filterDto, departmentId, officeId, committeeId)
+            .FilterCommitteeByReportFilterParametersDto(filterDto, departmentId, officeId, committeeId, false)
             .AsSplitQuery()
             .Select(c => new Committee
             {
@@ -543,5 +543,161 @@ public class CommitteeRepository : ICommitteeRepository
             .Include(item => item.ContactPoints).ThenInclude(x => x.Gender)
             .Include(item => item.MembershipAdditionsInGeneralElection)
             .AsSplitQuery();
+    }
+
+    public async Task<IEnumerable<Committee>> GetNewCommitteesByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? startDate, DateOnly? endDate)
+    {
+        var committees = await _dataContext.Committees
+           // we only want GeneralElection commmittes, which are active at the reportDate.
+           .Where(c => c.CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && c.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid)
+           .Where(c => c.BeginDate >= startDate && c.BeginDate < endDate)
+           .Include(item => item.CommitteeLevel)
+           .Include(item => item.Department)
+           .Include(item => item.Office)
+           .Include(item => item.CommitteeType)
+           .Include(item => item.TermOfOffice)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item.Person)
+           .ThenInclude(item => item!.Gender)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item.Person)
+           .ThenInclude(item => item!.Language)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item!.Function)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item!.ElectionType)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item.Committee)
+           .Include(item => item.MembershipAdditionsInGeneralElection)
+           .FilterCommitteeByReportFilterParametersDto(filterDto, departmentId, officeId, committeeId, true)
+           .AsSplitQuery()
+           .Select(c => new Committee
+           {
+               Id = c.Id,
+               CommitteeNumber = c.CommitteeNumber,
+               Modified = c.Modified,
+               ModifiedBy = c.ModifiedBy,
+               Created = c.Created,
+               CreatedBy = c.CreatedBy,
+               BeginDate = c.BeginDate,
+               EndDate = c.EndDate,
+               TermOfOfficeDate = c.TermOfOfficeDate,
+               TermOfOfficeDateId = c.TermOfOfficeDateId,
+               TermOfOffice = c.TermOfOffice,
+               TermOfOfficeId = c.TermOfOfficeId,
+               DepartmentId = c.DepartmentId,
+               Department = c.Department,
+               OfficeId = c.OfficeId,
+               Office = c.Office,
+               CommitteeLevelId = c.CommitteeLevelId,
+               CommitteeLevel = c.CommitteeLevel,
+               CommitteeTypeId = c.CommitteeTypeId,
+               CommitteeType = c.CommitteeType,
+               IsDeleted = c.IsDeleted,
+               DescriptionGerman = c.DescriptionGerman,
+               DescriptionFrench = c.DescriptionFrench,
+               DescriptionItalian = c.DescriptionItalian,
+               DescriptionRomansh = c.DescriptionRomansh,
+               JustificationMembers = c.JustificationMembers,
+               JustificationGenders = c.JustificationGenders,
+               JustificationLanguages = c.JustificationLanguages,
+               MarketOrientated = c.MarketOrientated,
+               MeasuresGenders = c.MeasuresGenders,
+               MeasuresLanguages = c.MeasuresLanguages,
+               RemarksBaseData = c.RemarksBaseData,
+               RemarksBaseDataAdmin = c.RemarksBaseDataAdmin,
+               VacanciesGeneralElection = c.VacanciesGeneralElection,
+               LinkHomepageGerman = c.LinkHomepageGerman,
+               LinkHomepageFrench = c.LinkHomepageFrench,
+               LinkHomepageItalian = c.LinkHomepageItalian,
+               LinkHomepageRomansh = c.LinkHomepageRomansh,
+               MembershipAdditionsInGeneralElection = c.MembershipAdditionsInGeneralElection,
+               Memberships = c.Memberships
+                   .Where(m => m.EndDate >= startDate &&
+                               m.ElectionOfficeId != ElectionOffice.OtherGuid)
+                   .ToList(),
+           })
+           .OrderBy(c => c.DescriptionGerman)
+           .ToListAsync();
+
+        return committees;
+    }
+
+    public async Task<IEnumerable<Committee>> GetFormerCommitteesByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? startDate, DateOnly? endDate)
+    {
+        var committees = await _dataContext.Committees
+           // we only want GeneralElection commmittes, which are active at the reportDate.
+           .Where(c => c.CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && c.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid)
+           .Where(c => c.EndDate >= startDate && c.EndDate < endDate)
+           .Include(item => item.CommitteeLevel)
+           .Include(item => item.Department)
+           .Include(item => item.Office)
+           .Include(item => item.CommitteeType)
+           .Include(item => item.TermOfOffice)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item.Person)
+           .ThenInclude(item => item!.Gender)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item.Person)
+           .ThenInclude(item => item!.Language)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item!.Function)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item!.ElectionType)
+           .Include(item => item.Memberships)
+           .ThenInclude(item => item.Committee)
+           .Include(item => item.MembershipAdditionsInGeneralElection)
+           .FilterCommitteeByReportFilterParametersDto(filterDto, departmentId, officeId, committeeId, true)
+           .AsSplitQuery()
+           .Select(c => new Committee
+           {
+               Id = c.Id,
+               CommitteeNumber = c.CommitteeNumber,
+               Modified = c.Modified,
+               ModifiedBy = c.ModifiedBy,
+               Created = c.Created,
+               CreatedBy = c.CreatedBy,
+               BeginDate = c.BeginDate,
+               EndDate = c.EndDate,
+               TermOfOfficeDate = c.TermOfOfficeDate,
+               TermOfOfficeDateId = c.TermOfOfficeDateId,
+               TermOfOffice = c.TermOfOffice,
+               TermOfOfficeId = c.TermOfOfficeId,
+               DepartmentId = c.DepartmentId,
+               Department = c.Department,
+               OfficeId = c.OfficeId,
+               Office = c.Office,
+               CommitteeLevelId = c.CommitteeLevelId,
+               CommitteeLevel = c.CommitteeLevel,
+               CommitteeTypeId = c.CommitteeTypeId,
+               CommitteeType = c.CommitteeType,
+               IsDeleted = c.IsDeleted,
+               DescriptionGerman = c.DescriptionGerman,
+               DescriptionFrench = c.DescriptionFrench,
+               DescriptionItalian = c.DescriptionItalian,
+               DescriptionRomansh = c.DescriptionRomansh,
+               JustificationMembers = c.JustificationMembers,
+               JustificationGenders = c.JustificationGenders,
+               JustificationLanguages = c.JustificationLanguages,
+               MarketOrientated = c.MarketOrientated,
+               MeasuresGenders = c.MeasuresGenders,
+               MeasuresLanguages = c.MeasuresLanguages,
+               RemarksBaseData = c.RemarksBaseData,
+               RemarksBaseDataAdmin = c.RemarksBaseDataAdmin,
+               VacanciesGeneralElection = c.VacanciesGeneralElection,
+               LinkHomepageGerman = c.LinkHomepageGerman,
+               LinkHomepageFrench = c.LinkHomepageFrench,
+               LinkHomepageItalian = c.LinkHomepageItalian,
+               LinkHomepageRomansh = c.LinkHomepageRomansh,
+               MembershipAdditionsInGeneralElection = c.MembershipAdditionsInGeneralElection,
+               Memberships = c.Memberships
+                   .Where(m => m.EndDate >= startDate &&
+                               m.ElectionOfficeId != ElectionOffice.OtherGuid)
+                   .ToList(),
+           })
+           .OrderBy(c => c.DescriptionGerman)
+           .ToListAsync();
+
+        return committees;
     }
 }
