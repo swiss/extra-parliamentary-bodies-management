@@ -215,7 +215,7 @@ public static class CommitteeQueryExtensions
         return query;
     }
 
-    public static IQueryable<Committee> FilterCommitteeByReportFilterParametersDto(this IQueryable<Committee> query, ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId)
+    public static IQueryable<Committee> FilterCommitteeByReportFilterParametersDto(this IQueryable<Committee> query, ReportFilterParametersDto filterDto, Guid departmentId, Guid officeId, Guid committeeId, bool ignoreAnalysisDate)
     {
         if (filterDto != null)
         {
@@ -234,7 +234,7 @@ public static class CommitteeQueryExtensions
                 query = query.Where(c => filterDto.CommitteeTypeIds.Contains(c.CommitteeTypeId));
             }
 
-            if (filterDto.AnalysisDate1 is not null)
+            if (filterDto.AnalysisDate1 is not null && !ignoreAnalysisDate)
             {
                 query = query.Where(c => c.BeginDate < filterDto.AnalysisDate1 && (c.EndDate == null || c.EndDate > filterDto.AnalysisDate1));
             }
