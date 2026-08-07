@@ -76,6 +76,12 @@ public class MembershipService : IMembershipService
 
         _logger.LogInformation("Create membership for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
 
+        var committee = await _committeeRepository.GetById(createDto.CommitteeId);
+        if (!await _authorizationService.HasAccessToCommittee(committee))
+        {
+            throw new AuthorizationException($"Not permitted to create membership in committee {createDto.CommitteeId} with this role");
+        }
+
         var isGeneralElectionRunning = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 
         var membership = MembershipMapper.FromMembershipCreateDto(createDto, _authorizationService.GetCurrentUserName());
@@ -84,7 +90,8 @@ public class MembershipService : IMembershipService
 
         var membershipWithPerson = await _membershipRepository.GetById(newMembership.Id);
 
-        var committee = await _committeeRepository.GetById(membershipWithPerson.CommitteeId);
+        // Reload committee to get updated GeneralElectionCommittees
+        committee = await _committeeRepository.GetById(membershipWithPerson.CommitteeId);
 
         // TODO: Code smell – MembershipService is handling GEW workflow logic.
         // Extract GEW-related behavior into an application/orchestrator service.
@@ -114,6 +121,11 @@ public class MembershipService : IMembershipService
     public async Task<MembershipUpdateDto> GetMembershipForUpdate(Guid id)
     {
         var membership = await _membershipRepository.GetById(id);
+
+        if (!await _authorizationService.HasAccessToCommittee(membership.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to access membership in committee {membership.CommitteeId} with this role");
+        }
 
         var mappedMembership = MembershipMapper.ToMembershipUpdateDto(membership, _cultureService);
 
@@ -417,6 +429,11 @@ public class MembershipService : IMembershipService
 
         var existingEntry = await _membershipRepository.GetByIdForUpdate(id, updateDto.RowVersion);
 
+        if (!await _authorizationService.HasAccessToCommittee(existingEntry.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to update membership in committee {existingEntry.CommitteeId} with this role");
+        }
+
         // new, not only the shortening of a membership, but also terminating it, will cause a delete of GE candidate
         var deleteCandidate = updateDto.EndDate < existingEntry.EndDate
             || updateDto.ElectionTypeId == ElectionType.MembershipEndedBecauseOfDeathGuid
@@ -489,6 +506,11 @@ public class MembershipService : IMembershipService
     public async Task DeleteMembership(Guid id)
     {
         var membership = await _membershipRepository.GetByIdForUpdate(id);
+
+        if (!await _authorizationService.HasAccessToCommittee(membership.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to delete membership in committee {membership.CommitteeId} with this role");
+        }
 
         var canEdit = await CanEditMembership(membership);
         var canDelete = (canEdit && membership.BeginDate > DateOnly.FromDateTime(DateTime.Now)) || _authorizationService.IsAdmin;
