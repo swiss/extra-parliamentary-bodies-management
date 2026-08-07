@@ -61,6 +61,12 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         var validationResult = new CandidateListValidationResultDto();
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+
+        if (!await _authorizationService.HasAccessToCommittee(generalElectionCommittee.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to validate candidate list for committee {committeeId} with this role");
+        }
+
         var candidateIds = selectedCandidateIds.ToList();
 
         ValidateCandidateCount(candidateIds.Count, generalElectionCommittee, validationResult);
@@ -572,6 +578,11 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
 
+        if (!await _authorizationService.HasAccessToCommittee(generalElectionCommittee.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to save candidate list for committee {committeeId} with this role");
+        }
+
         UpdateCandidateSelection(generalElectionCommittee.MembershipCandidates, candidateIds);
 
         await _generalElectionCommitteeRepository.CommitChanges();
@@ -584,9 +595,15 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         _logger.LogInformation("Forward candidate list for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
 
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+
+        if (!await _authorizationService.HasAccessToCommittee(generalElectionCommittee.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to forward candidate list for committee {committeeId} with this role");
+        }
+
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
-        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
         var forwardTo = await _eiamAssignmentRepository.GetById(forwardDto.ForwardToId);
 
         var candidateListTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)).ToList();
@@ -664,10 +681,16 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         _logger.LogInformation("Forward ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
 
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+
+        if (!await _authorizationService.HasAccessToCommittee(generalElectionCommittee.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to forward ready-for-proposal for committee {committeeId} with this role");
+        }
+
         using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
 
         var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
-        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
         var forwardTo = await _eiamAssignmentRepository.GetById(forwardDto.ForwardToId);
 
         var readyForProposalTasks = (await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id))
@@ -780,6 +803,11 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
 
+        if (!await _authorizationService.HasAccessToCommittee(membershipCandidate.GeneralElectionCommittee!.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to update membership candidate in committee {membershipCandidate.GeneralElectionCommittee!.CommitteeId} with this role");
+        }
+
         membershipCandidate.FunctionId = membershipCandidatePartialUpdate.FunctionId;
         membershipCandidate.Remarks = membershipCandidatePartialUpdate.Remarks;
         membershipCandidate.RemarksStatus = membershipCandidatePartialUpdate.RemarksStatus;
@@ -820,6 +848,11 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
 
+        if (!await _authorizationService.HasAccessToCommittee(membershipCandidate.GeneralElectionCommittee!.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to update membership candidate in committee {membershipCandidate.GeneralElectionCommittee!.CommitteeId} with this role");
+        }
+
         if (membershipCandidateUpdate.PersonId is null)
         {
             membershipCandidate.GivenName = membershipCandidateUpdate.GivenName!;
@@ -855,6 +888,11 @@ public class MembershipCandidateService : IMembershipCandidateService
     {
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
 
+        if (!await _authorizationService.HasAccessToCommittee(membershipCandidate.GeneralElectionCommittee!.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to access membership candidate in committee {membershipCandidate.GeneralElectionCommittee!.CommitteeId} with this role");
+        }
+
         return MembershipCandidateMapper.ToMembershipCandidateUpdateDto(membershipCandidate);
     }
 
@@ -865,6 +903,11 @@ public class MembershipCandidateService : IMembershipCandidateService
         _logger.LogInformation("Create membership candidate for committee {CommitteeId}", membershipCandidateCreate.CommitteeId);
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(membershipCandidateCreate.CommitteeId);
+
+        if (!await _authorizationService.HasAccessToCommittee(generalElectionCommittee.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to create membership candidate in committee {membershipCandidateCreate.CommitteeId} with this role");
+        }
 
         var membershipCandidate = new MembershipCandidate
         {
@@ -909,6 +952,11 @@ public class MembershipCandidateService : IMembershipCandidateService
         _logger.LogInformation("Delete membership candidate {MembershipCandidateId}", id);
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
+
+        if (!await _authorizationService.HasAccessToCommittee(membershipCandidate.GeneralElectionCommittee!.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to delete membership candidate in committee {membershipCandidate.GeneralElectionCommittee!.CommitteeId} with this role");
+        }
 
         if (membershipCandidate.PersonId.HasValue && membershipCandidate.ElectionTypeId != ElectionType.NewElectionGuid)
         {

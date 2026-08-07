@@ -49,7 +49,10 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
         var membershipCandidate = await _dataContext.MembershipCandidates
             .Include(m => m.MembershipAddition)
             .Include(m => m.ElectionOffice)
-            .Include(m => m.GeneralElectionCommittee!.TermOfOfficeDate)
+            .Include(m => m.GeneralElectionCommittee)
+                .ThenInclude(c => c!.TermOfOfficeDate)
+            .Include(m => m.GeneralElectionCommittee)
+                .ThenInclude(c => c!.Committee)
             .Include(m => m.Person!.Memberships)
             .Include(m => m.Person!.LegislaturePeriods)
             .AsSplitQuery()
@@ -66,26 +69,6 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
         }
 
         return membershipCandidate;
-    }
-
-    public async Task<IEnumerable<MembershipCandidate>> GetByCommitteeId(Guid committeeId)
-    {
-        return await _dataContext.MembershipCandidates
-            .Include(x => x.GeneralElectionCommittee)
-            .Include(x => x.Gender)
-            .Include(x => x.Language)
-            .Include(x => x.Function)
-            .Include(x => x.MembershipAddition)
-            .Include(x => x.ElectionType)
-            .Include(x => x.Person)
-            .ThenInclude(x => x!.Gender)
-            .Include(x => x.Person)
-            .ThenInclude(x => x!.Language)
-            .AsNoTracking()
-            .AsSplitQuery()
-            .Where(x => x.GeneralElectionCommittee!.CommitteeId == committeeId)
-            .Where(x => !x.IsDeleted)
-            .ToListAsync();
     }
 
     public async Task<MembershipCandidate?> GetByMembershipIdForUpdate(Guid membershipId, uint? updateDtoRowVersion = null)

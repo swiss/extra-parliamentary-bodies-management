@@ -35,6 +35,7 @@ internal class MembershipCandidateServiceTests
         _worklistTaskRepository.GetAllByPersonId(Arg.Any<Guid>()).Returns([]);
         _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(Arg.Any<Guid>()).Returns([]);
         _worklistTaskRepository.GetByWorklistTaskTypeId(Arg.Any<Guid>()).Returns([]);
+        _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(true);
     }
 
     [TearDown]
@@ -1958,5 +1959,228 @@ internal class MembershipCandidateServiceTests
         await _service.ValidateCandidateList(committeeId, [], true);
 
         Assert.That(membershipTask.WorklistTaskStateId, Is.EqualTo(WorklistTaskState.Completed));
+    }
+
+    [Test]
+    public void CreateMembershipCandidate_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var createDto = new MembershipCandidateCreateDto
+        {
+            CommitteeId = committeeId,
+            GivenName = "Test",
+            Surname = "User",
+            BirthYear = 1980,
+            GenderId = Guid.NewGuid(),
+            LanguageId = Guid.NewGuid(),
+            FunctionId = Guid.NewGuid()
+        };
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeId(committeeId).Returns(generalElectionCommittee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.CreateMembershipCandidate(createDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to create membership candidate"));
+    }
+
+    [Test]
+    public void UpdateMembershipCandidate_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var candidateId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+        var candidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+        var updateDto = new MembershipCandidateUpdateDto
+        {
+            Id = candidateId,
+            GivenName = "Updated",
+            Surname = "User",
+            BirthYear = 1980,
+            GenderId = Guid.NewGuid(),
+            LanguageId = Guid.NewGuid(),
+            FunctionId = Guid.NewGuid(),
+            BeginDate = DateOnly.FromDateTime(DateTime.Now),
+            EndDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+            ElectionTypeId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            RowVersion = 0
+        };
+
+        _membershipCandidateRepository.GetByIdForUpdate(candidateId).Returns(candidate);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.UpdateMembershipCandidate(candidateId, updateDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to update membership candidate"));
+    }
+
+    [Test]
+    public void PartialUpdateMembershipCandidate_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var candidateId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+        var candidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+        var partialUpdateDto = new MembershipCandidatePartialUpdateDto
+        {
+            FunctionId = Guid.NewGuid(),
+            Remarks = "Test"
+        };
+
+        _membershipCandidateRepository.GetByIdForUpdate(candidateId).Returns(candidate);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.PartialUpdateMembershipCandidate(candidateId, partialUpdateDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to update membership candidate"));
+    }
+
+    [Test]
+    public void DeleteMembershipCandidate_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var candidateId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+        var candidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        _membershipCandidateRepository.GetByIdForUpdate(candidateId).Returns(candidate);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.DeleteMembershipCandidate(candidateId));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to delete membership candidate"));
+    }
+
+    [Test]
+    public void ValidateCandidateList_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.ValidateCandidateList(committeeId, [], false));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to validate candidate list"));
+    }
+
+    [Test]
+    public void SaveCandidateList_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.SaveCandidateList(committeeId, []));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to save candidate list"));
+    }
+
+    [Test]
+    public void ForwardCandidateList_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+        var forwardDto = new CandidateListForwardDto
+        {
+            ForwardToId = Guid.NewGuid(),
+            Description = "Test",
+            CandidateIds = []
+        };
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.ForwardCandidateList(committeeId, forwardDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to forward candidate list"));
+    }
+
+    [Test]
+    public void ForwardReadyForProposal_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+        var forwardDto = new ReadyForProposalForwardDto
+        {
+            ForwardToId = Guid.NewGuid(),
+            Description = "Test"
+        };
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(generalElectionCommittee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.ForwardReadyForProposal(committeeId, forwardDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to forward ready-for-proposal"));
+    }
+
+    [Test]
+    public void GetMembershipCandidateForUpdate_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var candidateId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(committee)
+            .Build();
+        var candidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .Build();
+
+        _membershipCandidateRepository.GetByIdForUpdate(candidateId).Returns(candidate);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.GetMembershipCandidateForUpdate(candidateId));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to access membership candidate"));
     }
 }
