@@ -29,6 +29,7 @@ internal class MembershipServiceTests
         _service = new MembershipService(_membershipRepository, _committeeRepository, _authorizationService, _cultureService, _generalElectionService,
             _generalElectionCommitteeService, _termOfOfficeDateService, _masterDataRepository, _membershipMirrorService, NullLogger<MembershipService>.Instance);
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
+       _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(true);
     }
 
     [TearDown]
@@ -799,4 +800,96 @@ internal class MembershipServiceTests
 
         Assert.That(async () => await _service.UpdateMembership(updateDto.Id, updateDto), Throws.Exception.InstanceOf<AuthorizationException>());
     }
+
+    [Test]
+    public void CreateMembership_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var createDto = new MembershipCreateDto
+        {
+            CommitteeId = committeeId,
+            PersonId = Guid.NewGuid(),
+            BeginDate = DateOnly.FromDateTime(DateTime.Now),
+            EndDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1))
+        };
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.CreateMembership(createDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to create membership"));
+    }
+
+    [Test]
+    public void UpdateMembership_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var membershipId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var membership = new MembershipBuilder()
+            .WithId(membershipId)
+            .WithCommittee(new CommitteeBuilder().WithId(committeeId).Build())
+            .Build();
+        var updateDto = new MembershipUpdateDto
+        {
+            Id = membershipId,
+            PersonId = Guid.NewGuid(),
+            CommitteeId = committeeId,
+            BeginDate = DateOnly.FromDateTime(DateTime.Now),
+            EndDate = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+            ElectionTypeId = Guid.NewGuid(),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            RowVersion = 0
+        };
+
+        _membershipRepository.GetByIdForUpdate(membershipId, 0).Returns(membership);
+        _authorizationService.HasAccessToCommittee(membership.Committee!).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.UpdateMembership(membershipId, updateDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to update membership"));
+    }
+
+    [Test]
+    public void DeleteMembership_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var membershipId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var membership = new MembershipBuilder()
+            .WithId(membershipId)
+            .WithCommittee(new CommitteeBuilder().WithId(committeeId).Build())
+            .Build();
+
+        _membershipRepository.GetByIdForUpdate(membershipId).Returns(membership);
+        _authorizationService.HasAccessToCommittee(membership.Committee!).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.DeleteMembership(membershipId));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to delete membership"));
+    }
+
+    [Test]
+    public void GetMembershipForUpdate_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var membershipId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var membership = new MembershipBuilder()
+            .WithId(membershipId)
+            .WithCommittee(new CommitteeBuilder().WithId(committeeId).Build())
+            .Build();
+
+        _membershipRepository.GetById(membershipId).Returns(membership);
+        _authorizationService.HasAccessToCommittee(membership.Committee!).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.GetMembershipForUpdate(membershipId));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to access membership"));
+    }
+
 }
