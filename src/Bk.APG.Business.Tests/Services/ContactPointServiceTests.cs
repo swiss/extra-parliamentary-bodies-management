@@ -663,4 +663,68 @@ internal class ContactPointServiceTests
             RowVersion = 666
         };
     }
+
+    [Test]
+    public void GetEmpty_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.GetEmpty(committeeId));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to access committee"));
+    }
+
+    [Test]
+    public void Create_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var createDto = new ContactPointCreateDto
+        {
+            CommitteeId = committeeId,
+            ContactPointTypeId = Guid.NewGuid(),
+            ContactPointTypeUri = "test.uri",
+            Zip = "3000",
+            City = "Bern"
+        };
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.Create(createDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to create contact point"));
+    }
+
+    [Test]
+    public void Update_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var committeeId = Guid.NewGuid();
+        var contactPointId = Guid.NewGuid();
+        var updateDto = new ContactPointUpdateDto
+        {
+            Id = contactPointId,
+            CommitteeId = committeeId,
+            ContactPointTypeUri = "test.uri",
+            ContactPointTypeId = Guid.NewGuid(),
+            Zip = "3000",
+            City = "Bern",
+            RowVersion = 0
+        };
+        var committee = new CommitteeBuilder().WithId(committeeId).Build();
+
+        _committeeRepository.GetById(committeeId).Returns(committee);
+        _authorizationService.HasAccessToCommittee(committee).Returns(false);
+
+        var ex = Assert.ThrowsAsync<AuthorizationException>(
+            async () => await _service.Update(contactPointId, updateDto));
+
+        Assert.That(ex?.Message, Does.Contain("Not permitted to update contact point"));
+    }
 }
