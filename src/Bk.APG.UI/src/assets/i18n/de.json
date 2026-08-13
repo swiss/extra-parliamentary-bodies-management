@@ -625,7 +625,7 @@
   "committee.details.warning.dataProtectionOfficer": "Kein/e Datenschutzberater/in zugewiesen. Bitte Angaben ergänzen.",
   "committee.details.info.dataProtectionOfficer": "Kein/e Datenschutzberater/in zugewiesen.",
   "common.pleaseCheckData": "Bitte die Daten kontrollieren.",
-  "person.details.warning.federalDuty": "Die Person ist neu im Bundesdienst. Bitte geben Sie eine Begründung für die entsprechende Mitgliedschaft an.",
+  "person.details.warning.federalDuty": "Die Person ist neu im Bundesdienst. Bitte geben Sie eine Begründung bei allen bestehenden Mitgliedschaften an. Bei bestehenden Mitgliedschaften sollte geprüft werden, ob die Checkbox Mitgliedschaft im Zusammenhang mit «im Bundesdienst» selektiert werden muss. Dies kann einen Effekt auf die Validierung der maximalen Amtszeit haben.",
   "person.details.warning.federalAssemblyAuthoritiesCommission": "Mitglieder der Bundesversammlung dürfen keiner Behördenkommission angehören. Bitte Mitgliedschaften anpassen.",
   "person.details.warning.federalAssemblyAdministrationCommission": "Die Person ist neu in der Bundesversammlung. Bitte geben Sie eine Begründung für die entsprechende Mitgliedschaft an.",
   "person.details.warning.endDate": "Das Enddatum einer Mitgliedschaft ist erreicht. Bitte Status anpassen oder Amtszeit verlängern.",
