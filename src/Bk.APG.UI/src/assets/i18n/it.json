@@ -592,7 +592,7 @@
   "committee.details.warning.dataProtectionOfficer": "Nessun consulente per la protezione dei dati assegnato. Completare i dati.",
   "committee.details.info.dataProtectionOfficer": "Nessun consulente per la protezione dei dati assegnato.",
   "common.pleaseCheckData": "Controllare i dati.",
-  "person.details.warning.federalDuty": "La persona è nuova all'interno della Confederazione. Fornire una motivazione per la relativa nomina a membro.",
+  "person.details.warning.federalDuty": "La persona è neoassunta presso la Confederazione. Occorre fornire una motivazione per ogni nomina a membro e verificare se deve essere selezionata la casella «Membro in relazione al servizio presso la Confederazione». Ciò può avere un effetto sulla convalida della durata massima del mandato.",
   "person.details.warning.federalAssemblyAdministrationCommission": "La persona è nuova all'interno dell'Assemblea federale. Fornire una motivazione per la relativa nomina a membro.",
   "person.details.warning.federalAssemblyAuthoritiesCommission": "La persona è nuova all'interno dell'Assemblea federale. Fornire una motivazione per la relativa nomina a membro.",
   "person.details.warning.endDate": "La data di fine della nomina a membro è stata raggiunta. Modificare lo status o prolungare il mandato.",
