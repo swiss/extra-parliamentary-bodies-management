@@ -223,13 +223,12 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
 
     private toggleFormFields() {
         effect(() => {
-            const isCandidateListValidated = !!this.generalElectionCommittee()?.isCandidateListValidated;
-            if (isCandidateListValidated) {
-                this.membershipCandidateForm.controls.endDate.disable({emitEvent: false});
-                this.membershipCandidateForm.controls.functionId.disable({emitEvent: false});
-            } else {
+            if (this.membershipCandidateModification()?.canEditEndDate) {
                 this.membershipCandidateForm.controls.endDate.enable({emitEvent: false});
                 this.membershipCandidateForm.controls.functionId.enable({emitEvent: false});
+            } else {
+                this.membershipCandidateForm.controls.endDate.disable({emitEvent: false});
+                this.membershipCandidateForm.controls.functionId.disable({emitEvent: false});
             }
 
             const isExtraParliamentaryCommmission = !!this.generalElectionCommittee()?.extraParliamentaryCommission;
@@ -240,6 +239,10 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
                 this.membershipCandidateForm.controls.electionOfficeId.disable({emitEvent: false});
             } else {
                 this.membershipCandidateForm.controls.electionOfficeId.enable({emitEvent: false});
+            }
+
+            if (this.membershipCandidateModification()?.canEditBeginDate) {
+                this.membershipCandidateForm.controls.beginDate.enable({emitEvent: false});
             }
         });
     }
