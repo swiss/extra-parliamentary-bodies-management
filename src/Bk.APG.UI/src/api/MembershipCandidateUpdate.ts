@@ -30,4 +30,6 @@ export interface MembershipCandidateUpdate {
     needsRequirementsProfile: boolean;
     maximumDurationExceeded: boolean;
     hasFederalAssemblyAuthoritiesCommissionConflict: boolean;
+    canEditBeginDate: boolean;
+    canEditEndDate: boolean;
 }

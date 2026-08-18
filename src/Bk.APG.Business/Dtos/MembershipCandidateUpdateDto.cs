@@ -32,4 +32,6 @@ public class MembershipCandidateUpdateDto
     public bool NeedsRequirementsProfile { get; set; }
     public bool MaximumDurationExceeded { get; set; }
     public bool HasFederalAssemblyAuthoritiesCommissionConflict { get; set; }
+    public bool CanEditBeginDate { get; set; }
+    public bool CanEditEndDate { get; set; }
 }
