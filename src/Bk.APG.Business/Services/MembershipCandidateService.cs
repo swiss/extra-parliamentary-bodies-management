@@ -19,6 +19,7 @@ public class MembershipCandidateService : IMembershipCandidateService
     private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly IEiamAssignmentRepository _eiamAssignmentRepository;
     private readonly IPersonService _personService;
+    private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
     private readonly ILogger<MembershipCandidateService> _logger;
 
     public MembershipCandidateService(
@@ -28,6 +29,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         IWorklistTaskRepository worklistTaskRepository,
         IEiamAssignmentRepository eiamAssignmentRepository,
         IPersonService personService,
+        IGeneralElectionCommitteeService generalElectionCommitteeService,
         ILogger<MembershipCandidateService> logger)
     {
         _membershipCandidateRepository = membershipCandidateRepository;
@@ -36,6 +38,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         _worklistTaskRepository = worklistTaskRepository;
         _eiamAssignmentRepository = eiamAssignmentRepository;
         _personService = personService;
+        _generalElectionCommitteeService = generalElectionCommitteeService;
         _logger = logger;
     }
 
@@ -862,11 +865,24 @@ public class MembershipCandidateService : IMembershipCandidateService
             membershipCandidate.LanguageId = membershipCandidateUpdate.LanguageId!.Value;
         }
 
+        if (membershipCandidate.BeginDate != membershipCandidateUpdate.BeginDate && !membershipCandidateUpdate.CanEditBeginDate)
+        {
+            throw new AuthorizationException(
+                $"Start date for candidate {membershipCandidate.Id} cannot be changed");
+        }
+
+        if (membershipCandidate.EndDate != membershipCandidateUpdate.EndDate && !membershipCandidateUpdate.CanEditEndDate)
+        {
+            throw new AuthorizationException(
+                $"End date for candidate {membershipCandidate.Id} cannot be changed");
+        }
+
+        membershipCandidate.BeginDate = membershipCandidateUpdate.BeginDate;
+        membershipCandidate.EndDate = membershipCandidateUpdate.EndDate;
         membershipCandidate.ElectionOfficeId = membershipCandidateUpdate.ElectionOfficeId;
         membershipCandidate.FunctionId = membershipCandidateUpdate.FunctionId;
         membershipCandidate.MaximumEmploymentLevel = membershipCandidateUpdate.MaximumEmploymentLevel;
         membershipCandidate.MembershipAdditionId = membershipCandidateUpdate.MembershipAdditionId;
-        membershipCandidate.EndDate = membershipCandidateUpdate.EndDate;
         membershipCandidate.JustificationLongerDuty = membershipCandidateUpdate.JustificationLongerDuty;
         membershipCandidate.JustificationShorterDuty = membershipCandidateUpdate.JustificationShorterDuty;
         membershipCandidate.JustificationMemberInFederalAssembly = membershipCandidateUpdate.JustificationMemberInFederalAssembly;
@@ -876,6 +892,12 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         membershipCandidate.Modified = DateTime.UtcNow;
         membershipCandidate.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+        if (membershipCandidate.GeneralElectionCommittee is not null && membershipCandidate.IsSelected &&
+            membershipCandidate.GeneralElectionCommittee.CandidateListStateId == CandidateListState.Validated)
+        {
+            await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membershipCandidate.GeneralElectionCommittee.CommitteeId);
+        }
 
         await _membershipCandidateRepository.CommitChanges();
 
@@ -893,7 +915,14 @@ public class MembershipCandidateService : IMembershipCandidateService
             throw new AuthorizationException($"Not permitted to access membership candidate in committee {membershipCandidate.GeneralElectionCommittee!.CommitteeId} with this role");
         }
 
-        return MembershipCandidateMapper.ToMembershipCandidateUpdateDto(membershipCandidate);
+        var dto = MembershipCandidateMapper.ToMembershipCandidateUpdateDto(membershipCandidate);
+
+        dto.CanEditBeginDate = membershipCandidate.ElectionTypeId == ElectionType.NewElectionGuid && (_authorizationService.IsAdmin || _authorizationService.IsDepartment ||
+            ((_authorizationService.IsSecretariat || _authorizationService.IsOffice) && membershipCandidate.GeneralElectionCommittee.CandidateListStateId == CandidateListState.Draft));
+        dto.CanEditEndDate = _authorizationService.IsAdmin || _authorizationService.IsDepartment ||
+            ((_authorizationService.IsSecretariat || _authorizationService.IsOffice) && membershipCandidate.GeneralElectionCommittee.CandidateListStateId == CandidateListState.Draft);
+
+        return dto;
     }
 
     public async Task<MembershipCandidateDetailDto> CreateMembershipCandidate(MembershipCandidateCreateDto membershipCandidateCreate)

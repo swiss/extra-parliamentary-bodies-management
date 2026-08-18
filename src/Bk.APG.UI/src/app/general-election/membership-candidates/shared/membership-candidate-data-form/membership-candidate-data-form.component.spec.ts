@@ -1,6 +1,6 @@
 import {signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
-import {GeneralElectionCommitteeDetails} from '@api/GeneralElectionCommitteeDetails';
+import {MembershipCandidateUpdate} from '@api/MembershipCandidateUpdate';
 import {ErrorService} from '@shared/error-service.service';
 import {MasterDataService} from '@shared/master-data.service';
 import {ConfigsService} from '../../../../configs.service';
@@ -63,19 +63,32 @@ describe('MembershipCandidateDataFormComponent', () => {
         jest.clearAllMocks();
     });
 
-    it('should disable endDate and function when candidate list is completed', () => {
-        component.generalElectionCommittee.set({isCandidateListValidated: true} as GeneralElectionCommitteeDetails);
+    it.each([
+        ['can edit', true],
+        ['cannot edit', false],
+    ])('should %s endDate and functionId according to canEditEndDate', (_, canEditEndDate) => {
+        component.membershipCandidateModification.set({
+            canEditEndDate,
+        } as MembershipCandidateUpdate);
+
         fixture.detectChanges();
 
-        expect(component.membershipCandidateForm.controls.endDate.disabled).toBe(true);
-        expect(component.membershipCandidateForm.controls.functionId.disabled).toBe(true);
+        expect(component.membershipCandidateForm.controls.endDate.enabled).toBe(canEditEndDate);
+        expect(component.membershipCandidateForm.controls.functionId.enabled).toBe(canEditEndDate);
     });
 
-    it('should enable endDate and function when candidate list is not completed', () => {
-        component.generalElectionCommittee.set({isCandidateListValidated: false} as GeneralElectionCommitteeDetails);
+    it.each([
+        ['can edit', true],
+        ['cannot edit', false],
+    ])('should %s beginDate according to canEditBeginDate', (_, canEditBeginDate) => {
+        component.membershipCandidateModification.set({
+            canEditBeginDate,
+        } as MembershipCandidateUpdate);
+
+        component.membershipCandidateForm.controls.beginDate.disable();
+
         fixture.detectChanges();
 
-        expect(component.membershipCandidateForm.controls.endDate.enabled).toBe(true);
-        expect(component.membershipCandidateForm.controls.functionId.enabled).toBe(true);
+        expect(component.membershipCandidateForm.controls.beginDate.enabled).toBe(canEditBeginDate);
     });
 });
