@@ -1,3 +1,4 @@
+using System.Threading.Channels;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -19,6 +20,7 @@ internal class MembershipCandidateServiceTests
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly IEiamAssignmentRepository _eiamAssignmentRepository = Substitute.For<IEiamAssignmentRepository>();
     private readonly IPersonService _personService = Substitute.For<IPersonService>();
+    private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService = Substitute.For<IGeneralElectionCommitteeService>();
 
     [SetUp]
     public void SetUp()
@@ -30,6 +32,7 @@ internal class MembershipCandidateServiceTests
             _worklistTaskRepository,
             _eiamAssignmentRepository,
             _personService,
+            _generalElectionCommitteeService,
             NullLogger<MembershipCandidateService>.Instance);
 
         _worklistTaskRepository.GetAllByPersonId(Arg.Any<Guid>()).Returns([]);
@@ -46,6 +49,7 @@ internal class MembershipCandidateServiceTests
         _generalElectionCommitteeRepository.ClearSubstitute();
         _worklistTaskRepository.ClearSubstitute();
         _eiamAssignmentRepository.ClearSubstitute();
+        _generalElectionCommitteeService.ClearSubstitute();
     }
 
     [Test]
@@ -71,8 +75,66 @@ internal class MembershipCandidateServiceTests
         }
     }
 
+    [TestCase(true, 1)]
+    [TestCase(false, 0)]
+    public async Task UpdateMembershipCandidate_ShouldUpdateMembershipCandidate(bool isSelected, int expectedInvalidatation)
+    {
+        _authorizationService.IsAdmin.Returns(true);
+        var membershipCandidateId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var existingMembershipCandidate = new MembershipCandidateBuilder()
+            .WithIsSelected(isSelected)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder()
+            .WithCommitteeId(committeeId)            
+            .WithCandidateListStateId(CandidateListState.Validated).Build())
+            .WithElectionTypeId(ElectionType.NewElectionGuid).Build();
+        _membershipCandidateRepository.GetByIdForUpdate(membershipCandidateId).Returns(existingMembershipCandidate);
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(existingMembershipCandidate.GeneralElectionCommittee!);
+        var updateDto = new MembershipCandidateUpdateDto
+        {
+            GivenName = "UpdatedGivenName",
+            Surname = "UpdatedSurname",
+            BirthYear = 1985,
+            GenderId = Guid.NewGuid(),
+            LanguageId = Guid.NewGuid(),
+            ElectionTypeId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            MaximumEmploymentLevel = 75,
+            MembershipAdditionId = Guid.NewGuid(),
+            Id = membershipCandidateId,
+            PersonId = null,
+            BeginDate = new DateOnly(2025, 1, 1),
+            EndDate = DateOnly.FromDateTime(DateTime.Now),
+            FunctionId = Guid.NewGuid(),
+            RowVersion = 0,
+            CanEditBeginDate = true,
+            CanEditEndDate = true
+        };
+
+        await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
+
+        await _generalElectionCommitteeService.Received(expectedInvalidatation).InvalidateMembershipCandidateList(existingMembershipCandidate.GeneralElectionCommittee!.CommitteeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(existingMembershipCandidate.BeginDate, Is.EqualTo(updateDto.BeginDate));
+            Assert.That(existingMembershipCandidate.GivenName, Is.EqualTo(updateDto.GivenName));
+            Assert.That(existingMembershipCandidate.Surname, Is.EqualTo(updateDto.Surname));
+            Assert.That(existingMembershipCandidate.BirthYear, Is.EqualTo(updateDto.BirthYear));
+            Assert.That(existingMembershipCandidate.GenderId, Is.EqualTo(updateDto.GenderId));
+            Assert.That(existingMembershipCandidate.LanguageId, Is.EqualTo(updateDto.LanguageId));
+            Assert.That(existingMembershipCandidate.ElectionTypeId, Is.Not.EqualTo(updateDto.ElectionTypeId));
+            Assert.That(existingMembershipCandidate.ElectionOfficeId, Is.EqualTo(updateDto.ElectionOfficeId));
+            Assert.That(existingMembershipCandidate.FunctionId, Is.EqualTo(updateDto.FunctionId));
+            Assert.That(existingMembershipCandidate.MaximumEmploymentLevel, Is.EqualTo(updateDto.MaximumEmploymentLevel));
+            Assert.That(existingMembershipCandidate.MembershipAdditionId, Is.EqualTo(updateDto.MembershipAdditionId));
+            Assert.That(existingMembershipCandidate.EndDate, Is.EqualTo(updateDto.EndDate));
+            Assert.That(existingMembershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(updateDto.InCorrelationWithFederalDuty));
+        }
+    }
+
     [Test]
-    public async Task UpdateMembershipCandidate_ShouldUpdateMembershipCandidate()
+    public async Task UpdateMembershipCandidate_WhenBeginDateIsChangedForNonNewElection_ShouldThrowBusinessValidationException()
     {
         var membershipCandidateId = Guid.NewGuid();
         var existingMembershipCandidate = new MembershipCandidateBuilder().Build();
@@ -93,26 +155,42 @@ internal class MembershipCandidateServiceTests
             BeginDate = default,
             EndDate = DateOnly.FromDateTime(DateTime.Now),
             FunctionId = Guid.NewGuid(),
+            RowVersion = 0,
+            CanEditBeginDate = false
+        };
+        var ex = Assert.ThrowsAsync<AuthorizationException>(async () => await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto));
+        Assert.That(ex.Message, Is.EqualTo($"Start date for candidate {existingMembershipCandidate.Id} cannot be changed"));
+    }
+
+    [Test]
+    public async Task UpdateMembershipCandidate_WhenEndDateIsChangedForNewElectionWithoutPermission_ShouldThrowAuthorizationException()
+    {
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.IsDepartment.Returns(false);
+        var membershipCandidateId = Guid.NewGuid();
+        var existingMembershipCandidate = new MembershipCandidateBuilder()
+            .WithElectionTypeId(ElectionType.NewElectionGuid).Build();
+        _membershipCandidateRepository.GetByIdForUpdate(membershipCandidateId).Returns(existingMembershipCandidate);
+        var updateDto = new MembershipCandidateUpdateDto
+        {
+            GivenName = "UpdatedGivenName",
+            Surname = "UpdatedSurname",
+            BirthYear = 1985,
+            GenderId = Guid.NewGuid(),
+            LanguageId = Guid.NewGuid(),
+            ElectionTypeId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            MaximumEmploymentLevel = 75,
+            MembershipAdditionId = Guid.NewGuid(),
+            Id = membershipCandidateId,
+            PersonId = null,
+            BeginDate = existingMembershipCandidate.BeginDate,
+            EndDate = DateOnly.FromDateTime(DateTime.Now),
+            FunctionId = Guid.NewGuid(),
             RowVersion = 0
         };
-
-        await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
-
-        using (Assert.EnterMultipleScope())
-        {
-            Assert.That(existingMembershipCandidate.GivenName, Is.EqualTo(updateDto.GivenName));
-            Assert.That(existingMembershipCandidate.Surname, Is.EqualTo(updateDto.Surname));
-            Assert.That(existingMembershipCandidate.BirthYear, Is.EqualTo(updateDto.BirthYear));
-            Assert.That(existingMembershipCandidate.GenderId, Is.EqualTo(updateDto.GenderId));
-            Assert.That(existingMembershipCandidate.LanguageId, Is.EqualTo(updateDto.LanguageId));
-            Assert.That(existingMembershipCandidate.ElectionTypeId, Is.Not.EqualTo(updateDto.ElectionTypeId));
-            Assert.That(existingMembershipCandidate.ElectionOfficeId, Is.EqualTo(updateDto.ElectionOfficeId));
-            Assert.That(existingMembershipCandidate.FunctionId, Is.EqualTo(updateDto.FunctionId));
-            Assert.That(existingMembershipCandidate.MaximumEmploymentLevel, Is.EqualTo(updateDto.MaximumEmploymentLevel));
-            Assert.That(existingMembershipCandidate.MembershipAdditionId, Is.EqualTo(updateDto.MembershipAdditionId));
-            Assert.That(existingMembershipCandidate.EndDate, Is.EqualTo(updateDto.EndDate));
-            Assert.That(existingMembershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(updateDto.InCorrelationWithFederalDuty));
-        }
+        var ex = Assert.ThrowsAsync<AuthorizationException>(async () => await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto));
+        Assert.That(ex.Message, Is.EqualTo($"End date for candidate { existingMembershipCandidate.Id} cannot be changed"));
     }
 
     [Test]
@@ -633,6 +711,70 @@ internal class MembershipCandidateServiceTests
         var result = await _service.GetMembershipCandidateForUpdate(candidateId);
 
         Assert.That(result, Is.Not.Null);
+    }
+
+    [TestCase(true, false, false, CandidateListState.DraftGuidAsString, true, true)]
+    [TestCase(false, true, false, CandidateListState.DraftGuidAsString, true, true)]
+    [TestCase(false, false, true, CandidateListState.DraftGuidAsString, true, true)]
+    [TestCase(false, false, false, CandidateListState.DraftGuidAsString, false, false)]
+    [TestCase(false, false, true, CandidateListState.ValidatedGuidAsString, false, false)]
+    [TestCase(false, false, false, CandidateListState.ValidatedGuidAsString, false, false)]
+    public async Task GetMembershipCandidateForUpdate_ShouldSetEditPermissions(
+        bool isAdmin,
+        bool isDepartment,
+        bool isSecretariatOrOffice,
+        string candidateListState,
+        bool expectedCanEditBeginDate,
+        bool expectedCanEditEndDate)
+    {
+        var candidateId = Guid.NewGuid();
+
+        _authorizationService.IsAdmin.Returns(isAdmin);
+        _authorizationService.IsDepartment.Returns(isDepartment);
+        _authorizationService.IsSecretariat.Returns(isSecretariatOrOffice);
+        _authorizationService.IsOffice.Returns(false);
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder()
+            .WithCandidateListStateId(new Guid(candidateListState)).Build())
+            .Build();
+
+        _membershipCandidateRepository
+            .GetByIdForUpdate(candidateId)
+            .Returns(membershipCandidate);
+
+        var result = await _service.GetMembershipCandidateForUpdate(candidateId);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.CanEditBeginDate, Is.EqualTo(expectedCanEditBeginDate));
+            Assert.That(result.CanEditEndDate, Is.EqualTo(expectedCanEditEndDate));
+        });
+    }
+
+    [Test]
+    public async Task GetMembershipCandidateForUpdate_WhenNotNewElection_ShouldNotAllowBeginDateEdit()
+    {
+        var candidateId = Guid.NewGuid();
+
+        _authorizationService.IsAdmin.Returns(true);
+
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithElectionTypeId(Guid.NewGuid())
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder()
+            .WithCandidateListStateId(CandidateListState.Draft).Build())
+            .Build();
+
+        _membershipCandidateRepository
+            .GetByIdForUpdate(candidateId)
+            .Returns(membershipCandidate);
+
+        var result = await _service.GetMembershipCandidateForUpdate(candidateId);
+
+        Assert.That(result.CanEditBeginDate, Is.False);
     }
 
     [Test]
