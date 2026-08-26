@@ -58,6 +58,10 @@ public class CompareListService : ICompareListService
         var committeesFromDate1 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1)).ToArray();
         var committeesFromDate2 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate2)).ToArray();
 
+        // inactive commitees should only come in formerCommittees, so filter them out here
+        committeesFromDate1 = committeesFromDate1.Where(c => c.IsActive).ToArray();
+        committeesFromDate2 = committeesFromDate2.Where(c => c.IsActive).ToArray();
+
         var newCommittees = (await _committeeRepository.GetNewCommitteesByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1, filterDto.AnalysisDate2)).ToArray();
         var formerCommittees = (await _committeeRepository.GetFormerCommitteesByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1, filterDto.AnalysisDate2)).ToArray();
 
@@ -118,7 +122,7 @@ public class CompareListService : ICompareListService
         // loop 1, we add all the matching committees from Date 1.
         foreach (var committee in filteredCommittees1)
         {
-            var compareListCommittee = FillCommitteeDto(committee, filteredCommittees2);
+            var compareListCommittee = FillCommitteeDto(committee, filteredCommittees2, false);
 
             if (compareListCommittee != null)
             {
@@ -134,7 +138,7 @@ public class CompareListService : ICompareListService
                 continue;
             }
 
-            var compareListCommittee = FillCommitteeDto(committee, filteredCommittees1);
+            var compareListCommittee = FillCommitteeDto(committee, filteredCommittees1, true);
 
             if (compareListCommittee != null)
             {
@@ -146,7 +150,7 @@ public class CompareListService : ICompareListService
         return departmentDto;
     }
 
-    private static CompareListCommitteeDto? FillCommitteeDto(Committee committee, Committee[] compareCommittees)
+    private static CompareListCommitteeDto? FillCommitteeDto(Committee committee, Committee[] compareCommittees, bool turnFields)
     {
         var compareCommittee = compareCommittees.FirstOrDefault(c => c.Id == committee.Id);
 
@@ -178,6 +182,16 @@ public class CompareListService : ICompareListService
         {
             femaleUnderStaffedNew = IsGenderUnderStaffed(compareCommittee.Memberships, activeMemberCountNew, Gender.FemaleGuid, currentCommitteeType.FemaleThreshold.GetValueOrDefault());
             maleUnderStaffedNew = IsGenderUnderStaffed(compareCommittee.Memberships, activeMemberCountNew, Gender.MaleGuid, currentCommitteeType.MaleThreshold.GetValueOrDefault());
+        }
+
+        if (!femaleUnderStaffedOld && !maleUnderStaffedOld)
+        {
+            genderPartsOld.Add(BusinessTexts.Compare_List_Gender_OK);
+        }
+
+        if (!femaleUnderStaffedNew && !maleUnderStaffedNew)
+        {
+            genderPartsNew.Add(BusinessTexts.Compare_List_Gender_OK);
         }
 
         if (femaleUnderStaffedOld)
@@ -248,51 +262,116 @@ public class CompareListService : ICompareListService
 
         if (ShouldIncludeCommitteeInReport(germanUnderStaffedOld, frenchUnderStaffedOld, italianUnderStaffedOld, femaleUnderStaffedOld, maleUnderStaffedOld, committee))
         {
-            var compareListCommittee = new CompareListCommitteeDto()
+            // this whole turnFields is necessary, because we need to add committees, which have only errors in the second selection. 
+            if (turnFields)
             {
-                Id = committee.Id,
-                CommitteeNumber = committee.CommitteeNumber,
-                Name = committee.GetDescription(),
-                DepartmentId = committee.DepartmentId,
-                CommitteeTypeId = committee.CommitteeTypeId,
-                MemberCountOld = committee.Memberships.Count,
-                MemberCountNew = compareCommittee is not null ? compareCommittee.Memberships.Count : 0,
-                FederalDutyBothDisplay = committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
-                FederalDutyOldDisplay = committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && !compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
-                FederalDutyNewDisplay = !committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
-                FederalDutyCountOld = committee.Memberships.Count(m => m.Person!.FederalDuty),
-                FederalDutyCountNew = compareCommittee is not null ? compareCommittee.Memberships.Count(m => m.Person!.FederalDuty) : 0,
-                FederalAssemblyBothDisplay = committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
-                FederalAssemblyOldDisplay = committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && !compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
-                FederalAssemblyNewDisplay = !committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
-                FederalAssemblyCountOld = committee.Memberships.Count(m => m.Person!.FederalAssembly),
-                FederalAssemblyCountNew = compareCommittee is not null ? compareCommittee.Memberships.Count(m => m.Person!.FederalAssembly) : 0,
-                GermanBothDisplay = germanUnderStaffedOld && germanUnderStaffedNew,
-                GermanOldDisplay = germanUnderStaffedOld && !germanUnderStaffedNew,
-                GermanNewDisplay = !germanUnderStaffedOld && germanUnderStaffedNew,
-                FrenchBothDisplay = frenchUnderStaffedOld && frenchUnderStaffedNew,
-                FrenchOldDisplay = frenchUnderStaffedOld && !frenchUnderStaffedNew,
-                FrenchNewDisplay = !frenchUnderStaffedOld && frenchUnderStaffedNew,
-                ItalianBothDisplay = italianUnderStaffedOld && italianUnderStaffedNew,
-                ItalianOldDisplay = italianUnderStaffedOld && !italianUnderStaffedNew,
-                ItalianNewDisplay = !italianUnderStaffedOld && italianUnderStaffedNew,
-                GermanTextOld = germanTextOld,
-                GermanTextNew = germanTextNew,
-                FrenchTextOld = frenchTextOld,
-                FrenchTextNew = frenchTextNew,
-                ItalianTextOld = italianTextOld,
-                ItalianTextNew = italianTextNew,
-                GenderBothDisplay = (femaleUnderStaffedOld || maleUnderStaffedOld) && (femaleUnderStaffedNew || maleUnderStaffedNew),
-                GenderOldDisplay = (femaleUnderStaffedOld || maleUnderStaffedOld) && !femaleUnderStaffedNew && !maleUnderStaffedNew,
-                GenderNewDisplay = !femaleUnderStaffedOld && !maleUnderStaffedOld && (femaleUnderStaffedNew || maleUnderStaffedNew),
-                GenderTextOld = string.Join(", ", genderPartsOld),
-                GenderTextNew = string.Join(", ", genderPartsNew)
-            };
+                var compareListCommittee = FillCommitteeFromSecondDate(committee, compareCommittee);
 
-            return compareListCommittee;
+                compareListCommittee.GermanBothDisplay = germanUnderStaffedNew && germanUnderStaffedOld;
+                compareListCommittee.GermanOldDisplay = !germanUnderStaffedNew && germanUnderStaffedOld;
+                compareListCommittee.GermanNewDisplay = germanUnderStaffedNew;
+                compareListCommittee.FrenchBothDisplay = frenchUnderStaffedNew && frenchUnderStaffedOld;
+                compareListCommittee.FrenchNewDisplay = !frenchUnderStaffedNew && frenchUnderStaffedOld;
+                compareListCommittee.FrenchOldDisplay = frenchUnderStaffedNew;
+                compareListCommittee.ItalianBothDisplay = italianUnderStaffedNew && italianUnderStaffedOld;
+                compareListCommittee.ItalianNewDisplay = !italianUnderStaffedNew && italianUnderStaffedOld;
+                compareListCommittee.ItalianOldDisplay = italianUnderStaffedNew;
+                compareListCommittee.GermanTextNew = germanTextOld;
+                compareListCommittee.GermanTextOld = germanTextNew;
+                compareListCommittee.FrenchTextNew = frenchTextOld;
+                compareListCommittee.FrenchTextOld = frenchTextNew;
+                compareListCommittee.ItalianTextNew = italianTextOld;
+                compareListCommittee.ItalianTextOld = italianTextNew;
+                compareListCommittee.GenderBothDisplay = (femaleUnderStaffedNew || maleUnderStaffedNew) && (femaleUnderStaffedOld || maleUnderStaffedOld);
+                compareListCommittee.GenderNewDisplay = (femaleUnderStaffedOld || maleUnderStaffedOld) && !femaleUnderStaffedNew && !maleUnderStaffedNew;
+                compareListCommittee.GenderOldDisplay = femaleUnderStaffedNew && maleUnderStaffedNew;
+                compareListCommittee.GenderTextNew = string.Join(", ", genderPartsOld);
+                compareListCommittee.GenderTextOld = string.Join(", ", genderPartsNew);
+
+                return compareListCommittee;
+            }
+            else
+            {
+                var compareListCommittee = FillCommitteeFromFirstDate(committee, compareCommittee);
+
+                compareListCommittee.GermanBothDisplay = germanUnderStaffedOld && germanUnderStaffedNew;
+                compareListCommittee.GermanOldDisplay = germanUnderStaffedOld && !germanUnderStaffedNew;
+                compareListCommittee.GermanNewDisplay = !germanUnderStaffedOld && germanUnderStaffedNew;
+                compareListCommittee.FrenchBothDisplay = frenchUnderStaffedOld && frenchUnderStaffedNew;
+                compareListCommittee.FrenchOldDisplay = frenchUnderStaffedOld && !frenchUnderStaffedNew;
+                compareListCommittee.FrenchNewDisplay = !frenchUnderStaffedOld && frenchUnderStaffedNew;
+                compareListCommittee.ItalianBothDisplay = italianUnderStaffedOld && italianUnderStaffedNew;
+                compareListCommittee.ItalianOldDisplay = italianUnderStaffedOld && !italianUnderStaffedNew;
+                compareListCommittee.ItalianNewDisplay = !italianUnderStaffedOld && italianUnderStaffedNew;
+                compareListCommittee.GermanTextOld = germanTextOld;
+                compareListCommittee.GermanTextNew = germanTextNew;
+                compareListCommittee.FrenchTextOld = frenchTextOld;
+                compareListCommittee.FrenchTextNew = frenchTextNew;
+                compareListCommittee.ItalianTextOld = italianTextOld;
+                compareListCommittee.ItalianTextNew = italianTextNew;
+                compareListCommittee.GenderBothDisplay = (femaleUnderStaffedOld || maleUnderStaffedOld) && (femaleUnderStaffedNew || maleUnderStaffedNew);
+                compareListCommittee.GenderOldDisplay = (femaleUnderStaffedOld || maleUnderStaffedOld) && !femaleUnderStaffedNew && !maleUnderStaffedNew;
+                compareListCommittee.GenderNewDisplay = !femaleUnderStaffedOld && !maleUnderStaffedOld && (femaleUnderStaffedNew || maleUnderStaffedNew);
+                compareListCommittee.GenderTextOld = string.Join(", ", genderPartsOld);
+                compareListCommittee.GenderTextNew = string.Join(", ", genderPartsNew);
+
+                return compareListCommittee;
+            }
         }
 
         return null;
+    }
+
+    private static CompareListCommitteeDto FillCommitteeFromFirstDate(Committee committee, Committee? compareCommittee)
+    {
+        var compareListCommittee = new CompareListCommitteeDto()
+        {
+            Id = committee.Id,
+            CommitteeNumber = committee.CommitteeNumber,
+            Name = committee.GetDescription(),
+            DepartmentId = committee.DepartmentId,
+            CommitteeTypeId = committee.CommitteeTypeId,
+            MemberCountOld = committee.Memberships.Count,
+            MemberCountNew = compareCommittee is not null ? compareCommittee.Memberships.Count : 0,
+            FederalDutyBothDisplay = committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
+            FederalDutyOldDisplay = committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && !compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
+            FederalDutyNewDisplay = !committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
+            FederalDutyCountOld = committee.Memberships.Count(m => m.Person!.FederalDuty),
+            FederalDutyCountNew = compareCommittee is not null ? compareCommittee.Memberships.Count(m => m.Person!.FederalDuty) : 0,
+            FederalAssemblyBothDisplay = committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
+            FederalAssemblyOldDisplay = committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && !compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
+            FederalAssemblyNewDisplay = !committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
+            FederalAssemblyCountOld = committee.Memberships.Count(m => m.Person!.FederalAssembly),
+            FederalAssemblyCountNew = compareCommittee is not null ? compareCommittee.Memberships.Count(m => m.Person!.FederalAssembly) : 0,
+        };
+
+        return compareListCommittee;
+    }
+
+    private static CompareListCommitteeDto FillCommitteeFromSecondDate(Committee committee, Committee? compareCommittee)
+    {
+        var compareListCommittee = new CompareListCommitteeDto()
+        {
+            Id = committee.Id,
+            CommitteeNumber = committee.CommitteeNumber,
+            Name = committee.GetDescription(),
+            DepartmentId = committee.DepartmentId,
+            CommitteeTypeId = committee.CommitteeTypeId,
+            MemberCountNew = committee.Memberships.Count,
+            MemberCountOld = compareCommittee is not null ? compareCommittee.Memberships.Count : 0,
+            FederalDutyBothDisplay = committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
+            FederalDutyNewDisplay = committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && !compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
+            FederalDutyOldDisplay = !committee.Memberships.Any(m => m.Person!.FederalDuty) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalDuty),
+            FederalDutyCountNew = committee.Memberships.Count(m => m.Person!.FederalDuty),
+            FederalDutyCountOld = compareCommittee is not null ? compareCommittee.Memberships.Count(m => m.Person!.FederalDuty) : 0,
+            FederalAssemblyBothDisplay = committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
+            FederalAssemblyNewDisplay = committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && !compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
+            FederalAssemblyOldDisplay = !committee.Memberships.Any(m => m.Person!.FederalAssembly) && compareCommittee is not null && compareCommittee.Memberships.Any(m => m.Person!.FederalAssembly),
+            FederalAssemblyCountNew = committee.Memberships.Count(m => m.Person!.FederalAssembly),
+            FederalAssemblyCountOld = compareCommittee is not null ? compareCommittee.Memberships.Count(m => m.Person!.FederalAssembly) : 0,
+        };
+
+        return compareListCommittee;
     }
 
     private static CompareListNewCommitteeDto? FillNewCommitteeDto(Committee committee)
