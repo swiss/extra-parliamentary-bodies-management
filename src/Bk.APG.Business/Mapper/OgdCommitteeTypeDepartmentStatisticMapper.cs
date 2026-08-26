@@ -54,7 +54,6 @@ public static class OgdCommitteeTypeDepartmentStatisticMapper
             });
         }
 
-        // TODO PP: Totale als Bund/Federal exportieren? Check!
         dataRow.Values.Add(new DimensionValue
         {
             Predicate = $"{ogdNamespace}:organisation",
