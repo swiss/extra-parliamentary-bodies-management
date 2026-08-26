@@ -109,15 +109,24 @@ public class CommitteeService : ICommitteeService
         {
             var committeesListDate1 = await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1);
 
+            committees.AddRange(GenerateCommitteeListForCompareList(committeesListDate1.ToList()));
+
             var committeesListDate2 = await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate2);
+
+            committees.AddRange(GenerateCommitteeListForCompareList(committeesListDate2.ToList()));
 
             var newCommittees = (await _committeeRepository.GetNewCommitteesByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1, filterParameters.AnalysisDate2)).ToArray();
 
             var formerCommittees = (await _committeeRepository.GetFormerCommitteesByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1, filterParameters.AnalysisDate2)).ToArray();
 
-            var committeesList = committeesListDate1.Concat(committeesListDate2).Concat(formerCommittees).Concat(newCommittees).DistinctBy(c => c.Id).ToList();
+            committees.AddRange(newCommittees);
+            committees.AddRange(formerCommittees);
 
-            committees.AddRange(GenerateCommitteeListForCompareList(committeesList));
+            var distinctCommittees = committees
+                .DistinctBy(c => c.Id)
+                .ToList();
+
+            committees = distinctCommittees;
         }
         else
         {
