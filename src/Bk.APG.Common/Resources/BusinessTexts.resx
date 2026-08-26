@@ -528,6 +528,9 @@
     <data name="Compare_List_Language_OK" xml:space="preserve">
         <value>Keine Untervertretung</value>
     </data>
+    <data name="Compare_List_Gender_OK" xml:space="preserve">
+        <value>Keine Untervertretung</value>
+    </data>    
     <data name="Compare_List_Women" xml:space="preserve">
         <value>Frauen</value>
     </data>
