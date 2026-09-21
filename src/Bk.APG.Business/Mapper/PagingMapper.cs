@@ -8,8 +8,15 @@ public static class PagingMapper
     public static PagingParameters ToPagingParameters(PagingParametersDto dto)
     {
         ArgumentNullException.ThrowIfNull(dto);
-        ArgumentNullException.ThrowIfNull(dto.PageSize);
-        ArgumentNullException.ThrowIfNull(dto.PageIndex);
+        if (dto.PageSize is null)
+        {
+            throw new ArgumentNullException(nameof(dto));
+        }
+
+        if (dto.PageIndex is null)
+        {
+            throw new ArgumentNullException(nameof(dto));
+        }
 
         return new PagingParameters
         {
