@@ -20,7 +20,10 @@ public class OgdExportBackgroundService : BackgroundService
     {
         return Task.Run(async () =>
         {
-            _logger.LogInformation("{BackgroundService} is starting...", nameof(OgdExportBackgroundService));
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("{BackgroundService} is starting...", nameof(OgdExportBackgroundService));
+            }
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -39,7 +42,10 @@ public class OgdExportBackgroundService : BackgroundService
                         var exportService = scope.ServiceProvider.GetRequiredService<IOgdExportService>();
                         await exportService.Export(stoppingToken);
                         timer.Stop();
-                        _logger.LogInformation("Export to LINDAS finished. Duration: {Duration:g}", timer.Elapsed);
+                        if (_logger.IsEnabled(LogLevel.Information))
+                        {
+                            _logger.LogInformation("Export to LINDAS finished. Duration: {Duration:g}", timer.Elapsed);
+                        }
                     }
                     else
                     {
@@ -49,7 +55,10 @@ public class OgdExportBackgroundService : BackgroundService
                 catch (Exception e)
                 {
                     _logger.LogError("OGD Export Failed"); //used for alert by splunk (don't change)
-                    _logger.LogError(e, "Error during LINDAS export. Error={Message}", e.Message);
+                    if (_logger.IsEnabled(LogLevel.Error))
+                    {
+                        _logger.LogError(e, "Error during LINDAS export. Error={Message}", e.Message);
+                    }
                 }
                 finally
                 {

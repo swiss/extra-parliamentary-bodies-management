@@ -208,10 +208,6 @@ public static class PersonMapper
         ArgumentNullException.ThrowIfNull(personCreateDto);
         ArgumentNullException.ThrowIfNull(personCreateDto.Surname);
         ArgumentNullException.ThrowIfNull(personCreateDto.GivenName);
-        ArgumentNullException.ThrowIfNull(personCreateDto.BirthYear);
-        ArgumentNullException.ThrowIfNull(personCreateDto.LanguageId);
-        ArgumentNullException.ThrowIfNull(personCreateDto.GenderId);
-        ArgumentNullException.ThrowIfNull(personCreateDto.CorrespondenceLanguageId);
 
         var privateAddress = personCreateDto.PrivateAddress is not null ? AddressMapper.FromAddressUpdateDto(personCreateDto.PrivateAddress!) : null;
         var officeAddress = personCreateDto.OfficeAddress is not null ? AddressMapper.FromAddressUpdateDto(personCreateDto.OfficeAddress!) : null;
@@ -256,9 +252,6 @@ public static class PersonMapper
 
         ArgumentNullException.ThrowIfNull(membershipCandidate.Surname);
         ArgumentNullException.ThrowIfNull(membershipCandidate.GivenName);
-        ArgumentNullException.ThrowIfNull(membershipCandidate.BirthYear);
-        ArgumentNullException.ThrowIfNull(membershipCandidate.LanguageId);
-        ArgumentNullException.ThrowIfNull(membershipCandidate.GenderId);
 
         var person = new Person
         {
