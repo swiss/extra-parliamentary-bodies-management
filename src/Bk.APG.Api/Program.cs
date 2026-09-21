@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Serilog;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Swiss.FCh.Cube.Dimension.Extensions;
@@ -143,9 +143,9 @@ try
                         }
                     }
                 });
-            config.AddSecurityRequirement(new OpenApiSecurityRequirement
+            config.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                { new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = securityScheme } }, ["openid"] }
+                { new OpenApiSecuritySchemeReference(securityScheme, document), ["openid"] }
             });
         });
     }

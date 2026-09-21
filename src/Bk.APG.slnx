@@ -1,0 +1,38 @@
+<Solution>
+  <Folder Name="/00.SolutionItems/">
+    <File Path="../.editorconfig" />
+    <File Path="../.gitignore" />
+    <File Path="../.trivyignore" />
+    <File Path="../CHANGELOG.md" />
+    <File Path="../CONTRIBUTING.md" />
+    <File Path="../Dockerfile.backend" />
+    <File Path="../etc/apg-docker/docker-compose.yml" />
+    <File Path="../GETTING-STARTED.md" />
+    <File Path="../image_version.json" />
+    <File Path="../README.md" />
+    <File Path=".globalconfig" />
+    <File Path="Directory.Build.props" />
+    <File Path="NuGet.Config" />
+  </Folder>
+  <Folder Name="/20.Api/">
+    <Project Path="Bk.APG.Api.Tests/Bk.APG.Api.Tests.csproj" />
+    <Project Path="Bk.APG.Api/Bk.APG.Api.csproj" />
+  </Folder>
+  <Folder Name="/30.Business/">
+    <Project Path="Bk.APG.Business.Tests/Bk.APG.Business.Tests.csproj" />
+    <Project Path="Bk.APG.Business/Bk.APG.Business.csproj" />
+  </Folder>
+  <Folder Name="/40.Infrastructure/">
+    <Project Path="Bk.APG.Infrastructure.DataSource/Bk.APG.Infrastructure.DataSource.csproj" />
+    <Project Path="Bk.APG.Infrastructure.Service.Tests/Bk.APG.Infrastructure.Service.Tests.csproj" />
+    <Project Path="Bk.APG.Infrastructure.Service/Bk.APG.Infrastructure.Service.csproj" />
+  </Folder>
+  <Folder Name="/50.CrossCutting/">
+    <Project Path="Bk.APG.CrossCutting.Tests/Bk.APG.CrossCutting.Tests.csproj" />
+    <Project Path="Bk.APG.CrossCutting/Bk.APG.CrossCutting.csproj" />
+  </Folder>
+  <Folder Name="/60.Common/">
+    <Project Path="Bk.APG.Common.Tests/Bk.APG.Common.Tests.csproj" />
+    <Project Path="Bk.APG.Common/Bk.APG.Common.csproj" />
+  </Folder>
+</Solution>
