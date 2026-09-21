@@ -294,7 +294,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update general election committee {CommitteeId}", committeeId);
+        }
 
         var existingCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId, updateDto.RowVersion);
 
@@ -338,7 +341,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         await _generalElectionCommitteeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated general election committee {CommitteeId}", committeeId);
+        }
 
         var changedGeneralElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
 
@@ -349,7 +355,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update justifications for general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update justifications for general election committee {CommitteeId}", committeeId);
+        }
 
         var existingGeneralElectionCommittee = await _generalElectionCommitteeRepository.GetByIdForUpdate(committeeId, updateDto.RowVersion);
 
@@ -377,14 +386,20 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         await _generalElectionCommitteeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated justifications for general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated justifications for general election committee {CommitteeId}", committeeId);
+        }
 
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeJustificationUpdateDto(existingGeneralElectionCommittee);
     }
 
     public async Task<GeneralElectionCommitteeUpdateDto> UpdateGeneralElectionCommitteeVacancies(Guid id, int vacancies)
     {
-        _logger.LogInformation("Update vacancies for general election committee {CommitteeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update vacancies for general election committee {CommitteeId}", id);
+        }
 
         var existingCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(id);
 
@@ -396,7 +411,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         await _generalElectionCommitteeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated vacancies for general election committee {CommitteeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated vacancies for general election committee {CommitteeId}", id);
+        }
 
         return GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeUpdateDto(existingCommittee);
     }
@@ -414,7 +432,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<(string fileName, Stream content)> GenerateCandidateListExport(Guid id, IEnumerable<Guid> membershipCandidateIds)
     {
-        _logger.LogInformation("Generate candidate list export for general election committee {CommitteeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate candidate list export for general election committee {CommitteeId}", id);
+        }
 
         string[] headers =
         [
@@ -539,14 +560,20 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
                 ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
         {
-            _logger.LogError("User is not allowed to edit general election committee {CommitteeId}", committee.Id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("User is not allowed to edit general election committee {CommitteeId}", committee.Id);
+            }
 
             throw new AuthorizationException($"User is not allowed to edit general election committee with id: {committee.Id}");
         }
 
         if (!committee.IsActive && !_authorizationService.IsAdmin)
         {
-            _logger.LogError("General election committee {CommitteeId} can be updated by admin role only", committee.Id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("General election committee {CommitteeId} can be updated by admin role only", committee.Id);
+            }
 
             throw new AuthorizationException($"General election committee with id: {committee.Id} can be updated by admin role only");
         }

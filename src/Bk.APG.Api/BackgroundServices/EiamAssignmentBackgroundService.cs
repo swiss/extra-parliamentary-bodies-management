@@ -18,7 +18,10 @@ public class EiamAssignmentBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("{BackgroundService} is starting...", nameof(EiamAssignmentBackgroundService));
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("{BackgroundService} is starting...", nameof(EiamAssignmentBackgroundService));
+        }
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -53,7 +56,10 @@ public class EiamAssignmentBackgroundService : BackgroundService
                 .ThenInclude(o => o!.EiamAssignment)
                 .ToListAsync(ct);
 
-            _logger.LogInformation("Found {Count} committees without EIAM assignment", committeesWithoutEiamAssignment.Count);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Found {Count} committees without EIAM assignment", committeesWithoutEiamAssignment.Count);
+            }
 
             foreach (var committee in committeesWithoutEiamAssignment)
             {
@@ -78,12 +84,18 @@ public class EiamAssignmentBackgroundService : BackgroundService
             if (committeesWithoutEiamAssignment.Count > 0)
             {
                 await dataContext.SaveChangesAsync(ct);
-                _logger.LogInformation("Successfully processed {Count} committees and created EIAM assignments", committeesWithoutEiamAssignment.Count);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Successfully processed {Count} committees and created EIAM assignments", committeesWithoutEiamAssignment.Count);
+                }
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred during {BackgroundService} EIAM assignment processing", nameof(EiamAssignmentBackgroundService));
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error occurred during {BackgroundService} EIAM assignment processing", nameof(EiamAssignmentBackgroundService));
+            }
         }
     }
 }
