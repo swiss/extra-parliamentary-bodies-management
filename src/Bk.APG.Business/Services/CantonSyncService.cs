@@ -20,7 +20,10 @@ public class CantonSyncService : BackgroundService
     {
         return Task.Run(async () =>
         {
-            _logger.LogInformation("{BackgroundService} is starting...", nameof(CantonSyncService));
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("{BackgroundService} is starting...", nameof(CantonSyncService));
+            }
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -47,7 +50,10 @@ public class CantonSyncService : BackgroundService
                             await cantonService.CreateOrUpdate(item);
                         }
 
-                        _logger.LogInformation("{Count} cantons synchronized", cantons.Count);
+                        if (_logger.IsEnabled(LogLevel.Information))
+                        {
+                            _logger.LogInformation("{Count} cantons synchronized", cantons.Count);
+                        }
                     }
                     else
                     {
@@ -56,7 +62,10 @@ public class CantonSyncService : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error while trying to synchronize cantons.");
+                    if (_logger.IsEnabled(LogLevel.Error))
+                    {
+                        _logger.LogError(e, "Error while trying to synchronize cantons.");
+                    }
                 }
 
                 await Task.Delay(TimeSpan.FromDays(1), stoppingToken);

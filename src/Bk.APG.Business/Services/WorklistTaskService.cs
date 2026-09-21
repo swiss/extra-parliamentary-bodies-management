@@ -117,26 +117,38 @@ public class WorklistTaskService : IWorklistTaskService
         }
 
         var worklistTask = await _worklistTaskRepository.Create(WorklistTaskMapper.ToWorklistTask(worklistTaskCreateDto, EiamAssignment.AdminId, currentUserName));
-        _logger.LogInformation("Created task {WorklistTaskId} by admin", worklistTask.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created task {WorklistTaskId} by admin", worklistTask.Id);
+        }
 
         return worklistTask;
     }
 
     public async Task RemoveAllGeneralElectionTasks(Guid termOfOfficeDateId)
     {
-        _logger.LogInformation("Remove all general election tasks for term of office date {TermOfOfficeDateId}", termOfOfficeDateId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Remove all general election tasks for term of office date {TermOfOfficeDateId}", termOfOfficeDateId);
+        }
 
         var parents = await _worklistTaskRepository.GetByTermOfOfficeDateId(termOfOfficeDateId);
 
         _worklistTaskRepository.DeleteRange(parents);
-        _logger.LogInformation("Removed all general election tasks for term of office date {TermOfOfficeDateId}", termOfOfficeDateId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Removed all general election tasks for term of office date {TermOfOfficeDateId}", termOfOfficeDateId);
+        }
     }
 
     public async Task<WorklistTaskUpdateDto> UpdateWorklistTask(Guid id, WorklistTaskUpdateDto updateDto)
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update worklist task {WorklistTaskId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update worklist task {WorklistTaskId}", id);
+        }
 
         var currentUserName = _authorizationService.GetCurrentUserName();
         var worklistTask = await _worklistTaskRepository.GetByIdForUpdate(id);
@@ -147,14 +159,20 @@ public class WorklistTaskService : IWorklistTaskService
         worklistTask.ModifiedBy = currentUserName;
 
         await _worklistTaskRepository.Update(worklistTask);
-        _logger.LogInformation("Updated worklist task {WorklistTaskId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated worklist task {WorklistTaskId}", id);
+        }
 
         return updateDto;
     }
 
     public async Task ForwardWorklistTask(Guid id, WorklistTaskForwardDto forwardDto)
     {
-        _logger.LogInformation("Forward worklist task {WorklistTaskId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Forward worklist task {WorklistTaskId}", id);
+        }
 
         var worklistTask = await _worklistTaskRepository.GetByIdForForward(id);
         var currentEiamAssignment = await _authorizationService.GetCurrentEiamAssignment();
@@ -169,7 +187,10 @@ public class WorklistTaskService : IWorklistTaskService
         if (worklistTask.WorklistTaskTypeId == WorklistTaskType.GeneralElectionDispatch)
         {
             await ForwardGeneralElectionDispatch(forwardDto, worklistTask);
-            _logger.LogInformation("Forwarded worklist task {WorklistTaskId}", id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Forwarded worklist task {WorklistTaskId}", id);
+            }
         }
         else
         {
@@ -179,7 +200,10 @@ public class WorklistTaskService : IWorklistTaskService
 
     private async Task ForwardGeneralElectionDispatch(WorklistTaskForwardDto forwardDto, WorklistTask worklistTask)
     {
-        _logger.LogDebug("Forwarding general election dispatch task {WorklistTaskId}", worklistTask.Id);
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug("Forwarding general election dispatch task {WorklistTaskId}", worklistTask.Id);
+        }
         var currentUserName = _authorizationService.GetCurrentUserName();
         var isDepartment = worklistTask.AssignedTo!.Role == Role.Department;
         if (isDepartment && worklistTask.Department!.IsBigDepartment)
@@ -219,7 +243,10 @@ public class WorklistTaskService : IWorklistTaskService
             }).ToList();
 
         await _worklistTaskRepository.CreateRange(newTasks);
-        _logger.LogInformation("Created {Count} tasks for office {OfficeId}", newTasks.Count, worklistTask.OfficeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created {Count} tasks for office {OfficeId}", newTasks.Count, worklistTask.OfficeId);
+        }
 
         worklistTask.WorklistTaskStateId = WorklistTaskState.Completed;
         worklistTask.Modified = DateTime.UtcNow;
@@ -270,7 +297,10 @@ public class WorklistTaskService : IWorklistTaskService
                 if (parentTaskOffice == null)
                 {
                     // Office task is missing, has to be created here, TODO PP, that Use Case was completely out of scope
-                    _logger.LogInformation("Creation of worklist tasks for a new office must be made after configuration in EIAM, OfficeId {OfficeId}", committee.OfficeId);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        _logger.LogInformation("Creation of worklist tasks for a new office must be made after configuration in EIAM, OfficeId {OfficeId}", committee.OfficeId);
+                    }
 
                     //var officeEiamAssignment = _eiamAssignmentRepository.GetByOfficeId();
 
@@ -305,7 +335,10 @@ public class WorklistTaskService : IWorklistTaskService
             if (newTasks.Count > 0)
             {
                 await _worklistTaskRepository.CreateRange(newTasks);
-                _logger.LogInformation("Created tasks for secretariats in department {DepartmentId}", parentTaskDepartment.DepartmentId);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Created tasks for secretariats in department {DepartmentId}", parentTaskDepartment.DepartmentId);
+                }
             }
         }
     }
@@ -332,7 +365,10 @@ public class WorklistTaskService : IWorklistTaskService
         }
 
         await _worklistTaskRepository.CreateRange(newTasks);
-        _logger.LogInformation("Created {Count} tasks for secretariats in department {DepartmentId}", newTasks.Count, worklistTask.DepartmentId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created {Count} tasks for secretariats in department {DepartmentId}", newTasks.Count, worklistTask.DepartmentId);
+        }
 
         worklistTask.WorklistTaskStateId = WorklistTaskState.Completed;
         worklistTask.Modified = DateTime.UtcNow;
@@ -359,7 +395,10 @@ public class WorklistTaskService : IWorklistTaskService
     private void CreateWorklistTasksForCommitteeSmallDepartment(WorklistTaskForwardDto forwardDto,
         WorklistTask worklistTask, List<WorklistTask> newTasks, Committee committee, Guid forwarderId, string currentUserName)
     {
-        _logger.LogDebug("Creating worklist tasks for small department committee {CommitteeId}", committee.Id);
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug("Creating worklist tasks for small department committee {CommitteeId}", committee.Id);
+        }
         newTasks.Add(new WorklistTask
         {
             AssignedToId = committee.EiamAssignmentId!.Value,
@@ -400,7 +439,10 @@ public class WorklistTaskService : IWorklistTaskService
 
     private void CreateWorklistTasksForCommitteeBigDepartment(WorklistTaskForwardDto forwardDto, WorklistTask worklistTask, List<WorklistTask> newTasks, Committee committee, Guid officeAssignmentId, string currentUserName)
     {
-        _logger.LogDebug("Creating worklist tasks for big department committee {CommitteeId}", committee.Id);
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug("Creating worklist tasks for big department committee {CommitteeId}", committee.Id);
+        }
         newTasks.Add(new WorklistTask
         {
             AssignedToId = committee.EiamAssignmentId!.Value,
