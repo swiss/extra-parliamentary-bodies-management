@@ -56,7 +56,10 @@ public class ReportService : IReportService
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
-        _logger.LogInformation("Generate report of type {ReportType}", filterDto.DocumentType);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate report of type {ReportType}", filterDto.DocumentType);
+        }
 
         return filterDto.DocumentType switch
         {

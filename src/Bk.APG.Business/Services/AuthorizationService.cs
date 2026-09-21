@@ -146,9 +146,12 @@ public class AuthorizationService : IAuthorizationService
         var currentRole = GetCurrentRole();
         if (currentRole != null && eiamAssignment.Role != currentRole)
         {
-            _logger.LogError(
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(
                 "Role mismatch: user has role '{UserRole}' but assignment has role '{AssignmentRole}' for external ID '{ExternalId}'",
                 currentRole, eiamAssignment.Role, externalId);
+            }
             throw new AuthorizationException(
                 $"Role mismatch: user has role '{currentRole}' but assignment has role '{eiamAssignment.Role}' for external ID '{externalId}'");
         }
