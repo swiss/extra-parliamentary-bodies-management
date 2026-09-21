@@ -82,7 +82,10 @@ public class GeneralElectionService : IGeneralElectionService
     {
         ArgumentNullException.ThrowIfNull(worklistTaskCreateDto);
 
-        _logger.LogInformation("Prepare general election started by user {User}", _authorizationService.GetCurrentUserName());
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Prepare general election started by user {User}", _authorizationService.GetCurrentUserName());
+        }
 
         var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 
@@ -105,7 +108,10 @@ public class GeneralElectionService : IGeneralElectionService
 
     public async Task<bool> StartGeneralElection(Guid termOfOfficeDateId, DateOnly termOfOfficeBeginDate, DateOnly termOfOfficeEndDate, DateOnly dueDate, string description)
     {
-        _logger.LogInformation("Start general election process for TermOfOfficeDateId {TermOfOfficeDateId}", termOfOfficeDateId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Start general election process for TermOfOfficeDateId {TermOfOfficeDateId}", termOfOfficeDateId);
+        }
 
         // this function can only be executed from Admin role, so we will always get 3 zero guids here!
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
@@ -120,7 +126,10 @@ public class GeneralElectionService : IGeneralElectionService
         {
             foreach (var committee in committees)
             {
-                _logger.LogInformation("Generate general election data for committee {CommitteeId}", committee.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Generate general election data for committee {CommitteeId}", committee.Id);
+                }
 
                 var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, _authorizationService.GetCurrentUserName());
                 generalElectionCommittee.CommitteeType = null;
@@ -178,7 +187,10 @@ public class GeneralElectionService : IGeneralElectionService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during general election data preparation for TermOfOfficeDateId {TermOfOfficeDateId}", termOfOfficeDateId);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error during general election data preparation for TermOfOfficeDateId {TermOfOfficeDateId}", termOfOfficeDateId);
+            }
 
             // If something fails, we delete complete content of the GE tables. All dependent data is deleted as well here!
             await _generalElectionCommitteeRepository.DeleteAll();
@@ -189,7 +201,10 @@ public class GeneralElectionService : IGeneralElectionService
             throw;
         }
 
-        _logger.LogInformation("General election started for TermOfOfficeDateId {TermOfOfficeDateId}", termOfOfficeDateId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("General election started for TermOfOfficeDateId {TermOfOfficeDateId}", termOfOfficeDateId);
+        }
 
         return true;
     }
@@ -198,7 +213,10 @@ public class GeneralElectionService : IGeneralElectionService
     {
         ArgumentNullException.ThrowIfNull(person);
 
-        _logger.LogInformation("Update candidates from person {PersonId}", person.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update candidates from person {PersonId}", person.Id);
+        }
 
         var candidates = await _membershipCandidateRepository.GetByPersonIdForUpdate(person.Id);
 
@@ -220,7 +238,10 @@ public class GeneralElectionService : IGeneralElectionService
     {
         ArgumentNullException.ThrowIfNull(membership);
 
-        _logger.LogInformation("Create new membership candidate for general election committee {CommitteeId}", membership.CommitteeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Create new membership candidate for general election committee {CommitteeId}", membership.CommitteeId);
+        }
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(membership.CommitteeId);
         var termOfOfficeDate = generalElectionCommittee.TermOfOfficeDate;
@@ -235,7 +256,10 @@ public class GeneralElectionService : IGeneralElectionService
             membershipCandidate.EndDate = newEndDate;
             membershipCandidate.IsSelected = isSelected;
             await _membershipCandidateRepository.Create(membershipCandidate);
-            _logger.LogInformation("New membership candidate created {MembershipCandidateId}", membershipCandidate.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("New membership candidate created {MembershipCandidateId}", membershipCandidate.Id);
+            }
         }
         else
         {
@@ -245,7 +269,10 @@ public class GeneralElectionService : IGeneralElectionService
 
             var dto = MembershipCandidateLogMessageMapper.ToMembershipCandidateLogMessage(generalElectionCommittee.Id, (Guid)membershipCandidate.PersonId!, errorText, _authorizationService.GetCurrentUserName());
             await _membershipCandidateLogMessageRepository.Create(dto);
-            _logger.LogInformation("Membership candidate for person {PersonId} not created because maximum duration exceeded", membershipCandidate.PersonId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Membership candidate for person {PersonId} not created because maximum duration exceeded", membershipCandidate.PersonId);
+            }
         }
     }
 
@@ -293,7 +320,10 @@ public class GeneralElectionService : IGeneralElectionService
     {
         ArgumentNullException.ThrowIfNull(worklistTaskCreateDto);
 
-        _logger.LogInformation("Prepare the end of general election started by user {User}", _authorizationService.GetCurrentUserName());
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Prepare the end of general election started by user {User}", _authorizationService.GetCurrentUserName());
+        }
 
         var running = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 

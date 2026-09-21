@@ -18,7 +18,10 @@ public class EndGeneralElectionBackgroundService : BackgroundService
     {
         return Task.Run(async () =>
         {
-            _logger.LogInformation("{BackgroundService} is starting...", nameof(EndGeneralElectionBackgroundService));
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("{BackgroundService} is starting...", nameof(EndGeneralElectionBackgroundService));
+            }
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -38,7 +41,10 @@ public class EndGeneralElectionBackgroundService : BackgroundService
                         var generalElectionService = scope.ServiceProvider.GetRequiredService<IGeneralElectionService>();
                         await generalElectionService.EndGeneralElection();
                         timer.Stop();
-                        _logger.LogInformation("General election was terminated! Duration: {Duration:g}", timer.Elapsed);
+                        if (_logger.IsEnabled(LogLevel.Information))
+                        {
+                            _logger.LogInformation("General election was terminated! Duration: {Duration:g}", timer.Elapsed);
+                        }
                     }
                     else
                     {
@@ -48,7 +54,10 @@ public class EndGeneralElectionBackgroundService : BackgroundService
                 catch (Exception e)
                 {
                     _logger.LogError("End GeneralElection failed"); //used for alert by splunk (don't change)
-                    _logger.LogError(e, "Error during ending GeneralElection. Error={Message}", e.Message);
+                    if (_logger.IsEnabled(LogLevel.Error))
+                    {
+                        _logger.LogError(e, "Error during ending GeneralElection. Error={Message}", e.Message);
+                    }
                 }
                 finally
                 {

@@ -87,7 +87,10 @@ public class GeneralMeasureService : IGeneralMeasureService
         var genderMeasure = await _generalMeasureRepository.GetGeneralGenderMeasureForUpdate(generalMeasureUpdate.DepartmentId);
         if (genderMeasure is null)
         {
-            _logger.LogInformation("Create new gender measure for department {DepartmentId}", generalMeasureUpdate.DepartmentId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Create new gender measure for department {DepartmentId}", generalMeasureUpdate.DepartmentId);
+            }
 
             genderMeasure = new GeneralGenderMeasure
             {
@@ -100,24 +103,36 @@ public class GeneralMeasureService : IGeneralMeasureService
             };
 
             await _generalMeasureRepository.AddGeneralGenderMeasure(genderMeasure);
-            _logger.LogInformation("Created gender measure {MeasureId}", genderMeasure.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Created gender measure {MeasureId}", genderMeasure.Id);
+            }
         }
         else
         {
-            _logger.LogInformation("Update gender measure {MeasureId}", genderMeasure.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Update gender measure {MeasureId}", genderMeasure.Id);
+            }
 
             genderMeasure.Description = generalMeasureUpdate.JustificationGenders ?? string.Empty;
             genderMeasure.Modified = DateTime.UtcNow;
             genderMeasure.ModifiedBy = userName;
 
             await _generalMeasureRepository.CommitChanges();
-            _logger.LogInformation("Updated gender measure {MeasureId}", genderMeasure.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Updated gender measure {MeasureId}", genderMeasure.Id);
+            }
         }
 
         var languageMeasure = await _generalMeasureRepository.GetGeneralLanguageMeasureForUpdate(generalMeasureUpdate.DepartmentId);
         if (languageMeasure is null)
         {
-            _logger.LogInformation("Create new language measure for department {DepartmentId}", generalMeasureUpdate.DepartmentId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Create new language measure for department {DepartmentId}", generalMeasureUpdate.DepartmentId);
+            }
 
             languageMeasure = new GeneralLanguageMeasure
             {
@@ -130,24 +145,36 @@ public class GeneralMeasureService : IGeneralMeasureService
             };
 
             await _generalMeasureRepository.AddGeneralLanguageMeasure(languageMeasure);
-            _logger.LogInformation("Created language measure {MeasureId}", genderMeasure.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Created language measure {MeasureId}", genderMeasure.Id);
+            }
         }
         else
         {
-            _logger.LogInformation("Update language measure {MeasureId}", genderMeasure.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Update language measure {MeasureId}", genderMeasure.Id);
+            }
 
             languageMeasure.Description = generalMeasureUpdate.JustificationLanguages ?? string.Empty;
             languageMeasure.Modified = DateTime.UtcNow;
             languageMeasure.ModifiedBy = userName;
 
             await _generalMeasureRepository.CommitChanges();
-            _logger.LogInformation("Updated language measure {MeasureId}", genderMeasure.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Updated language measure {MeasureId}", genderMeasure.Id);
+            }
         }
     }
 
     public async Task Forward(Guid departmentId, string message, bool forwardToAdmin)
     {
-        _logger.LogInformation("Forward general measure for department {DepartmentId} to {ForwardTarget}", departmentId, forwardToAdmin ? "admin" : "department");
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Forward general measure for department {DepartmentId} to {ForwardTarget}", departmentId, forwardToAdmin ? "admin" : "department");
+        }
 
         var tasks = await _worklistTaskRepository.GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(departmentId, [WorklistTaskType.GeneralMeasureCheck, WorklistTaskType.GeneralMeasureValidate]);
         var departmentTask = tasks.Single(x => x.WorklistTaskTypeId == WorklistTaskType.GeneralMeasureCheck);
@@ -183,7 +210,10 @@ public class GeneralMeasureService : IGeneralMeasureService
 
     public async Task Validate(Guid departmentId)
     {
-        _logger.LogInformation("Validate general measure for department {DepartmentId}", departmentId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Validate general measure for department {DepartmentId}", departmentId);
+        }
 
         var adminTask = (await _worklistTaskRepository.GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(departmentId, [WorklistTaskType.GeneralMeasureValidate])).Single();
         adminTask.WorklistTaskStateId = WorklistTaskState.Completed;

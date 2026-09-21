@@ -60,7 +60,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task<CandidateListValidationResultDto> ValidateCandidateList(Guid committeeId, IEnumerable<Guid> selectedCandidateIds, bool duplicateCheckDone)
     {
-        _logger.LogInformation("Validate candidate list for general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Validate candidate list for general election committee {CommitteeId}", committeeId);
+        }
 
         var validationResult = new CandidateListValidationResultDto();
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
@@ -98,11 +101,17 @@ public class MembershipCandidateService : IMembershipCandidateService
 
             await _generalElectionCommitteeRepository.CommitChanges();
 
-            _logger.LogInformation("Validated candidate list for general election committee {CommitteeId}", committeeId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Validated candidate list for general election committee {CommitteeId}", committeeId);
+            }
         }
         else
         {
-            _logger.LogInformation("Candidate list for general election committee {CommitteeId} is not valid", committeeId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Candidate list for general election committee {CommitteeId} is not valid", committeeId);
+            }
         }
 
         return validationResult;
@@ -199,7 +208,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
                 if (membershipTask is null)
                 {
-                    _logger.LogInformation("Creating membership validation task for committee {CommitteeId} and membership candidate {MembershipCandidateId}", generalElectionCommittee.CommitteeId, membershipCandidate.Id);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        _logger.LogInformation("Creating membership validation task for committee {CommitteeId} and membership candidate {MembershipCandidateId}", generalElectionCommittee.CommitteeId, membershipCandidate.Id);
+                    }
 
                     await _worklistTaskRepository.Create(new WorklistTask
                     {
@@ -255,7 +267,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         {
             if (missingSecretariatTask is null)
             {
-                _logger.LogInformation("Creating missing secretariat task for committee {CommitteeId}", generalElectionCommittee.CommitteeId);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Creating missing secretariat task for committee {CommitteeId}", generalElectionCommittee.CommitteeId);
+                }
 
                 await _worklistTaskRepository.Create(new WorklistTask
                 {
@@ -296,7 +311,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         {
             if (missingDataProtectionOfficerTask is null)
             {
-                _logger.LogInformation("Creating missing data protection officer task for committee {CommitteeId}", generalElectionCommittee.CommitteeId);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Creating missing data protection officer task for committee {CommitteeId}", generalElectionCommittee.CommitteeId);
+                }
 
                 await _worklistTaskRepository.Create(new WorklistTask
                 {
@@ -421,7 +439,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         var interestsTask = personTasks.FirstOrDefault(x => x.WorklistTaskTypeId == worklistTaskTypeId);
         if (interestsTask is null)
         {
-            _logger.LogInformation("Creating task {TaskTypeId} for person {PersonId}", worklistTaskTypeId, membershipCandidate.PersonId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Creating task {TaskTypeId} for person {PersonId}", worklistTaskTypeId, membershipCandidate.PersonId);
+            }
 
             await _worklistTaskRepository.Create(new WorklistTask
             {
@@ -463,7 +484,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         {
             if (missingJustificationTask is null)
             {
-                _logger.LogInformation("Creating missing justification task for general election committee {CommitteeId}", generalElectionCommittee.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Creating missing justification task for general election committee {CommitteeId}", generalElectionCommittee.Id);
+                }
 
                 await _worklistTaskRepository.Create(new WorklistTask
                 {
@@ -577,7 +601,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task SaveCandidateList(Guid committeeId, IEnumerable<Guid> candidateIds)
     {
-        _logger.LogInformation("Save candidate list for general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Save candidate list for general election committee {CommitteeId}", committeeId);
+        }
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
 
@@ -589,14 +616,20 @@ public class MembershipCandidateService : IMembershipCandidateService
         UpdateCandidateSelection(generalElectionCommittee.MembershipCandidates, candidateIds);
 
         await _generalElectionCommitteeRepository.CommitChanges();
-        _logger.LogInformation("Saved candidate list for general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Saved candidate list for general election committee {CommitteeId}", committeeId);
+        }
     }
 
     public async Task ForwardCandidateList(Guid committeeId, CandidateListForwardDto forwardDto)
     {
         ArgumentNullException.ThrowIfNull(forwardDto);
 
-        _logger.LogInformation("Forward candidate list for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Forward candidate list for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        }
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
 
@@ -675,14 +708,20 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         scope.Complete();
 
-        _logger.LogInformation("Forwarded candidate list for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Forwarded candidate list for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        }
     }
 
     public async Task ForwardReadyForProposal(Guid committeeId, ReadyForProposalForwardDto forwardDto)
     {
         ArgumentNullException.ThrowIfNull(forwardDto);
 
-        _logger.LogInformation("Forward ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Forward ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        }
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
 
@@ -747,12 +786,18 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         scope.Complete();
 
-        _logger.LogInformation("Forwarded ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Forwarded ready-for-proposal task for general election committee {CommitteeId} to assignment {ForwardToId}", committeeId, forwardDto.ForwardToId);
+        }
     }
 
     public async Task<CandidateListValidationResultDto> FinalizeReadyForProposal(Guid committeeId)
     {
-        _logger.LogInformation("Finalize ready-for-proposal for general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Finalize ready-for-proposal for general election committee {CommitteeId}", committeeId);
+        }
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(committeeId);
         var selectedCandidateIds = generalElectionCommittee.MembershipCandidates.Where(x => x.IsSelected).Select(x => x.Id).ToList();
@@ -760,7 +805,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         if (!validationResult.AllValidationsPassed)
         {
-            _logger.LogInformation("Finalize ready-for-proposal failed because of validation errors for general election committee {CommitteeId}", committeeId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Finalize ready-for-proposal failed because of validation errors for general election committee {CommitteeId}", committeeId);
+            }
             return validationResult;
         }
 
@@ -794,7 +842,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         scope.Complete();
 
-        _logger.LogInformation("Finalized ready-for-proposal for general election committee {CommitteeId}", committeeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Finalized ready-for-proposal for general election committee {CommitteeId}", committeeId);
+        }
         return validationResult;
     }
 
@@ -802,7 +853,10 @@ public class MembershipCandidateService : IMembershipCandidateService
     {
         ArgumentNullException.ThrowIfNull(membershipCandidatePartialUpdate);
 
-        _logger.LogInformation("Partial update membership candidate {MembershipCandidateId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Partial update membership candidate {MembershipCandidateId}", id);
+        }
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
 
@@ -819,7 +873,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         membershipCandidate.ModifiedBy = _authorizationService.GetCurrentUserName();
 
         await _membershipCandidateRepository.CommitChanges();
-        _logger.LogInformation("Partial updated membership candidate {MembershipCandidateId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Partial updated membership candidate {MembershipCandidateId}", id);
+        }
     }
 
     public async Task<MembershipListDto> GetMembers(Guid generalElectionCommitteeId)
@@ -847,7 +904,10 @@ public class MembershipCandidateService : IMembershipCandidateService
     {
         ArgumentNullException.ThrowIfNull(membershipCandidateUpdate);
 
-        _logger.LogInformation("Update membership candidate {MembershipCandidateId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update membership candidate {MembershipCandidateId}", id);
+        }
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
 
@@ -903,7 +963,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         await RevalidateCandidateListIfNeeded(membershipCandidate);
 
-        _logger.LogInformation("Updated membership candidate {MembershipCandidateId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated membership candidate {MembershipCandidateId}", id);
+        }
     }
 
     public async Task<MembershipCandidateUpdateDto> GetMembershipCandidateForUpdate(Guid id)
@@ -929,7 +992,10 @@ public class MembershipCandidateService : IMembershipCandidateService
     {
         ArgumentNullException.ThrowIfNull(membershipCandidateCreate);
 
-        _logger.LogInformation("Create membership candidate for committee {CommitteeId}", membershipCandidateCreate.CommitteeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Create membership candidate for committee {CommitteeId}", membershipCandidateCreate.CommitteeId);
+        }
 
         var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeId(membershipCandidateCreate.CommitteeId);
 
@@ -964,7 +1030,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         };
 
         var createdMembershipCandidate = await _membershipCandidateRepository.Create(membershipCandidate);
-        _logger.LogInformation("Created membership candidate {MembershipCandidateId}", createdMembershipCandidate.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created membership candidate {MembershipCandidateId}", createdMembershipCandidate.Id);
+        }
 
         return await GetMembershipCandidateDetail(createdMembershipCandidate.Id);
     }
@@ -978,7 +1047,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
     public async Task DeleteMembershipCandidate(Guid id)
     {
-        _logger.LogInformation("Delete membership candidate {MembershipCandidateId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Delete membership candidate {MembershipCandidateId}", id);
+        }
 
         var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
 
@@ -997,7 +1069,10 @@ public class MembershipCandidateService : IMembershipCandidateService
 
         await RevalidateCandidateListIfNeeded(membershipCandidate);
 
-        _logger.LogInformation("Deleted membership candidate {MembershipCandidateId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Deleted membership candidate {MembershipCandidateId}", id);
+        }
     }
 
     private async Task RevalidateCandidateListIfNeeded(MembershipCandidate membershipCandidate)

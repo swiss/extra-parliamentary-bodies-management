@@ -164,12 +164,6 @@ dotnet_diagnostic.IDE0100.severity = error
 dotnet_diagnostic.IDE0110.severity = suggestion
 dotnet_diagnostic.NUnit1032.severity = suggestion
 
-# New quality rules surfaced by .NET 10 SDK analyzers (net10.0 upgrade) - downgraded to suggestion,
-# fixing every call site is a large refactor out of scope for the framework/package upgrade.
-dotnet_diagnostic.CA1873.severity = suggestion
-dotnet_diagnostic.CA2264.severity = suggestion
-dotnet_diagnostic.CA1849.severity = suggestion
-dotnet_diagnostic.CA1871.severity = suggestion
 # CA1515 flags public types as candidates for internal, but test builder classes are
 # intentionally public for cross ProjectReference reuse between test projects.
 dotnet_diagnostic.CA1515.severity = suggestion

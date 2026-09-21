@@ -132,7 +132,10 @@ public class PersonService : IPersonService
         }
 
         var newEntry = await _personRepository.Create(mappedPerson);
-        _logger.LogInformation("Person created with id {PersonId}", newEntry.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Person created with id {PersonId}", newEntry.Id);
+        }
 
         var savedPerson = await _personRepository.GetById(newEntry.Id);
 
@@ -143,7 +146,10 @@ public class PersonService : IPersonService
     {
         ArgumentNullException.ThrowIfNull(membershipCandidate);
 
-        _logger.LogInformation("Create person for membership candidate {MembershipCandidateId}", membershipCandidate.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Create person for membership candidate {MembershipCandidateId}", membershipCandidate.Id);
+        }
 
         var mappedPerson = PersonMapper.FromMembershipCandidate(membershipCandidate);
         var currentUserName = _authorizationService.GetCurrentUserName();
@@ -156,7 +162,10 @@ public class PersonService : IPersonService
         mappedPerson.Modified = DateTime.UtcNow;
 
         var newEntry = await _personRepository.Create(mappedPerson);
-        _logger.LogInformation("Created person {PersonId} from membership candidate {MembershipCandidateId}", newEntry.Id, membershipCandidate.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created person {PersonId} from membership candidate {MembershipCandidateId}", newEntry.Id, membershipCandidate.Id);
+        }
 
         return await _personRepository.GetById(newEntry.Id);
     }
@@ -165,7 +174,10 @@ public class PersonService : IPersonService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update person {PersonId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update person {PersonId}", id);
+        }
 
         var existingEntry = await _personRepository.GetByIdForUpdate(id, updateDto.RowVersion);
         var currentUserName = _authorizationService.GetCurrentUserName();
@@ -216,7 +228,10 @@ public class PersonService : IPersonService
 
         await _personRepository.CommitChanges();
 
-        _logger.LogInformation("Updated person {PersonId}", existingEntry.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated person {PersonId}", existingEntry.Id);
+        }
 
         if (isGeneralElectionRunning)
         {
@@ -256,7 +271,10 @@ public class PersonService : IPersonService
 
     public async Task DeletePerson(Guid id)
     {
-        _logger.LogDebug("Delete person {PersonId}", id);
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug("Delete person {PersonId}", id);
+        }
 
         var person = await _personRepository.GetByIdForUpdate(id);
         var membershipCandidates = (await _membershipCandidateRepository.GetByPersonIdForUpdate(id)).ToList();
@@ -286,7 +304,10 @@ public class PersonService : IPersonService
 
         await _personRepository.CommitChanges();
 
-        _logger.LogInformation("Deleted person {PersonId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Deleted person {PersonId}", id);
+        }
     }
 
     private void CreateOrUpdateAddresses(Person existingEntry, PersonUpdateDto update, string currentUserName)
@@ -303,7 +324,10 @@ public class PersonService : IPersonService
             {
                 UpdateAddress(existingEntry.OfficeAddress, update.OfficeAddress, currentUserName);
 
-                _logger.LogInformation("Updated office address {AddressId}'", existingEntry.OfficeAddress.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Updated office address {AddressId}'", existingEntry.OfficeAddress.Id);
+                }
             }
 
             if (update.OfficeAddress.ActiveAddress && existingEntry.CorrespondenceAddressId != existingEntry.OfficeAddressId)
@@ -328,7 +352,10 @@ public class PersonService : IPersonService
             {
                 UpdateAddress(existingEntry.PrivateAddress, update.PrivateAddress, currentUserName);
 
-                _logger.LogInformation("Updated private address {AddressId}", existingEntry.PrivateAddress.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Updated private address {AddressId}", existingEntry.PrivateAddress.Id);
+                }
             }
 
             if (update.PrivateAddress.ActiveAddress && existingEntry.CorrespondenceAddressId != existingEntry.PrivateAddressId)

@@ -27,7 +27,10 @@ public class AddressService : IAddressService
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "Failed to verify address");
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(e, "Failed to verify address");
+            }
             return new AddressVerificationResultDto { Status = AddressVerificationStatus.Invalid };
         }
     }

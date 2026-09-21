@@ -454,7 +454,7 @@ internal class ContactPointServiceTests
         _authorizationService.HasAccessToCommittee(_committee).Returns(false);
         _contactPointRepository.GetByIdForUpdate(_guid).Returns(_contactPointToUpdate);
 
-        Assert.That(async () => await _service.Delete(_guid), Throws.Exception.InstanceOf<AuthorizationException>());
+        Assert.ThrowsAsync<AuthorizationException>(async () => await _service.Delete(_guid));
         _contactPointRepository.DidNotReceive().Delete(Arg.Any<ContactPoint>());
         await _contactPointRepository.Received(0).CommitChanges();
     }
