@@ -87,7 +87,10 @@ public class MembershipService : IMembershipService
 
         var isGeneralElectionRunning = await _termOfOfficeDateService.CheckForRunningGeneralElection();
 
-        var membership = MembershipMapper.FromMembershipCreateDto(createDto, _authorizationService.GetCurrentUserName());
+        var membership = MembershipMapper.FromMembershipCreateDto(
+            createDto,
+            _authorizationService.GetCurrentUserName(),
+            committee.CommitteeTypeId);
 
         var newMembership = await _membershipRepository.Create(membership);
 
@@ -479,7 +482,10 @@ public class MembershipService : IMembershipService
         existingEntry.FunctionId = updateDto.FunctionId;
         existingEntry.ElectionOfficeId = updateDto.ElectionOfficeId;
         existingEntry.MembershipAdditionId = updateDto.MembershipAdditionId;
-        existingEntry.JustificationLongerDuty = updateDto.JustificationLongerDuty;
+        existingEntry.JustificationLongerDuty = FederalDutyJustification.Normalize(
+            updateDto.JustificationLongerDuty,
+            updateDto.InCorrelationWithFederalDuty,
+            existingEntry.Committee?.CommitteeTypeId);
         existingEntry.JustificationShorterDuty = updateDto.JustificationShorterDuty;
         existingEntry.JustificationMemberInFederalDuty = updateDto.JustificationMemberInFederalDuty;
         existingEntry.JustificationMemberInFederalAssembly = updateDto.JustificationMemberInFederalAssembly;

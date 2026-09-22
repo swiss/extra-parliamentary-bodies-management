@@ -141,6 +141,23 @@ internal class MembershipMapperTests
         });
     }
 
+    [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, true)]
+    [TestCase(CommitteeType.AdministrationCommissionGuidAsString, true)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, false)]
+    public void FromMembershipCreateDto_ShouldNormalizeJustificationOnlyForApplicableCommitteeTypes(string committeeTypeId, bool expectedAutomaticText)
+    {
+        var createDto = new Faker<MembershipCreateDto>()
+            .RuleFor(dto => dto.InCorrelationWithFederalDuty, true)
+            .RuleFor(dto => dto.JustificationLongerDuty, "Existing justification")
+            .Generate();
+
+        var membership = MembershipMapper.FromMembershipCreateDto(createDto, "foo bar", Guid.Parse(committeeTypeId));
+
+        Assert.That(membership.JustificationLongerDuty, Is.EqualTo(expectedAutomaticText
+            ? FederalDutyJustification.GermanText
+            : createDto.JustificationLongerDuty));
+    }
+
     [Test]
     public void ToMembershipUpdateDto_ShouldMapCorrectly()
     {
