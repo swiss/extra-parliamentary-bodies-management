@@ -41,6 +41,7 @@ import {PersonOverviewBasicDataComponent} from '../../../persons/shared/person-o
 import {PersonSearchComponent} from '../../../persons/shared/person-search/person-search.component';
 import {HelpTooltipComponent} from '../../../shared/help-tooltip/help-tooltip.component';
 import {CommitteeSearchComponent} from '../committee-search/committee-search.component';
+import {getFederalDutyJustification, isFederalDutyJustification, isFederalDutyJustificationApplicable} from '../federal-duty-justification';
 
 @Component({
     selector: 'apg-membership-data-form',
@@ -148,11 +149,18 @@ export class MembershipDataFormComponent implements OnInit {
 
     private readonly justificationLongerDutyNeeded = computed(() => {
         const extraParliamentaryCommission = this.committee()?.extraParliamentaryCommission ?? false;
-        const inCorrelationWithFederalDuty = this.formInCorrelationWithFederalDuty() ?? false;
+        const committeeTypeApplicable = isFederalDutyJustificationApplicable(this.committee()?.committeeTypeId);
         const estimatedTermOfOffice = this.validationResults().estimatedTermOfOffice ?? 0;
 
-        return extraParliamentaryCommission && inCorrelationWithFederalDuty && estimatedTermOfOffice > 12;
+        return extraParliamentaryCommission && committeeTypeApplicable && estimatedTermOfOffice > 12;
     });
+
+    private readonly automaticJustificationLongerDutyActive = computed(
+        () =>
+            (this.committee()?.extraParliamentaryCommission ?? false) &&
+            isFederalDutyJustificationApplicable(this.committee()?.committeeTypeId) &&
+            this.formInCorrelationWithFederalDuty() === true
+    );
 
     private readonly justificationShorterDutyNeeded = computed(() => {
         const period4YearsInGeneralElection = this.committee()?.period4YearsInGeneralElection ?? false;
@@ -242,6 +250,7 @@ export class MembershipDataFormComponent implements OnInit {
             this.justificationMemberInFederalDutyNeeded();
             this.justificationMemberInFederalAssemblyNeeded();
             this.requirementsProfileNeeded();
+            this.syncAutomaticLongerDutyJustification();
 
             if (this.validationResults().hasErrors) {
                 return;
@@ -401,6 +410,13 @@ export class MembershipDataFormComponent implements OnInit {
         this.membershipForm.controls.justificationShorterDuty.markAsTouched();
         this.membershipForm.controls.justificationMemberInFederalDuty.markAsTouched();
         this.membershipForm.controls.justificationMemberInFederalAssembly.markAsTouched();
+    }
+
+    onFederalDutyCheckboxChange(event: MatCheckboxChange) {
+        this.validateData(event);
+        this.syncAutomaticLongerDutyJustification();
+        this.membershipForm.controls.justificationLongerDuty.updateValueAndValidity();
+        this.toggleJustificationFields(false);
     }
 
     ngOnInit() {
@@ -719,7 +735,7 @@ export class MembershipDataFormComponent implements OnInit {
         } else {
             form.controls.inCorrelationWithFederalDuty.enable({emitEvent: false});
         }
-        if (disable || !this.justificationLongerDutyNeeded()) {
+        if (disable || !this.justificationLongerDutyNeeded() || this.automaticJustificationLongerDutyActive()) {
             form.controls.justificationLongerDuty.disable();
         } else {
             form.controls.justificationLongerDuty.enable();
@@ -743,6 +759,17 @@ export class MembershipDataFormComponent implements OnInit {
             form.controls.requirementsProfile.disable();
         } else {
             form.controls.requirementsProfile.enable();
+        }
+    }
+
+    private syncAutomaticLongerDutyJustification() {
+        const control = this.membershipForm.controls.justificationLongerDuty;
+        const automaticText = getFederalDutyJustification();
+
+        if (this.automaticJustificationLongerDutyActive()) {
+            control.setValue(automaticText, {emitEvent: false});
+        } else if (isFederalDutyJustification(control.value ?? undefined)) {
+            control.setValue('', {emitEvent: false});
         }
     }
 
