@@ -82,8 +82,6 @@ public class EiamAssignmentBuilder
 
     public EiamAssignmentBuilder WithParentId(Guid parentAssignmentId)
     {
-        ArgumentNullException.ThrowIfNull(parentAssignmentId);
-
         _parentId = parentAssignmentId;
         return this;
     }
