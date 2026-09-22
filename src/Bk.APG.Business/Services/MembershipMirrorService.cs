@@ -26,7 +26,10 @@ public class MembershipMirrorService : IMembershipMirrorService
     {
         ArgumentNullException.ThrowIfNull(membership);
 
-        _logger.LogInformation("Mirror membership {MembershipId} for general election", membership.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Mirror membership {MembershipId} for general election", membership.Id);
+        }
 
         var membershipCandidate = await _membershipCandidateRepository.GetByMembershipIdForUpdate(membership.Id);
 
@@ -34,7 +37,10 @@ public class MembershipMirrorService : IMembershipMirrorService
         {
             if (membershipCandidate.GeneralElectionCommittee?.IsValidated == true && membershipCandidate.GeneralElectionCommittee?.CandidateListStateId == CandidateListState.Validated)
             {
-                _logger.LogInformation("Membership candidate list already validated, skip mirror entries");
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Membership candidate list already validated, skip mirror entries");
+                }
                 return;
             }
 
@@ -42,13 +48,19 @@ public class MembershipMirrorService : IMembershipMirrorService
             {
                 // if the end date has been shortened or the election type is an ending one, we can delete the membershipCandidate
                 await _membershipCandidateRepository.Delete(membershipCandidate);
-                _logger.LogInformation("Membership candidate {MembershipCandidateId} deleted because of end date change in present data", membershipCandidate.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Membership candidate {MembershipCandidateId} deleted because of end date change in present data", membershipCandidate.Id);
+                }
             }
             else
             {
                 if (membershipCandidate.GeneralElectionCommittee?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded && !wasMetadataChanged)
                 {
-                    _logger.LogInformation("No metadata change during 'BRA ready forwarded' state, skip mirror entries");
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        _logger.LogInformation("No metadata change during 'BRA ready forwarded' state, skip mirror entries");
+                    }
                     return;
                 }
 
@@ -77,7 +89,10 @@ public class MembershipMirrorService : IMembershipMirrorService
 
                 await _membershipCandidateRepository.CommitChanges();
 
-                _logger.LogInformation("Updated membership candidate {MembershipCandidateId} with data from current membership", membershipCandidate.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Updated membership candidate {MembershipCandidateId} with data from current membership", membershipCandidate.Id);
+                }
             }
         }
     }
@@ -86,20 +101,29 @@ public class MembershipMirrorService : IMembershipMirrorService
     {
         ArgumentNullException.ThrowIfNull(createDto);
 
-        _logger.LogInformation("Create membership from GE for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Create membership from GE for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
+        }
 
         var membership = MembershipMapper.FromMembershipCreateDto(createDto, userName);
 
         var newMembership = await _membershipRepository.Create(membership);
 
-        _logger.LogInformation("Created membership from candidate with id {MembershipId}", newMembership.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created membership from candidate with id {MembershipId}", newMembership.Id);
+        }
     }
 
     public async Task UpdateMembershipFromCandidate(Guid id, MembershipUpdateDto updateDto, string userName)
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update membership with id {MembershipId} started.", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update membership with id {MembershipId} started.", id);
+        }
 
         var existingEntry = await _membershipRepository.GetByIdForUpdate(id);
 
@@ -123,6 +147,9 @@ public class MembershipMirrorService : IMembershipMirrorService
         existingEntry.Modified = DateTime.UtcNow;
 
         await _membershipRepository.CommitChanges();
-        _logger.LogInformation("Updated candidate data to membership with with id {MembershipId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated candidate data to membership with with id {MembershipId}", id);
+        }
     }
 }

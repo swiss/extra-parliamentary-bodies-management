@@ -123,9 +123,6 @@ public static class GeneralElectionMapper
         ArgumentNullException.ThrowIfNull(membership.Person);
         ArgumentNullException.ThrowIfNull(membership.Person.Surname);
         ArgumentNullException.ThrowIfNull(membership.Person.GivenName);
-        ArgumentNullException.ThrowIfNull(membership.Person.BirthYear);
-        ArgumentNullException.ThrowIfNull(membership.Person.LanguageId);
-        ArgumentNullException.ThrowIfNull(membership.Person.GenderId);
 
         return new MembershipCandidate
         {

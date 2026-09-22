@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>Bk.APG.Business</RootNamespace>
@@ -9,17 +9,17 @@
 
     <ItemGroup>
         <PackageReference Include="AWSSDK.S3" Version="[3.7.302]" />  <!-- RHOS S3 storage doesn't work with higher versions (yet) -->
-        <PackageReference Include="Swiss.FCh.DocumentService.Client" Version="1.8.2" />
+        <PackageReference Include="Swiss.FCh.DocumentService.Client" Version="1.9.0" />
         <PackageReference Include="Swiss.FCh.MasterData" Version="3.2.4" />
-        <PackageReference Include="Swiss.FCh.Utils" Version="2.0.1" />
+        <PackageReference Include="Swiss.FCh.Utils" Version="3.0.1" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
-        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0"/>
-        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.12" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Bk.APG.Common\Bk.APG.Common.csproj"/>
-        <ProjectReference Include="..\Bk.APG.CrossCutting\Bk.APG.CrossCutting.csproj"/>
+        <ProjectReference Include="..\Bk.APG.Common\Bk.APG.Common.csproj" />
+        <ProjectReference Include="..\Bk.APG.CrossCutting\Bk.APG.CrossCutting.csproj" />
     </ItemGroup>
 
 </Project>

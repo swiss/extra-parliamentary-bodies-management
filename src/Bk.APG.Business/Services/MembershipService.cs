@@ -74,7 +74,10 @@ public class MembershipService : IMembershipService
     {
         ArgumentNullException.ThrowIfNull(createDto);
 
-        _logger.LogInformation("Create membership for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Create membership for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
+        }
 
         var committee = await _committeeRepository.GetById(createDto.CommitteeId);
         if (!await _authorizationService.HasAccessToCommittee(committee))
@@ -104,7 +107,10 @@ public class MembershipService : IMembershipService
             else
             {
                 await _generalElectionService.CreateNewMembershipCandidate(membershipWithPerson, true);
-                _logger.LogInformation("Created membership candidate for general election for membership id {MembershipId}", newMembership.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Created membership candidate for general election for membership id {MembershipId}", newMembership.Id);
+                }
 
                 if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
                 {
@@ -113,7 +119,10 @@ public class MembershipService : IMembershipService
             }
         }
 
-        _logger.LogInformation("Created membership with id {MembershipId}", newMembership.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created membership with id {MembershipId}", newMembership.Id);
+        }
 
         return await GetMembershipDetail(membership.Id);
     }
@@ -425,7 +434,10 @@ public class MembershipService : IMembershipService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update membership with id {MembershipId} started.", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update membership with id {MembershipId} started.", id);
+        }
 
         var existingEntry = await _membershipRepository.GetByIdForUpdate(id, updateDto.RowVersion);
 
@@ -479,7 +491,10 @@ public class MembershipService : IMembershipService
         existingEntry.Modified = DateTime.UtcNow;
 
         await _membershipRepository.CommitChanges();
-        _logger.LogInformation("Updated membership with id {MembershipId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated membership with id {MembershipId}", id);
+        }
 
         // TODO: Code smell – MembershipService is handling GEW workflow logic.
         // Extract GEW-related behavior into an application/orchestrator service.
@@ -497,7 +512,10 @@ public class MembershipService : IMembershipService
                 await _generalElectionCommitteeService.SetFederalCouncilProposalToDirty(existingEntry.CommitteeId);
             }
 
-            _logger.LogInformation("Mirrored membership changes for general election for membership id {MembershipId}", existingEntry.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Mirrored membership changes for general election for membership id {MembershipId}", existingEntry.Id);
+            }
         }
 
         return MembershipMapper.ToMembershipUpdateDto(existingEntry, _cultureService);

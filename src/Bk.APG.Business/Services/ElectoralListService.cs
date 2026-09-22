@@ -37,7 +37,10 @@ public class ElectoralListService : IElectoralListService
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
-        _logger.LogInformation("Generating electoral list document of type {ListType}", listType);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generating electoral list document of type {ListType}", listType);
+        }
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
         var memberFunction = await _masterDataRepository.GetById<Function>(Function.MemberGuid);
