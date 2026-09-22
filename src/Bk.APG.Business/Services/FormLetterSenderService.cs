@@ -92,13 +92,19 @@ public class FormLetterSenderService : IFormLetterSenderService
 
             var createdFormLetterSender = await _formLetterSenderRepository.Create(formLetterSender);
 
-            _logger.LogInformation("Form letter sender {FormLetterSenderId} created", createdFormLetterSender.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Form letter sender {FormLetterSenderId} created", createdFormLetterSender.Id);
+            }
 
             return FormLetterSenderMapper.ToFormLetterSenderUpdateDto(createdFormLetterSender, _authorizationService.IsAdmin);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error creating form letter sender. Cleaning up any created signature.");
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error creating form letter sender. Cleaning up any created signature.");
+            }
 
             if (formLetterSender.SignatureFileReferenceId is not null)
             {
@@ -157,7 +163,10 @@ public class FormLetterSenderService : IFormLetterSenderService
         if (string.IsNullOrWhiteSpace(formLetterSenderUpdateDto.SignatureFileName) && formLetterSender.SignatureFileReferenceId is not null)
         {
             // Signature has been removed
-            _logger.LogInformation("Removing signature file reference {SignatureFileReferenceId} for form letter sender {FormLetterSenderId}", formLetterSender.SignatureFileReferenceId, formLetterSender.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Removing signature file reference {SignatureFileReferenceId} for form letter sender {FormLetterSenderId}", formLetterSender.SignatureFileReferenceId, formLetterSender.Id);
+            }
             await DeleteSignature(formLetterSender.SignatureFileReferenceId.Value);
             formLetterSender.SignatureFileReference = null;
         }
@@ -167,7 +176,10 @@ public class FormLetterSenderService : IFormLetterSenderService
             // Remove old signature if it exists
             if (formLetterSender.SignatureFileReferenceId is not null)
             {
-                _logger.LogInformation("Removing old signature file reference {SignatureFileReferenceId} for form letter sender {FormLetterSenderId}", formLetterSender.SignatureFileReferenceId, formLetterSender.Id);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Removing old signature file reference {SignatureFileReferenceId} for form letter sender {FormLetterSenderId}", formLetterSender.SignatureFileReferenceId, formLetterSender.Id);
+                }
                 await DeleteSignature(formLetterSender.SignatureFileReferenceId.Value);
             }
 
@@ -187,7 +199,10 @@ public class FormLetterSenderService : IFormLetterSenderService
 
         await _formLetterSenderRepository.CommitChanges();
 
-        _logger.LogInformation("Updated form letter sender {FormLetterSenderId}", formLetterSender.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated form letter sender {FormLetterSenderId}", formLetterSender.Id);
+        }
 
         return FormLetterSenderMapper.ToFormLetterSenderUpdateDto(formLetterSender, _authorizationService.IsAdmin);
     }
@@ -207,7 +222,10 @@ public class FormLetterSenderService : IFormLetterSenderService
 
         if (formLetterSender.SignatureFileReferenceId is not null)
         {
-            _logger.LogInformation("Removing signature file reference {SignatureFileReferenceId} for form letter sender {FormLetterSenderId} before deleting form letter sender", formLetterSender.SignatureFileReferenceId, formLetterSender.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Removing signature file reference {SignatureFileReferenceId} for form letter sender {FormLetterSenderId} before deleting form letter sender", formLetterSender.SignatureFileReferenceId, formLetterSender.Id);
+            }
             await DeleteSignature(formLetterSender.SignatureFileReferenceId.Value);
         }
 
@@ -215,7 +233,10 @@ public class FormLetterSenderService : IFormLetterSenderService
 
         await _formLetterSenderRepository.CommitChanges();
 
-        _logger.LogInformation("Deleted form letter sender {FormLetterSenderId}", formLetterSender.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Deleted form letter sender {FormLetterSenderId}", formLetterSender.Id);
+        }
 
     }
 

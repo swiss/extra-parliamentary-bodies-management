@@ -106,7 +106,7 @@ public class FormLetterService : IFormLetterService
                 if (filterDto.ExportFileType == "word")
                 {
                     var zipFile = zip.CreateEntry($"{fileName}.docx", CompressionLevel.Fastest);
-                    await using var zipFileStream = zipFile.Open();
+                    await using var zipFileStream = await zipFile.OpenAsync();
 
                     await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", reducedDataDto, "formLetter");
                     await documentStream.CopyToAsync(zipFileStream);
@@ -114,7 +114,7 @@ public class FormLetterService : IFormLetterService
                 else
                 {
                     var zipFile = zip.CreateEntry($"{fileName}.pdf", CompressionLevel.Fastest);
-                    await using var zipFileStream = zipFile.Open();
+                    await using var zipFileStream = await zipFile.OpenAsync();
 
                     await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{template}.docx", reducedDataDto, "formLetter");
                     await documentStream.CopyToAsync(zipFileStream);

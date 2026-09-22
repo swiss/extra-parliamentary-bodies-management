@@ -163,6 +163,10 @@ dotnet_diagnostic.IDE0080.severity = error
 dotnet_diagnostic.IDE0100.severity = error
 dotnet_diagnostic.IDE0110.severity = suggestion
 dotnet_diagnostic.NUnit1032.severity = suggestion
+
+# CA1515 flags public types as candidates for internal, but test builder classes are
+# intentionally public for cross ProjectReference reuse between test projects.
+dotnet_diagnostic.CA1515.severity = suggestion
 csharp_style_unused_value_expression_statement_preference = discard_variable:suggestion
 csharp_style_unused_value_assignment_preference = discard_variable:warning
 csharp_style_prefer_primary_constructors = false

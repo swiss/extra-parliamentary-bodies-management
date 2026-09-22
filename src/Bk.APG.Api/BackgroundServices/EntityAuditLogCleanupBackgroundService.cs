@@ -16,7 +16,10 @@ public class EntityAuditLogCleanupBackgroundService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("{BackgroundService} is starting...", nameof(EntityAuditLogCleanupBackgroundService));
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("{BackgroundService} is starting...", nameof(EntityAuditLogCleanupBackgroundService));
+        }
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -48,14 +51,20 @@ public class EntityAuditLogCleanupBackgroundService : BackgroundService
                 .Where(x => x.AuditDate < DateTime.UtcNow.AddYears(-4))
                 .ToListAsync(cancellationToken);
 
-            _logger.LogInformation("Found {Count} entity audit logs to delete", entityAuditLogsToDelete.Count);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Found {Count} entity audit logs to delete", entityAuditLogsToDelete.Count);
+            }
 
             dataContext.EntityAuditLog.RemoveRange(entityAuditLogsToDelete);
             await dataContext.SaveChangesAsync(cancellationToken);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred during {BackgroundService}", nameof(EntityAuditLogCleanupBackgroundService));
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error occurred during {BackgroundService}", nameof(EntityAuditLogCleanupBackgroundService));
+            }
         }
     }
 }

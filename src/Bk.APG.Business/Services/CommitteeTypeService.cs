@@ -46,13 +46,19 @@ public class CommitteeTypeService : ICommitteeTypeService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update committee type {CommitteeTypeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update committee type {CommitteeTypeId}", id);
+        }
 
         var existingCommitteeType = await _committeeTypeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
 
         if (!_authorizationService.IsAdmin)
         {
-            _logger.LogError("User is not allowed to edit committee type {CommitteeTypeId}", id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("User is not allowed to edit committee type {CommitteeTypeId}", id);
+            }
 
             throw new AuthorizationException($"User is not allowed to edit committee type with id: {id}");
         }
@@ -60,21 +66,30 @@ public class CommitteeTypeService : ICommitteeTypeService
         if ((updateDto.GermanMinimalThreshold > 0 || updateDto.FrenchMinimalThreshold > 0 || updateDto.ItalianMinimalThreshold > 0 || updateDto.RomanshMinimalThreshold > 0) &&
             (updateDto.GermanThresholdPercentage > 0 || updateDto.FrenchThresholdPercentage > 0 || updateDto.ItalianThresholdPercentage > 0 || updateDto.RomanshThresholdPercentage > 0))
         {
-            _logger.LogError("It is not allowed to have minimal and percentage values on the same committee type! Update failed for {CommitteeTypeId}", id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("It is not allowed to have minimal and percentage values on the same committee type! Update failed for {CommitteeTypeId}", id);
+            }
 
             throw new BusinessValidationException($"It is not allowed to have Minimal and Percentage values on the same committee type! Update failed, id: {id}");
         }
 
         if (updateDto.GermanThresholdPercentage + updateDto.FrenchThresholdPercentage + updateDto.ItalianThresholdPercentage + updateDto.RomanshThresholdPercentage > 100)
         {
-            _logger.LogError("Update of committee type {CommitteeTypeId} failed, because language percentages were bigger than 100%.", id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("Update of committee type {CommitteeTypeId} failed, because language percentages were bigger than 100%.", id);
+            }
 
             throw new BusinessValidationException($"Update of committee Typ {id} failed, because language percentages were bigger than 100%.");
         }
 
         if (updateDto.FemaleThreshold + updateDto.MaleThreshold > 100)
         {
-            _logger.LogError("Update of committee type {CommitteeTypeId} failed, because gender percentages were bigger than 100%.", id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("Update of committee type {CommitteeTypeId} failed, because gender percentages were bigger than 100%.", id);
+            }
 
             throw new BusinessValidationException($"Update of committee Typ {id} failed, because gender percentages were bigger than 100%.");
         }
@@ -95,7 +110,10 @@ public class CommitteeTypeService : ICommitteeTypeService
 
         await _committeeTypeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated committee type {CommitteeTypeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated committee type {CommitteeTypeId}", id);
+        }
         return await GetCommitteeTypeForUpdate(id);
     }
 }

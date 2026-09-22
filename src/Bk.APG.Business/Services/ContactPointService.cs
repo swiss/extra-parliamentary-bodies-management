@@ -105,7 +105,10 @@ public class ContactPointService : IContactPointService
         mappedContactPoint.Modified = DateTime.UtcNow;
 
         await _contactPointRepository.Create(mappedContactPoint);
-        _logger.LogInformation("Created contact point {ContactPointId}", mappedContactPoint.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created contact point {ContactPointId}", mappedContactPoint.Id);
+        }
 
         await CompleteContactPointTasksIfResolved(createDto.CommitteeId);
 
@@ -116,7 +119,10 @@ public class ContactPointService : IContactPointService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update contact point {ContactPointId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update contact point {ContactPointId}", id);
+        }
 
         var committee = await _committeeRepository.GetById(updateDto.CommitteeId);
         if (!await _authorizationService.HasAccessToCommittee(committee))
@@ -171,7 +177,10 @@ public class ContactPointService : IContactPointService
 
             await _contactPointRepository.CommitChanges();
 
-            _logger.LogInformation("Updated contact point {ContactPointId}", id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Updated contact point {ContactPointId}", id);
+            }
 
             await CompleteContactPointTasksIfResolved(updateDto.CommitteeId);
         }
@@ -179,13 +188,19 @@ public class ContactPointService : IContactPointService
 
     public async Task Delete(Guid id)
     {
-        _logger.LogDebug("Delete contact point {ContactPointId}", id);
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            _logger.LogDebug("Delete contact point {ContactPointId}", id);
+        }
 
         var contactPoint = await _contactPointRepository.GetByIdForUpdate(id);
 
         if (!await _authorizationService.HasAccessToCommittee(contactPoint.Committee!))
         {
-            _logger.LogError("User is not allowed to delete contact point {ContactPointId} for committee {CommitteeId}", id, contactPoint.CommitteeId);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("User is not allowed to delete contact point {ContactPointId} for committee {CommitteeId}", id, contactPoint.CommitteeId);
+            }
             throw new AuthorizationException($"User is not allowed to delete contact point with id: {id}");
         }
 
@@ -193,7 +208,10 @@ public class ContactPointService : IContactPointService
 
         await _contactPointRepository.CommitChanges();
 
-        _logger.LogInformation("Deleted contact point {ContactPointId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Deleted contact point {ContactPointId}", id);
+        }
     }
 
     private async Task<bool> CheckForDuplicate(ContactPoint contactPoint)
