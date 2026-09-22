@@ -46,7 +46,8 @@ public class MembershipCandidate : EntityBase
     public string FunctionName => Function is null ? string.Empty : Gender!.Uri == Gender.Female ? Function.GetFemaleText() : Function.GetText();
 
     [NotMapped]
-    public bool JustificationLongerDutyNeeded => GeneralElectionCommittee!.ExtraParliamentaryCommission && EndDate > BeginDate && new DateOnly(1, 1, 1).Year + (EndDate.Year - BeginDate.Year) - 1 >= 12;
+    public bool JustificationLongerDutyNeeded => FederalDutyJustification.IsApplicableCommitteeType(GeneralElectionCommittee?.CommitteeTypeId) &&
+                                                 EndDate > BeginDate && new DateOnly(1, 1, 1).Year + (EndDate.Year - BeginDate.Year) - 1 >= 12;
 
     [NotMapped]
     public bool JustificationShorterDutyNeeded => GeneralElectionCommittee!.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && EndDate > BeginDate && new DateOnly(1, 1, 1).Year + (EndDate.AddDays(1).Year - BeginDate.Year) - 1 < 4;
@@ -68,7 +69,8 @@ public class MembershipCandidate : EntityBase
     public int CurrentTermOfOffice => MembershipTermCalculator.CalculateCurrentTermInYears(Person?.Memberships.Where(m => m.CommitteeId == GeneralElectionCommittee!.CommitteeId) ?? [], true);
 
     [NotMapped]
-    public bool NeedsLongerDutyJustification => GeneralElectionCommittee!.ExtraParliamentaryCommission && !InCorrelationWithFederalDuty && EstimatedTermOfOffice > 12;
+    public bool NeedsLongerDutyJustification => FederalDutyJustification.IsApplicableCommitteeType(GeneralElectionCommittee?.CommitteeTypeId) &&
+                                                !InCorrelationWithFederalDuty && EstimatedTermOfOffice > 12;
 
     [NotMapped]
     public bool HasMissingLongerDutyJustification => NeedsLongerDutyJustification && string.IsNullOrWhiteSpace(JustificationLongerDuty);
@@ -102,7 +104,8 @@ public class MembershipCandidate : EntityBase
     public bool HasMissingRequirementsProfile => NeedsRequirementsProfile && string.IsNullOrWhiteSpace(RequirementsProfile);
 
     [NotMapped]
-    public bool MaximumDurationExceeded => GeneralElectionCommittee!.ExtraParliamentaryCommission && !InCorrelationWithFederalDuty && EstimatedTermOfOffice > 16;
+    public bool MaximumDurationExceeded => FederalDutyJustification.IsApplicableCommitteeType(GeneralElectionCommittee?.CommitteeTypeId) &&
+                                           !InCorrelationWithFederalDuty && EstimatedTermOfOffice > 16;
 
     [NotMapped]
     public bool HasFederalAssemblyAuthoritiesCommissionConflict => Person?.FederalAssembly == true &&
