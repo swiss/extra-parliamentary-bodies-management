@@ -347,12 +347,18 @@ public class OgdExportService : IOgdExportService
                 var storageProvider = _storageProviders[target];
                 var graphUri = _targetsOptions.Targets[target].GraphName;
 
-                _logger.LogInformation("OGD export: Deleting graph on target {TargetName}", target);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("OGD export: Deleting graph on target {TargetName}", target);
+                }
                 await storageProvider.DeleteGraphAsync(graphUri, ct);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "OGD export: Error while deleting graph on target {TargetName}", target);
+                if (_logger.IsEnabled(LogLevel.Error))
+                {
+                    _logger.LogError(ex, "OGD export: Error while deleting graph on target {TargetName}", target);
+                }
             }
         }
 
@@ -368,12 +374,18 @@ public class OgdExportService : IOgdExportService
                     var storageProvider = _storageProviders[target];
                     var graphUri = _targetsOptions.Targets[target].GraphName;
 
-                    _logger.LogInformation("OGD export: Updating data on target {TargetName}. Chunk: {Current}", target, current);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        _logger.LogInformation("OGD export: Updating data on target {TargetName}. Chunk: {Current}", target, current);
+                    }
                     await storageProvider.UpdateGraphAsync(graphUri, chunk, [], ct);
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex, "OGD export: Error while updating data on target {TargetName}. Chunk: {Current}", target, current);
+                    if (_logger.IsEnabled(LogLevel.Error))
+                    {
+                        _logger.LogError(ex, "OGD export: Error while updating data on target {TargetName}. Chunk: {Current}", target, current);
+                    }
                 }
             }
         }
@@ -479,7 +491,10 @@ public class OgdExportService : IOgdExportService
             using var documentStream = await _documentService.GetDocument(appointmentDecision.OriginalDocument!.DocumentStorageId);
             if (documentStream == null)
             {
-                _logger.LogWarning("Could not retrieve original document for appointment decision {AppointmentDecisionId}", appointmentDecision.Id);
+                if (_logger.IsEnabled(LogLevel.Warning))
+                {
+                    _logger.LogWarning("Could not retrieve original document for appointment decision {AppointmentDecisionId}", appointmentDecision.Id);
+                }
                 continue;
             }
 
