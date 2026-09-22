@@ -27,7 +27,10 @@ public class DocumentService : IDocumentService
     public async Task<string> UploadDocument(byte[] fileContentBytes)
     {
         var key = Guid.NewGuid().ToString();
-        _logger.LogInformation("Upload document with key {Key}", key);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Upload document with key {Key}", key);
+        }
 
         using var stream = new MemoryStream(fileContentBytes);
 
@@ -42,7 +45,10 @@ public class DocumentService : IDocumentService
         using var transferUtility = new TransferUtility(_s3Client);
         await transferUtility.UploadAsync(uploadRequest);
 
-        _logger.LogInformation("Uploaded new document with key {Key}", key);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Uploaded new document with key {Key}", key);
+        }
 
         return key;
     }
@@ -51,12 +57,18 @@ public class DocumentService : IDocumentService
     {
         var bucketName = _s3Configuration.bucket;
 
-        _logger.LogInformation("Setting up S3 bucket: {Bucket}", bucketName);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Setting up S3 bucket: {Bucket}", bucketName);
+        }
 
         var listBucketResponse = await _s3Client.ListBucketsAsync();
         if (listBucketResponse.Buckets is not null && listBucketResponse.Buckets.Any(x => x.BucketName == bucketName))
         {
-            _logger.LogInformation("Bucket {Bucket} already exists, emptying it.", bucketName);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Bucket {Bucket} already exists, emptying it.", bucketName);
+            }
 
             var request = new ListObjectsV2Request
             {
@@ -80,7 +92,10 @@ public class DocumentService : IDocumentService
         }
         else
         {
-            _logger.LogInformation("Creating bucket {Bucket}", bucketName);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Creating bucket {Bucket}", bucketName);
+            }
             await _s3Client.PutBucketAsync(bucketName);
         }
     }
@@ -117,10 +132,16 @@ public class DocumentService : IDocumentService
 
     public async Task RemoveDocument(string documentId)
     {
-        _logger.LogInformation("Delete document with key {Key}", documentId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Delete document with key {Key}", documentId);
+        }
 
         await _s3Client.DeleteAsync(_s3Configuration.bucket, documentId, null);
 
-        _logger.LogInformation("Document with key {Key} has been deleted", documentId);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Document with key {Key} has been deleted", documentId);
+        }
     }
 }

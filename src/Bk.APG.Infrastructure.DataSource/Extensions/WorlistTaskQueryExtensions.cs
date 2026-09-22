@@ -94,12 +94,12 @@ public static class WorklistTaskQueryExtensions
 
         if (filterParameter.AssignedBy is not null)
         {
-            query = query.Where(c => c.AssignedBy != null && c.AssignedBy.Role == (Role)Enum.Parse(typeof(Role), filterParameter.AssignedBy.ToString()));
+            query = query.Where(c => c.AssignedBy != null && c.AssignedBy.Role == Enum.Parse<Role>(filterParameter.AssignedBy.ToString()));
         }
 
         if (filterParameter.AssignedTo is not null)
         {
-            query = query.Where(c => c.AssignedTo != null && c.AssignedTo.Role == (Role)Enum.Parse(typeof(Role), filterParameter.AssignedTo.ToString()));
+            query = query.Where(c => c.AssignedTo != null && c.AssignedTo.Role == Enum.Parse<Role>(filterParameter.AssignedTo.ToString()));
         }
 
         if (filterParameter.CreatedFrom is not null)

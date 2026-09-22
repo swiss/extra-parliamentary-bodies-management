@@ -38,7 +38,10 @@ public class DataAnalysisService : IDataAnalysisService
 
     public async Task<(string fileName, Stream content)> GenerateCommitteeTypeExport(DateOnly dataAnalysisDate)
     {
-        _logger.LogInformation("Generate committee type export for date {DataAnalysisDate}", dataAnalysisDate);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate committee type export for date {DataAnalysisDate}", dataAnalysisDate);
+        }
 
         string[] headers =
         [
@@ -176,7 +179,10 @@ public class DataAnalysisService : IDataAnalysisService
 
     public async Task<(string fileName, Stream content)> GenerateCommitteeExport(DateOnly dataAnalysisDate)
     {
-        _logger.LogInformation("Generate committee export for date {DataAnalysisDate}", dataAnalysisDate);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate committee export for date {DataAnalysisDate}", dataAnalysisDate);
+        }
 
         string[] headers =
         [
@@ -328,7 +334,10 @@ public class DataAnalysisService : IDataAnalysisService
 
     public async Task<(string fileName, Stream content)> GenerateMembershipExport(DateOnly dataAnalysisDate)
     {
-        _logger.LogInformation("Generate membership export for date {DataAnalysisDate}", dataAnalysisDate);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate membership export for date {DataAnalysisDate}", dataAnalysisDate);
+        }
 
         string[] headers =
         [
@@ -450,7 +459,10 @@ public class DataAnalysisService : IDataAnalysisService
 
     public async Task<(string fileName, Stream content)> GenerateMembershipInterestExport(DateOnly dataAnalysisDate)
     {
-        _logger.LogInformation("Generate membership export with interests for date {DataAnalysisDate}", dataAnalysisDate);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate membership export with interests for date {DataAnalysisDate}", dataAnalysisDate);
+        }
 
         string[] headers =
         [
@@ -502,7 +514,10 @@ public class DataAnalysisService : IDataAnalysisService
             fileName = BusinessTexts.DataAnalysis_ContactPointSecretariat;
         }
 
-        _logger.LogInformation("Generate contact point export ({ContactPointType}) for date {DataAnalysisDate}", dataAnalysisDate, contactPointType);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate contact point export ({ContactPointType}) for date {DataAnalysisDate}", dataAnalysisDate, contactPointType);
+        }
 
         string[] headers =
         [
@@ -653,7 +668,10 @@ public class DataAnalysisService : IDataAnalysisService
 
     public async Task<(string fileName, Stream content)> GeneratePersonExport(DateOnly dataAnalysisDate)
     {
-        _logger.LogInformation("Generate person export for date {DataAnalysisDate}", dataAnalysisDate);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate person export for date {DataAnalysisDate}", dataAnalysisDate);
+        }
 
         string[] headers =
         [
@@ -724,7 +742,10 @@ public class DataAnalysisService : IDataAnalysisService
 
     public async Task<(string fileName, Stream content)> GenerateRegionExport(DateOnly dataAnalysisDate)
     {
-        _logger.LogInformation("Generate region export for date {DataAnalysisDate}", dataAnalysisDate);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate region export for date {DataAnalysisDate}", dataAnalysisDate);
+        }
 
         var departments = (await _masterDataRepository.GetDepartments()).ToArray();
         string[] headers = [BusinessTexts.DataAnalysis_Canton, .. departments.OrderBy(x => x.Sort).Select(x => x.GetText()), BusinessTexts.DataAnalysis_Total];
@@ -788,7 +809,10 @@ public class DataAnalysisService : IDataAnalysisService
 
     public async Task<(string fileName, Stream content)> GenerateAgeExport(DateOnly dataAnalysisDate)
     {
-        _logger.LogInformation("Generate age export for date {DataAnalysisDate}", dataAnalysisDate);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Generate age export for date {DataAnalysisDate}", dataAnalysisDate);
+        }
 
         string[] headers =
         [

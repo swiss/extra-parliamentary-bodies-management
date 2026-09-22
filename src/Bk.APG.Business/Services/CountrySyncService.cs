@@ -20,7 +20,10 @@ public class CountrySyncService : BackgroundService
     {
         return Task.Run(async () =>
         {
-            _logger.LogInformation("{BackgroundService} is starting...", nameof(CountrySyncService));
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("{BackgroundService} is starting...", nameof(CountrySyncService));
+            }
 
             while (!stoppingToken.IsCancellationRequested)
             {
@@ -51,7 +54,10 @@ public class CountrySyncService : BackgroundService
                             await countryService.CreateOrUpdate(item);
                         }
 
-                        _logger.LogInformation("{Count} countries synchronized", countries.Count);
+                        if (_logger.IsEnabled(LogLevel.Information))
+                        {
+                            _logger.LogInformation("{Count} countries synchronized", countries.Count);
+                        }
                     }
                     else
                     {
@@ -60,7 +66,10 @@ public class CountrySyncService : BackgroundService
                 }
                 catch (Exception e)
                 {
-                    _logger.LogError(e, "Error while trying to synchronize countries.");
+                    if (_logger.IsEnabled(LogLevel.Error))
+                    {
+                        _logger.LogError(e, "Error while trying to synchronize countries.");
+                    }
                 }
 
                 await Task.Delay(TimeSpan.FromDays(1), stoppingToken);

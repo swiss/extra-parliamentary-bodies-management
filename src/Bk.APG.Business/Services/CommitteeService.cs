@@ -201,7 +201,10 @@ public class CommitteeService : ICommitteeService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update committee {CommitteeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update committee {CommitteeId}", id);
+        }
 
         if (checkAuthorization)
         {
@@ -256,7 +259,10 @@ public class CommitteeService : ICommitteeService
 
         await _committeeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated committee {CommitteeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated committee {CommitteeId}", id);
+        }
 
         return await GetCommitteeDetail(id, true);
     }
@@ -283,7 +289,10 @@ public class CommitteeService : ICommitteeService
                 }
                 else
                 {
-                    _logger.LogInformation("No person attached to candidate, could not create member!");
+                    if (_logger.IsEnabled(LogLevel.Information))
+                    {
+                        _logger.LogInformation("No person attached to candidate, could not create member!");
+                    }
                 }
             }
             else if (candidate.ElectionTypeId == ElectionType.ReElectionGuid && candidate.MembershipId != null)
@@ -333,7 +342,10 @@ public class CommitteeService : ICommitteeService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update justifications for committee {CommitteeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update justifications for committee {CommitteeId}", id);
+        }
 
         var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion);
 
@@ -350,7 +362,10 @@ public class CommitteeService : ICommitteeService
 
         await _committeeRepository.CommitChanges();
 
-        _logger.LogInformation("Updated justifications for committee {CommitteeId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Updated justifications for committee {CommitteeId}", id);
+        }
 
         return CommitteeMapper.ToCommitteeJustificationUpdateDto(existingCommittee);
     }
@@ -403,7 +418,10 @@ public class CommitteeService : ICommitteeService
         }
 
         var createdCommittee = await _committeeRepository.Create(committee);
-        _logger.LogInformation("Created new committee {CommitteeId}", createdCommittee.Id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Created new committee {CommitteeId}", createdCommittee.Id);
+        }
 
         var newCommittee = await _committeeRepository.GetByIdForUpdate(createdCommittee.Id);
 
@@ -426,7 +444,10 @@ public class CommitteeService : ICommitteeService
 
         if (createdCommittee.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && await _termOfOfficeDateService.CheckForRunningGeneralElection())
         {
-            _logger.LogInformation("Generate general election data for new committee {CommitteeId}", createdCommittee.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Generate general election data for new committee {CommitteeId}", createdCommittee.Id);
+            }
 
             var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, _authorizationService.GetCurrentUserName());
 
@@ -751,14 +772,20 @@ public class CommitteeService : ICommitteeService
         if (!(_authorizationService.IsAdmin || (_authorizationService.IsDepartment && (await _authorizationService.GetDepartment())?.Id == committee.DepartmentId) ||
             ((_authorizationService.IsOffice || _authorizationService.IsSecretariat) && await _authorizationService.IsCommitteeAssigned(committee.Id))))
         {
-            _logger.LogError("User is not allowed to edit committee {CommitteeId}", committee.Id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("User is not allowed to edit committee {CommitteeId}", committee.Id);
+            }
 
             throw new AuthorizationException($"User is not allowed to edit committee with id: {committee.Id}");
         }
 
         if (committee.EndDate is not null && committee.EndDate < DateOnly.FromDateTime(DateTime.Today) && !_authorizationService.IsAdmin)
         {
-            _logger.LogError("Committee {CommitteeId} can be updated by admin role only", committee.Id);
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError("Committee {CommitteeId} can be updated by admin role only", committee.Id);
+            }
 
             throw new AuthorizationException($"Committee with id: {committee.Id} can be updated by admin role only");
         }
