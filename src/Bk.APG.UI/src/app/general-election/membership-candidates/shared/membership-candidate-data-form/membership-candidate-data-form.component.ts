@@ -1,7 +1,7 @@
 import {AfterViewChecked, Component, effect, model, signal, ViewChild} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {MatCheckbox} from '@angular/material/checkbox';
+import {MatCheckbox, MatCheckboxChange} from '@angular/material/checkbox';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
 import {MatOption, MatSelect} from '@angular/material/select';
@@ -21,6 +21,11 @@ import {MasterDataService} from '@shared/master-data.service';
 import {RichTextEditorComponent} from '@shared/rich-text-editor/rich-text-editor.component';
 import {debounceTime} from 'rxjs';
 import {ConfigsService} from '../../../../configs.service';
+import {
+    getFederalDutyJustification,
+    isFederalDutyJustification,
+    isFederalDutyJustificationApplicable,
+} from '../../../../memberships/shared/federal-duty-justification';
 import {PersonsService} from '../../../../persons/persons.service';
 import {PersonSearchComponent} from '../../../../persons/shared/person-search/person-search.component';
 
@@ -86,6 +91,7 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
                 }
 
                 this.resetForm(modification);
+                this.syncAutomaticLongerDutyJustification();
             }
         });
 
@@ -158,6 +164,11 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
         return this.selectedPerson()?.genderId === this.configsService.frontendConfig.entityIds.gender.femaleId ? f.textFemale : f.text;
     }
 
+    onFederalDutyCheckboxChange(_: MatCheckboxChange) {
+        this.syncAutomaticLongerDutyJustification();
+        this.membershipCandidateForm.controls.justificationLongerDuty.updateValueAndValidity();
+    }
+
     private createForm() {
         const form = new FormGroup({
             surname: new FormControl('', {validators: [Validators.maxLength(150)]}),
@@ -195,9 +206,7 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
             Validators.max(100),
             conditionalValidator(() => this.generalElectionCommittee()?.marketOrientated === true, Validators.required),
         ]);
-        form.controls.justificationLongerDuty.setValidators([
-            conditionalValidator(() => this.membershipCandidateModification()?.needsLongerDutyJustification === true, Validators.required),
-        ]);
+        form.controls.justificationLongerDuty.setValidators([conditionalValidator(() => this.isLongerDutyJustificationNeeded(), Validators.required)]);
         form.controls.justificationShorterDuty.setValidators([
             conditionalValidator(() => this.membershipCandidateModification()?.needsShorterDutyJustification === true, Validators.required),
         ]);
@@ -245,5 +254,33 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
                 this.membershipCandidateForm.controls.beginDate.enable({emitEvent: false});
             }
         });
+    }
+
+    private syncAutomaticLongerDutyJustification() {
+        const control = this.membershipCandidateForm.controls.justificationLongerDuty;
+        const isAutomatic =
+            this.generalElectionCommittee()?.extraParliamentaryCommission === true &&
+            isFederalDutyJustificationApplicable(this.generalElectionCommittee()?.committeeTypeId) &&
+            this.membershipCandidateForm.controls.inCorrelationWithFederalDuty.value === true;
+        if (isAutomatic) {
+            control.setValue(getFederalDutyJustification(), {emitEvent: false});
+            control.disable({emitEvent: false});
+        } else {
+            if (isFederalDutyJustification(control.value ?? undefined)) {
+                control.setValue('', {emitEvent: false});
+            }
+            if (this.generalElectionCommittee()?.isValidated !== true) {
+                control.enable({emitEvent: false});
+            }
+        }
+    }
+
+    private isLongerDutyJustificationNeeded(): boolean {
+        return (
+            this.generalElectionCommittee()?.extraParliamentaryCommission === true &&
+            isFederalDutyJustificationApplicable(this.generalElectionCommittee()?.committeeTypeId) &&
+            (this.membershipCandidateModification()?.estimatedTermOfOffice ?? 0) > 12 &&
+            this.membershipCandidateForm.controls.inCorrelationWithFederalDuty.value !== true
+        );
     }
 }
