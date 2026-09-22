@@ -285,7 +285,10 @@ public class CommitteeService : ICommitteeService
 
                 if (createDto.PersonId != Guid.Empty)
                 {
-                    await _membershipMirrorService.CreateNewMembershipFromCandidate(createDto, userName);
+                    await _membershipMirrorService.CreateNewMembershipFromCandidate(
+                        createDto,
+                        userName,
+                        candidate.GeneralElectionCommittee?.CommitteeTypeId);
                 }
                 else
                 {

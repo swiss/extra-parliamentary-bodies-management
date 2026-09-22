@@ -70,7 +70,7 @@ public static class MembershipMapper
         };
     }
 
-    public static Membership FromMembershipCreateDto(MembershipCreateDto membershipCreateDto, string currentUserName)
+    public static Membership FromMembershipCreateDto(MembershipCreateDto membershipCreateDto, string currentUserName, Guid? committeeTypeId = null)
     {
         ArgumentNullException.ThrowIfNull(membershipCreateDto);
 
@@ -86,7 +86,10 @@ public static class MembershipMapper
             ElectionOfficeId = membershipCreateDto.ElectionOfficeId,
             OldMembershipAddition = null,
             MembershipAdditionId = membershipCreateDto.MembershipAdditionId,
-            JustificationLongerDuty = membershipCreateDto.JustificationLongerDuty,
+            JustificationLongerDuty = FederalDutyJustification.Normalize(
+                membershipCreateDto.JustificationLongerDuty,
+                membershipCreateDto.InCorrelationWithFederalDuty,
+                committeeTypeId),
             JustificationShorterDuty = membershipCreateDto.JustificationShorterDuty,
             JustificationMemberInFederalDuty = membershipCreateDto.JustificationMemberInFederalDuty,
             JustificationMemberInFederalAssembly = membershipCreateDto.JustificationMemberInFederalAssembly,

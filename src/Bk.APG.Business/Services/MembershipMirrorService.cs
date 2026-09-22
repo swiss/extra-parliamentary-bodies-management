@@ -97,7 +97,7 @@ public class MembershipMirrorService : IMembershipMirrorService
         }
     }
 
-    public async Task CreateNewMembershipFromCandidate(MembershipCreateDto createDto, string userName)
+    public async Task CreateNewMembershipFromCandidate(MembershipCreateDto createDto, string userName, Guid? committeeTypeId = null)
     {
         ArgumentNullException.ThrowIfNull(createDto);
 
@@ -106,7 +106,7 @@ public class MembershipMirrorService : IMembershipMirrorService
             _logger.LogInformation("Create membership from GE for person {PersonId} in committee {CommitteeId}", createDto.PersonId, createDto.CommitteeId);
         }
 
-        var membership = MembershipMapper.FromMembershipCreateDto(createDto, userName);
+        var membership = MembershipMapper.FromMembershipCreateDto(createDto, userName, committeeTypeId);
 
         var newMembership = await _membershipRepository.Create(membership);
 
