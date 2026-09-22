@@ -251,6 +251,21 @@ internal class MembershipCandidateTests
     }
 
     [Test]
+    public void NeedsLongerDutyJustification_WhenOtherCommitteeType_ShouldReturnFalse()
+    {
+        var committee = new GeneralElectionCommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.ManagementCommitteeGuid)
+            .Build();
+        var candidate = new MembershipCandidateBuilder()
+            .WithGeneralElectionCommittee(committee)
+            .WithBeginDate(new DateOnly(2020, 1, 1))
+            .WithEndDate(new DateOnly(2033, 1, 1))
+            .Build();
+
+        Assert.That(candidate.NeedsLongerDutyJustification, Is.False);
+    }
+
+    [Test]
     public void NeedsShorterDutyJustification_WhenTermEndsEarly_ShouldReturnTrue()
     {
         var termOfOfficeDate = new TermOfOfficeDateBuilder()
