@@ -29,7 +29,10 @@ public class OgdDocumentService : IOgdDocumentService
     {
         ArgumentNullException.ThrowIfNull(fileName);
 
-        _logger.LogInformation("Upload new OGD document {FileName} to S3 bucket {Bucket} at path {Path}", fileName, _s3Configuration.bucket, path);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Upload new OGD document {FileName} to S3 bucket {Bucket} at path {Path}", fileName, _s3Configuration.bucket, path);
+        }
 
         // Sanitize filename to prevent header injection
         var safeFileName = fileName.Replace("\r", "", StringComparison.InvariantCultureIgnoreCase).Replace("\n", "", StringComparison.InvariantCultureIgnoreCase);
@@ -55,7 +58,10 @@ public class OgdDocumentService : IOgdDocumentService
         using var transferUtility = new TransferUtility(_s3Client);
         await transferUtility.UploadAsync(uploadRequest);
 
-        _logger.LogInformation("Uploaded new OGD document with key {Key}", uploadRequest.Key);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Uploaded new OGD document with key {Key}", uploadRequest.Key);
+        }
     }
 
     public async Task SetupBucket()

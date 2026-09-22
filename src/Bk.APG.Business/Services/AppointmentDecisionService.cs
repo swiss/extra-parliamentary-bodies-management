@@ -98,15 +98,24 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
             await _appointmentDecisionRepository.Create(appointmentDecision);
 
-            _logger.LogInformation("Appointment decision {AppointmentDecisionId} created", appointmentDecision.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Appointment decision {AppointmentDecisionId} created", appointmentDecision.Id);
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while creating appointment decision. Remove uploaded documents...");
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error while creating appointment decision. Remove uploaded documents...");
+            }
 
             foreach (var documentId in uploadedDocumentIds)
             {
-                _logger.LogInformation("Remove document {DocumentId}", documentId);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Remove document {DocumentId}", documentId);
+                }
                 await _documentService.RemoveDocument(documentId);
             }
 
@@ -120,7 +129,10 @@ public class AppointmentDecisionService : IAppointmentDecisionService
     {
         ArgumentNullException.ThrowIfNull(updateDto);
 
-        _logger.LogInformation("Update appointment decision {AppointmentDecisionId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Update appointment decision {AppointmentDecisionId}", id);
+        }
 
         CheckAuthorization();
 
@@ -175,24 +187,39 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
             foreach (var documentId in documentIdsToRemove)
             {
-                _logger.LogInformation("Removing document storage entry {DocumentId}' ...", documentId);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Removing document storage entry {DocumentId}' ...", documentId);
+                }
 
                 await DeleteDocumentStorageEntry(documentId);
 
-                _logger.LogInformation("Document storage entry (incl. file) {DocumentId}' removed", documentId);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Document storage entry (incl. file) {DocumentId}' removed", documentId);
+                }
             }
 
             await _appointmentDecisionRepository.CommitChanges();
 
-            _logger.LogInformation("Appointment decision {AppointmentDecisionId} updated", appointmentDecision.Id);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Appointment decision {AppointmentDecisionId} updated", appointmentDecision.Id);
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while updating appointment decision. Remove uploaded documents...");
+            if (_logger.IsEnabled(LogLevel.Error))
+            {
+                _logger.LogError(ex, "Error while updating appointment decision. Remove uploaded documents...");
+            }
 
             foreach (var documentId in uploadedDocumentIds)
             {
-                _logger.LogInformation("Remove document {DocumentId}", documentId);
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    _logger.LogInformation("Remove document {DocumentId}", documentId);
+                }
                 await _documentService.RemoveDocument(documentId);
             }
 
@@ -204,7 +231,10 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
     public async Task DeleteAppointmentDecision(Guid id)
     {
-        _logger.LogInformation("Delete appointment decision {AppointmentDecisionId}", id);
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Delete appointment decision {AppointmentDecisionId}", id);
+        }
 
         CheckAuthorization();
 
@@ -212,28 +242,40 @@ public class AppointmentDecisionService : IAppointmentDecisionService
 
         if (appointmentDecision.FileReferenceGerman is not null)
         {
-            _logger.LogInformation("Removing document storage entry DE {FileReferenceId}...", appointmentDecision.FileReferenceGermanId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Removing document storage entry DE {FileReferenceId}...", appointmentDecision.FileReferenceGermanId);
+            }
 
             await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceGerman.Id);
         }
 
         if (appointmentDecision.FileReferenceFrench is not null)
         {
-            _logger.LogInformation("Removing document storage entry FR {FileReferenceId}...", appointmentDecision.FileReferenceFrenchId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Removing document storage entry FR {FileReferenceId}...", appointmentDecision.FileReferenceFrenchId);
+            }
 
             await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceFrench.Id);
         }
 
         if (appointmentDecision.FileReferenceItalian is not null)
         {
-            _logger.LogInformation("Removing document storage entry IT {FileReferenceId}...", appointmentDecision.FileReferenceItalianId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Removing document storage entry IT {FileReferenceId}...", appointmentDecision.FileReferenceItalianId);
+            }
 
             await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceItalian.Id);
         }
 
         if (appointmentDecision.FileReferenceRomansh is not null)
         {
-            _logger.LogInformation("Removing document storage entry RM {FileReferenceId}...", appointmentDecision.FileReferenceRomanshId);
+            if (_logger.IsEnabled(LogLevel.Information))
+            {
+                _logger.LogInformation("Removing document storage entry RM {FileReferenceId}...", appointmentDecision.FileReferenceRomanshId);
+            }
 
             await DeleteDocumentStorageEntry(appointmentDecision.FileReferenceRomansh.Id);
         }
