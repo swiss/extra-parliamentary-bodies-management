@@ -22,7 +22,6 @@ describe('FormLettersSenderEditComponent', () => {
     let markAsTouchedSpy: jest.Mock;
     let markAsPristineSpy: jest.Mock;
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockFormComponentData: any;
 
     const mockSenderUpdate: FormLettersSenderUpdate = {
