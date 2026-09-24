@@ -12,6 +12,7 @@ public class WorklistTaskCreateValidator : AbstractValidator<WorklistTaskCreateD
             .NotEmpty();
 
         RuleFor(x => x.DueDate)
-            .NotNull();
+            .NotNull()
+            .GreaterThanOrEqualTo(_ => DateOnly.FromDateTime(DateTime.Today));
     }
 }
