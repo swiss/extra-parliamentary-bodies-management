@@ -44,5 +44,5 @@ public class WorklistTask : EntityBase
     public uint RowVersion { get; set; }
 
     [NotMapped]
-    public bool IsOverdue => DateOnly.FromDateTime(DateTime.Today) > DueDate;
+    public bool IsOverdue => WorklistTaskStateId == WorklistTaskState.Active && DateOnly.FromDateTime(DateTime.Today) > DueDate;
 }
