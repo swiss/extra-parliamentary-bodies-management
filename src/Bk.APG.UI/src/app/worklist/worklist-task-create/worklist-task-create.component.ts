@@ -69,6 +69,7 @@ import {WorklistService} from '../worklist.service';
 })
 export class WorklistTaskCreateComponent implements OnInit {
     form = this.buildForm();
+    readonly minDueDate = new Date(new Date().setHours(0, 0, 0, 0));
     availableAssignments = signal<EiamAssignment[]>([]);
     dataSource = new MatTableDataSource<GeneralElectionCommitteeList>();
     readonly displayedCommitteeColumns: string[] = ['description'];

@@ -4,6 +4,7 @@ using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.CrossCutting;
+using Bk.APG.CrossCutting.Exception;
 using Microsoft.Extensions.Logging;
 
 namespace Bk.APG.Business.Services;
@@ -152,6 +153,11 @@ public class WorklistTaskService : IWorklistTaskService
 
         var currentUserName = _authorizationService.GetCurrentUserName();
         var worklistTask = await _worklistTaskRepository.GetByIdForUpdate(id);
+
+        if (updateDto.DueDate < DateOnly.FromDateTime(worklistTask.Created))
+        {
+            throw new BusinessValidationException("The due date cannot be before the task creation date.");
+        }
 
         worklistTask.Description = updateDto.Description ?? string.Empty;
         worklistTask.DueDate = updateDto.DueDate;

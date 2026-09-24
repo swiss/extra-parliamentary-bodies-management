@@ -24,6 +24,8 @@ public class WorklistTaskUpdateValidator : AbstractValidator<WorklistTaskUpdateD
             .NotEmpty();
 
         RuleFor(x => x.DueDate)
-            .NotNull();
+            .NotNull()
+            .GreaterThanOrEqualTo(x => DateOnly.FromDateTime(x.Created))
+            .When(x => x.Created != default);
     }
 }
