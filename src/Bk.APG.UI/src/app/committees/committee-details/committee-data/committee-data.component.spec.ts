@@ -1,5 +1,3 @@
-/* eslint-disable dot-notation */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {signal, WritableSignal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {AbstractControl, ControlEvent, FormGroup, PristineChangeEvent} from '@angular/forms';

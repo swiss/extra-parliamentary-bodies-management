@@ -184,6 +184,8 @@ export default defineConfig([
             '@typescript-eslint/ban-ts-comment': 'off',
             '@typescript-eslint/no-floating-promises': 'off',
             '@angular-eslint/use-component-selector': 'off',
+            '@typescript-eslint/no-explicit-any': 'off',
+            'dot-notation': 'off',
             'max-lines-per-function': 'off',
             'max-lines': 'off',
         },
