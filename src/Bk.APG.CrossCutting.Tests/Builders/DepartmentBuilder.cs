@@ -24,6 +24,7 @@ public class DepartmentBuilder
     private readonly string _descriptionRm;
     private readonly int _sort;
     private readonly int _oldId;
+    private EiamAssignment? _eiamAssignment;
     private readonly Guid _eiamAssignmentId;
     private bool _isBigDepartment;
 
@@ -46,6 +47,7 @@ public class DepartmentBuilder
         _descriptionRm = _faker.Random.String();
         _sort = _faker.Random.Int(0);
         _oldId = _faker.Random.Int(1);
+        _eiamAssignment = new EiamAssignmentBuilder().Build();
         _eiamAssignmentId = _faker.Random.Guid();
         _isBigDepartment = false;
     }
@@ -80,6 +82,14 @@ public class DepartmentBuilder
         return this;
     }
 
+    public DepartmentBuilder WithEiamAssignment(EiamAssignment eiamAssignment)
+    {
+        ArgumentNullException.ThrowIfNull(eiamAssignment);
+
+        _eiamAssignment = eiamAssignment;
+        return this;
+    }
+
     public Department Build()
     {
         return new Department
@@ -101,6 +111,7 @@ public class DepartmentBuilder
             DescriptionRm = _descriptionRm,
             Sort = _sort,
             OldId = _oldId,
+            EiamAssignment = _eiamAssignment,
             EiamAssignmentId = _eiamAssignmentId,
             IsBigDepartment = _isBigDepartment,
         };
