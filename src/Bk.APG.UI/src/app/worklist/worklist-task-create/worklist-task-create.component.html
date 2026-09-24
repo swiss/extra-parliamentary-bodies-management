@@ -43,7 +43,7 @@
 
             <mat-form-field obErrorMessages>
                 <mat-label>{{ 'worklist.task.dueDate' | translate }}</mat-label>
-                <input matInput [matDatepicker]="dueDatePicker" [formControl]="form.controls.dueDate" required />
+                <input matInput [matDatepicker]="dueDatePicker" [formControl]="form.controls.dueDate" [min]="minDueDate" required />
                 <mat-datepicker-toggle matIconSuffix [for]="dueDatePicker" />
                 <mat-datepicker #dueDatePicker xPosition="end" />
                 <mat-error />
