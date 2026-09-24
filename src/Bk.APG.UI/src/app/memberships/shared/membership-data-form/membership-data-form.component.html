@@ -154,7 +154,7 @@
                 <apg-help-tooltip text="membership.helpTooltip.employmentLevel" />
             </div>
             <div class="checkbox-with-tooltip">
-                <mat-checkbox [formControl]="membershipForm.controls.inCorrelationWithFederalDuty" (change)="validateData($event)">{{
+                <mat-checkbox [formControl]="membershipForm.controls.inCorrelationWithFederalDuty" (change)="onFederalDutyCheckboxChange($event)">{{
                     'membership.details.inCorrelationWithFederalDuty' | translate
                 }}</mat-checkbox>
                 <apg-help-tooltip text="membership.helpTooltip.inCorrelationWithFederalDuty" />

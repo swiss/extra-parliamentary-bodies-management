@@ -60,7 +60,8 @@ public class Membership : EntityBase
     public bool HasOtherElectionOffice => _hasOtherElectionOfficePredicate(this);
 
     [NotMapped]
-    public bool JustificationLongerDutyNeeded => Committee?.ExtraParliamentaryCommission == true && MembershipTermCalculator.CalculateEstimatedTermInYears(BeginDate, EndDate) > 12;
+    public bool JustificationLongerDutyNeeded => FederalDutyJustification.IsApplicableCommitteeType(Committee?.CommitteeTypeId) &&
+                                                 MembershipTermCalculator.CalculateEstimatedTermInYears(BeginDate, EndDate) > 12;
 
     [NotMapped]
     public bool JustificationShorterDutyNeeded => Committee?.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid && EndDate < Committee?.TermOfOfficeDate?.EndDate && EndDate > BeginDate;

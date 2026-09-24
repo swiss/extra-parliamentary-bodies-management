@@ -223,6 +223,7 @@
             </mat-form-field>
             <mat-checkbox
                 [formControl]="membershipCandidateForm.controls.inCorrelationWithFederalDuty"
+                (change)="onFederalDutyCheckboxChange($event)"
                 matTooltip="{{ 'membership.details.inCorrelationWithFederalDuty' | translate }}"
             >
                 {{ 'membership.details.inCorrelationWithFederalDuty' | translate }}

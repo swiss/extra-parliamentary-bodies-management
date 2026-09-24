@@ -9,6 +9,7 @@ import {MatSelect} from '@angular/material/select';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {ActivatedRoute, ActivatedRouteSnapshot, Router} from '@angular/router';
 import {CommitteeDetails} from '@api/CommitteeDetails';
+import {CommitteeMembershipValidationResult} from '@api/CommitteeMembershipValidationResult';
 import {MembershipCreate} from '@api/MembershipCreate';
 import {MembershipUpdate} from '@api/MembershipUpdate';
 import {PersonDetails} from '@api/PersonDetails';
@@ -26,6 +27,7 @@ import {ConfigsService} from '../../../configs.service';
 import {PersonsService} from '../../../persons/persons.service';
 import {PersonSearchComponent} from '../../../persons/shared/person-search/person-search.component';
 import {CommitteeSearchComponent} from '../committee-search/committee-search.component';
+import {federalDutyJustificationTexts} from '../federal-duty-justification';
 import {MembershipDataFormComponent} from './membership-data-form.component';
 
 describe('MembershipDataFormComponent', () => {
@@ -210,6 +212,64 @@ describe('MembershipDataFormComponent', () => {
         component.updateValidity(true);
 
         expect(component.membershipForm.controls.justificationLongerDuty.valid).toBe(false);
+    });
+
+    it('should set the German automatic justification regardless of term length', () => {
+        component.committeeEntity.set({
+            id: '1',
+            extraParliamentaryCommission: true,
+            committeeTypeId: 'f2e2af70-d1d4-42b5-b23a-793cbc220064',
+        } as CommitteeDetails);
+        component.personSelected.set({id: '100', federalDuty: true} as PersonDetails);
+        component.validationResults.set({
+            hasErrors: false,
+            estimatedTermOfOffice: 0,
+        } as CommitteeMembershipValidationResult);
+        component.membershipForm.controls.justificationLongerDuty.setValue('Existing justification');
+        component.membershipForm.controls.inCorrelationWithFederalDuty.setValue(true);
+
+        component.onFederalDutyCheckboxChange({checked: true} as never);
+
+        expect(component.membershipForm.controls.justificationLongerDuty.value).toBe(federalDutyJustificationTexts.de);
+        expect(component.membershipForm.controls.justificationLongerDuty.disabled).toBe(true);
+    });
+
+    it('should clear the German automatic justification and re-enable validation when federal duty is disabled', () => {
+        component.committeeEntity.set({
+            id: '1',
+            extraParliamentaryCommission: true,
+            committeeTypeId: '0a4b7f1d-d8bf-4932-bece-dd2a51cc2d59',
+        } as CommitteeDetails);
+        component.personSelected.set({id: '100', federalDuty: true} as PersonDetails);
+        component.validationResults.set({
+            hasErrors: false,
+            estimatedTermOfOffice: 13,
+        } as CommitteeMembershipValidationResult);
+        component.membershipForm.controls.inCorrelationWithFederalDuty.setValue(true);
+        component.onFederalDutyCheckboxChange({checked: true} as never);
+
+        component.membershipForm.controls.inCorrelationWithFederalDuty.setValue(false);
+        component.onFederalDutyCheckboxChange({checked: false} as never);
+
+        expect(component.membershipForm.controls.justificationLongerDuty.value).toBe('');
+        expect(component.membershipForm.controls.justificationLongerDuty.enabled).toBe(true);
+        expect(component.membershipForm.controls.justificationLongerDuty.hasError('required')).toBe(true);
+    });
+
+    it('should not apply the automatic justification for other committee types', () => {
+        component.committeeEntity.set({id: '1', extraParliamentaryCommission: true, committeeTypeId: 'other'} as CommitteeDetails);
+        component.personSelected.set({id: '100', federalDuty: true} as PersonDetails);
+        component.validationResults.set({
+            hasErrors: false,
+            estimatedTermOfOffice: 13,
+        } as CommitteeMembershipValidationResult);
+        component.membershipForm.controls.justificationLongerDuty.setValue('Existing justification');
+        component.membershipForm.controls.inCorrelationWithFederalDuty.setValue(true);
+
+        component.onFederalDutyCheckboxChange({checked: true} as never);
+
+        expect(component.membershipForm.controls.justificationLongerDuty.value).toBe('Existing justification');
+        expect(component.membershipForm.controls.justificationLongerDuty.disabled).toBe(true);
     });
 
     it('should be invalid when justificationShorterDuty missing', () => {
