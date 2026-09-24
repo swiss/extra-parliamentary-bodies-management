@@ -943,7 +943,10 @@ public class MembershipCandidateService : IMembershipCandidateService
         membershipCandidate.FunctionId = membershipCandidateUpdate.FunctionId;
         membershipCandidate.MaximumEmploymentLevel = membershipCandidateUpdate.MaximumEmploymentLevel;
         membershipCandidate.MembershipAdditionId = membershipCandidateUpdate.MembershipAdditionId;
-        membershipCandidate.JustificationLongerDuty = membershipCandidateUpdate.JustificationLongerDuty;
+        membershipCandidate.JustificationLongerDuty = FederalDutyJustification.Normalize(
+            membershipCandidateUpdate.JustificationLongerDuty,
+            membershipCandidateUpdate.InCorrelationWithFederalDuty,
+            membershipCandidate.GeneralElectionCommittee?.CommitteeTypeId);
         membershipCandidate.JustificationShorterDuty = membershipCandidateUpdate.JustificationShorterDuty;
         membershipCandidate.JustificationMemberInFederalAssembly = membershipCandidateUpdate.JustificationMemberInFederalAssembly;
         membershipCandidate.JustificationMemberInFederalDuty = membershipCandidateUpdate.JustificationMemberInFederalDuty;

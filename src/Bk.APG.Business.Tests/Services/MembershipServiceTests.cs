@@ -576,10 +576,13 @@ internal class MembershipServiceTests
 
         var membershipToUpdateId = Guid.NewGuid();
 
-        var committee = new CommitteeBuilder().Build();
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .Build();
 
         var membership = new MembershipBuilder()
             .WithCommitteeId(committee.Id)
+            .WithCommittee(committee)
             .WithId(membershipToUpdateId)
             .Build();
 
@@ -624,7 +627,7 @@ internal class MembershipServiceTests
             Assert.That(membership.PersonId, Is.EqualTo(updateDto.PersonId));
             Assert.That(membership.MembershipAdditionId, Is.EqualTo(updateDto.MembershipAdditionId));
             Assert.That(membership.MaximumEmploymentLevel, Is.EqualTo(updateDto.MaximumEmploymentLevel));
-            Assert.That(membership.JustificationLongerDuty, Is.EqualTo(updateDto.JustificationLongerDuty));
+            Assert.That(membership.JustificationLongerDuty, Is.EqualTo(FederalDutyJustification.GermanText));
             Assert.That(membership.JustificationShorterDuty, Is.EqualTo(updateDto.JustificationShorterDuty));
             Assert.That(membership.JustificationMemberInFederalDuty, Is.EqualTo(updateDto.JustificationMemberInFederalDuty));
             Assert.That(membership.JustificationMemberInFederalAssembly, Is.EqualTo(updateDto.JustificationMemberInFederalAssembly));

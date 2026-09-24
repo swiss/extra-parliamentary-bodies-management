@@ -8,7 +8,7 @@
     <File Path="../Dockerfile.backend" />
     <File Path="../etc/apg-docker/docker-compose.yml" />
     <File Path="../GETTING-STARTED.md" />
-    <File Path="../image_version.json" />
+    <File Path="../GitVersion.yaml" />
     <File Path="../README.md" />
     <File Path=".globalconfig" />
     <File Path="Directory.Build.props" />
