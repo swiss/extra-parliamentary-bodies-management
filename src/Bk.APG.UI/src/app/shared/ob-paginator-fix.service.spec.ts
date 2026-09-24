@@ -1,4 +1,3 @@
-/* eslint-disable dot-notation */
 import {of} from 'rxjs';
 import {ObPaginatorFixService} from './ob-paginator-fix.service';
 

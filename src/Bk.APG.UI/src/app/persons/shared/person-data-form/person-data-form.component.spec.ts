@@ -1,4 +1,3 @@
-/* eslint-disable dot-notation,@typescript-eslint/no-explicit-any */
 import {HttpClient} from '@angular/common/http';
 import {ComponentFixture, discardPeriodicTasks, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {FormGroup, ReactiveFormsModule} from '@angular/forms';
