@@ -1,11 +1,14 @@
 import {signal} from '@angular/core';
-import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {MembershipCandidateTermCalculation} from '@api/MembershipCandidateTermCalculation';
 import {MembershipCandidateUpdate} from '@api/MembershipCandidateUpdate';
 import {ErrorService} from '@shared/error-service.service';
 import {MasterDataService} from '@shared/master-data.service';
+import {of} from 'rxjs';
 import {ConfigsService} from '../../../../configs.service';
 import {federalDutyJustificationTexts} from '../../../../memberships/shared/federal-duty-justification';
 import {PersonsService} from '../../../../persons/persons.service';
+import {MembershipCandidateService} from '../../membership-candidate-service';
 import {MembershipCandidateDataFormComponent} from './membership-candidate-data-form.component';
 
 describe('MembershipCandidateDataFormComponent', () => {
@@ -29,6 +32,10 @@ describe('MembershipCandidateDataFormComponent', () => {
         getPersonDetails: jest.fn(),
     };
 
+    const membershipCandidateServiceMock = {
+        calculateMembershipCandidateTerm: jest.fn(),
+    };
+
     const configsServiceMock = {
         frontendConfig: {
             entityIds: {
@@ -49,6 +56,7 @@ describe('MembershipCandidateDataFormComponent', () => {
                 {provide: MasterDataService, useValue: masterDataServiceMock},
                 {provide: ErrorService, useValue: errorServiceMock},
                 {provide: PersonsService, useValue: personsServiceMock},
+                {provide: MembershipCandidateService, useValue: membershipCandidateServiceMock},
                 {provide: ConfigsService, useValue: configsServiceMock},
             ],
         })
@@ -147,5 +155,82 @@ describe('MembershipCandidateDataFormComponent', () => {
 
         expect(component.membershipCandidateForm.controls.justificationLongerDuty.value).toBe('Existing justification');
         expect(component.membershipCandidateForm.controls.justificationLongerDuty.enabled).toBe(true);
+    });
+
+    describe('term of office recalculation', () => {
+        beforeEach(() => {
+            component.membershipCandidateModification.set({
+                id: '1',
+                beginDate: new Date(2018, 1, 1),
+                endDate: new Date(2022, 1, 1),
+                canEditBeginDate: true,
+                canEditEndDate: true,
+            } as MembershipCandidateUpdate);
+            fixture.detectChanges();
+        });
+
+        it('should call calculateMembershipCandidateTerm and update term values when endDate changes', fakeAsync(() => {
+            const term: MembershipCandidateTermCalculation = {currentTermOfOffice: 4, estimatedTermOfOffice: 8};
+            membershipCandidateServiceMock.calculateMembershipCandidateTerm.mockReturnValue(of(term));
+
+            const newEndDate = new Date(2033, 1, 1);
+            component.membershipCandidateForm.controls.beginDate.setValue(new Date(2020, 1, 1));
+            component.membershipCandidateForm.controls.endDate.setValue(newEndDate);
+            tick(300);
+
+            expect(membershipCandidateServiceMock.calculateMembershipCandidateTerm).toHaveBeenCalledWith('1', new Date(2020, 1, 1), newEndDate);
+            expect(component.membershipCandidateModification()?.currentTermOfOffice).toEqual(4);
+            expect(component.membershipCandidateModification()?.estimatedTermOfOffice).toEqual(8);
+        }));
+
+        it('should not overwrite the changed date after the term values are updated', fakeAsync(() => {
+            const term: MembershipCandidateTermCalculation = {currentTermOfOffice: 4, estimatedTermOfOffice: 8};
+            membershipCandidateServiceMock.calculateMembershipCandidateTerm.mockReturnValue(of(term));
+
+            const newEndDate = new Date(2033, 1, 1);
+            component.membershipCandidateForm.controls.endDate.setValue(newEndDate);
+            tick(300);
+
+            expect(component.membershipCandidateForm.controls.endDate.value).toEqual(newEndDate);
+        }));
+
+        it('should not call calculateMembershipCandidateTerm when the form is invalid', fakeAsync(() => {
+            component.membershipCandidateForm.controls.endDate.setValue(undefined);
+            tick(300);
+
+            expect(membershipCandidateServiceMock.calculateMembershipCandidateTerm).not.toHaveBeenCalled();
+        }));
+
+        it('should not call calculateMembershipCandidateTerm when the candidate has no id yet', fakeAsync(() => {
+            component.membershipCandidateModification.set({
+                canEditBeginDate: true,
+                canEditEndDate: true,
+            } as MembershipCandidateUpdate);
+            fixture.detectChanges();
+
+            component.membershipCandidateForm.controls.endDate.setValue(new Date(2033, 1, 1));
+            tick(300);
+
+            expect(membershipCandidateServiceMock.calculateMembershipCandidateTerm).not.toHaveBeenCalled();
+        }));
+
+        it('should call calculateMembershipCandidateTerm when beginDate is disabled but endDate changes', fakeAsync(() => {
+            const term: MembershipCandidateTermCalculation = {currentTermOfOffice: 4, estimatedTermOfOffice: 8};
+            membershipCandidateServiceMock.calculateMembershipCandidateTerm.mockReturnValue(of(term));
+
+            component.membershipCandidateModification.set({
+                id: '1',
+                beginDate: new Date(2018, 1, 1),
+                endDate: new Date(2022, 1, 1),
+                canEditBeginDate: false,
+                canEditEndDate: true,
+            } as MembershipCandidateUpdate);
+            fixture.detectChanges();
+
+            component.membershipCandidateForm.controls.endDate.setValue(new Date(2033, 1, 1));
+            tick(300);
+
+            expect(membershipCandidateServiceMock.calculateMembershipCandidateTerm).toHaveBeenCalled();
+        }));
     });
 });
