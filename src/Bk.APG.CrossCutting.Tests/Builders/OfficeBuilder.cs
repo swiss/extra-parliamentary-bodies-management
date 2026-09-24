@@ -28,6 +28,7 @@ public class OfficeBuilder
     private readonly int _oldId;
     private bool _isCentralFederalAdministration;
     private bool _isGeneralSecretariat;
+    private EiamAssignment? _eiamAssignment;
     private readonly Guid _eiamAssignmentId;
 
     public OfficeBuilder()
@@ -53,6 +54,7 @@ public class OfficeBuilder
         _department = new DepartmentBuilder().WithId(_departmentId).Build();
         _isCentralFederalAdministration = false;
         _isGeneralSecretariat = false;
+        _eiamAssignment = new EiamAssignmentBuilder().Build();
         _eiamAssignmentId = _faker.Random.Guid();
     }
 
@@ -125,6 +127,14 @@ public class OfficeBuilder
         return this;
     }
 
+    public OfficeBuilder WithEiamAssignment(EiamAssignment eiamAssignment)
+    {
+        ArgumentNullException.ThrowIfNull(eiamAssignment);
+
+        _eiamAssignment = eiamAssignment;
+        return this;
+    }
+
     public OfficeBuilder WithDepartmentId(Guid departmentId)
     {
         _departmentId = departmentId;
@@ -156,6 +166,7 @@ public class OfficeBuilder
             OldId = _oldId,
             IsCentralFederalAdministration = _isCentralFederalAdministration,
             IsGeneralSecretariat = _isGeneralSecretariat,
+            EiamAssignment = _eiamAssignment,
             EiamAssignmentId = _eiamAssignmentId
         };
     }
