@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any,dot-notation */
 import {Component, signal} from '@angular/core';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
