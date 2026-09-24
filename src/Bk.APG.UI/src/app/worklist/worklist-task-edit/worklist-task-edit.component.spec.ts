@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {provideHttpClient} from '@angular/common/http';
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideNativeDateAdapter} from '@angular/material/core';
