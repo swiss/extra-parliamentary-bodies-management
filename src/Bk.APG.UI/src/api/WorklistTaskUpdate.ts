@@ -5,6 +5,7 @@ export interface WorklistTaskUpdate {
     description: string;
     assignedTo: string;
     dueDate: Date;
+    created?: Date;
     canEdit?: boolean;
     canForward?: boolean;
     isBigDepartment?: boolean;

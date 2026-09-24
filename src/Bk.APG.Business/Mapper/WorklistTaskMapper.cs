@@ -91,6 +91,7 @@ public static class WorklistTaskMapper
         {
             Id = worklistTask.Id,
             Description = worklistTask.Description,
+            Created = worklistTask.Created,
             DueDate = worklistTask.DueDate,
             WorklistTaskType = worklistTask.WorklistTaskType!.GetText(),
             WorklistTaskState = worklistTask.WorklistTaskState!.GetText(),
