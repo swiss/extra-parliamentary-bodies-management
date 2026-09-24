@@ -73,9 +73,7 @@ describe('FormLettersSenderDataFormComponent', () => {
     });
 
     it('should expose sender functions and departments from master data', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const senderFunctions = (component as any).senderFunctions();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const departments = (component as any).departments();
 
         expect(senderFunctions).toEqual([{id: 'f1', description: 'Function 1'}]);
@@ -86,7 +84,6 @@ describe('FormLettersSenderDataFormComponent', () => {
         component.senderForm.controls.departmentId.setValue('dep-a');
         fixture.detectChanges();
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const departmentOffices = (component as any).departmentOffices();
         expect(departmentOffices).toEqual([
             {id: 'o1', departmentId: 'dep-a', name: 'Office A'},
