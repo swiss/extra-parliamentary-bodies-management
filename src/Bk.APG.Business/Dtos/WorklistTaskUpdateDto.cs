@@ -8,6 +8,7 @@ public class WorklistTaskUpdateDto
     public required string AssignedTo { get; set; }
     public required string AssignedBy { get; set; }
     public string? Description { get; set; }
+    public DateTime Created { get; set; }
     public required DateOnly DueDate { get; set; }
     public bool CanEdit { get; set; }
     public bool CanForward { get; set; }
