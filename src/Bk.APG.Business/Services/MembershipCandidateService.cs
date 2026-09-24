@@ -93,11 +93,11 @@ public class MembershipCandidateService : IMembershipCandidateService
                 await CheckCandidatePersonsAndCreateTasks(generalElectionCommittee, validationResult);
 
                 await CheckCandidateMembershipsAndCreateTasks(generalElectionCommittee, validationResult);
+
+                validationResult.AreContactPointsMissing = await CheckContactPointsAndCreateTasks(generalElectionCommittee);
+
+                await ActivateOrDeactivateReadyForProposalTasks(generalElectionCommittee, validationResult);
             }
-
-            validationResult.AreContactPointsMissing = await CheckContactPointsAndCreateTasks(generalElectionCommittee);
-
-            await ActivateOrDeactivateReadyForProposalTasks(generalElectionCommittee, validationResult);
 
             await _generalElectionCommitteeRepository.CommitChanges();
 
@@ -535,11 +535,11 @@ public class MembershipCandidateService : IMembershipCandidateService
         var newTasks = new List<WorklistTask>();
         if (generalElectionCommittee.Department!.IsBigDepartment)
         {
-            newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Office!.EiamAssignmentId!.Value, generalElectionCommittee.OfficeReadyForProposalDueDate!.Value));
+            newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Office!.EiamAssignment!.Id, generalElectionCommittee.OfficeReadyForProposalDueDate!.Value));
         }
 
-        newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Committee!.EiamAssignmentId!.Value, generalElectionCommittee.SecretariatReadyForProposalDueDate!.Value));
-        newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Department.EiamAssignmentId, departmentDueDate));
+        newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Committee!.EiamAssignment!.Id, generalElectionCommittee.SecretariatReadyForProposalDueDate!.Value));
+        newTasks.Add(GenerateProposalTask(generalElectionCommittee, generalElectionCommittee.Department.EiamAssignment!.Id, departmentDueDate));
         newTasks.Add(GenerateProposalTask(generalElectionCommittee, EiamAssignment.AdminId, DateOnly.FromDateTime(DateTime.UtcNow.AddDays(14))));
 
         await _worklistTaskRepository.CreateRange(newTasks);
