@@ -7,6 +7,7 @@ public interface IMembershipCandidateService
     Task PartialUpdateMembershipCandidate(Guid id, MembershipCandidatePartialUpdateDto membershipCandidatePartialUpdate);
     Task UpdateMembershipCandidate(Guid id, MembershipCandidateUpdateDto membershipCandidateUpdate);
     Task<MembershipCandidateUpdateDto> GetMembershipCandidateForUpdate(Guid id);
+    Task<MembershipCandidateTermCalculationDto> CalculateMembershipCandidateTerm(Guid id, MembershipCandidateTermCalculationRequestDto request);
     Task<MembershipCandidateDetailDto> CreateMembershipCandidate(MembershipCandidateCreateDto membershipCandidateCreate);
     Task<MembershipListDto> GetMembers(Guid generalElectionCommitteeId);
     Task DeleteMembershipCandidate(Guid id);

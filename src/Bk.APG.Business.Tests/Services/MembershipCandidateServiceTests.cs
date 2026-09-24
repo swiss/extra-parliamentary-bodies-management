@@ -780,6 +780,85 @@ internal class MembershipCandidateServiceTests
     }
 
     [Test]
+    public async Task CalculateMembershipCandidateTerm_WithPriorMemberships_ShouldAddCurrentTermToEstimatedTerm()
+    {
+        var candidateId = Guid.NewGuid();
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder().Build();
+        var priorMembership = new MembershipBuilder()
+            .WithCommitteeId(generalElectionCommittee.CommitteeId)
+            .WithBeginDate(new DateOnly(2015, 1, 1))
+            .WithEndDate(new DateOnly(2019, 1, 1))
+            .Build();
+        var person = new PersonBuilder().WithMemberships([priorMembership]).Build();
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .WithGeneralElectionCommittee(generalElectionCommittee)
+            .WithPerson(person)
+            .Build();
+
+        _membershipCandidateRepository.GetByIdForUpdate(candidateId).Returns(membershipCandidate);
+
+        var request = new MembershipCandidateTermCalculationRequestDto
+        {
+            BeginDate = new DateOnly(2020, 1, 1),
+            EndDate = new DateOnly(2023, 1, 1)
+        };
+
+        var result = await _service.CalculateMembershipCandidateTerm(candidateId, request);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.CurrentTermOfOffice, Is.EqualTo(4));
+            Assert.That(result.EstimatedTermOfOffice, Is.EqualTo(8));
+        });
+    }
+
+    [Test]
+    public async Task CalculateMembershipCandidateTerm_WithoutPerson_ShouldReturnZeroCurrentTermOfOffice()
+    {
+        var candidateId = Guid.NewGuid();
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .Build();
+
+        _membershipCandidateRepository.GetByIdForUpdate(candidateId).Returns(membershipCandidate);
+
+        var request = new MembershipCandidateTermCalculationRequestDto
+        {
+            BeginDate = new DateOnly(2020, 1, 1),
+            EndDate = new DateOnly(2023, 1, 1)
+        };
+
+        var result = await _service.CalculateMembershipCandidateTerm(candidateId, request);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.CurrentTermOfOffice, Is.EqualTo(0));
+            Assert.That(result.EstimatedTermOfOffice, Is.EqualTo(4));
+        });
+    }
+
+    [Test]
+    public void CalculateMembershipCandidateTerm_WithoutAccessToCommittee_ShouldThrowAuthorizationException()
+    {
+        var candidateId = Guid.NewGuid();
+        var membershipCandidate = new MembershipCandidateBuilder()
+            .WithId(candidateId)
+            .Build();
+
+        _membershipCandidateRepository.GetByIdForUpdate(candidateId).Returns(membershipCandidate);
+        _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(false);
+
+        var request = new MembershipCandidateTermCalculationRequestDto
+        {
+            BeginDate = new DateOnly(2020, 1, 1),
+            EndDate = new DateOnly(2023, 1, 1)
+        };
+
+        Assert.ThrowsAsync<AuthorizationException>(() => _service.CalculateMembershipCandidateTerm(candidateId, request));
+    }
+
+    [Test]
     public async Task CreateMembershipCandidate_ShouldCreateAndReturnMembershipCandidate()
     {
         var committeeId = Guid.NewGuid();

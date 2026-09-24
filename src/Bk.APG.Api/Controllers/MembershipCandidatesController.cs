@@ -26,6 +26,18 @@ public class MembershipCandidatesController : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("{id:guid}/calculate-term")]
+    [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
+    public async Task<ActionResult> CalculateMembershipCandidateTerm(
+        [FromRoute] Guid id,
+        [FromBody, Required] MembershipCandidateTermCalculationRequestDto request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var result = await _membershipCandidateService.CalculateMembershipCandidateTerm(id, request);
+        return Ok(result);
+    }
+
     [HttpPatch("{id:guid}")]
     [Authorize(Policy = APGPolicies.RequireAdminDepartmentOfficeOrSecretariatRole)]
     public async Task<IActionResult> PartialUpdateMembershipCandidate([FromRoute] Guid id, [FromBody, Required] MembershipCandidatePartialUpdateDto membershipCandidatePartialUpdate)
