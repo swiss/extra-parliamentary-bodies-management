@@ -6,6 +6,6 @@ namespace Bk.APG.Business.Services;
 public interface IMembershipMirrorService
 {
     Task MirrorOrDeleteMembershipForGeneralElection(Membership membership, bool deleteCandidate, bool wasMetadataChanged);
-    Task CreateNewMembershipFromCandidate(MembershipCreateDto createDto, string userName);
+    Task CreateNewMembershipFromCandidate(MembershipCreateDto createDto, string userName, Guid? committeeTypeId = null);
     Task UpdateMembershipFromCandidate(Guid id, MembershipUpdateDto updateDto, string userName);
 }

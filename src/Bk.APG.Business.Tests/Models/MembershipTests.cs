@@ -337,6 +337,8 @@ internal class MembershipTests
     [TestCase(CommitteeType.AuthoritiesCommissionGuidAsString, "justification", 1, false)]
     [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "", 1, false)]
     [TestCase(CommitteeType.AdministrationCommissionGuidAsString, "justification", 1, false)]
+    [TestCase(CommitteeType.ManagementCommitteeGuidAsString, "", 13, false)]
+    [TestCase(CommitteeType.FederalAgenciesCommitteeGuidAsString, "", 13, false)]
     public void NeedsAttentionLongerDuty_ShouldReturnExpected(string committeeTypeId, string justificationLongerDuty, int endYearsOffset, bool expected)
     {
         var membership = new MembershipBuilder()
