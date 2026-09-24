@@ -288,7 +288,7 @@ internal class MembershipCandidateServiceTests
     }
 
     [Test]
-    public async Task ValidateCandidateList_WithDuplicateWarning_ShouldNotCompleteCandidateListAndTasks()
+    public async Task ValidateCandidateList_WithDuplicateWarning_ShouldNotCompleteOrCreateTasks()
     {
         var committeeId = Guid.NewGuid();
         var candidateIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
@@ -342,6 +342,8 @@ internal class MembershipCandidateServiceTests
         }
 
         await _generalElectionCommitteeRepository.Received(1).CommitChanges();
+        await _worklistTaskRepository.DidNotReceiveWithAnyArgs().Create(Arg.Any<WorklistTask>());
+        await _worklistTaskRepository.DidNotReceiveWithAnyArgs().CreateRange(Arg.Any<IEnumerable<WorklistTask>>());
     }
 
     [Test]
