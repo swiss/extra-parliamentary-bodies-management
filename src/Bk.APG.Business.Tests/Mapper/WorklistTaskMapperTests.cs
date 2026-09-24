@@ -40,6 +40,24 @@ internal class WorklistTaskMapperTests
     }
 
     [Test]
+    public void ToWorklistTaskDto_ShouldNotMarkInactivePastTaskAsOverdue()
+    {
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .Build();
+        worklistTask.DueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
+
+        var worklistTaskDto = WorklistTaskMapper.ToWorklistTaskDto(worklistTask);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(worklistTask.IsOverdue, Is.False);
+            Assert.That(worklistTaskDto.IsOverdue, Is.False);
+            Assert.That(worklistTaskDto.IsInactive, Is.True);
+        });
+    }
+
+    [Test]
     public void ToWorklistTaskCreateDto_ShouldMapCorrectly()
     {
         var worklistTaskCreateDto = new WorklistTaskCreateDto
@@ -98,6 +116,7 @@ internal class WorklistTaskMapperTests
         {
             Assert.That(worklistTaskUpdateDto.Id, Is.EqualTo(worklistTask.Id));
             Assert.That(worklistTaskUpdateDto.Description, Is.EqualTo(worklistTask.Description));
+            Assert.That(worklistTaskUpdateDto.Created, Is.EqualTo(worklistTask.Created));
             Assert.That(worklistTaskUpdateDto.DueDate, Is.EqualTo(worklistTask.DueDate));
         });
     }

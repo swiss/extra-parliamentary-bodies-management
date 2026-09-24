@@ -68,7 +68,7 @@ describe('WorklistTaskEditComponent', () => {
 
     describe('save', () => {
         it('should navigate to worklist and show success notification when form is valid', () => {
-            component.form.controls.dueDate.setValue(new Date('2024-12-31'));
+            component.form.controls.dueDate.setValue(new Date());
             component.save();
             expect(routerSpy.navigate).toHaveBeenCalledWith(['/worklist']);
             expect(notificationServiceSpy.success).toHaveBeenCalledWith('worklist.task.edit.success');
