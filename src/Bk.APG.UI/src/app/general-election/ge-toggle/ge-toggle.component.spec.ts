@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatButtonToggleChange} from '@angular/material/button-toggle';
 import {GeneralElectionService} from '../general-election.service';

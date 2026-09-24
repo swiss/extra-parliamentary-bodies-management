@@ -126,7 +126,6 @@ describe('GeCommitteeJustificationsComponent', () => {
             const justificationBeforeSave = {id: '123', justificationMembers: 'my justification'} as GeneralElectionCommitteeJustificationUpdate;
 
             component.committeeJustificationUpdate.set(justificationBeforeSave);
-            // eslint-disable-next-line dot-notation
             component['unmodifiedCommitteeJustification'] = {
                 id: '999',
                 selectionProcedure: 'selectionProcedure',
