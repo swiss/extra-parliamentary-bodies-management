@@ -3,6 +3,7 @@ using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Business.Services;
 using Bk.APG.CrossCutting;
+using Bk.APG.CrossCutting.Exception;
 using Bk.APG.CrossCutting.Tests.Builders;
 using Bogus;
 using Microsoft.Extensions.Logging;
@@ -133,12 +134,26 @@ internal class WorklistTaskServiceTests
         var updateDto = new Faker<WorklistTaskUpdateDto>().Generate();
         var id = updateDto.Id;
         var worklistTask = new WorklistTaskBuilder().Build();
+        worklistTask.Created = DateTime.Today.AddDays(-1);
+        updateDto.DueDate = DateOnly.FromDateTime(DateTime.Today);
         _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
 
         await _service.UpdateWorklistTask(id, updateDto);
 
         await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
         await _worklistTaskRepository.Received(1).Update(Arg.Any<WorklistTask>());
+    }
+
+    [Test]
+    public void UpdateWorklistTask_WhenDueDateIsBeforeCreationDate_ShouldThrowBusinessValidationException()
+    {
+        var updateDto = new Faker<WorklistTaskUpdateDto>().Generate();
+        var worklistTask = new WorklistTaskBuilder().Build();
+        worklistTask.Created = DateTime.Today;
+        updateDto.DueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
+        _worklistTaskRepository.GetByIdForUpdate(updateDto.Id).Returns(worklistTask);
+
+        Assert.That(async () => await _service.UpdateWorklistTask(updateDto.Id, updateDto), Throws.Exception.InstanceOf<BusinessValidationException>());
     }
 
     [Test]

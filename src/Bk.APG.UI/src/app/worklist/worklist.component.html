@@ -87,7 +87,7 @@
     <tr *matHeaderRowDef="displayedColumns()" mat-header-row></tr>
     <tr
         *matRowDef="let row; columns: displayedColumns()"
-        [class]="row.isCompleted ? 'green-table-row' : row.isOverdue ? 'red-table-row' : row.isInactive ? 'inactive-table-row' : ''"
+        [class]="row.isInactive ? 'inactive-table-row' : row.isCompleted ? 'green-table-row' : row.isOverdue ? 'red-table-row' : ''"
         (dblclick)="navigateToDetails(row)"
         mat-row
     ></tr>

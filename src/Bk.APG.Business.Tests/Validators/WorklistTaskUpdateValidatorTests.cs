@@ -45,6 +45,18 @@ internal class WorklistTaskUpdateValidatorTests
         result.ShouldHaveValidationErrorFor(x => x.AssignedTo);
     }
 
+    [Test]
+    public void Validate_WhenDueDateIsBeforeCreationDate_ShouldAddValidationError()
+    {
+        var model = BuildValidModel();
+        model.Created = DateTime.Today;
+        model.DueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1));
+
+        var result = _validator.TestValidate(model);
+
+        result.ShouldHaveValidationErrorFor(x => x.DueDate);
+    }
+
     private static WorklistTaskUpdateDto BuildValidModel()
     {
         return new WorklistTaskUpdateDto
@@ -59,4 +71,3 @@ internal class WorklistTaskUpdateValidatorTests
         };
     }
 }
-
