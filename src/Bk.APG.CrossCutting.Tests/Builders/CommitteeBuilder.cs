@@ -54,6 +54,7 @@ public class CommitteeBuilder
     private readonly List<Membership> _memberships;
     private readonly List<ContactPoint> _contactPoints;
     private readonly List<GeneralElectionCommittee> _generalElectionCommittees;
+    private EiamAssignment? _eiamAssignment;
     private readonly Guid _eiamAssignmentId;
 
     private readonly uint _rowVersion;
@@ -112,6 +113,7 @@ public class CommitteeBuilder
         _contactPoints = [];
         _rowVersion = _faker.Random.UInt();
         _generalElectionCommittees = [];
+        _eiamAssignment = new EiamAssignmentBuilder().Build();
         _eiamAssignmentId = _faker.Random.Guid();
     }
 
@@ -316,6 +318,14 @@ public class CommitteeBuilder
         return this;
     }
 
+    public CommitteeBuilder WithEiamAssignment(EiamAssignment eiamAssignment)
+    {
+        ArgumentNullException.ThrowIfNull(eiamAssignment);
+
+        _eiamAssignment = eiamAssignment;
+        return this;
+    }
+
     public Committee Build()
     {
         return new Committee
@@ -368,6 +378,7 @@ public class CommitteeBuilder
             LinkHomepageRomansh = _linkHomepageRomansh,
             RowVersion = _rowVersion,
             GeneralElectionCommittees = _generalElectionCommittees,
+            EiamAssignment = _eiamAssignment,
             EiamAssignmentId = _eiamAssignmentId
         };
     }
