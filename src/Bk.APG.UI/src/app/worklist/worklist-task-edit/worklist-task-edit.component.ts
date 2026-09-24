@@ -46,6 +46,7 @@ import {WorklistService} from '../worklist.service';
 })
 export class WorklistTaskEditComponent implements OnInit {
     form = this.buildForm();
+    minDueDate = new Date(new Date().setHours(0, 0, 0, 0));
     protected worklistTask = signal<WorklistTaskUpdate | undefined>(undefined);
     protected readonly taskId: string;
 
@@ -69,6 +70,10 @@ export class WorklistTaskEditComponent implements OnInit {
             )
             .subscribe(task => {
                 this.worklistTask.set(task);
+                if (task.created) {
+                    this.minDueDate = new Date(task.created);
+                    this.minDueDate.setHours(0, 0, 0, 0);
+                }
                 if (!task.canEdit) {
                     this.form.disable();
                 }
