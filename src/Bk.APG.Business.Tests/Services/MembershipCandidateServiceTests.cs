@@ -1,4 +1,3 @@
-using System.Threading.Channels;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -131,6 +130,126 @@ internal class MembershipCandidateServiceTests
             Assert.That(existingMembershipCandidate.EndDate, Is.EqualTo(updateDto.EndDate));
             Assert.That(existingMembershipCandidate.InCorrelationWithFederalDuty, Is.EqualTo(updateDto.InCorrelationWithFederalDuty));
         }
+    }
+
+    [Test]
+    public async Task UpdateMembershipCandidate_WhenMetadataIsUnchanged_ShouldNotInvalidateCandidateList()
+    {
+        _authorizationService.IsAdmin.Returns(true);
+        var membershipCandidateId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var existingMembershipCandidate = new MembershipCandidateBuilder()
+            .WithIsSelected(true)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder()
+            .WithCommitteeId(committeeId)
+            .WithCandidateListStateId(CandidateListState.Validated).Build())
+            .WithElectionTypeId(ElectionType.NewElectionGuid).Build();
+        _membershipCandidateRepository.GetByIdForUpdate(membershipCandidateId).Returns(existingMembershipCandidate);
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(existingMembershipCandidate.GeneralElectionCommittee!);
+        var updateDto = new MembershipCandidateUpdateDto
+        {
+            GivenName = existingMembershipCandidate.GivenName,
+            Surname = existingMembershipCandidate.Surname,
+            BirthYear = existingMembershipCandidate.BirthYear,
+            GenderId = existingMembershipCandidate.GenderId,
+            LanguageId = existingMembershipCandidate.LanguageId,
+            ElectionTypeId = existingMembershipCandidate.ElectionTypeId,
+            ElectionOfficeId = existingMembershipCandidate.ElectionOfficeId,
+            MaximumEmploymentLevel = existingMembershipCandidate.MaximumEmploymentLevel,
+            MembershipAdditionId = existingMembershipCandidate.MembershipAdditionId,
+            Id = membershipCandidateId,
+            PersonId = existingMembershipCandidate.PersonId,
+            BeginDate = existingMembershipCandidate.BeginDate,
+            EndDate = existingMembershipCandidate.EndDate,
+            FunctionId = existingMembershipCandidate.FunctionId,
+            RowVersion = 0,
+            CanEditBeginDate = true,
+            CanEditEndDate = true,
+            JustificationLongerDuty = "new text",
+            JustificationShorterDuty = "new text",
+            JustificationMemberInFederalAssembly = "new text",
+            JustificationMemberInFederalDuty = "new text",
+        };
+
+        await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
+
+        await _generalElectionCommitteeService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(existingMembershipCandidate.GeneralElectionCommittee!.CommitteeId);
+    }
+
+    [TestCase(nameof(MembershipCandidateUpdateDto.MaximumEmploymentLevel))]
+    [TestCase(nameof(MembershipCandidateUpdateDto.BeginDate))]
+    [TestCase(nameof(MembershipCandidateUpdateDto.EndDate))]
+    [TestCase(nameof(MembershipCandidateUpdateDto.ElectionTypeId))]
+    [TestCase(nameof(MembershipCandidateUpdateDto.FunctionId))]
+    [TestCase(nameof(MembershipCandidateUpdateDto.InCorrelationWithFederalDuty))]
+    public async Task UpdateMembershipCandidate_WhenMetadataHasChanged_ShouldInvalidateCandidateList(string changedProperty)
+    {
+        _authorizationService.IsAdmin.Returns(true);
+
+        var membershipCandidateId = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+
+        var existingMembershipCandidate = new MembershipCandidateBuilder()
+            .WithIsSelected(true)
+            .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder()
+                .WithCommitteeId(committeeId)
+                .WithCandidateListStateId(CandidateListState.Validated)
+                .Build())
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithMaximumEmploymentLevel(10)
+            .Build();
+
+        _membershipCandidateRepository
+            .GetByIdForUpdate(membershipCandidateId)
+            .Returns(existingMembershipCandidate);
+
+        _generalElectionCommitteeRepository
+            .GetByCommitteeIdForUpdate(committeeId)
+            .Returns(existingMembershipCandidate.GeneralElectionCommittee!);
+
+        var updateDto = new MembershipCandidateUpdateDto
+        {
+            GivenName = existingMembershipCandidate.GivenName,
+            Surname = existingMembershipCandidate.Surname,
+            BirthYear = existingMembershipCandidate.BirthYear,
+            GenderId = existingMembershipCandidate.GenderId,
+            LanguageId = existingMembershipCandidate.LanguageId,
+            ElectionTypeId = changedProperty == nameof(MembershipCandidateUpdateDto.ElectionTypeId)
+                ? ElectionType.ReElectionGuid
+                : existingMembershipCandidate.ElectionTypeId,
+            ElectionOfficeId = existingMembershipCandidate.ElectionOfficeId,
+            MaximumEmploymentLevel = changedProperty == nameof(MembershipCandidateUpdateDto.MaximumEmploymentLevel)
+                ? existingMembershipCandidate.MaximumEmploymentLevel + 1
+                : existingMembershipCandidate.MaximumEmploymentLevel,
+            MembershipAdditionId = existingMembershipCandidate.MembershipAdditionId,
+            Id = membershipCandidateId,
+            PersonId = existingMembershipCandidate.PersonId,
+            BeginDate = changedProperty == nameof(MembershipCandidateUpdateDto.BeginDate)
+                ? existingMembershipCandidate.BeginDate!.AddDays(1)
+                : existingMembershipCandidate.BeginDate,
+            EndDate = changedProperty == nameof(MembershipCandidateUpdateDto.EndDate)
+                ? existingMembershipCandidate.EndDate!.AddDays(1)
+                : existingMembershipCandidate.EndDate,
+            FunctionId = changedProperty == nameof(MembershipCandidateUpdateDto.FunctionId)
+                ? Function.MemberGuid
+                : existingMembershipCandidate.FunctionId,
+            RowVersion = 0,
+            CanEditBeginDate = true,
+            CanEditEndDate = true,
+            JustificationLongerDuty = existingMembershipCandidate.JustificationLongerDuty,
+            JustificationShorterDuty = existingMembershipCandidate.JustificationShorterDuty,
+            JustificationMemberInFederalAssembly = existingMembershipCandidate.JustificationMemberInFederalAssembly,
+            JustificationMemberInFederalDuty = existingMembershipCandidate.JustificationMemberInFederalDuty,
+            InCorrelationWithFederalDuty = changedProperty == nameof(MembershipCandidateUpdateDto.InCorrelationWithFederalDuty)
+                ? !existingMembershipCandidate.InCorrelationWithFederalDuty
+                : existingMembershipCandidate.InCorrelationWithFederalDuty,
+        };
+
+        await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
+
+        await _generalElectionCommitteeService
+            .Received(1)
+            .InvalidateMembershipCandidateList(committeeId);
     }
 
     [Test]
