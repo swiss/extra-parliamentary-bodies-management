@@ -991,6 +991,29 @@ public class MembershipCandidateService : IMembershipCandidateService
         return dto;
     }
 
+    public async Task<MembershipCandidateTermCalculationDto> CalculateMembershipCandidateTerm(
+        Guid id,
+        MembershipCandidateTermCalculationRequestDto request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var membershipCandidate = await _membershipCandidateRepository.GetByIdForUpdate(id);
+
+        if (!await _authorizationService.HasAccessToCommittee(membershipCandidate.GeneralElectionCommittee!.Committee!))
+        {
+            throw new AuthorizationException($"Not permitted to calculate membership candidate term in committee {membershipCandidate.GeneralElectionCommittee.CommitteeId}");
+        }
+
+        var currentTermOfOffice = membershipCandidate.CurrentTermOfOffice;
+        var estimatedTermOfOffice = MembershipTermCalculator.CalculateEstimatedTermInYears(request.BeginDate, request.EndDate) + currentTermOfOffice;
+
+        return new MembershipCandidateTermCalculationDto
+        {
+            CurrentTermOfOffice = currentTermOfOffice,
+            EstimatedTermOfOffice = estimatedTermOfOffice
+        };
+    }
+
     public async Task<MembershipCandidateDetailDto> CreateMembershipCandidate(MembershipCandidateCreateDto membershipCandidateCreate)
     {
         ArgumentNullException.ThrowIfNull(membershipCandidateCreate);
