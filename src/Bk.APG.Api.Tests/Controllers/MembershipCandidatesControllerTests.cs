@@ -25,6 +25,30 @@ internal class MembershipCandidatesControllerTests
     }
 
     [Test]
+    public async Task CalculateMembershipCandidateTerm_ShouldCallServiceAndReturnOkWithResult()
+    {
+        var membershipCandidateId = Guid.NewGuid();
+        var request = new MembershipCandidateTermCalculationRequestDto
+        {
+            BeginDate = new DateOnly(2020, 1, 1),
+            EndDate = new DateOnly(2023, 1, 1)
+        };
+        var calculationResult = new MembershipCandidateTermCalculationDto
+        {
+            CurrentTermOfOffice = 4,
+            EstimatedTermOfOffice = 8
+        };
+
+        _membershipCandidateService.CalculateMembershipCandidateTerm(membershipCandidateId, request).Returns(calculationResult);
+
+        var result = await _controller.CalculateMembershipCandidateTerm(membershipCandidateId, request) as OkObjectResult;
+
+        await _membershipCandidateService.Received(1).CalculateMembershipCandidateTerm(membershipCandidateId, request);
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Value, Is.EqualTo(calculationResult));
+    }
+
+    [Test]
     public async Task UpdateCandidate_ShouldCallServiceAndReturnNoContent()
     {
         var membershipCandidateId = Guid.NewGuid();

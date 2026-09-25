@@ -1,6 +1,6 @@
 import {AfterViewChecked, Component, effect, model, signal, ViewChild} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatCheckbox, MatCheckboxChange} from '@angular/material/checkbox';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 import {MatError, MatFormField, MatInput, MatLabel, MatSuffix} from '@angular/material/input';
@@ -19,7 +19,7 @@ import {dateValidator} from '@shared/form-validators/date.validator';
 import {Comparison, rangeValidator} from '@shared/form-validators/range.validator';
 import {MasterDataService} from '@shared/master-data.service';
 import {RichTextEditorComponent} from '@shared/rich-text-editor/rich-text-editor.component';
-import {debounceTime} from 'rxjs';
+import {debounceTime, filter, merge, switchMap} from 'rxjs';
 import {ConfigsService} from '../../../../configs.service';
 import {
     getFederalDutyJustification,
@@ -28,6 +28,7 @@ import {
 } from '../../../../memberships/shared/federal-duty-justification';
 import {PersonsService} from '../../../../persons/persons.service';
 import {PersonSearchComponent} from '../../../../persons/shared/person-search/person-search.component';
+import {MembershipCandidateService} from '../../membership-candidate-service';
 
 @Component({
     selector: 'apg-membership-candidate-data-form',
@@ -67,6 +68,7 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
     constructor(
         protected readonly masterDataService: MasterDataService,
         private readonly personService: PersonsService,
+        private readonly membershipCandidateService: MembershipCandidateService,
         protected readonly errorService: ErrorService,
         readonly configsService: ConfigsService
     ) {
@@ -77,6 +79,28 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
             };
             this.membershipCandidateModification.update(value => ({...value, ...formValues}) as MembershipCandidateUpdate);
         });
+
+        const isControlValidOrDisabled = (control: AbstractControl) => control.disabled || control.valid;
+
+        merge(this.membershipCandidateForm.controls.beginDate.valueChanges, this.membershipCandidateForm.controls.endDate.valueChanges)
+            .pipe(
+                debounceTime(300),
+                filter(
+                    () =>
+                        isControlValidOrDisabled(this.membershipCandidateForm.controls.beginDate) &&
+                        isControlValidOrDisabled(this.membershipCandidateForm.controls.endDate)
+                ),
+                filter(() => !!this.membershipCandidateModification()?.id),
+                switchMap(() =>
+                    this.membershipCandidateService.calculateMembershipCandidateTerm(
+                        this.membershipCandidateModification()!.id,
+                        this.membershipCandidateForm.controls.beginDate.value!,
+                        this.membershipCandidateForm.controls.endDate.value!
+                    )
+                ),
+                takeUntilDestroyed()
+            )
+            .subscribe(term => this.updateTermOfOffice(term.currentTermOfOffice, term.estimatedTermOfOffice));
 
         this.toggleFormFields();
 
@@ -167,6 +191,19 @@ export class MembershipCandidateDataFormComponent implements AfterViewChecked {
     onFederalDutyCheckboxChange(_: MatCheckboxChange) {
         this.syncAutomaticLongerDutyJustification();
         this.membershipCandidateForm.controls.justificationLongerDuty.updateValueAndValidity();
+    }
+
+    private updateTermOfOffice(currentTermOfOffice: number, estimatedTermOfOffice: number) {
+        this.membershipCandidateModification.update(
+            value =>
+                ({
+                    ...value,
+                    ...this.membershipCandidateForm.getRawValue(),
+                    personId: this.selectedPerson()?.id,
+                    currentTermOfOffice,
+                    estimatedTermOfOffice,
+                }) as MembershipCandidateUpdate
+        );
     }
 
     private createForm() {
