@@ -16,7 +16,25 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 
 ## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Run `npm test` to execute the unit tests via Jest.
+
+Run a specific spec file:
+
+```shell
+npm test -- --test-path-pattern=src\\app\\auth\\auth.service.spec.ts
+```
+
+Run a specific test by name:
+
+```shell
+npm test -- --test-path-pattern=src\\app\\auth\\auth.service.spec.ts -t "should be created"
+```
+
+List tests:
+
+```shell
+npm test -- --list-tests
+```
 
 ## Running end-to-end tests
 
