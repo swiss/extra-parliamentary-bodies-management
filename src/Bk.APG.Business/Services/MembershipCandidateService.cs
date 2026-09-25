@@ -916,6 +916,8 @@ public class MembershipCandidateService : IMembershipCandidateService
             throw new AuthorizationException($"Not permitted to update membership candidate in committee {membershipCandidate.GeneralElectionCommittee!.CommitteeId} with this role");
         }
 
+        var hasMetadataChanged = HasMetadataChanged(membershipCandidate, membershipCandidateUpdate);
+
         if (membershipCandidateUpdate.PersonId is null)
         {
             membershipCandidate.GivenName = membershipCandidateUpdate.GivenName!;
@@ -956,7 +958,8 @@ public class MembershipCandidateService : IMembershipCandidateService
         membershipCandidate.Modified = DateTime.UtcNow;
         membershipCandidate.ModifiedBy = _authorizationService.GetCurrentUserName();
 
-        if (membershipCandidate.GeneralElectionCommittee is not null && membershipCandidate.IsSelected &&
+        if (hasMetadataChanged &&
+            membershipCandidate.GeneralElectionCommittee is not null && membershipCandidate.IsSelected &&
             membershipCandidate.GeneralElectionCommittee.CandidateListStateId == CandidateListState.Validated)
         {
             await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membershipCandidate.GeneralElectionCommittee.CommitteeId);
@@ -1062,6 +1065,16 @@ public class MembershipCandidateService : IMembershipCandidateService
         }
 
         return await GetMembershipCandidateDetail(createdMembershipCandidate.Id);
+    }
+
+    private static bool HasMetadataChanged(MembershipCandidate existing, MembershipCandidateUpdateDto dto)
+    {
+        return existing.MaximumEmploymentLevel != dto.MaximumEmploymentLevel ||
+               existing.BeginDate != dto.BeginDate ||
+               existing.EndDate != dto.EndDate ||
+               existing.ElectionTypeId != dto.ElectionTypeId ||
+               existing.FunctionId != dto.FunctionId ||
+               existing.InCorrelationWithFederalDuty != dto.InCorrelationWithFederalDuty;
     }
 
     private async Task<MembershipCandidateDetailDto> GetMembershipCandidateDetail(Guid id)
