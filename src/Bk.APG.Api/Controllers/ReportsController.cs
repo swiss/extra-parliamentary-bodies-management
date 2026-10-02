@@ -34,20 +34,8 @@ public class ReportsController : ControllerBase
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
-        if (filterDto.ExportType == "single")
-        {
-            // we export a ZIP File with all documents within
-            var (fileName, zipFile) = await _formLetterService.CreateFormLetterAsZipFile(filterDto);
+        var (fileName, zipFile) = await _formLetterService.CreateFormLetterAsZipFile(filterDto);
 
-            return File(zipFile, MediaTypeNames.Application.Zip, fileName);
-        }
-        else
-        {
-            var (fileName, content) = await _formLetterService.CreateFormLetterSingleDocument(filterDto);
-
-            return filterDto.ExportFileType == "word"
-                ? File(content, WordMimeType, fileName)
-                : File(content, MediaTypeNames.Application.Pdf, fileName);
-        }
+        return File(zipFile, MediaTypeNames.Application.Zip, fileName);
     }
 }

@@ -50,65 +50,107 @@ public class FormLetterService : IFormLetterService
 
         _logger.LogInformation("Generate form letter report");
 
-        var reportDto = await FillFormLetterDto(filterDto);
+        var reportDtos = await FillFormLetterDto(filterDto);
 
         var zipStream = new MemoryStream();
         const int maxFileNameLength = 150;
 
-        if (reportDto.Memberships != null && filterDto.ExportType == "single")
+        if (filterDto.ExportType == "single")
         {
-            const string template = "FormLetterGeneralElection";
-
-            var allMemberships = reportDto.Memberships.ToList();
-
-            var grouped = reportDto.Memberships.GroupBy(m => m.CommitteeId).ToList();
-
+            // Type "single" means, that every committee will be exported in 1 to 4 single files
             using var zip = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
-            foreach (var group in grouped)
+
+            foreach (var reportDto in reportDtos)
             {
-                var currentCommitteeId = group.Key;
-
-                var first = group.First();
-
-                var reducedMembersDto = allMemberships
-                    .Where(m => m.CommitteeId == currentCommitteeId)
-                    .OrderBy(m => m.Surname)
-                    .ThenBy(m => m.GivenName)
-                    .ToList();
-
-                var reducedDataDto = new FormLetterReportDto
+                if (reportDto.Memberships != null)
                 {
-                    SenderOfficeGerman = reportDto.SenderOfficeGerman,
-                    SenderOfficeFrench = reportDto.SenderOfficeFrench,
-                    SenderOfficeItalian = reportDto.SenderOfficeItalian,
-                    SenderName = reportDto.SenderName,
-                    SenderStreet = reportDto.SenderStreet,
-                    SenderZip = reportDto.SenderZip,
-                    SenderCity = reportDto.SenderCity,
-                    SenderPhone = reportDto.SenderPhone,
-                    SenderEmail = reportDto.SenderEmail,
-                    SenderWebsite = reportDto.SenderWebsite,
-                    SenderSignature = reportDto.SenderSignature,
-                    HasSignature = reportDto.HasSignature,
-                    NextTermOfOfficeBeginDate = reportDto.NextTermOfOfficeBeginDate,
-                    NextTermOfOfficeEndDate = reportDto.NextTermOfOfficeEndDate,
-                    TermOfOfficeEndDate = reportDto.TermOfOfficeEndDate,
-                    Memberships = reducedMembersDto
-                };
+                    var allMemberships = reportDto.Memberships.ToList();
 
-                var fileName = first.FileName.Replace(" ", "_", StringComparison.InvariantCultureIgnoreCase);
+                    var grouped = reportDto.Memberships.GroupBy(m => m.CommitteeId).ToList();
+
+                    foreach (var group in grouped)
+                    {
+                        var currentCommitteeId = group.Key;
+
+                        var first = group.First();
+
+                        var reducedMembersDto = allMemberships
+                            .Where(m => m.CommitteeId == currentCommitteeId)
+                            .OrderBy(m => m.Surname)
+                            .ThenBy(m => m.GivenName)
+                            .ToList();
+
+                        var reducedDataDto = new FormLetterReportDto
+                        {
+                            FormLetterLanguage = reportDto.FormLetterLanguage,
+                            SenderOffice = reportDto.SenderOffice,
+                            SenderName = reportDto.SenderName,
+                            SenderStreet = reportDto.SenderStreet,
+                            SenderZip = reportDto.SenderZip,
+                            SenderCity = reportDto.SenderCity,
+                            SenderPhone = reportDto.SenderPhone,
+                            SenderEmail = reportDto.SenderEmail,
+                            SenderWebsite = reportDto.SenderWebsite,
+                            SenderSignature = reportDto.SenderSignature,
+                            HasSignature = reportDto.HasSignature,
+                            NextTermOfOfficeBeginDate = reportDto.NextTermOfOfficeBeginDate,
+                            NextTermOfOfficeEndDate = reportDto.NextTermOfOfficeEndDate,
+                            TermOfOfficeEndDate = reportDto.TermOfOfficeEndDate,
+                            Memberships = reducedMembersDto
+                        };
+
+                        var fileName = first.FileName.Replace(" ", "_", StringComparison.InvariantCultureIgnoreCase);
+
+                        if (fileName.Length > maxFileNameLength)
+                        {
+                            fileName = fileName[..maxFileNameLength];
+                        }
+
+                        fileName = $"{fileName}_{GetFileNameLanguageExtension(reportDto.FormLetterLanguage)}";
+
+                        if (filterDto.ExportFileType == "word")
+                        {
+                            var zipFile = zip.CreateEntry($"{fileName}.docx", CompressionLevel.Fastest);
+                            await using var zipFileStream = await zipFile.OpenAsync();
+
+                            await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{reportDto.TemplateName}.docx", reducedDataDto, "formLetter");
+                            await documentStream.CopyToAsync(zipFileStream);
+                        }
+                        else
+                        {
+                            var zipFile = zip.CreateEntry($"{fileName}.pdf", CompressionLevel.Fastest);
+                            await using var zipFileStream = await zipFile.OpenAsync();
+
+                            await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{reportDto.TemplateName}.docx", reducedDataDto, "formLetter");
+                            await documentStream.CopyToAsync(zipFileStream);
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            using var zip = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
+
+            // here, all the committees are in one document per language
+            foreach (var reportDto in reportDtos)
+            {
+                var fileName = BusinessTexts.FormLetterCompleteExport_Filename;
 
                 if (fileName.Length > maxFileNameLength)
                 {
                     fileName = fileName[..maxFileNameLength];
                 }
 
+                fileName = $"{fileName}_{GetFileNameLanguageExtension(reportDto.FormLetterLanguage)}";
+
                 if (filterDto.ExportFileType == "word")
                 {
                     var zipFile = zip.CreateEntry($"{fileName}.docx", CompressionLevel.Fastest);
                     await using var zipFileStream = await zipFile.OpenAsync();
 
-                    await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", reducedDataDto, "formLetter");
+                    await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{reportDto.TemplateName}.docx", reportDto, "formLetter");
+
                     await documentStream.CopyToAsync(zipFileStream);
                 }
                 else
@@ -116,48 +158,20 @@ public class FormLetterService : IFormLetterService
                     var zipFile = zip.CreateEntry($"{fileName}.pdf", CompressionLevel.Fastest);
                     await using var zipFileStream = await zipFile.OpenAsync();
 
-                    await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{template}.docx", reducedDataDto, "formLetter");
+                    await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{reportDto.TemplateName}.docx", reportDto, "formLetter");
                     await documentStream.CopyToAsync(zipFileStream);
                 }
             }
         }
 
         zipStream.Position = 0;
-        return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.FormLetterCompleteExport_Filename}.zip", zipStream);
+        return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd_HHmmss}_{BusinessTexts.FormLetterCompleteExport_Filename}.zip", zipStream);
     }
 
-    public async Task<(string fileName, Stream content)> CreateFormLetterSingleDocument(FormLetterFilterParameters filterDto)
+    private async Task<IEnumerable<FormLetterReportDto>> FillFormLetterDto(FormLetterFilterParameters filterDto)
     {
-        ArgumentNullException.ThrowIfNull(filterDto);
-
         const string template = "FormLetterGeneralElection";
 
-        var reportDto = await FillFormLetterDto(filterDto);
-
-        if (filterDto.ExportFileType == "word")
-        {
-            await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{template}.docx", reportDto, "formLetter");
-
-            var stream = new MemoryStream();
-            await documentStream.CopyToAsync(stream);
-            stream.Position = 0;
-
-            return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.FormLetterCompleteExport_Filename}.docx", stream);
-        }
-        else
-        {
-            await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{template}.docx", reportDto, "formLetter");
-
-            var stream = new MemoryStream();
-            await documentStream.CopyToAsync(stream);
-            stream.Position = 0;
-
-            return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd}_{BusinessTexts.FormLetterCompleteExport_Filename}.pdf", stream);
-        }
-    }
-
-    private async Task<FormLetterReportDto> FillFormLetterDto(FormLetterFilterParameters filterDto)
-    {
         var allElectionTypes = await _masterDataRepository.GetElectionTypes();
         var electionTypeList = allElectionTypes.Select(e => e.Id).ToList();
         electionTypeList.Remove(ElectionType.MembershipEndedBecauseOfDeathGuid);
@@ -192,6 +206,8 @@ public class FormLetterService : IFormLetterService
 
         var allRecipients = newAndReElections.Concat(endedMemberships).ToList().OrderBy(m => m.Surname).ThenBy(m => m.GivenName);
 
+        var formLetterReportList = new List<FormLetterReportDto>();
+
         var signaturePictureExists = false;
         var picBase64 = string.Empty;
 
@@ -209,27 +225,37 @@ public class FormLetterService : IFormLetterService
             }
         }
 
-        var formLetterReportDto = new FormLetterReportDto
+        foreach (var language in Enum.GetValues<FormLetterLanguage>())
         {
-            NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
-            NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
-            TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
-            Memberships = allRecipients,
-            HasSignature = signaturePictureExists,
-            SenderSignature = picBase64,
-            SenderOfficeGerman = sender.Office?.DescriptionDe,
-            SenderOfficeFrench = sender.Office?.DescriptionFr,
-            SenderOfficeItalian = sender.Office?.DescriptionIt,
-            SenderName = sender.GivenName + " " + sender.Surname,
-            SenderStreet = sender.StreetGerman,
-            SenderZip = sender.Zip,
-            SenderCity = sender.CityGerman,
-            SenderPhone = sender.Phone,
-            SenderEmail = sender.Email,
-            SenderWebsite = sender.Website
-        };
+            var currentRecipients = allRecipients.Where(r => r.FormLetterLanguage == language).ToList();
 
-        return formLetterReportDto;
+            if (currentRecipients.Count > 0)
+            {
+                var formLetterReportDto = new FormLetterReportDto
+                {
+                    FormLetterLanguage = language,
+                    NextTermOfOfficeBeginDate = nextTermOfOfficeDate.BeginDate.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture),
+                    NextTermOfOfficeEndDate = nextTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
+                    TermOfOfficeEndDate = currentTermOfOfficeDate.EndDate?.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture) ?? "",
+                    HasSignature = signaturePictureExists,
+                    SenderSignature = picBase64,
+                    SenderOffice = GetSenderLanguageText(language, sender.Office?.DescriptionDe, sender.Office?.DescriptionFr, sender.Office?.DescriptionIt, sender.Office?.DescriptionRm),
+                    SenderName = sender.GivenName + " " + sender.Surname,
+                    SenderStreet = GetSenderLanguageText(language, sender.StreetGerman, sender.StreetFrench, sender.StreetItalian, sender.StreetRomansh),
+                    SenderZip = sender.Zip,
+                    SenderCity = GetSenderLanguageText(language, sender.CityGerman, sender.CityFrench, sender.CityItalian, sender.CityRomansh),
+                    SenderPhone = sender.Phone,
+                    SenderEmail = sender.Email,
+                    SenderWebsite = sender.Website,
+                    TemplateName = $"{template}_{language}",
+                    Memberships = currentRecipients,
+                };
+
+                formLetterReportList.Add(formLetterReportDto);
+            }
+        }
+
+        return formLetterReportList;
     }
 
     private async Task<List<FormLetterMembershipReportDto>> GetNewAndReelectionMemberships(FormLetterFilterParameters filterDto, List<Guid> electionTypeListFuture, FormLetterSender sender)
@@ -285,6 +311,56 @@ public class FormLetterService : IFormLetterService
             date.ToString("MMMM yyyy", new CultureInfo("it-CH")),
             date.ToString("MMMM yyyy", new CultureInfo("rm-CH"))
         );
+    }
+
+    private static string GetSenderLanguageText(FormLetterLanguage language, string? germanText, string? frenchText, string? italianText, string? romanshText)
+    {
+        if (language == FormLetterLanguage.German)
+        {
+            return germanText ?? string.Empty;
+        }
+
+        if (language == FormLetterLanguage.French)
+        {
+            return frenchText ?? string.Empty;
+        }
+
+        if (language == FormLetterLanguage.Italian)
+        {
+            return italianText ?? string.Empty;
+        }
+
+        if (language == FormLetterLanguage.Romansh)
+        {
+            return romanshText ?? string.Empty;
+        }
+
+        return germanText ?? string.Empty;
+    }
+
+    private static string GetFileNameLanguageExtension(FormLetterLanguage language)
+    {
+        if (language == FormLetterLanguage.German)
+        {
+            return "DE";
+        }
+
+        if (language == FormLetterLanguage.French)
+        {
+            return "FR";
+        }
+
+        if (language == FormLetterLanguage.Italian)
+        {
+            return "IT";
+        }
+
+        if (language == FormLetterLanguage.Romansh)
+        {
+            return "RM";
+        }
+
+        return "DE";
     }
 
     private static FormLetterMembershipReportDto MapToFormLetterMembershipDto(
