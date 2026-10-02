@@ -214,6 +214,8 @@ public class CommitteeService : ICommitteeService
 
         var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion > 0 ? updateDto.RowVersion : null);
 
+        var committeeDissolutionWithdrawal = updateDto.EndDate is not null && existingCommittee.EndDate != updateDto.EndDate;
+
         existingCommittee.BeginDate = updateDto.BeginDate;
         existingCommittee.EndDate = updateDto.EndDate;
 
@@ -247,6 +249,24 @@ public class CommitteeService : ICommitteeService
         existingCommittee.LinkHomepageRomansh = updateDto.LinkHomepageRomansh;
 
         existingCommittee.VacanciesGeneralElection = updateDto.VacanciesInGeneralElection;
+
+        if (committeeDissolutionWithdrawal)
+        {
+            if (existingCommittee.IsInGeneralElection && existingCommittee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
+            {
+                await _membershipMirrorService.InvalidateMembershipCandidateList(existingCommittee.Id);
+            }
+
+            foreach (var membership in existingCommittee.Memberships.Where(y => !y.IsDeleted && !y.HasOtherElectionOffice))
+            {
+                membership.ElectionTypeId = ElectionType.CommitteeDissolutionWithdrawalGuid;
+                membership.EndDate = updateDto.EndDate!.Value;
+                if (existingCommittee.IsInGeneralElection)
+                {
+                    await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(membership, true, true);
+                }
+            }
+        }
 
         await UpdateMembershipAdditionsInGeneralElection(updateDto, existingCommittee);
 

@@ -117,6 +117,7 @@ export interface ElectionTypeIdConfig {
     reElectionId: string;
     maximumDutyRetirementId: string;
     deceasedId: string;
+    committeeDissolutionWithdrawalId: string;
 }
 
 export interface CountryIdConfig {
