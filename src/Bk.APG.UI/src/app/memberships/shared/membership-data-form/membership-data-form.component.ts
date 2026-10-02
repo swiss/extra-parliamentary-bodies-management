@@ -91,7 +91,18 @@ export class MembershipDataFormComponent implements OnInit {
     validationResults = signal({} as CommitteeMembershipValidationResult);
     validationRequest!: CommitteeMembershipValidationRequest;
     activeFunctions = computed(() => this.masterDataService.functions().filter(y => !y.isDeleted));
-    activeElectionTypes = computed(() => this.masterDataService.electionTypes().filter(y => !y.isDeleted));
+    activeElectionTypes = computed(() => {
+        const selectedId = this.selectedElectionTypeId();
+
+        return this.masterDataService
+            .electionTypes()
+            .filter(x => !x.isDeleted)
+            .filter(
+                x =>
+                    x.id !== this.configsService.frontendConfig.entityIds.electionType.committeeDissolutionWithdrawalId ||
+                    selectedId === this.configsService.frontendConfig.entityIds.electionType.committeeDissolutionWithdrawalId
+            );
+    });
     activeElectionOffices = computed(() => this.masterDataService.electionOffices().filter(y => !y.isDeleted));
     membershipModification = model<MembershipCreate | MembershipUpdate>();
     personEntity = model<PersonDetails | undefined>();
@@ -105,6 +116,7 @@ export class MembershipDataFormComponent implements OnInit {
     isSecretariat = false;
     canEdit = false;
     canEditBeginDate = false;
+    canEditEndDateAndElectionType = false;
 
     currentDate: Date = new Date();
 
@@ -319,6 +331,7 @@ export class MembershipDataFormComponent implements OnInit {
 
                     this.canEdit = (this.membershipModification() as MembershipUpdate).canEdit;
                     this.canEditBeginDate = (this.membershipModification() as MembershipUpdate).canEditBeginDate;
+                    this.canEditEndDateAndElectionType = (this.membershipModification() as MembershipUpdate).canEditEndDateAndElectionType;
 
                     const beginDateControl = this.membershipForm.controls.beginDate;
                     const endDateControl = this.membershipForm.controls.endDate;
@@ -327,11 +340,15 @@ export class MembershipDataFormComponent implements OnInit {
                         beginDateControl.disable();
                         endDateControl.disable();
                     } else {
-                        endDateControl.enable();
                         if (this.canEditBeginDate) {
                             beginDateControl.enable();
                         } else {
                             beginDateControl.disable();
+                        }
+                        if (this.canEditEndDateAndElectionType) {
+                            endDateControl.enable();
+                        } else {
+                            endDateControl.disable();
                         }
                     }
 
@@ -694,7 +711,11 @@ export class MembershipDataFormComponent implements OnInit {
                 this.membershipForm.controls.remarksStatus.disable();
             } else {
                 if (this.isUpdateMode) {
-                    this.membershipForm.controls.electionTypeId.enable();
+                    if (this.canEditEndDateAndElectionType) {
+                        this.membershipForm.controls.electionTypeId.enable();
+                    } else {
+                        this.membershipForm.controls.electionTypeId.disable();
+                    }
                     this.membershipForm.controls.electionTypeId.updateValueAndValidity();
                     this.membershipForm.controls.electionTypeId.markAllAsTouched();
                 }

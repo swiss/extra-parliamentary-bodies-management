@@ -16,13 +16,7 @@
         <button (click)="back()" mat-button obButton="secondary" type="button">{{ 'common.back' | translate }}</button>
         <button mat-button obButton="secondary" [disabled]="!form().dirty" type="button" (click)="reset()">{{ 'common.reset' | translate }}</button>
         <button mat-button obButton="secondary" [disabled]="!canDelete" type="button" (click)="delete()">{{ 'common.delete' | translate }}</button>
-        <button
-            mat-button
-            obButton="primary"
-            type="button"
-            [disabled]="!form().valid || !form().dirty || form().controls.electionTypeId.disabled || hasValidationErrors()"
-            (click)="save()"
-        >
+        <button mat-button obButton="primary" type="button" [disabled]="!form().valid || !form().dirty || hasValidationErrors()" (click)="save()">
             {{ 'common.save' | translate }}
         </button>
     </div>

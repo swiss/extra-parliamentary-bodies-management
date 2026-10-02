@@ -18,7 +18,7 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("data")
-                .HasAnnotation("ProductVersion", "8.0.22")
+                .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);

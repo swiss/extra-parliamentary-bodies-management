@@ -14,14 +14,47 @@ public class MembershipMirrorServiceTests
     private MembershipMirrorService _membershipMirrorService = null!;
     private readonly IMembershipCandidateRepository _membershipCandidateRepository = Substitute.For<IMembershipCandidateRepository>();
     private readonly IMembershipRepository _membershipRepository = Substitute.For<IMembershipRepository>();
+    private readonly IAuthorizationService _authorizationService = Substitute.For<IAuthorizationService>();
+    private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+    private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
     private readonly ILogger<MembershipMirrorService> _logger = NullLogger<MembershipMirrorService>.Instance;
+
+    private GeneralElectionCommittee _generalElectionCommittee1;
+    private Committee _committee;
+    private Guid _committeeId;
+    private Guid _generalElectionCommitteeId;
+    private Guid _departmentId;
+    private Department _department;
 
     [SetUp]
     public void SetUp()
     {
+        _generalElectionCommitteeId = Guid.NewGuid();
+        _departmentId = Guid.NewGuid();
+        _committeeId = Guid.Parse("17FEBC36-0837-4AD3-AB92-0594777FBC1E");
+
+        _department = new DepartmentBuilder().WithId(_departmentId).Build();
+
+        _committee = new CommitteeBuilder().WithId(_committeeId).WithDepartment(_department).Build();
+        _generalElectionCommittee1 = new GeneralElectionCommitteeBuilder()
+            .WithId(_generalElectionCommitteeId)
+            .WithCommitteeId(_committeeId)
+            .WithCommittee(_committee)
+            .WithBeginDate(new DateOnly(1976, 1, 1))
+            .WithEndDate(new DateOnly(2030, 12, 31))
+            .WithMaximalMember(5)
+            .WithDepartment(_department)
+            .WithIsValidated(true)
+            .WithTermOfOfficeDate(new TermOfOfficeDateBuilder().Build())
+            .WithCandidateListStateId(CandidateListState.Draft)
+            .Build();
+
         _membershipMirrorService = new MembershipMirrorService(
             _membershipCandidateRepository,
             _membershipRepository,
+            _authorizationService,
+            _worklistTaskRepository,
+            _generalElectionCommitteeRepository,
             _logger);
     }
 
@@ -235,5 +268,94 @@ public class MembershipMirrorServiceTests
 
         await _membershipMirrorService.UpdateMembershipFromCandidate(membershipId, updateDto, "BackgroundService");
         await _membershipRepository.Received(1).CommitChanges();
+    }
+
+    [Test]
+    public async Task InvalidateMembershipCandidateList_WhenCalled_ShouldInvalidateTasks()
+    {
+        var candidateListState = new CandidateListStateBuilder()
+            .WithId(CandidateListState.Draft)
+            .Build();
+        var currentAssignment = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Department)
+            .Build();
+        var currentAssignmentSecretariat = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Secretariat)
+            .Build();
+        var currentAssignmentOffice = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Office)
+            .Build();
+        var currentAssignmentDepartment = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Department)
+            .Build();
+        var currentAssignmentAdmin = new EiamAssignmentBuilder()
+            .WithId(Guid.NewGuid())
+            .WithRole(Role.Admin)
+            .Build();
+        var completedCandidateListApprovalTask = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListApprove)
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithAssignedTo(currentAssignment)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Build();
+        var activeCandidateListTaskSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionPersonInterests)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Build();
+        var activeReadyForProposalTasksForSecretariat = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentSecretariat)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Build();
+        var activeReadyForProposalTasksForOffice = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentOffice)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Build();
+        var activeReadyForProposalTasksForDepartment = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentDepartment)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Build();
+        var activeReadyForProposalTasksForAdmin = new WorklistTaskBuilder()
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(currentAssignmentAdmin)
+            .WithGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Build();
+
+        _generalElectionCommittee1.IsValidated = true;
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(_committeeId).Returns(_generalElectionCommittee1);
+        _generalElectionCommittee1.CandidateListState = candidateListState;
+        _generalElectionCommittee1.CandidateListStateId = candidateListState.Id;
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id).Returns([
+            completedCandidateListApprovalTask,
+            activeCandidateListTaskSecretariat,
+            activeReadyForProposalTasksForSecretariat,
+            activeReadyForProposalTasksForOffice,
+            activeReadyForProposalTasksForDepartment,
+            activeReadyForProposalTasksForAdmin]);
+
+        await _membershipMirrorService.InvalidateMembershipCandidateList(_committeeId);
+
+        using (Assert.EnterMultipleScope())
+        {
+            Assert.That(_generalElectionCommittee1.IsValidated, Is.False);
+            Assert.That(activeCandidateListTaskSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(completedCandidateListApprovalTask.WorklistTaskStateId == WorklistTaskState.Active, Is.True);
+            Assert.That(activeReadyForProposalTasksForSecretariat.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(activeReadyForProposalTasksForOffice.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(activeReadyForProposalTasksForDepartment.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+            Assert.That(activeReadyForProposalTasksForAdmin.WorklistTaskStateId == WorklistTaskState.Inactive, Is.True);
+        }
     }
 }

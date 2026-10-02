@@ -10,15 +10,24 @@ public class MembershipMirrorService : IMembershipMirrorService
 {
     private readonly IMembershipCandidateRepository _membershipCandidateRepository;
     private readonly IMembershipRepository _membershipRepository;
+    private readonly IAuthorizationService _authorizationService;
+    private readonly IWorklistTaskRepository _worklistTaskRepository;
+    private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
     private readonly ILogger<MembershipMirrorService> _logger;
 
     public MembershipMirrorService(
         IMembershipCandidateRepository membershipCandidateRepository,
         IMembershipRepository membershipRepository,
+        IAuthorizationService authorizationService,
+        IWorklistTaskRepository worklistTaskRepository,
+        IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
         ILogger<MembershipMirrorService> logger)
     {
         _membershipCandidateRepository = membershipCandidateRepository;
         _membershipRepository = membershipRepository;
+        _authorizationService = authorizationService;
+        _worklistTaskRepository = worklistTaskRepository;
+        _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
         _logger = logger;
     }
 
@@ -151,5 +160,56 @@ public class MembershipMirrorService : IMembershipMirrorService
         {
             _logger.LogInformation("Updated candidate data to membership with with id {MembershipId}", id);
         }
+    }
+
+    public async Task InvalidateMembershipCandidateList(Guid committeeId)
+    {
+        if (_logger.IsEnabled(LogLevel.Information))
+        {
+            _logger.LogInformation("Invalidating membership candidate list for  committee {CommitteeId}", committeeId);
+        }
+
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+        generalElectionCommittee.IsValidated = false;
+        generalElectionCommittee.CandidateListStateId = CandidateListState.Draft;
+        var committeeTasks = await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id);
+
+        var taskApproveByDepartment = committeeTasks.FirstOrDefault(y => y.AssignedTo?.Role == Role.Department
+            && y.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove);
+        var taskListForSecretariat = committeeTasks.Where(y => y.AssignedTo?.Role == Role.Secretariat
+            && (y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingJustifications ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingSecretariat ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonBaseData ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionPersonInterests ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMissingDataProtectionOfficer ||
+            y.WorklistTaskTypeId == WorklistTaskType.GeneralElectionMembershipValidation));
+
+        if (taskApproveByDepartment is not null)
+        {
+            taskApproveByDepartment.WorklistTaskStateId = WorklistTaskState.Active;
+            taskApproveByDepartment.Modified = DateTime.UtcNow;
+            taskApproveByDepartment.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+
+        foreach (var task in taskListForSecretariat)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Inactive;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+
+        // Invalidate BRA Ready tasks
+
+        var taskListForProposalAdminOrDepartmentOrOffice = committeeTasks.Where(y =>
+           (y.AssignedTo?.Role == Role.Admin || y.AssignedTo?.Role == Role.Department || y.AssignedTo?.Role == Role.Office || y.AssignedTo?.Role == Role.Secretariat)
+           && y.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal);
+
+        foreach (var task in taskListForProposalAdminOrDepartmentOrOffice)
+        {
+            task.WorklistTaskStateId = WorklistTaskState.Inactive;
+            task.Modified = DateTime.UtcNow;
+            task.ModifiedBy = _authorizationService.GetCurrentUserName();
+        }
+        await _worklistTaskRepository.CommitChanges();
     }
 }
