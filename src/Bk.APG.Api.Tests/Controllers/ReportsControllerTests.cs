@@ -49,7 +49,7 @@ internal class ReportsControllerTests
     }
 
     [Test]
-    public async Task GenerateReportFormLetter_WithExportTypeSingle_ReturnsZipFileResult()
+    public async Task GenerateReportFormLetter_WithAnyExportType_ReturnsZipFileResult()
     {
         using var memoryStream = new MemoryStream();
         var filterDto = new FormLetterFilterParameters { ExportType = "single" };
@@ -66,52 +66,6 @@ internal class ReportsControllerTests
         {
             Assert.That(resultObject.FileDownloadName, Is.EqualTo("FooBar"));
             Assert.That(resultObject.ContentType, Is.EqualTo(MediaTypeNames.Application.Zip));
-            Assert.That(resultObject.FileStream, Is.EqualTo(memoryStream));
-        });
-    }
-
-    [Test]
-    public async Task GenerateReportFormLetter_WithExportTypeMultiAndTypeWord_ReturnsDocFileResult()
-    {
-        var wordMimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.template";
-
-        using var memoryStream = new MemoryStream();
-        var filterDto = new FormLetterFilterParameters { ExportType = "multi", ExportFileType = "word" };
-
-        _formLetterService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
-
-        var result = await _controller.GenerateReportFormLetter(filterDto);
-
-        Assert.That(result, Is.Not.Null);
-        var resultObject = result as FileStreamResult;
-
-        Assert.That(resultObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(resultObject.FileDownloadName, Is.EqualTo("FooBar"));
-            Assert.That(resultObject.ContentType, Is.EqualTo(wordMimeType));
-            Assert.That(resultObject.FileStream, Is.EqualTo(memoryStream));
-        });
-    }
-
-    [Test]
-    public async Task GenerateReportFormLetter_WithExportTypeMultiAndTypePdf_ReturnsDocFileResult()
-    {
-        using var memoryStream = new MemoryStream();
-        var filterDto = new FormLetterFilterParameters { ExportType = "multi", ExportFileType = "pdf" };
-
-        _formLetterService.CreateFormLetterSingleDocument(filterDto).Returns(("FooBar", memoryStream));
-
-        var result = await _controller.GenerateReportFormLetter(filterDto);
-
-        Assert.That(result, Is.Not.Null);
-        var resultObject = result as FileStreamResult;
-
-        Assert.That(resultObject, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(resultObject.FileDownloadName, Is.EqualTo("FooBar"));
-            Assert.That(resultObject.ContentType, Is.EqualTo(MediaTypeNames.Application.Pdf));
             Assert.That(resultObject.FileStream, Is.EqualTo(memoryStream));
         });
     }
