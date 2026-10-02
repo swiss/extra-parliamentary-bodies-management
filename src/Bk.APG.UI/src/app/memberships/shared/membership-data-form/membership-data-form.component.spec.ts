@@ -50,6 +50,7 @@ describe('MembershipDataFormComponent', () => {
     const authServiceMock = {
         roles$: rolesSubject.asObservable(),
     };
+    let masterDataServiceMock: Partial<MasterDataService>;
 
     beforeEach(async () => {
         activatedRouteMock = {
@@ -62,7 +63,7 @@ describe('MembershipDataFormComponent', () => {
             {id: 'addition-2', text: 'Deleted Addition', isDeleted: true},
         ]);
 
-        const masterDataServiceMock = {
+        masterDataServiceMock = {
             electionTypes: signal([
                 {id: 'id1', text: 'type1', description: 'desc1', isDeleted: false},
                 {id: 'id2', text: 'type2', description: 'desc2', isDeleted: true},
@@ -115,6 +116,7 @@ describe('MembershipDataFormComponent', () => {
                         reElectionId: 'reElectionId',
                         maximumDutyRetirementId: 'maximumDutyRetirementId',
                         deceasedId: 'deceasedId',
+                        committeeDissolutionWithdrawalId: 'committee-id',
                     },
                     committeeType: {
                         managementId: 'managementId',
@@ -470,5 +472,106 @@ describe('MembershipDataFormComponent', () => {
         fixture.detectChanges();
 
         expect(component.membershipForm.controls.membershipAdditionId.value).toBe('Membership Addition FR');
+    });
+
+    describe('activeElectionTypes', () => {
+        it('should exclude deleted election types', () => {
+            component.membershipForm.controls.electionTypeId.setValue('id1');
+
+            expect(component.activeElectionTypes()).toEqual([
+                {
+                    id: 'id1',
+                    text: 'type1',
+                    description: 'desc1',
+                    isDeleted: false,
+                },
+            ]);
+        });
+
+        it('should exclude committee dissolution withdrawal when another type is selected', () => {
+            masterDataServiceMock.electionTypes!.set([
+                {
+                    id: 'id1',
+                    text: 'type1',
+                    description: 'desc1',
+                    isDeleted: false,
+                },
+                {
+                    id: 'committee-id',
+                    text: 'committee',
+                    description: 'desc',
+                    isDeleted: false,
+                },
+            ]);
+
+            component.membershipForm.controls.electionTypeId.setValue('id1');
+
+            expect(component.activeElectionTypes()).toEqual([
+                {
+                    id: 'id1',
+                    text: 'type1',
+                    description: 'desc1',
+                    isDeleted: false,
+                },
+            ]);
+        });
+
+        it('should include committee dissolution withdrawal when it is selected', () => {
+            masterDataServiceMock.electionTypes!.set([
+                {
+                    id: 'id1',
+                    text: 'type1',
+                    description: 'desc1',
+                    isDeleted: false,
+                },
+                {
+                    id: 'committee-id',
+                    text: 'committee',
+                    description: 'desc',
+                    isDeleted: false,
+                },
+            ]);
+
+            component.membershipForm.controls.electionTypeId.setValue('committee-id');
+
+            expect(component.activeElectionTypes()).toEqual([
+                {
+                    id: 'id1',
+                    text: 'type1',
+                    description: 'desc1',
+                    isDeleted: false,
+                },
+                {
+                    id: 'committee-id',
+                    text: 'committee',
+                    description: 'desc',
+                    isDeleted: false,
+                },
+            ]);
+        });
+    });
+
+    it('should enable electionTypeId when in update mode and canEditEndDateAndElectionType is true', () => {
+        component.isUpdateMode = true;
+        component.canEdit = true;
+        component.canEditEndDateAndElectionType = true;
+
+        component.membershipForm.controls.electionTypeId.disable();
+
+        (component as any).toggleFormFields(false);
+
+        expect(component.membershipForm.controls.electionTypeId.enabled).toBe(true);
+    });
+
+    it('should disable electionTypeId when in update mode and canEditEndDateAndElectionType is false', () => {
+        component.isUpdateMode = true;
+        component.canEdit = true;
+        component.canEditEndDateAndElectionType = false;
+
+        component.membershipForm.controls.electionTypeId.enable();
+
+        (component as any).toggleFormFields(false);
+
+        expect(component.membershipForm.controls.electionTypeId.disabled).toBe(true);
     });
 });
