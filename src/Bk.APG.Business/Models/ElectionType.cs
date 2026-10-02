@@ -22,6 +22,10 @@ public class ElectionType : MasterDataBase
     public const string MaximumMembershipDurationGuidAsString = "bd814190-0667-4e74-8779-e581390629d9";
     public static readonly Guid MaximumMembershipDurationGuid = Guid.Parse(MaximumMembershipDurationGuidAsString);
 
+    // Ausscheidung aufgrund Gremienauflösung
+    public const string CommitteeDissolutionWithdrawalGuidAsString = "1eb590bb-fed2-4834-9a8e-e8e35e7bde93";
+    public static readonly Guid CommitteeDissolutionWithdrawalGuid = Guid.Parse(CommitteeDissolutionWithdrawalGuidAsString);
+
     // Todesfall
     public const string MembershipEndedBecauseOfDeathGuidAsString = "c5d01ed1-4a61-41de-ba01-0c415c4b87a0";
     public static readonly Guid MembershipEndedBecauseOfDeathGuid = Guid.Parse(MembershipEndedBecauseOfDeathGuidAsString);

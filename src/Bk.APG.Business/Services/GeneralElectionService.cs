@@ -391,9 +391,8 @@ public class GeneralElectionService : IGeneralElectionService
 
     private static bool CheckMembership(Membership membership)
     {
-        // any form of retirement will be ignored
-        if (membership.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid || membership.ElectionTypeId == ElectionType.MembershipEndedBecauseOfDeathGuid ||
-            membership.ElectionTypeId == ElectionType.OtherRetirementReasonGuid || membership.ElectionTypeId == ElectionType.RetirementGuid)
+        // any form of retirement will be ignored   
+        if (membership.IsRetired)
         {
             return false;
         }

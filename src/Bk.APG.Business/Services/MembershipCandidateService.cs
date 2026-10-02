@@ -19,7 +19,7 @@ public class MembershipCandidateService : IMembershipCandidateService
     private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly IEiamAssignmentRepository _eiamAssignmentRepository;
     private readonly IPersonService _personService;
-    private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService;
+    private readonly IMembershipMirrorService _membershipMirrorService;
     private readonly ILogger<MembershipCandidateService> _logger;
 
     public MembershipCandidateService(
@@ -29,7 +29,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         IWorklistTaskRepository worklistTaskRepository,
         IEiamAssignmentRepository eiamAssignmentRepository,
         IPersonService personService,
-        IGeneralElectionCommitteeService generalElectionCommitteeService,
+        IMembershipMirrorService membershipMirrorService,
         ILogger<MembershipCandidateService> logger)
     {
         _membershipCandidateRepository = membershipCandidateRepository;
@@ -38,7 +38,7 @@ public class MembershipCandidateService : IMembershipCandidateService
         _worklistTaskRepository = worklistTaskRepository;
         _eiamAssignmentRepository = eiamAssignmentRepository;
         _personService = personService;
-        _generalElectionCommitteeService = generalElectionCommitteeService;
+        _membershipMirrorService = membershipMirrorService;
         _logger = logger;
     }
 
@@ -653,10 +653,7 @@ public class MembershipCandidateService : IMembershipCandidateService
                 departmentTask.WorklistTaskStateId = WorklistTaskState.Active;
                 departmentTask.Description = forwardDto.Description;
 
-                if (officeTask is not null)
-                {
-                    officeTask.WorklistTaskStateId = WorklistTaskState.Completed;
-                }
+                officeTask?.WorklistTaskStateId = WorklistTaskState.Completed;
 
                 // if an office executes the task, the one from the secretariat has to be completed as well
                 secretariatTask.WorklistTaskStateId = WorklistTaskState.Completed;
@@ -761,10 +758,7 @@ public class MembershipCandidateService : IMembershipCandidateService
                 var task = readyForProposalTasks.FirstOrDefault(x =>
                     x.AssignedToId == assignmentInChain.Id);
 
-                if (task is not null)
-                {
-                    task.WorklistTaskStateId = WorklistTaskState.Completed;
-                }
+                task?.WorklistTaskStateId = WorklistTaskState.Completed;
 
                 if (assignmentInChain.Id == currentEiamAssignment.Id)
                 {
@@ -962,7 +956,7 @@ public class MembershipCandidateService : IMembershipCandidateService
             membershipCandidate.GeneralElectionCommittee is not null && membershipCandidate.IsSelected &&
             membershipCandidate.GeneralElectionCommittee.CandidateListStateId == CandidateListState.Validated)
         {
-            await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membershipCandidate.GeneralElectionCommittee.CommitteeId);
+            await _membershipMirrorService.InvalidateMembershipCandidateList(membershipCandidate.GeneralElectionCommittee.CommitteeId);
         }
 
         await _membershipCandidateRepository.CommitChanges();

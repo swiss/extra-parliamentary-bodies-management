@@ -41,6 +41,7 @@ describe('MembershipsService', () => {
             rowVersion: 123,
             canEdit: true,
             canEditBeginDate: true,
+            canEditEndDateAndElectionType: true,
             canDelete: true,
         });
 
@@ -60,6 +61,7 @@ describe('MembershipsService', () => {
             rowVersion: 123,
             canEdit: true,
             canEditBeginDate: true,
+            canEditEndDateAndElectionType: true,
             canDelete: true,
         });
     });
