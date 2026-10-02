@@ -27,5 +27,6 @@ public class MembershipUpdateDto
     public required uint RowVersion { get; init; }
     public bool CanEdit { get; set; }
     public bool CanEditBeginDate { get; set; }
+    public bool CanEditEndDateAndElectionType { get; set; }
     public bool CanDelete { get; set; }
 }
