@@ -106,4 +106,8 @@ public class Membership : EntityBase
                                                      (Committee!.CommitteeTypeId == CommitteeType.ManagementCommitteeGuid ||
                                                       Committee!.CommitteeTypeId == CommitteeType.FederalAgenciesCommitteeGuid ||
                                                       Committee!.SupervisionDuty == true) && !HasOtherElectionOffice;
+
+    [NotMapped]
+    public bool IsRetired => ElectionTypeId == ElectionType.MaximumMembershipDurationGuid || ElectionTypeId == ElectionType.MembershipEndedBecauseOfDeathGuid ||
+            ElectionTypeId == ElectionType.OtherRetirementReasonGuid || ElectionTypeId == ElectionType.RetirementGuid || ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid;
 }
