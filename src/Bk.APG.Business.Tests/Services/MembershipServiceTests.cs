@@ -29,7 +29,7 @@ internal class MembershipServiceTests
         _service = new MembershipService(_membershipRepository, _committeeRepository, _authorizationService, _cultureService, _generalElectionService,
             _generalElectionCommitteeService, _termOfOfficeDateService, _masterDataRepository, _membershipMirrorService, NullLogger<MembershipService>.Instance);
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
-       _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(true);
+        _authorizationService.HasAccessToCommittee(Arg.Any<Committee>()).Returns(true);
     }
 
     [TearDown]
@@ -40,6 +40,8 @@ internal class MembershipServiceTests
         _membershipRepository.ClearSubstitute();
         _committeeRepository.ClearSubstitute();
         _authorizationService.ClearSubstitute();
+        _termOfOfficeDateService.ClearSubstitute();
+        _membershipMirrorService.ClearSubstitute();
     }
 
     [Test]
@@ -239,7 +241,7 @@ internal class MembershipServiceTests
 
         await _service.CreateMembership(createDto);
 
-        await _generalElectionCommitteeService.Received(1).InvalidateMembershipCandidateList(committeeId);
+        await _membershipMirrorService.Received(1).InvalidateMembershipCandidateList(committeeId);
     }
 
     [Test]
@@ -349,7 +351,7 @@ internal class MembershipServiceTests
 
         await _service.CreateMembership(createDto);
 
-        await _generalElectionCommitteeService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(committeeId);
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(committeeId);
         await _generalElectionService.Received(1).CreateNewMembershipCandidate(membership, true);
     }
 
@@ -359,6 +361,7 @@ internal class MembershipServiceTests
         var membershipId = Guid.NewGuid();
 
         var membership = new MembershipBuilder()
+            .WithIsActive(true)
             .WithBeginDate(new DateOnly(2024, 1, 1))
             .WithEndDate(new DateOnly(2024, 2, 1))
             .WithFunctionId(Guid.NewGuid())
@@ -374,6 +377,81 @@ internal class MembershipServiceTests
 
         Assert.That(membershipDetail, Is.Not.Null);
         Assert.That(membershipDetail.Id, Is.EqualTo(membership.Id));
+        Assert.That(membershipDetail.CanEditBeginDate, Is.False);
+        Assert.That(membershipDetail.CanEdit, Is.False);
+        Assert.That(membershipDetail.CanEditEndDateAndElectionType, Is.False);
+    }
+
+    [Test]
+    public async Task GetMembershipForUpdate_ForFutureBeginDate_ShouldEnableEdit()
+    {
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.IsDepartment.Returns(true);
+
+        var permittedDepartmentId = Guid.NewGuid();
+
+        var department = new DepartmentBuilder().WithId(permittedDepartmentId).Build();
+        _authorizationService.GetDepartment().Returns(department);
+
+        var membershipId = Guid.NewGuid();
+
+        var membership = new MembershipBuilder()
+            .WithBeginDate(new DateOnly(2040, 1, 1))
+            .WithEndDate(new DateOnly(2050, 2, 1))
+            .WithFunctionId(Guid.NewGuid())
+            .WithElectionTypeId(ElectionType.NewElectionGuid)
+            .WithMaximumEmploymentLevel(1)
+            .WithJustificationShorterDuty("text")
+            .WithCommittee(new CommitteeBuilder().WithDepartment(department).Build())
+            .Build();
+
+        _membershipRepository
+            .GetById(Arg.Any<Guid>())
+            .Returns(membership);
+
+        var membershipDetail = await _service.GetMembershipForUpdate(membershipId);
+
+        Assert.That(membershipDetail, Is.Not.Null);
+        Assert.That(membershipDetail.Id, Is.EqualTo(membership.Id));
+        Assert.That(membershipDetail.CanEditBeginDate, Is.True);
+        Assert.That(membershipDetail.CanEdit, Is.True);
+        Assert.That(membershipDetail.CanEditEndDateAndElectionType, Is.True);
+    }
+
+    [Test]
+    public async Task GetMembershipForUpdate_ForDepartmentWithPermissionButInWrongElectionType_ShouldDisableEditEndDateAndFunctionType()
+    {
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.IsDepartment.Returns(true);
+        var permittedDepartmentId = Guid.NewGuid();
+
+        var department = new DepartmentBuilder().WithId(permittedDepartmentId).Build();
+        _authorizationService.GetDepartment().Returns(department);
+
+        var membershipId = Guid.NewGuid();
+
+        var membership = new MembershipBuilder()
+            .WithIsActive(true)
+            .WithBeginDate(new DateOnly(DateTime.Today.Year, 1, 1))
+            .WithEndDate(new DateOnly(DateTime.Today.Year, 12, 31))
+            .WithFunctionId(Guid.NewGuid())
+            .WithElectionTypeId(ElectionType.CommitteeDissolutionWithdrawalGuid)
+            .WithMaximumEmploymentLevel(1)
+            .WithJustificationShorterDuty("text")
+            .WithCommittee(new CommitteeBuilder().WithDepartment(department).Build())
+            .Build();
+
+        _membershipRepository
+            .GetById(Arg.Any<Guid>())
+            .Returns(membership);
+
+        var membershipDetail = await _service.GetMembershipForUpdate(membershipId);
+
+        Assert.That(membershipDetail, Is.Not.Null);
+        Assert.That(membershipDetail.Id, Is.EqualTo(membership.Id));
+        Assert.That(membershipDetail.CanEditBeginDate, Is.False);
+        Assert.That(membershipDetail.CanEdit, Is.True);
+        Assert.That(membershipDetail.CanEditEndDateAndElectionType, Is.False);
     }
 
     [Test]
@@ -411,7 +489,7 @@ internal class MembershipServiceTests
 
         await _service.DeleteMembership(membershipToDeleteId);
 
-        await _generalElectionCommitteeService.Received(1).InvalidateMembershipCandidateList(committeeId);
+        await _membershipMirrorService.Received(1).InvalidateMembershipCandidateList(committeeId);
     }
 
     [Test]
@@ -507,7 +585,7 @@ internal class MembershipServiceTests
 
         await _service.UpdateMembership(updateDto.Id, updateDto);
 
-        await _generalElectionCommitteeService.Received(1).InvalidateMembershipCandidateList(committeeId);
+        await _membershipMirrorService.Received(1).InvalidateMembershipCandidateList(committeeId);
     }
 
     [Test]
@@ -805,6 +883,103 @@ internal class MembershipServiceTests
     }
 
     [Test]
+    public async Task UpdateMembership_WithWrongElectionType_ShouldThrowBusinessValidationException()
+    {
+        _authorizationService.IsAdmin.Returns(true);
+        _authorizationService.IsDepartment.Returns(false);
+
+        var membershipToUpdateId = Guid.NewGuid();
+
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithCommitteeId(committee.Id)
+            .WithCommittee(committee)
+            .WithId(membershipToUpdateId)
+            .Build();
+
+        var updateDto = new MembershipUpdateDto
+        {
+            Id = membershipToUpdateId,
+            BeginDate = new DateOnly(2024, 1, 1),
+            CommitteeId = committee.Id,
+            EndDate = new DateOnly(2024, 2, 1),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            ElectionTypeId = ElectionType.CommitteeDissolutionWithdrawalGuid,
+            JustificationLongerDuty = "JustificationLongerDuty",
+            JustificationShorterDuty = "JustificationShorterDuty",
+            JustificationMemberInFederalDuty = "JustificationMemberInFederalDuty",
+            JustificationMemberInFederalAssembly = "JustificationMemberInFederalAssembly",
+            RequirementsProfile = "RequirementsProfile",
+            MembershipAdditionId = Guid.NewGuid(),
+            PersonId = Guid.NewGuid(),
+            InCorrelationWithFederalDuty = true,
+            MaximumEmploymentLevel = 2,
+            RowVersion = 666
+        };
+        _committeeRepository.GetById(committee.Id).Returns(committee);
+        _membershipRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(membership);
+        _membershipRepository.GetById(updateDto.Id).Returns(membership);
+
+        var ex = Assert.ThrowsAsync<BusinessValidationException>(
+            async () => await _service.UpdateMembership(updateDto.Id, updateDto));
+
+        Assert.That(ex?.Message, Does.Contain("Committee dissolution withdrawal election type can only be set by the backend."));
+    }
+
+    [Test]
+    public async Task UpdateMembership_WhenElectionTypeIsLocked_ShouldThrowBusinessValidationException()
+    {
+        _authorizationService.IsAdmin.Returns(true);
+        _authorizationService.IsDepartment.Returns(false);
+
+        var membershipToUpdateId = Guid.NewGuid();
+
+        var committee = new CommitteeBuilder()
+            .WithCommitteeTypeId(CommitteeType.AuthoritiesCommissionGuid)
+            .Build();
+
+        var membership = new MembershipBuilder()
+            .WithCommitteeId(committee.Id)
+            .WithCommittee(committee)
+            .WithId(membershipToUpdateId)
+            .WithElectionTypeId(ElectionType.CommitteeDissolutionWithdrawalGuid)
+            .Build();
+
+        var updateDto = new MembershipUpdateDto
+        {
+            Id = membershipToUpdateId,
+            BeginDate = new DateOnly(2024, 1, 1),
+            CommitteeId = committee.Id,
+            EndDate = new DateOnly(2024, 2, 1),
+            FunctionId = Guid.NewGuid(),
+            ElectionOfficeId = Guid.NewGuid(),
+            ElectionTypeId = Guid.NewGuid(),
+            JustificationLongerDuty = "JustificationLongerDuty",
+            JustificationShorterDuty = "JustificationShorterDuty",
+            JustificationMemberInFederalDuty = "JustificationMemberInFederalDuty",
+            JustificationMemberInFederalAssembly = "JustificationMemberInFederalAssembly",
+            RequirementsProfile = "RequirementsProfile",
+            MembershipAdditionId = Guid.NewGuid(),
+            PersonId = Guid.NewGuid(),
+            InCorrelationWithFederalDuty = true,
+            MaximumEmploymentLevel = 2,
+            RowVersion = 666
+        };
+        _committeeRepository.GetById(committee.Id).Returns(committee);
+        _membershipRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(membership);
+        _membershipRepository.GetById(updateDto.Id).Returns(membership);
+
+        var ex = Assert.ThrowsAsync<BusinessValidationException>(
+            async () => await _service.UpdateMembership(updateDto.Id, updateDto));
+
+        Assert.That(ex?.Message, Does.Contain("Election type cannot be manually changed for this membership."));
+    }
+
+    [Test]
     public void CreateMembership_WhenUserHasNoAccessToCommittee_ShouldThrowAuthorizationException()
     {
         var committeeId = Guid.NewGuid();
@@ -894,5 +1069,4 @@ internal class MembershipServiceTests
 
         Assert.That(ex?.Message, Does.Contain("Not permitted to access membership"));
     }
-
 }
