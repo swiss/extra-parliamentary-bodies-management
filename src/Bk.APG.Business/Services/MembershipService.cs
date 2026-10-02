@@ -105,7 +105,7 @@ public class MembershipService : IMembershipService
         {
             if (committee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
-                await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membershipWithPerson.CommitteeId);
+                await _membershipMirrorService.InvalidateMembershipCandidateList(membershipWithPerson.CommitteeId);
             }
             else
             {
@@ -143,6 +143,7 @@ public class MembershipService : IMembershipService
 
         mappedMembership.CanEdit = await CanEditMembership(membership);
         mappedMembership.CanEditBeginDate = (mappedMembership.CanEdit && membership.BeginDate > DateOnly.FromDateTime(DateTime.Now)) || _authorizationService.IsAdmin;
+        mappedMembership.CanEditEndDateAndElectionType = (mappedMembership.CanEdit && membership.ElectionTypeId != ElectionType.CommitteeDissolutionWithdrawalGuid) || _authorizationService.IsAdmin;
         mappedMembership.CanDelete = (mappedMembership.CanEdit && membership.BeginDate > DateOnly.FromDateTime(DateTime.Now)) || _authorizationService.IsAdmin;
 
         return mappedMembership;
@@ -449,6 +450,16 @@ public class MembershipService : IMembershipService
             throw new AuthorizationException($"Not permitted to update membership in committee {existingEntry.CommitteeId} with this role");
         }
 
+        if (existingEntry.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid && updateDto.ElectionTypeId != existingEntry.ElectionTypeId)
+        {
+            throw new BusinessValidationException("Election type cannot be manually changed for this membership.");
+        }
+
+        if (updateDto.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid && existingEntry.ElectionTypeId != updateDto.ElectionTypeId)
+        {
+            throw new BusinessValidationException("Committee dissolution withdrawal election type can only be set by the backend.");
+        }
+
         // new, not only the shortening of a membership, but also terminating it, will cause a delete of GE candidate
         var deleteCandidate = updateDto.EndDate < existingEntry.EndDate
             || updateDto.ElectionTypeId == ElectionType.MembershipEndedBecauseOfDeathGuid
@@ -508,7 +519,7 @@ public class MembershipService : IMembershipService
         {
             if (existingEntry.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
-                await _generalElectionCommitteeService.InvalidateMembershipCandidateList(existingEntry.CommitteeId);
+                await _membershipMirrorService.InvalidateMembershipCandidateList(existingEntry.CommitteeId);
             }
 
             await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(existingEntry, deleteCandidate, wasMetadataChanged);
@@ -551,7 +562,7 @@ public class MembershipService : IMembershipService
         {
             if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
-                await _generalElectionCommitteeService.InvalidateMembershipCandidateList(membership.CommitteeId);
+                await _membershipMirrorService.InvalidateMembershipCandidateList(membership.CommitteeId);
             }
             if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded)
             {

@@ -561,15 +561,19 @@ internal class CommitteeServiceTests
     }
 
     [Test]
-    public async Task UpdateCommittee_WithDepartmentRole_ShouldUpdatePropertiesAndCommitChanges()
+    public async Task UpdateCommittee_WithDepartmentRoleAndChangedEndDate_ShouldUpdatePropertiesAndMirrorMemberships()
     {
         _authorizationService.IsAdmin.Returns(false);
         _authorizationService.IsDepartment.Returns(true);
 
         var updateDto = BuildUpdateDto();
+        updateDto.EndDate = _committee.EndDate!.Value.AddDays(1);
+        updateDto.TermOfOfficeId = TermOfOffice.Period4YearsInGeneralElectionGuid;
+        updateDto.LevelId = CommitteeLevel.FederalCouncilGuid;
         _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
         _committeeRepository.GetById(updateDto.Id).Returns(_committee);
         _authorizationService.GetDepartment().Returns(new DepartmentBuilder().WithId(_committee.DepartmentId).Build());
+        _committee.GeneralElectionCommittees = [new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build()];
 
         await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
 
@@ -603,6 +607,118 @@ internal class CommitteeServiceTests
 
             Assert.That(_committee.EndDate, Is.EqualTo(updateDto.EndDate));
         });
+
+        await _membershipMirrorService.Received(1).InvalidateMembershipCandidateList(_committee.Id);
+
+        await _membershipMirrorService.Received(1).MirrorOrDeleteMembershipForGeneralElection(Arg.Is(_committee.Memberships.ToList()[0]), true, true);
+        await _membershipMirrorService.Received(1).MirrorOrDeleteMembershipForGeneralElection(Arg.Is(_committee.Memberships.ToList()[1]), true, true);
+        await _membershipMirrorService.Received(1).MirrorOrDeleteMembershipForGeneralElection(Arg.Is(_committee.Memberships.ToList()[2]), true, true);
+        await _membershipMirrorService.Received(1).MirrorOrDeleteMembershipForGeneralElection(Arg.Is(_committee.Memberships.ToList()[3]), true, true);
+        await _membershipMirrorService.Received(1).MirrorOrDeleteMembershipForGeneralElection(Arg.Is(_committee.Memberships.ToList()[4]), true, true);
+
+        foreach (var membership in _committee.Memberships)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(membership.ElectionTypeId, Is.EqualTo(ElectionType.CommitteeDissolutionWithdrawalGuid));
+                Assert.That(membership.EndDate, Is.EqualTo(updateDto.EndDate!.Value));
+            });
+        }
+    }
+
+    [Test]
+    public async Task UpdateCommittee_WithDepartmentRoleAndUnchangedEndDate_ShouldUpdatePropertiesWithoutMirroringMemberships()
+    {
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.IsDepartment.Returns(true);
+
+        var updateDto = BuildUpdateDto();
+        updateDto.EndDate = _committee.EndDate!.Value;
+        updateDto.TermOfOfficeId = TermOfOffice.Period4YearsInGeneralElectionGuid;
+        updateDto.LevelId = CommitteeLevel.FederalCouncilGuid;
+        _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
+        _committeeRepository.GetById(updateDto.Id).Returns(_committee);
+        _authorizationService.GetDepartment().Returns(new DepartmentBuilder().WithId(_committee.DepartmentId).Build());
+        _committee.GeneralElectionCommittees = [new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build()];
+
+        await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
+
+        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(_committee.DescriptionRomansh, Is.EqualTo(updateDto.DescriptionRomansh));
+
+            Assert.That(_committee.CommitteeLevelId, Is.EqualTo(updateDto.LevelId));
+            Assert.That(_committee.OfficeId, Is.EqualTo(updateDto.OfficeId));
+            Assert.That(_committee.DepartmentId, Is.EqualTo(updateDto.DepartmentId));
+            Assert.That(_committee.CommitteeTypeId, Is.EqualTo(updateDto.CommitteeTypeId));
+
+            Assert.That(_committee.FederalLawEstablishment, Is.EqualTo(updateDto.FederalLawEstablishment));
+            Assert.That(_committee.SupervisionDuty, Is.EqualTo(updateDto.SupervisionDuty));
+            Assert.That(_committee.MarketOrientated, Is.EqualTo(updateDto.MarketOrientated));
+
+            Assert.That(_committee.LegalFormId, Is.EqualTo(updateDto.LegalFormId));
+            Assert.That(_committee.LegalBase, Is.EqualTo(updateDto.LegalBase));
+
+            Assert.That(_committee.TermOfOfficeId, Is.EqualTo(updateDto.TermOfOfficeId));
+            Assert.That(_committee.MinimalMembers, Is.EqualTo(updateDto.MinimalMembers));
+            Assert.That(_committee.MaximalMembers, Is.EqualTo(updateDto.MaximalMembers));
+            Assert.That(_committee.AdditionalAuthorityMembers, Is.EqualTo(updateDto.AdditionalAuthorityMembers));
+            Assert.That(_committee.LinkAuthorityWebsite, Is.EqualTo(updateDto.LinkAuthorityWebsite));
+            Assert.That(_committee.LinkHomepageGerman, Is.EqualTo(updateDto.LinkHomepageGerman));
+            Assert.That(_committee.LinkHomepageFrench, Is.EqualTo(updateDto.LinkHomepageFrench));
+            Assert.That(_committee.LinkHomepageItalian, Is.EqualTo(updateDto.LinkHomepageItalian));
+            Assert.That(_committee.LinkHomepageRomansh, Is.EqualTo(updateDto.LinkHomepageRomansh));
+
+            Assert.That(_committee.EndDate, Is.EqualTo(updateDto.EndDate));
+        });
+
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(_committee.Id);
+
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().MirrorOrDeleteMembershipForGeneralElection(Arg.Any<Membership>(), Arg.Any<bool>(), Arg.Any<bool>());
+
+        foreach (var membership in _committee.Memberships)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(membership.ElectionTypeId, Is.Not.EqualTo(ElectionType.CommitteeDissolutionWithdrawalGuid));
+                Assert.That(membership.EndDate, Is.Not.EqualTo(updateDto.EndDate!.Value));
+            });
+        }
+    }
+
+    [Test]
+    public async Task UpdateCommittee_WithDepartmentRoleAndNonGeneralElectionTerm_ShouldUpdatePropertiesWithoutMirroringMemberships()
+    {
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.IsDepartment.Returns(true);
+
+        var updateDto = BuildUpdateDto();
+        updateDto.EndDate = _committee.EndDate!.Value;
+        updateDto.TermOfOfficeId = new Guid();
+        updateDto.LevelId = CommitteeLevel.FederalCouncilGuid;
+        _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
+        _committeeRepository.GetById(updateDto.Id).Returns(_committee);
+        _authorizationService.GetDepartment().Returns(new DepartmentBuilder().WithId(_committee.DepartmentId).Build());
+        _committee.GeneralElectionCommittees = [new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build()];
+
+        await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
+
+        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(_committee.Id);
+
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().MirrorOrDeleteMembershipForGeneralElection(Arg.Any<Membership>(), Arg.Any<bool>(), Arg.Any<bool>());
+
+        foreach (var membership in _committee.Memberships)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(membership.ElectionTypeId, Is.Not.EqualTo(ElectionType.CommitteeDissolutionWithdrawalGuid));
+                Assert.That(membership.EndDate, Is.Not.EqualTo(updateDto.EndDate!.Value));
+            });
+        }
     }
 
     [Test]
@@ -1412,7 +1528,7 @@ internal class CommitteeServiceTests
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
 
-        await _membershipMirrorService.Received(1).CreateNewMembershipFromCandidate(Arg.Any<MembershipCreateDto>(), Arg.Any<string>());
+        await _membershipMirrorService.Received(1).CreateNewMembershipFromCandidate(Arg.Any<MembershipCreateDto>(), Arg.Any<string>(), Arg.Any<Guid>());
 
         await _membershipMirrorService.Received(1).UpdateMembershipFromCandidate(Arg.Any<Guid>(), Arg.Any<MembershipUpdateDto>(), Arg.Any<string>());
     }

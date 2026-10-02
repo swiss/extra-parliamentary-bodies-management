@@ -187,6 +187,9 @@ public class ElectionTypeOptions
 
     [Required]
     public required string DeceasedId { get; init; }
+
+    [Required]
+    public required string CommitteeDissolutionWithdrawalId { get; init; }
 }
 
 public class CountryOptions

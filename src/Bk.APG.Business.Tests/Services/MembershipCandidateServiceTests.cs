@@ -19,7 +19,7 @@ internal class MembershipCandidateServiceTests
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
     private readonly IEiamAssignmentRepository _eiamAssignmentRepository = Substitute.For<IEiamAssignmentRepository>();
     private readonly IPersonService _personService = Substitute.For<IPersonService>();
-    private readonly IGeneralElectionCommitteeService _generalElectionCommitteeService = Substitute.For<IGeneralElectionCommitteeService>();
+    private readonly IMembershipMirrorService _membershipMirrorService = Substitute.For<IMembershipMirrorService>();
 
     [SetUp]
     public void SetUp()
@@ -31,7 +31,7 @@ internal class MembershipCandidateServiceTests
             _worklistTaskRepository,
             _eiamAssignmentRepository,
             _personService,
-            _generalElectionCommitteeService,
+            _membershipMirrorService,
             NullLogger<MembershipCandidateService>.Instance);
 
         _worklistTaskRepository.GetAllByPersonId(Arg.Any<Guid>()).Returns([]);
@@ -48,7 +48,7 @@ internal class MembershipCandidateServiceTests
         _generalElectionCommitteeRepository.ClearSubstitute();
         _worklistTaskRepository.ClearSubstitute();
         _eiamAssignmentRepository.ClearSubstitute();
-        _generalElectionCommitteeService.ClearSubstitute();
+        _membershipMirrorService.ClearSubstitute();
     }
 
     [Test]
@@ -84,7 +84,7 @@ internal class MembershipCandidateServiceTests
         var existingMembershipCandidate = new MembershipCandidateBuilder()
             .WithIsSelected(isSelected)
             .WithGeneralElectionCommittee(new GeneralElectionCommitteeBuilder()
-            .WithCommitteeId(committeeId)            
+            .WithCommitteeId(committeeId)
             .WithCandidateListStateId(CandidateListState.Validated).Build())
             .WithElectionTypeId(ElectionType.NewElectionGuid).Build();
         _membershipCandidateRepository.GetByIdForUpdate(membershipCandidateId).Returns(existingMembershipCandidate);
@@ -112,7 +112,7 @@ internal class MembershipCandidateServiceTests
 
         await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
 
-        await _generalElectionCommitteeService.Received(expectedInvalidatation).InvalidateMembershipCandidateList(existingMembershipCandidate.GeneralElectionCommittee!.CommitteeId);
+        await _membershipMirrorService.Received(expectedInvalidatation).InvalidateMembershipCandidateList(existingMembershipCandidate.GeneralElectionCommittee!.CommitteeId);
 
         using (Assert.EnterMultipleScope())
         {
@@ -173,7 +173,7 @@ internal class MembershipCandidateServiceTests
 
         await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
 
-        await _generalElectionCommitteeService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(existingMembershipCandidate.GeneralElectionCommittee!.CommitteeId);
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(existingMembershipCandidate.GeneralElectionCommittee!.CommitteeId);
     }
 
     [TestCase(nameof(MembershipCandidateUpdateDto.MaximumEmploymentLevel))]
@@ -247,7 +247,7 @@ internal class MembershipCandidateServiceTests
 
         await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto);
 
-        await _generalElectionCommitteeService
+        await _membershipMirrorService
             .Received(1)
             .InvalidateMembershipCandidateList(committeeId);
     }
@@ -309,7 +309,7 @@ internal class MembershipCandidateServiceTests
             RowVersion = 0
         };
         var ex = Assert.ThrowsAsync<AuthorizationException>(async () => await _service.UpdateMembershipCandidate(membershipCandidateId, updateDto));
-        Assert.That(ex.Message, Is.EqualTo($"End date for candidate { existingMembershipCandidate.Id} cannot be changed"));
+        Assert.That(ex.Message, Is.EqualTo($"End date for candidate {existingMembershipCandidate.Id} cannot be changed"));
     }
 
     [Test]

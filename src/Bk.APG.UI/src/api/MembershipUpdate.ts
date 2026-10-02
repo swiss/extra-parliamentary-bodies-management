@@ -25,5 +25,6 @@ export interface MembershipUpdate {
     rowVersion: number;
     canEdit: boolean;
     canEditBeginDate: boolean;
+    canEditEndDateAndElectionType: boolean;
     canDelete: boolean;
 }
