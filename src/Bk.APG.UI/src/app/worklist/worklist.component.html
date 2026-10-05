@@ -72,14 +72,9 @@
         <th *matHeaderCellDef mat-header-cell></th>
         <td *matCellDef="let element" mat-cell>
             @if (!!element.navigationUrl) {
-                <button
-                    (click)="navigateToUrl(element.navigationUrl)"
-                    mat-icon-button
-                    obButton="tertiary"
-                    [matTooltip]="'worklist.task.navigation' | translate"
-                >
+                <a [href]="element.navigationUrl" mat-icon-button obButton="tertiary" [matTooltip]="'worklist.task.navigation' | translate">
                     <mat-icon svgIcon="link" />
-                </button>
+                </a>
             }
         </td>
     </ng-container>
