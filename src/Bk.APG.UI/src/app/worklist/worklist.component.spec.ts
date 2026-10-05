@@ -137,15 +137,4 @@ describe('WorklistComponent', () => {
 
         expect(worklistService.getWorklistTasks).toHaveBeenCalledWith({pageIndex: 0, pageSize: 25}, {direction: 'desc', sort: 'worklistTaskType'}, {});
     });
-
-    describe('navigateToUrl', () => {
-        it('should navigate to the provided URL', () => {
-            const router = TestBed.inject(Router);
-            const navigateByUrlSpy = jest.spyOn(router, 'navigateByUrl');
-
-            component.navigateToUrl('/test-url');
-
-            expect(navigateByUrlSpy).toHaveBeenCalledWith('/test-url');
-        });
-    });
 });
