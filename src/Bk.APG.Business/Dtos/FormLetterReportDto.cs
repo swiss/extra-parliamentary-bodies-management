@@ -2,9 +2,9 @@ namespace Bk.APG.Business.Dtos;
 
 public class FormLetterReportDto
 {
-    public string? SenderOfficeGerman { get; set; }
-    public string? SenderOfficeFrench { get; set; }
-    public string? SenderOfficeItalian { get; set; }
+    public required FormLetterLanguage FormLetterLanguage { get; set; }
+    public string? TemplateName { get; set; }
+    public string? SenderOffice { get; set; }
     public string? SenderName { get; set; }
     public string? SenderStreet { get; set; }
     public string? SenderZip { get; set; }
@@ -39,6 +39,7 @@ public class FormLetterMembershipReportDto
     public required FormLetterLanguage FormLetterLanguage { get; set; }
     public required Guid CommitteeId { get; set; }
     public required string CommitteeName { get; set; }
+    public bool SelfOrganized { get; set; }
     public required string Function { get; set; }
     public string? Salutation { get; set; }
     public string? SalutationText { get; set; }
