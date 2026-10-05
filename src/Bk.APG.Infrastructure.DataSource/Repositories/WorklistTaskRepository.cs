@@ -76,6 +76,8 @@ public class WorklistTaskRepository : IWorklistTaskRepository
             .Include(item => item.AssignedBy!.Department!.Offices)
             .Include(item => item.AssignedBy!.Office)
             .Include(item => item.AssignedBy!.Committee)
+            .Include(item => item.AssignedTo!.Parent)
+            .Include(item => item.AssignedTo!.Parent!.Parent)
             .AsSplitQuery()
             .FirstOrDefaultAsync(x => x.Id == id);
 
@@ -221,5 +223,13 @@ public class WorklistTaskRepository : IWorklistTaskRepository
         await _dataContext.WorklistTasks
             .ExecuteUpdateAsync(setters => setters
                 .SetProperty(w => w.IsDeleted, true));
+    }
+
+    public async Task<IEnumerable<WorklistTask>> GetAllByCommitteeIdForUpdate(Guid committeeId)
+    {
+        return await _dataContext.WorklistTasks.Include(x => x.AssignedTo)
+            .ThenInclude(y => y!.Parent)
+            .Where(x => x.CommitteeId == committeeId && !x.IsDeleted)
+            .ToListAsync();
     }
 }
