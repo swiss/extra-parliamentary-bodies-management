@@ -129,6 +129,147 @@ internal class WorklistTaskServiceTests
     }
 
     [Test]
+    public async Task GetWorklistTaskForUpdate_WhenCurrentUserIsParentOfAssignedOfficeAndTaskTypeIsIncorrect_ShouldNotAllowEdit()
+    {
+        var currentEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Department).Build();
+        var officeEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Office).WithParent(currentEiamAssignment).Build();
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentEiamAssignment);
+
+        var worklistTask = new WorklistTaskBuilder()
+            .WithAssignedTo(officeEiamAssignment)
+            .WithWorklistTaskTypeId(WorklistTaskType.GeneralElectionStart)
+            .Build();
+        var id = Guid.NewGuid();
+        _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
+
+        var result = await _service.GetWorklistTaskForUpdate(id);
+
+        await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.CanEdit, Is.False);
+    }
+
+    [Test]
+    public async Task GetWorklistTaskForUpdate_WhenCurrentUserIsParentOfAssignedOfficeAndTaskStateIsIncorrect_ShouldNotAllowEdit()
+    {
+        var currentEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Department).Build();
+        var officeEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Office).WithParent(currentEiamAssignment).Build();
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentEiamAssignment);
+
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithAssignedTo(officeEiamAssignment)
+            .WithWorklistTaskTypeId(WorklistTaskType.ReadyForFederalCouncilProposal)
+            .Build();
+        var id = Guid.NewGuid();
+        _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
+
+        var result = await _service.GetWorklistTaskForUpdate(id);
+
+        await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.CanEdit, Is.False);
+    }
+
+    [Test]
+    public async Task GetWorklistTaskForUpdate_WhenCurrentUserIsParentOfAssignedOffice_ShouldAllowEdit()
+    {
+        var currentEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Department).Build();
+        var officeEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Office).WithParent(currentEiamAssignment).Build();
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentEiamAssignment);
+
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithAssignedTo(officeEiamAssignment)
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListCreate)
+            .Build();
+        var id = Guid.NewGuid();
+        _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
+
+        var result = await _service.GetWorklistTaskForUpdate(id);
+
+        await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.CanEdit, Is.True);
+    }
+
+    [Test]
+    public async Task GetWorklistTaskForUpdate_WhenCurrentUserIsParentOfAssignedSecretariat_ShouldAllowEdit()
+    {
+        var currentEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Office).Build();
+        var secretariatEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Secretariat).WithParent(currentEiamAssignment).Build();
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentEiamAssignment);
+
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListCreate)
+            .WithAssignedTo(secretariatEiamAssignment)
+            .Build();
+        var id = Guid.NewGuid();
+        _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
+
+        var result = await _service.GetWorklistTaskForUpdate(id);
+
+        await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.CanEdit, Is.True);
+    }
+
+    [Test]
+    public async Task GetWorklistTaskForUpdate_WhenCurrentUserIsGrandparentOfAssignedSecretariat_ShouldAllowEdit()
+    {
+        var currentEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Department).Build();
+        var officeEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Office).WithParent(currentEiamAssignment).Build();
+        var secretariatEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Secretariat).WithParent(officeEiamAssignment).Build();
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentEiamAssignment);
+
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskStateId(WorklistTaskState.Active)
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListCreate)
+            .WithAssignedTo(secretariatEiamAssignment)
+            .Build();
+        var id = Guid.NewGuid();
+        _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
+
+        var result = await _service.GetWorklistTaskForUpdate(id);
+
+        await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.CanEdit, Is.True);
+    }
+
+    [Test]
+    public async Task GetWorklistTaskForUpdate_WhenCurrentUserIsAssigner_ShouldAllowEdit()
+    {
+        var currentEiamAssignment = new EiamAssignmentBuilder().WithRole(Role.Department).Build();
+
+        _authorizationService.GetCurrentEiamAssignment().Returns(currentEiamAssignment);
+
+        var worklistTask = new WorklistTaskBuilder()
+            .WithWorklistTaskStateId(WorklistTaskState.Inactive)
+            .WithAssignedBy(currentEiamAssignment).Build();
+        var id = Guid.NewGuid();
+        _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTask);
+
+        var result = await _service.GetWorklistTaskForUpdate(id);
+
+        await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
+
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.CanEdit, Is.True);
+    }
+
+    [Test]
     public async Task UpdateWorklistTask_WithDto_ShouldReturnResult()
     {
         var updateDto = new Faker<WorklistTaskUpdateDto>().Generate();
@@ -142,6 +283,66 @@ internal class WorklistTaskServiceTests
 
         await _worklistTaskRepository.Received(1).GetByIdForUpdate(id);
         await _worklistTaskRepository.Received(1).Update(Arg.Any<WorklistTask>());
+    }
+
+    [Test]
+    public async Task UpdateWorklistTask_WhenDueDateChanges_ShouldUpdateNonCompletedDepartmentTask()
+    {
+        var id = Guid.NewGuid();
+        var committeeId = Guid.NewGuid();
+        var dueDate = DateOnly.FromDateTime(DateTime.Today);
+
+        var updateDto = new WorklistTaskUpdateDto
+        {
+            Id = id,
+            DueDate = dueDate,
+            WorklistTaskType = WorklistTaskType.CandidateListApprove.ToString(),
+            WorklistTaskState = WorklistTaskState.Active.ToString(),
+            AssignedBy = Role.Department.ToString(),
+            AssignedTo = Role.Office.ToString(),
+        };
+
+        var worklistTaskForSecretariat = new WorklistTaskBuilder()
+            .WithCommitteeId(committeeId)
+            .WithAssignedTo(
+                new EiamAssignmentBuilder()
+                    .WithRole(Role.Secretariat)
+                    .Build())
+            .Build();
+
+        worklistTaskForSecretariat.Created = DateTime.Today.AddDays(-1);
+
+        var worklistPendingTaskForDepartment = new WorklistTaskBuilder()
+            .WithCommitteeId(committeeId)
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListApprove)
+            .WithAssignedTo(
+                new EiamAssignmentBuilder()
+                    .WithRole(Role.Department)
+                    .Build())
+            .Build();
+
+        var worklistCompletedTaskForDepartment = new WorklistTaskBuilder()
+            .WithCommitteeId(committeeId)            
+            .WithWorklistTaskStateId(WorklistTaskState.Completed)
+            .WithWorklistTaskTypeId(WorklistTaskType.CandidateListApprove)
+            .WithAssignedTo(
+                new EiamAssignmentBuilder()
+                    .WithRole(Role.Department)
+                    .Build())
+            .Build();
+
+        worklistCompletedTaskForDepartment.DueDate = new DateOnly(2025, 1, 2);
+
+        _worklistTaskRepository.GetByIdForUpdate(id).Returns(worklistTaskForSecretariat);
+        _worklistTaskRepository.GetAllByCommitteeIdForUpdate(worklistTaskForSecretariat.CommitteeId!.Value).Returns([worklistPendingTaskForDepartment, worklistCompletedTaskForDepartment]);
+
+        await _service.UpdateWorklistTask(id, updateDto);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(worklistPendingTaskForDepartment.DueDate, Is.EqualTo(DateOnly.FromDateTime(DateTime.Today).AddDays(7)));
+            Assert.That(worklistCompletedTaskForDepartment.DueDate, Is.EqualTo(new DateOnly(2025, 1, 2)));
+        });
     }
 
     [Test]
