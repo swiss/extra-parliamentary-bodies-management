@@ -202,7 +202,7 @@ public class ReportService : IReportService
 
         // get all committees for GE, which are released/validated and did not end before the current termOfOfficeDate
         var releasedGeneralElectionCommittees = committeesWithMembers
-            .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .ToArray();
         var releasedCommittees = releasedGeneralElectionCommittees.Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee).ToArray();
 
@@ -471,7 +471,7 @@ public class ReportService : IReportService
 
         // get all committees for GE, which are released and did not end before the current termOfOfficeDate
         var releasedCommittees = allGeneralElectionCommittees
-            .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
             .Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee)
             .ToArray();
         var releasedCommitteesDto = GetCommitteesByDepartmentAndTypes(releasedCommittees, departments);
