@@ -39,6 +39,7 @@ public class FormLetterMembershipReportDto
     public required FormLetterLanguage FormLetterLanguage { get; set; }
     public required Guid CommitteeId { get; set; }
     public required string CommitteeName { get; set; }
+    public bool SelfOrganized { get; set; }
     public required string Function { get; set; }
     public string? Salutation { get; set; }
     public string? SalutationText { get; set; }
