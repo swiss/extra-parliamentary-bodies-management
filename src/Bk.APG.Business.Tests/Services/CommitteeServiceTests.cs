@@ -1412,7 +1412,7 @@ internal class CommitteeServiceTests
 
         await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
 
-        await _membershipMirrorService.Received(1).CreateNewMembershipFromCandidate(Arg.Any<MembershipCreateDto>(), Arg.Any<string>());
+        await _membershipMirrorService.Received(1).CreateNewMembershipFromCandidate(Arg.Any<MembershipCreateDto>(), Arg.Any<string>(), Arg.Any<Guid>());
 
         await _membershipMirrorService.Received(1).UpdateMembershipFromCandidate(Arg.Any<Guid>(), Arg.Any<MembershipUpdateDto>(), Arg.Any<string>());
     }

@@ -55,16 +55,17 @@ public class FormLetterService : IFormLetterService
         var zipStream = new MemoryStream();
         const int maxFileNameLength = 150;
 
-        if (filterDto.ExportType == "single")
+        // Type "single" means, that every committee will be exported in 1 to 4 single files
+        using (var zip = new ZipArchive(zipStream, ZipArchiveMode.Create, true))
         {
-            // Type "single" means, that every committee will be exported in 1 to 4 single files
-            using var zip = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
-
-            foreach (var reportDto in reportDtos)
+            if (filterDto.ExportType == "single")
             {
-                if (reportDto.Memberships != null)
+                foreach (var reportDto in reportDtos)
                 {
-                    var allMemberships = reportDto.Memberships.ToList();
+                    if (reportDto.Memberships == null)
+                    {
+                        continue;
+                    }
 
                     var grouped = reportDto.Memberships.GroupBy(m => m.CommitteeId).ToList();
 
@@ -74,8 +75,7 @@ public class FormLetterService : IFormLetterService
 
                         var first = group.First();
 
-                        var reducedMembersDto = allMemberships
-                            .Where(m => m.CommitteeId == currentCommitteeId)
+                        var reducedMembersDto = group
                             .OrderBy(m => m.Surname)
                             .ThenBy(m => m.GivenName)
                             .ToList();
@@ -96,7 +96,8 @@ public class FormLetterService : IFormLetterService
                             NextTermOfOfficeBeginDate = reportDto.NextTermOfOfficeBeginDate,
                             NextTermOfOfficeEndDate = reportDto.NextTermOfOfficeEndDate,
                             TermOfOfficeEndDate = reportDto.TermOfOfficeEndDate,
-                            Memberships = reducedMembersDto
+                            Memberships = reducedMembersDto,
+                            TemplateName = reportDto.TemplateName,
                         };
 
                         var fileName = first.FileName.Replace(" ", "_", StringComparison.InvariantCultureIgnoreCase);
@@ -106,66 +107,53 @@ public class FormLetterService : IFormLetterService
                             fileName = fileName[..maxFileNameLength];
                         }
 
-                        fileName = $"{fileName}_{GetFileNameLanguageExtension(reportDto.FormLetterLanguage)}";
+                        fileName = $"{fileName}_{GetFileNameLanguageExtension(reducedDataDto.FormLetterLanguage)}";
 
-                        if (filterDto.ExportFileType == "word")
-                        {
-                            var zipFile = zip.CreateEntry($"{fileName}.docx", CompressionLevel.Fastest);
-                            await using var zipFileStream = await zipFile.OpenAsync();
-
-                            await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{reportDto.TemplateName}.docx", reducedDataDto, "formLetter");
-                            await documentStream.CopyToAsync(zipFileStream);
-                        }
-                        else
-                        {
-                            var zipFile = zip.CreateEntry($"{fileName}.pdf", CompressionLevel.Fastest);
-                            await using var zipFileStream = await zipFile.OpenAsync();
-
-                            await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{reportDto.TemplateName}.docx", reducedDataDto, "formLetter");
-                            await documentStream.CopyToAsync(zipFileStream);
-                        }
+                        await AddDocumentToZip(fileName, filterDto.ExportFileType!, reducedDataDto, zip);
                     }
                 }
             }
-        }
-        else
-        {
-            using var zip = new ZipArchive(zipStream, ZipArchiveMode.Create, true);
-
-            // here, all the committees are in one document per language
-            foreach (var reportDto in reportDtos)
+            else
             {
-                var fileName = BusinessTexts.FormLetterCompleteExport_Filename;
-
-                if (fileName.Length > maxFileNameLength)
+                // here, all the committees are in one document per language
+                foreach (var reportDto in reportDtos)
                 {
-                    fileName = fileName[..maxFileNameLength];
-                }
+                    var fileName = BusinessTexts.FormLetterCompleteExport_Filename;
 
-                fileName = $"{fileName}_{GetFileNameLanguageExtension(reportDto.FormLetterLanguage)}";
+                    if (fileName.Length > maxFileNameLength)
+                    {
+                        fileName = fileName[..maxFileNameLength];
+                    }
 
-                if (filterDto.ExportFileType == "word")
-                {
-                    var zipFile = zip.CreateEntry($"{fileName}.docx", CompressionLevel.Fastest);
-                    await using var zipFileStream = await zipFile.OpenAsync();
+                    fileName = $"{fileName}_{GetFileNameLanguageExtension(reportDto.FormLetterLanguage)}";
 
-                    await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{reportDto.TemplateName}.docx", reportDto, "formLetter");
-
-                    await documentStream.CopyToAsync(zipFileStream);
-                }
-                else
-                {
-                    var zipFile = zip.CreateEntry($"{fileName}.pdf", CompressionLevel.Fastest);
-                    await using var zipFileStream = await zipFile.OpenAsync();
-
-                    await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{reportDto.TemplateName}.docx", reportDto, "formLetter");
-                    await documentStream.CopyToAsync(zipFileStream);
+                    await AddDocumentToZip(fileName, filterDto.ExportFileType!, reportDto, zip);
                 }
             }
         }
 
         zipStream.Position = 0;
         return ($"{DateTime.UtcNow.ToLocalTime():yyyyMMdd_HHmmss}_{BusinessTexts.FormLetterCompleteExport_Filename}.zip", zipStream);
+    }
+
+    private async Task AddDocumentToZip(string fileName, string exportFileType, FormLetterReportDto reportDto, ZipArchive zip)
+    {
+        if (exportFileType == "word")
+        {
+            var documentFile = zip.CreateEntry($"{fileName}.docx", CompressionLevel.Fastest);
+            await using var doucmentFileStream = await documentFile.OpenAsync();
+
+            await using var documentStream = (MemoryStream)await _documentService.CreateWordFromTemplate($"Templates/{reportDto.TemplateName}.docx", reportDto, "formLetter");
+            await documentStream.CopyToAsync(doucmentFileStream);
+        }
+        else
+        {
+            var documentFile = zip.CreateEntry($"{fileName}.pdf", CompressionLevel.Fastest);
+            await using var doucmentFileStream = await documentFile.OpenAsync();
+
+            await using var documentStream = (MemoryStream)await _documentService.CreatePdfFromTemplate($"Templates/{reportDto.TemplateName}.docx", reportDto, "formLetter");
+            await documentStream.CopyToAsync(doucmentFileStream);
+        }
     }
 
     private async Task<IEnumerable<FormLetterReportDto>> FillFormLetterDto(FormLetterFilterParameters filterDto)
@@ -272,6 +260,7 @@ public class FormLetterService : IFormLetterService
                     formLetterType: m.ElectionTypeId == ElectionType.NewElectionGuid ? FormLetterType.NewElection : FormLetterType.ReElection,
                     committeeId: c.CommitteeId,
                     committeeNames: (c.DescriptionGerman, c.DescriptionFrench, c.DescriptionItalian, c.DescriptionRomansh),
+                    selfOrganized: c.SelfOrganized != null && (bool)c.SelfOrganized,
                     dateLetter: dateLetter,
                     sender: sender,
                     person: m.Person!,
@@ -294,6 +283,7 @@ public class FormLetterService : IFormLetterService
                         m.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid ? FormLetterType.MaximumMembershipDuration : FormLetterType.OtherRetirement,
                     committeeId: c.Id,
                     committeeNames: (c.DescriptionGerman, c.DescriptionFrench, c.DescriptionItalian, c.DescriptionRomansh),
+                    selfOrganized: c.SelfOrganized != null && (bool)c.SelfOrganized,
                     dateLetter: dateLetter,
                     sender: sender,
                     person: m.Person!,
@@ -330,9 +320,9 @@ public class FormLetterService : IFormLetterService
             return italianText ?? string.Empty;
         }
 
-        if (language == FormLetterLanguage.Romansh)
+        if (language == FormLetterLanguage.Romansh && !string.IsNullOrWhiteSpace(romanshText))
         {
-            return romanshText ?? string.Empty;
+            return romanshText;
         }
 
         return germanText ?? string.Empty;
@@ -367,6 +357,7 @@ public class FormLetterService : IFormLetterService
         FormLetterType formLetterType,
         Guid committeeId,
         (string De, string? Fr, string? It, string? Rm) committeeNames,
+        bool selfOrganized,
         (string De, string Fr, string It, string Rm) dateLetter,
         FormLetterSender sender,
         Person person,
@@ -390,6 +381,7 @@ public class FormLetterService : IFormLetterService
             DateLetter = GetText(dateLetter.De, dateLetter.Fr, dateLetter.It, dateLetter.Rm),
             CommitteeId = committeeId,
             CommitteeName = GetText(committeeNames.De, committeeNames.Fr, committeeNames.It, committeeNames.Rm),
+            SelfOrganized = selfOrganized,
             CorrespondenceLanguageId = person.CorrespondenceLanguageId,
             Function = person.GenderId == Gender.MaleGuid
                 ? GetText(function.TextDe, function.TextFr, function.TextIt, function.TextRm)
@@ -452,9 +444,9 @@ public class FormLetterService : IFormLetterService
                 return italianText ?? string.Empty;
             }
 
-            if (person.CorrespondenceLanguageId == Language.RomanshGuid)
+            if (person.CorrespondenceLanguageId == Language.RomanshGuid && !string.IsNullOrWhiteSpace(romanshText))
             {
-                return romanshText ?? string.Empty;
+                return romanshText;
             }
 
             return germanText ?? string.Empty;
