@@ -158,6 +158,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var electionTypeListFuture = electionTypeList.ToList();
         electionTypeListFuture.Remove(ElectionType.MaximumMembershipDurationGuid);
         electionTypeListFuture.Remove(ElectionType.OtherRetirementReasonGuid);
+        electionTypeListFuture.Remove(ElectionType.CommitteeDissolutionWithdrawalGuid);
         electionTypeListFuture.Remove(ElectionType.RetirementGuid);
 
         if (_authorizationService is { IsAdmin: false, IsObserver: false })
@@ -179,9 +180,10 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
         // here we have to select the present committees as well, when filterDto ElectionType contains one of the 3 retire types or none are selected at all.
         if (filterParameters.ElectionTypeIds == null || filterParameters.ElectionTypeIds.Contains(ElectionType.MaximumMembershipDurationGuid) ||
-            filterParameters.ElectionTypeIds.Contains(ElectionType.RetirementGuid) || filterParameters.ElectionTypeIds.Contains(ElectionType.OtherRetirementReasonGuid))
+            filterParameters.ElectionTypeIds.Contains(ElectionType.RetirementGuid) || filterParameters.ElectionTypeIds.Contains(ElectionType.OtherRetirementReasonGuid)
+            || filterParameters.ElectionTypeIds.Contains(ElectionType.CommitteeDissolutionWithdrawalGuid))
         {
-            var currentCommittees = await _committeeService.GetCommitteesWithRetiredMembers(filter, electionTypeListPresent);
+            var currentCommittees = await _committeeService.GetCommitteesWithRetiredMembers(filterParameters, electionTypeListPresent);
 
             var existingCommittees = currentCommittees.Select(c => GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(c, "pp"));
 
