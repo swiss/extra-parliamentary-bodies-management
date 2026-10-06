@@ -343,10 +343,11 @@ public class CommitteeRepository : ICommitteeRepository
                 VacanciesGeneralElection = c.VacanciesGeneralElection,
                 // bring only members, which match by language and electiontype
                 Memberships = c.Memberships
-                    .Where(m => m.Person != null && m.EndDate == filterDto.EndDateCurrentTermOfOfficeDate &&
+                    .Where(m => m.Person != null &&
                                 (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
                                  filterDto.CorrespondenceLanguageIds!.Contains(m.Person.CorrespondenceLanguageId)) &&
                                 (electionTypesIds == null || electionTypesIds.Count == 0 || electionTypesIds.Contains(m.ElectionTypeId)) &&
+                                (m.EndDate == filterDto.EndDateCurrentTermOfOfficeDate || m.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid) &&
                                 m.ElectionOfficeId != ElectionOffice.OtherGuid)
                     .ToList()
             })

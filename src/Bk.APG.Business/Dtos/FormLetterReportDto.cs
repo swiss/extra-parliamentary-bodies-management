@@ -52,6 +52,7 @@ public class FormLetterMembershipReportDto
     public string? Zip { get; set; }
     public string? City { get; set; }
     public string? Country { get; set; }
+    public DateOnly? EndDate { get; set; }
 }
 
 public enum FormLetterType
@@ -60,7 +61,8 @@ public enum FormLetterType
     ReElection,
     Retire,
     MaximumMembershipDuration,
-    OtherRetirement
+    OtherRetirement,
+    CommitteeDissolutionWithdrawal,
 }
 
 public enum FormLetterLanguage
