@@ -279,7 +279,8 @@ public class FormLetterService : IFormLetterService
         var endedMemberships = allEndedMemberships
             .SelectMany(c => c.Memberships
                 .Select(m => MapToFormLetterMembershipDto(
-                    formLetterType: m.ElectionTypeId == ElectionType.RetirementGuid ? FormLetterType.Retire :
+                    formLetterType: m.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid ? FormLetterType.CommitteeDissolutionWithdrawal :
+                        m.ElectionTypeId == ElectionType.RetirementGuid ? FormLetterType.Retire :
                         m.ElectionTypeId == ElectionType.MaximumMembershipDurationGuid ? FormLetterType.MaximumMembershipDuration : FormLetterType.OtherRetirement,
                     committeeId: c.Id,
                     committeeNames: (c.DescriptionGerman, c.DescriptionFrench, c.DescriptionItalian, c.DescriptionRomansh),
@@ -287,7 +288,8 @@ public class FormLetterService : IFormLetterService
                     dateLetter: dateLetter,
                     sender: sender,
                     person: m.Person!,
-                    function: m.Function!)))
+                    function: m.Function!,
+                    endDate: m.EndDate)))
             .ToList();
 
         return endedMemberships;
@@ -361,7 +363,8 @@ public class FormLetterService : IFormLetterService
         (string De, string Fr, string It, string Rm) dateLetter,
         FormLetterSender sender,
         Person person,
-        Function function)
+        Function function,
+        DateOnly? endDate = null)
     {
         return new FormLetterMembershipReportDto
         {
@@ -399,7 +402,8 @@ public class FormLetterService : IFormLetterService
                 ? string.Empty
                 : person.CorrespondenceAddress.Country.TextDe == "CH"
                     ? string.Empty
-                    : GetText(person.CorrespondenceAddress.Country.DescriptionDe, person.CorrespondenceAddress.Country.DescriptionFr, person.CorrespondenceAddress.Country.DescriptionIt, person.CorrespondenceAddress.Country.DescriptionRm)
+                    : GetText(person.CorrespondenceAddress.Country.DescriptionDe, person.CorrespondenceAddress.Country.DescriptionFr, person.CorrespondenceAddress.Country.DescriptionIt, person.CorrespondenceAddress.Country.DescriptionRm),
+            EndDate = endDate,
         };
 
         FormLetterLanguage GetFormLetterLanguage()
