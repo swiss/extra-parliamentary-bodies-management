@@ -56,6 +56,18 @@
       <None Update="Templates\FormLetterGeneralElection.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\FormLetterGeneralElection_French.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\FormLetterGeneralElection_German.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\FormLetterGeneralElection_Italian.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Templates\FormLetterGeneralElection_Romansh.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
       <None Update="Templates\InformationNote_French.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
