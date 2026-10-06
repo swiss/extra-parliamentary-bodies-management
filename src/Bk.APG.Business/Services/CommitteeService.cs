@@ -766,7 +766,7 @@ public class CommitteeService : ICommitteeService
         return statisticDtos;
     }
 
-    public async Task<IEnumerable<Committee>> GetCommitteesWithRetiredMembers(GeneralElectionCommitteeExportFilterParametersDto? filter, List<Guid> electionTypeIds)
+    public async Task<IEnumerable<Committee>> GetCommitteesWithRetiredMembers(GeneralElectionCommitteeExportFilterParameters? filter, List<Guid> electionTypeIds)
     {
         if (filter != null)
         {
@@ -781,6 +781,7 @@ public class CommitteeService : ICommitteeService
                 CommitteeTypeIds = filter.CommitteeTypeIds,
                 ElectionTypeIds = filter.ElectionTypeIds,
                 EndDateCurrentTermOfOfficeDate = endDate,
+                CommitteeIds = filter.CommitteeIds,
             };
 
             var committees = await _committeeRepository.GetAllForFormLetter(filterDto, electionTypeIds);
