@@ -285,7 +285,7 @@ public static class CommitteeQueryExtensions
         }
 
         // here, only memberships, ending exactly at the end of the term of office are relevant.
-        query = query.Where(c => c.Memberships.Any(m => m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate));
+        query = query.Where(c => c.Memberships.Any(m => m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate || m.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid));
 
         if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
         {
