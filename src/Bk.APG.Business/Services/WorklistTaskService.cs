@@ -97,7 +97,11 @@ public class WorklistTaskService : IWorklistTaskService
         var department = await _authorizationService.GetDepartment();
         var isBigDepartment = department != null && department.IsBigDepartment;
 
-        dto.CanEdit = worklistTask.AssignedBy!.Id == currentEiamAssignment.Id;
+        dto.CanEdit = worklistTask.AssignedBy!.Id == currentEiamAssignment.Id ||
+            ((worklistTask.WorklistTaskStateId != WorklistTaskState.Completed) &&
+            (worklistTask.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate || worklistTask.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal) &&
+                    ((currentEiamAssignment.Role == Role.Department && (worklistTask.AssignedTo!.Parent?.Id == currentEiamAssignment.Id || worklistTask.AssignedTo!.Parent!.Parent?.Id == currentEiamAssignment.Id)) ||
+                        (currentEiamAssignment.Role == Role.Office && (worklistTask.AssignedTo!.Parent?.Id == currentEiamAssignment.Id))));
         dto.CanForward = worklistTask.GetCanBeForwarded(currentEiamAssignment.Id, _authorizationService.IsDepartment, isBigDepartment);
         dto.IsBigDepartment = worklistTask.AssignedTo!.Role == Role.Department && (worklistTask.AssignedTo.Department?.IsBigDepartment ?? false);
 
@@ -159,12 +163,28 @@ public class WorklistTaskService : IWorklistTaskService
             throw new BusinessValidationException("The due date cannot be before the task creation date.");
         }
 
+        var dueDateChanged = worklistTask.DueDate != updateDto.DueDate;
+
         worklistTask.Description = updateDto.Description ?? string.Empty;
         worklistTask.DueDate = updateDto.DueDate;
         worklistTask.Modified = DateTime.UtcNow;
         worklistTask.ModifiedBy = currentUserName;
 
+        if (dueDateChanged && worklistTask.AssignedTo?.Role == Role.Secretariat && worklistTask.CommitteeId is not null)
+        {
+            var committeeTasks = await _worklistTaskRepository.GetAllByCommitteeIdForUpdate(worklistTask.CommitteeId.Value);
+
+            foreach (var item in committeeTasks.Where(y => y.WorklistTaskStateId != WorklistTaskState.Completed))
+            {
+                if (item.WorklistTaskTypeId == WorklistTaskType.CandidateListApprove && item.AssignedTo?.Role == Role.Department)
+                {
+                    item.DueDate = worklistTask.DueDate.AddDays(7);
+                }
+            }
+        }
+
         await _worklistTaskRepository.Update(worklistTask);
+
         if (_logger.IsEnabled(LogLevel.Information))
         {
             _logger.LogInformation("Updated worklist task {WorklistTaskId}", id);

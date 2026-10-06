@@ -141,8 +141,4 @@ export class WorklistComponent {
     navigateToDetails(task: WorklistTask) {
         void this.router.navigate(['worklist', task.id]);
     }
-
-    navigateToUrl(url: string): void {
-        void this.router.navigateByUrl(url);
-    }
 }
