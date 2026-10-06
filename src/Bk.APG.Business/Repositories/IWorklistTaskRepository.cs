@@ -22,4 +22,5 @@ public interface IWorklistTaskRepository
     Task<List<WorklistTask>> GetByDepartmentIdAndWorklistTaskTypeIdsForUpdate(Guid departmentId, IEnumerable<Guid> worklistTaskTypeIds);
     Task SetAllWorklistTasksToIsDeleted();
     Task<IEnumerable<WorklistTask>> GetAllByCommitteeId(Guid committeeId);
+    Task<IEnumerable<WorklistTask>> GetAllByCommitteeIdForUpdate(Guid committeeId);
 }

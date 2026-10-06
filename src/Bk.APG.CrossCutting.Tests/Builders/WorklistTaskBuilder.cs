@@ -15,8 +15,8 @@ public class WorklistTaskBuilder
     private WorklistTask? _parentTask;
     private Guid _assignedToId;
     private EiamAssignment _assignedTo;
-    private readonly Guid _assignedById;
-    private readonly EiamAssignment _assignedBy;
+    private Guid _assignedById;
+    private EiamAssignment _assignedBy;
     private readonly DateOnly _dueDate;
     private Guid _worklistTaskTypeId;
     private WorklistTaskType? _worklistTaskType;
@@ -138,6 +138,15 @@ public class WorklistTaskBuilder
 
         _assignedTo = assignedTo;
         _assignedToId = assignedTo.Id;
+        return this;
+    }
+
+    public WorklistTaskBuilder WithAssignedBy(EiamAssignment assignedBy)
+    {
+        ArgumentNullException.ThrowIfNull(assignedBy);
+
+        _assignedBy = assignedBy;
+        _assignedById = assignedBy.Id;
         return this;
     }
 
