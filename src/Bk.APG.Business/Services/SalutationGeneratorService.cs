@@ -35,6 +35,10 @@ public class SalutationGeneratorService : ISalutationGeneratorService
             {
                 salutationText = salutation.DescriptionIt;
             }
+            else if (correspondenceLanguageId == Guid.Parse(Language.RomanshId))
+            {
+                salutationText = salutation.DescriptionRm + " " + surname;
+            }
         }
 
         return salutationText;
