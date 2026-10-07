@@ -56,7 +56,7 @@ description:
       Bundesratsgeschäfte zur Wahl der Mitglieder und Bericht ans Parlament.
     documentation: https://github.com/swiss/extra-parliamentary-bodies-management/blob/main/README.md
     features:
-      - Verwaltung außerparlamentarischer Gremien und ihrer Mitglieder
+      - Verwaltung ausserparlamentarischer Gremien und ihrer Mitglieder
       - Veröffentlichung der Daten als OGD
       - Vorbereitung der Bundesratsgeschäfte zur Wahl der Mitglieder
       - Durchführung und Überprüfung von Wahlen
