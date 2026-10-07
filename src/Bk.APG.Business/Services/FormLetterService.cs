@@ -15,6 +15,11 @@ public class FormLetterService : IFormLetterService
     private const string GeneralElectionTextItalian = "Rinnovo integrale";
     private const string GeneralElectionTextRomansh = "Renovaziun totala";
 
+    private const string CommitteeDissolutionWithdrawalTextGerman = "Gremiumauflösung";
+    private const string CommitteeDissolutionWithdrawalTextFrench = "Dissolution d'un comité";
+    private const string CommitteeDissolutionWithdrawalTextItalian = "Scioglimento dell'organo";
+    private const string CommitteeDissolutionWithdrawalTextRomansh = "Dissoluziun dal gremi";
+
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
     private readonly IDocumentService _documentServiceInternal;
@@ -289,6 +294,7 @@ public class FormLetterService : IFormLetterService
                     sender: sender,
                     person: m.Person!,
                     function: m.Function!,
+                    committeeDissolutionWithdrawal: m.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid,
                     endDate: m.EndDate)))
             .ToList();
 
@@ -364,6 +370,7 @@ public class FormLetterService : IFormLetterService
         FormLetterSender sender,
         Person person,
         Function function,
+        bool committeeDissolutionWithdrawal = false,
         DateOnly? endDate = null)
     {
         return new FormLetterMembershipReportDto
@@ -380,7 +387,8 @@ public class FormLetterService : IFormLetterService
             SenderStreet = GetText(sender.StreetGerman, sender.StreetFrench, sender.StreetItalian, sender.StreetRomansh),
             SenderZip = sender.Zip,
             SenderCity = GetText(sender.CityGerman, sender.CityFrench, sender.CityItalian, sender.CityRomansh),
-            Subject = GetText(GeneralElectionTextGerman, GeneralElectionTextFrench, GeneralElectionTextItalian, GeneralElectionTextRomansh),
+            Subject = committeeDissolutionWithdrawal ? GetText(CommitteeDissolutionWithdrawalTextGerman, CommitteeDissolutionWithdrawalTextFrench, CommitteeDissolutionWithdrawalTextItalian, CommitteeDissolutionWithdrawalTextRomansh)
+                : GetText(GeneralElectionTextGerman, GeneralElectionTextFrench, GeneralElectionTextItalian, GeneralElectionTextRomansh),
             DateLetter = GetText(dateLetter.De, dateLetter.Fr, dateLetter.It, dateLetter.Rm),
             CommitteeId = committeeId,
             CommitteeName = GetText(committeeNames.De, committeeNames.Fr, committeeNames.It, committeeNames.Rm),
