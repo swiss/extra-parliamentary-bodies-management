@@ -61,6 +61,7 @@ public class GeneralElectionCommitteeBuilder
     private string _measuresGenders;
     private string _justificationLanguages;
     private string _measuresLanguages;
+    private bool _federalInstitution;
 
     private readonly uint _rowVersion;
 
@@ -121,6 +122,7 @@ public class GeneralElectionCommitteeBuilder
         _measuresGenders = string.Empty;
         _justificationLanguages = string.Empty;
         _measuresLanguages = string.Empty;
+        _federalInstitution = false;
     }
 
     public GeneralElectionCommitteeBuilder WithId(Guid id)
@@ -345,6 +347,12 @@ public class GeneralElectionCommitteeBuilder
         return this;
     }
 
+    public GeneralElectionCommitteeBuilder WithFederalInstitution(bool federalInstitution)
+    {
+        _federalInstitution = federalInstitution;
+        return this;
+    }
+
     public GeneralElectionCommitteeBuilder WithOfficeReadyForProposalDueDate(DateOnly? officeReadyForProposalDueDate)
     {
         _officeReadyForProposalDueDate = officeReadyForProposalDueDate;
@@ -439,7 +447,8 @@ public class GeneralElectionCommitteeBuilder
             JustificationLanguages = _justificationLanguages,
             MeasuresLanguages = _measuresLanguages,
             WasValidatedOnce = _wasValidatedOnce,
-            IsFederalCouncilProposalDirty = _isFederalCouncilProposalDirty
+            IsFederalCouncilProposalDirty = _isFederalCouncilProposalDirty,
+            FederalInstitution = _federalInstitution
         };
     }
 }
