@@ -120,6 +120,9 @@ public class GeneralElectionCommittee : EntityBase
     public bool IsJustificationGendersRequired => IsValidated && (MaleUnderStaffed || FemaleUnderStaffed);
 
     [NotMapped]
+    public bool IsJustificationSelectionProcedureRequired => IsValidated && FederalInstitution == true;
+
+    [NotMapped]
     public int GermanCount => MembershipCandidates.Count(x => x is { IsSelected: true, Language.Uri: Language.GermanUri, IsDeleted: false });
 
     [NotMapped]
@@ -162,6 +165,7 @@ public class GeneralElectionCommittee : EntityBase
     public bool IsJustificationLanguagesRequired => IsValidated && (GermanUnderStaffed || FrenchUnderStaffed || ItalianUnderStaffed);
 
     [NotMapped]
-    public bool JustificationsNeedAttention => (IsJustificationGendersRequired && (string.IsNullOrWhiteSpace(JustificationGenders) || (string.IsNullOrWhiteSpace(MeasuresGenders) && string.IsNullOrWhiteSpace(Department!.GeneralGenderMeasure?.Description))))
-                                               || (IsJustificationLanguagesRequired && (string.IsNullOrWhiteSpace(JustificationLanguages) || (string.IsNullOrWhiteSpace(MeasuresLanguages) && string.IsNullOrWhiteSpace(Department!.GeneralLanguageMeasure?.Description))));
+    public bool JustificationsNeedAttention => (IsJustificationSelectionProcedureRequired && string.IsNullOrWhiteSpace(SelectionProcedure))
+                                                || (IsJustificationGendersRequired && (string.IsNullOrWhiteSpace(JustificationGenders) || (string.IsNullOrWhiteSpace(MeasuresGenders) && string.IsNullOrWhiteSpace(Department!.GeneralGenderMeasure?.Description))))
+                                                || (IsJustificationLanguagesRequired && (string.IsNullOrWhiteSpace(JustificationLanguages) || (string.IsNullOrWhiteSpace(MeasuresLanguages) && string.IsNullOrWhiteSpace(Department!.GeneralLanguageMeasure?.Description))));
 }
