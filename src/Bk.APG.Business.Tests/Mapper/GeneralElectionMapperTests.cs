@@ -19,6 +19,7 @@ internal class GeneralElectionMapperTests
             .WithCommitteeType(new CommitteeTypeBuilder().Build())
             .WithCommitteeLevel(new CommitteeLevelBuilder().Build())
             .WithMembership(new MembershipBuilder().WithBeginDate(DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-3))).Build())
+            .WithFederalInstitution(true)
             .Build();
 
         var generalElectionCommittee = GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(committee, "test");
@@ -54,6 +55,7 @@ internal class GeneralElectionMapperTests
             Assert.That(generalElectionCommittee.RemarksBaseDataAdmin, Is.EqualTo(committee.RemarksBaseDataAdmin));
             Assert.That(generalElectionCommittee.IsDeleted, Is.EqualTo(committee.IsDeleted));
             Assert.That(generalElectionCommittee.JustificationMembers, Is.EqualTo(committee.JustificationMembers));
+            Assert.That(generalElectionCommittee.FederalInstitution, Is.True);
         });
     }
 
