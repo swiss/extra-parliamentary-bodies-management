@@ -257,7 +257,7 @@ public class CommitteeService : ICommitteeService
                 await _membershipMirrorService.InvalidateMembershipCandidateList(existingCommittee.Id);
             }
 
-            foreach (var membership in existingCommittee.Memberships.Where(y => !y.IsDeleted && !y.HasOtherElectionOffice))
+            foreach (var membership in existingCommittee.Memberships.Where(y => !y.IsDeleted && y.EndDate > updateDto.EndDate!.Value && !y.HasOtherElectionOffice))
             {
                 membership.ElectionTypeId = ElectionType.CommitteeDissolutionWithdrawalGuid;
                 membership.EndDate = updateDto.EndDate!.Value;

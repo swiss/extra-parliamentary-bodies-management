@@ -57,6 +57,7 @@ public static class GeneralElectionMapper
             WasValidatedOnce = false,
             IsFederalCouncilProposalDirty = false,
             CandidateListStateId = CandidateListState.Draft,
+            FederalInstitution = committee.FederalInstitution,
             AssignedToRole = "admin"
         };
     }
