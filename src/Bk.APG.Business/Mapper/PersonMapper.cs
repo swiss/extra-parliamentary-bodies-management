@@ -171,10 +171,10 @@ public static class PersonMapper
             BirthYear = person.BirthYear,
             MaskAddress = maskAddress,
             PrivateAddress = person.PrivateAddress is not null && person.CorrespondenceAddress is not null && !maskAddress
-                ? AddressMapper.ToAddressUpdateDto(person.PrivateAddress!, person.CorrespondenceAddressId!.Value)
+                ? AddressMapper.ToAddressUpdateDto(person.PrivateAddress!, person.CorrespondenceAddress.Id)
                 : null,
             OfficeAddress = person.OfficeAddress is not null && person.CorrespondenceAddress is not null && !maskAddress
-                ? AddressMapper.ToAddressUpdateDto(person.OfficeAddress!, person.CorrespondenceAddressId!.Value)
+                ? AddressMapper.ToAddressUpdateDto(person.OfficeAddress!, person.CorrespondenceAddress.Id)
                 : null,
             LanguageId = person.LanguageId,
             CorrespondenceLanguageId = person.CorrespondenceLanguageId,
