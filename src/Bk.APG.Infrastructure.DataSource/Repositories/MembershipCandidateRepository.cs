@@ -17,6 +17,7 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
     public async Task<MembershipCandidate> GetById(Guid id)
     {
         var membershipCandidate = await _dataContext.MembershipCandidates
+            .Where(m => !m.IsDeleted)
             .Include(m => m.GeneralElectionCommittee)
             .Include(m => m.Function)
             .Include(m => m.ElectionType)
@@ -47,6 +48,7 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
     public async Task<MembershipCandidate> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null)
     {
         var membershipCandidate = await _dataContext.MembershipCandidates
+            .Where(m => !m.IsDeleted)
             .Include(m => m.MembershipAddition)
             .Include(m => m.ElectionOffice)
             .Include(m => m.GeneralElectionCommittee)
@@ -74,6 +76,7 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
     public async Task<MembershipCandidate?> GetByMembershipIdForUpdate(Guid membershipId, uint? updateDtoRowVersion = null)
     {
         var membershipCandidate = await _dataContext.MembershipCandidates
+            .Where(m => !m.IsDeleted)
             .Include(m => m.GeneralElectionCommittee)
             .Include(m => m.MembershipAddition)
             .Include(m => m.ElectionOffice)
@@ -90,9 +93,22 @@ public class MembershipCandidateRepository : IMembershipCandidateRepository
     public async Task<IEnumerable<MembershipCandidate>> GetByPersonIdForUpdate(Guid personId)
     {
         var membershipCandidates = await _dataContext.MembershipCandidates
+            .Where(m => !m.IsDeleted)
             .Include(m => m.MembershipAddition)
             .Include(m => m.ElectionOffice)
             .Where(m => m.PersonId == personId)
+            .ToListAsync();
+
+        return membershipCandidates;
+    }
+
+    public async Task<IEnumerable<MembershipCandidate>> GetByGeneralElectionCommitteeIdForUpdate(Guid generalElectionCommitteeId)
+    {
+        var membershipCandidates = await _dataContext.MembershipCandidates
+            .Where(m => !m.IsDeleted)
+            .Include(m => m.MembershipAddition)
+            .Include(m => m.ElectionOffice)
+            .Where(m => m.GeneralElectionCommitteeId == generalElectionCommitteeId)
             .ToListAsync();
 
         return membershipCandidates;

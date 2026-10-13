@@ -204,6 +204,38 @@ internal class GeneralElectionCommitteeMapperTests
     }
 
     [Test]
+    public void ToGeneralElectionCommitteeUpdateDto_ShouldMapCorrectly()
+    {
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder()
+            .WithCommittee(new CommitteeBuilder().Build())
+            .WithBeginDate(new DateOnly(2020, 1, 1))
+            .WithEndDate(new DateOnly(2024, 12, 31))
+            .WithMinimalMember(11)
+            .WithMaximalMember(15)
+            .WithDepartment(new DepartmentBuilder().Build())
+            .WithOffice(new OfficeBuilder().Build())
+            .Build();
+        generalElectionCommittee.IsDeleted = true;
+
+        var updateDto = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeUpdateDto(generalElectionCommittee);
+
+        Assert.That(updateDto, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(updateDto.Id, Is.EqualTo(generalElectionCommittee.Id));
+            Assert.That(updateDto.CommitteeId, Is.EqualTo(generalElectionCommittee.CommitteeId));
+            Assert.That(updateDto.CommitteeNumber, Is.EqualTo(generalElectionCommittee.Committee!.CommitteeNumber));
+            Assert.That(updateDto.BeginDate, Is.EqualTo(generalElectionCommittee.BeginDate));
+            Assert.That(updateDto.EndDate, Is.EqualTo(generalElectionCommittee.EndDate));
+            Assert.That(updateDto.CommitteeEndDate, Is.EqualTo(generalElectionCommittee.Committee.EndDate));
+            Assert.That(updateDto.MinimalMembers, Is.EqualTo(generalElectionCommittee.MinimalMembers));
+            Assert.That(updateDto.MaximalMembers, Is.EqualTo(generalElectionCommittee.MaximalMembers));
+            Assert.That(updateDto.RowVersion, Is.EqualTo(generalElectionCommittee.RowVersion));
+            Assert.That(updateDto.IsDeleted, Is.EqualTo(generalElectionCommittee.IsDeleted));
+        });
+    }
+
+    [Test]
     public void ToGeneralElectionCommitteeExportFilterParameters_ShouldMapCorrectly()
     {
         var filterParameters = new GeneralElectionCommitteeExportFilterParametersDto
