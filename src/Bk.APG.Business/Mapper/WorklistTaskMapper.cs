@@ -96,7 +96,8 @@ public static class WorklistTaskMapper
             WorklistTaskType = worklistTask.WorklistTaskType!.GetText(),
             WorklistTaskState = worklistTask.WorklistTaskState!.GetText(),
             AssignedTo = worklistTask.AssignedTo!.GetText(),
-            AssignedBy = worklistTask.AssignedBy!.GetText()
+            AssignedBy = worklistTask.AssignedBy!.GetText(),
+            IsDeleted = worklistTask.IsDeleted,
         };
     }
 
