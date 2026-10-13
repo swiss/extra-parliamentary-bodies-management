@@ -268,28 +268,31 @@ public static class CommitteeQueryExtensions
         return query;
     }
 
-    public static IQueryable<Committee> FilterCommitteesForFormLetter(this IQueryable<Committee> query, FormLetterFilterParameters filterParameter, List<Guid> electionTypeIds)
+    public static IQueryable<Committee> FilterCommitteesForFormLetter(this IQueryable<Committee> query, FormLetterFilterParameters filterParameter)
     {
         ArgumentNullException.ThrowIfNull(filterParameter);
 
-        if (electionTypeIds != null)
-        {
-            if (filterParameter.ElectionTypeIds != null && filterParameter.ElectionTypeIds.Any())
-            {
-                electionTypeIds = electionTypeIds
-                    .Where(id => filterParameter.ElectionTypeIds.Contains(id))
-                    .ToList();
-            }
+        var hasLanguageFilter = filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any();
+        var hasElectionTypeFilter = filterParameter.ElectionTypeIds is not null && filterParameter.ElectionTypeIds.Any();
 
-            query = query.Where(c => c.Memberships.Any(m => electionTypeIds!.Contains(m.ElectionTypeId)));
+        if (hasLanguageFilter && hasElectionTypeFilter)
+        {
+            query = query.Where(c => c.Memberships.Any(m =>
+                filterParameter.CorrespondenceLanguageIds!.Contains(m.Person!.CorrespondenceLanguageId) &&
+                filterParameter.ElectionTypeIds!.Contains(m.ElectionTypeId) &&
+                m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate));
         }
-
-        // here, only memberships, ending exactly at the end of the term of office are relevant.
-        query = query.Where(c => c.Memberships.Any(m => m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate || m.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid));
-
-        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
+        else if (hasLanguageFilter)
         {
-            query = query.Where(c => c.Memberships.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
+            query = query.Where(c => c.Memberships.Any(m =>
+                filterParameter.CorrespondenceLanguageIds!.Contains(m.Person!.CorrespondenceLanguageId) &&
+                m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate));
+        }
+        else if (hasElectionTypeFilter)
+        {
+            query = query.Where(c => c.Memberships.Any(m =>
+                filterParameter.ElectionTypeIds!.Contains(m.ElectionTypeId) &&
+                m.EndDate == filterParameter.EndDateCurrentTermOfOfficeDate));
         }
 
         if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())

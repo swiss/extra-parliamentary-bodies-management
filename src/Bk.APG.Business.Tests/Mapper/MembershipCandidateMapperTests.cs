@@ -97,7 +97,6 @@ internal class MembershipCandidateMapperTests
             Assert.That(dto.NeedsRequirementsProfile, Is.EqualTo(membership.NeedsRequirementsProfile));
             Assert.That(dto.MaximumDurationExceeded, Is.EqualTo(membership.MaximumDurationExceeded));
             Assert.That(dto.HasFederalAssemblyAuthoritiesCommissionConflict, Is.EqualTo(membership.HasFederalAssemblyAuthoritiesCommissionConflict));
-            Assert.That(dto.IsDeleted, Is.EqualTo(membership.IsDeleted));
         }
     }
 }

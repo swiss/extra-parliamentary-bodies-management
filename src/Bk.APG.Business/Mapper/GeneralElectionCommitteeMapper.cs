@@ -184,7 +184,6 @@ public static class GeneralElectionCommitteeMapper
             FederalInstitution = generalElectionCommitteeUpdate.FederalInstitution,
             SelfOrganized = generalElectionCommitteeUpdate.SelfOrganized,
             SelectionProcedure = generalElectionCommitteeUpdate.SelectionProcedure,
-            IsDeleted = generalElectionCommitteeUpdate.IsDeleted,
             RowVersion = generalElectionCommitteeUpdate.RowVersion
         };
     }

@@ -215,7 +215,6 @@ internal class GeneralElectionCommitteeMapperTests
             .WithDepartment(new DepartmentBuilder().Build())
             .WithOffice(new OfficeBuilder().Build())
             .Build();
-        generalElectionCommittee.IsDeleted = true;
 
         var updateDto = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeUpdateDto(generalElectionCommittee);
 
@@ -231,7 +230,6 @@ internal class GeneralElectionCommitteeMapperTests
             Assert.That(updateDto.MinimalMembers, Is.EqualTo(generalElectionCommittee.MinimalMembers));
             Assert.That(updateDto.MaximalMembers, Is.EqualTo(generalElectionCommittee.MaximalMembers));
             Assert.That(updateDto.RowVersion, Is.EqualTo(generalElectionCommittee.RowVersion));
-            Assert.That(updateDto.IsDeleted, Is.EqualTo(generalElectionCommittee.IsDeleted));
         });
     }
 

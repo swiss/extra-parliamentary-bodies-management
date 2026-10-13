@@ -108,7 +108,6 @@ internal class WorklistTaskMapperTests
     {
         var worklistTask = new WorklistTaskBuilder()
             .Build();
-        worklistTask.IsDeleted = true;
 
         var worklistTaskUpdateDto = WorklistTaskMapper.ToWorklistTaskUpdateDto(worklistTask);
 
@@ -119,7 +118,6 @@ internal class WorklistTaskMapperTests
             Assert.That(worklistTaskUpdateDto.Description, Is.EqualTo(worklistTask.Description));
             Assert.That(worklistTaskUpdateDto.Created, Is.EqualTo(worklistTask.Created));
             Assert.That(worklistTaskUpdateDto.DueDate, Is.EqualTo(worklistTask.DueDate));
-            Assert.That(worklistTaskUpdateDto.IsDeleted, Is.EqualTo(worklistTask.IsDeleted));
         });
     }
 

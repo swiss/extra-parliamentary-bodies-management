@@ -23,7 +23,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<GeneralElectionCommittee> GetById(Guid id)
     {
-        var generalElectionCommittee = await GetGeneralElectionCommittees().Where(g => !g.IsDeleted).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+        var generalElectionCommittee = await GetGeneralElectionCommittees().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
 
         if (generalElectionCommittee is null)
         {
@@ -35,7 +35,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<GeneralElectionCommittee> GetByCommitteeId(Guid committeeId)
     {
-        var generalElectionCommittee = await GetGeneralElectionCommittees().Where(g => !g.IsDeleted).AsNoTracking().FirstOrDefaultAsync(x => x.CommitteeId == committeeId);
+        var generalElectionCommittee = await GetGeneralElectionCommittees().AsNoTracking().FirstOrDefaultAsync(x => x.CommitteeId == committeeId);
 
         return generalElectionCommittee ?? throw new EntityNotFoundException($"GeneralElectionCommittee with CommitteeId={committeeId} not found");
     }
@@ -46,7 +46,6 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         var includeAllCandidates = candidateIds.Count == 0;
 
         var generalElectionCommittee = await GetGeneralElectionCommittees()
-            .Where(g => !g.IsDeleted)
             .Include(y => y.MembershipCandidates
                 .Where(mc => includeAllCandidates || candidateIds.Contains(mc.Id)))
                     .ThenInclude(mc => mc.Person)
@@ -248,7 +247,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .ThenInclude(item => item!.ElectionType)
             .Include(item => item.Committee)
             .FilterGeneralElectionCommitteesForExport(filterDto)
-        .AsSplitQuery()
+            .AsSplitQuery()
             .Select(c => new GeneralElectionCommittee
             {
                 Id = c.Id,
@@ -415,7 +414,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<GeneralElectionCommittee> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null)
     {
-        var generalElectionCommittee = await GetGeneralElectionCommittees().Where(g => !g.IsDeleted).FirstOrDefaultAsync(x => x.Id == id);
+        var generalElectionCommittee = await GetGeneralElectionCommittees().FirstOrDefaultAsync(x => x.Id == id);
 
         if (generalElectionCommittee is null)
         {
@@ -450,7 +449,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
 
     public async Task<GeneralElectionCommittee> GetByCommitteeIdForUpdate(Guid committeeId, uint? updateDtoRowVersion = null)
     {
-        var generalElectionCommittee = await GetGeneralElectionCommittees().Where(g => !g.IsDeleted).FirstOrDefaultAsync(x => x.CommitteeId == committeeId);
+        var generalElectionCommittee = await GetGeneralElectionCommittees().FirstOrDefaultAsync(x => x.CommitteeId == committeeId);
 
         if (generalElectionCommittee is null)
         {

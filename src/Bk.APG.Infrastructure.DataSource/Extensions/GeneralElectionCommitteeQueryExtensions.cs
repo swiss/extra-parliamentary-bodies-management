@@ -157,14 +157,24 @@ public static class GeneralElectionCommitteeQueryExtensions
     {
         ArgumentNullException.ThrowIfNull(filterParameter);
 
-        if (filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any())
-        {
-            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.CorrespondenceLanguageIds.Contains(m.Person!.CorrespondenceLanguageId)));
-        }
+        var hasLanguageFilter = filterParameter.CorrespondenceLanguageIds is not null && filterParameter.CorrespondenceLanguageIds.Any();
+        var hasElectionTypeFilter = filterParameter.ElectionTypeIds is not null && filterParameter.ElectionTypeIds.Any();
 
-        if (filterParameter.ElectionTypeIds is not null && filterParameter.ElectionTypeIds.Any())
+        if (hasLanguageFilter && hasElectionTypeFilter)
         {
-            query = query.Where(c => c.MembershipCandidates.Any(m => filterParameter.ElectionTypeIds.Contains(m.ElectionTypeId)));
+            query = query.Where(c => c.MembershipCandidates.Any(m =>
+                filterParameter.CorrespondenceLanguageIds!.Contains(m.Person!.CorrespondenceLanguageId) &&
+                filterParameter.ElectionTypeIds!.Contains(m.ElectionTypeId)));
+        }
+        else if (hasLanguageFilter)
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m =>
+                filterParameter.CorrespondenceLanguageIds!.Contains(m.Person!.CorrespondenceLanguageId)));
+        }
+        else if (hasElectionTypeFilter)
+        {
+            query = query.Where(c => c.MembershipCandidates.Any(m =>
+                filterParameter.ElectionTypeIds!.Contains(m.ElectionTypeId)));
         }
 
         if (filterParameter.DepartmentIds is not null && filterParameter.DepartmentIds.Any())
