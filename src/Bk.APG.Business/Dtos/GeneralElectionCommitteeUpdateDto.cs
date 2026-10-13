@@ -38,4 +38,5 @@ public class GeneralElectionCommitteeUpdateDto
     public bool CanEditDepartment { get; set; }
     public bool CanEditLegalbase { get; set; }
     public required uint RowVersion { get; init; }
+    public bool IsDeleted { get; set; }
 }
