@@ -31,6 +31,7 @@ internal class PersonServiceTests
     private Person _personToCreate;
     private Person _personToUpdate;
     private Person _personToUpdateWithAddresses;
+    private Person _personToUpdateWithoutCorrespondenceAddress;
     private List<Membership> _membershipList;
     private Membership _membership;
     private Guid _genderId;
@@ -97,6 +98,12 @@ internal class PersonServiceTests
             .WithLanguage(language)
             .WithGender(gender)
             .WithMemberships(_membershipList)
+            .Build();
+
+        _personToUpdateWithoutCorrespondenceAddress = new PersonBuilder()
+            .WithId(Guid.NewGuid())
+            .WithCorrespondenceLanguage(language)
+            .WithLanguage(language)
             .Build();
 
         _personRepository.GetByIdForUpdate(_personToUpdate.Id).Returns(_personToUpdate);
@@ -411,6 +418,48 @@ internal class PersonServiceTests
             Assert.That(_personToUpdateWithAddresses.PrivateAddress.ModifiedBy, Is.EqualTo("currentUser"));
             Assert.That(_personToUpdateWithAddresses.CorrespondenceAddress.City, Is.EqualTo("Basel"));
         });
+    }
+
+    [Test]
+    public async Task UpdatePerson_WhenCalledWithValidDataAndWithoutExistingAddresses_ShouldCallRepositoryAndUpdateCorrespondenceAddress()
+    {
+        var updateDto = new PersonUpdateDto
+        {
+            Id = _personToUpdateWithAddresses.Id,
+            Surname = "surname",
+            BirthYear = 2000,
+            CorrespondenceLanguageId = _personToUpdate.CorrespondenceLanguageId,
+            GenderId = _personToUpdate.GenderId,
+            GivenName = "givenName",
+            LanguageId = _personToUpdate.LanguageId,
+            SalutationId = _personToUpdate.SalutationId,
+            MaskAddress = false,
+            OfficeAddress = new AddressUpdateDto
+            {
+                Id = null,
+                ActiveAddress = true,
+                City = "Basel"
+            },
+            PrivateAddress = new AddressUpdateDto
+            {
+                Id = null,
+                City = "Zürich"
+            },
+            RowVersion = 666
+        };
+
+        _personToUpdateWithoutCorrespondenceAddress.CorrespondenceAddressId = null;
+
+        _personRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_personToUpdateWithoutCorrespondenceAddress);
+
+        await _service.UpdatePerson(_personToUpdateWithAddresses.Id, updateDto);
+
+        _authorizationService.Received(1).GetCurrentUserName();
+        await _personRepository.Received(1).GetByIdForUpdate(_personToUpdateWithAddresses.Id, updateDto.RowVersion);
+        await _personRepository.Received(1).CommitChanges();
+
+        Assert.That(_personToUpdateWithoutCorrespondenceAddress, Is.Not.Null);
+        Assert.That(_personToUpdateWithoutCorrespondenceAddress.CorrespondenceAddress, Is.Not.Null);
     }
 
     [Test]
