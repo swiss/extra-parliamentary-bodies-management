@@ -1083,4 +1083,63 @@ describe('PersonDataFormComponent', () => {
             expect(component.filteredOccupationDb()).toEqual([translatedSuggestion]);
         });
     });
+
+    describe('buildPersonModification', () => {
+        it('should omit empty addresses', () => {
+            component.personForm.controls.privateAddress.patchValue({
+                companyName: null,
+                street: '',
+                poBox: '',
+                countryId: null,
+                zip: '',
+                city: '',
+                phone: '',
+                mobile: '',
+                email: '',
+                cantonId: null,
+                activeAddress: false,
+            });
+
+            component.personForm.controls.officeAddress.patchValue({
+                companyName: null,
+                street: '',
+                poBox: '',
+                countryId: null,
+                zip: '',
+                city: '',
+                phone: '',
+                mobile: '',
+                email: '',
+                cantonId: null,
+                activeAddress: false,
+            });
+
+            const result = component.buildPersonModification();
+
+            expect(result).not.toHaveProperty('privateAddress');
+            expect(result).not.toHaveProperty('officeAddress');
+        });
+
+        it('should include populated addresses even when activeAddress is false', () => {
+            const privateAddress = {
+                companyName: null,
+                street: 'Main Street 1',
+                poBox: '',
+                countryId: null,
+                zip: '3000',
+                city: 'Bern',
+                phone: '',
+                mobile: '',
+                email: '',
+                cantonId: null,
+                activeAddress: false,
+            };
+
+            component.personForm.controls.privateAddress.patchValue(privateAddress);
+
+            const result = component.buildPersonModification();
+
+            expect(result.privateAddress).toEqual(privateAddress);
+        });
+    });
 });
