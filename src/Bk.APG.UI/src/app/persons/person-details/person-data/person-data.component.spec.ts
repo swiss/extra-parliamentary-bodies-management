@@ -180,6 +180,29 @@ describe('PersonDataComponent', () => {
             expect(personsServiceMock.updatePerson).toHaveBeenCalled();
             expect(notificationServiceMock.error).toHaveBeenCalledWith('person.details.data.error');
         });
+
+        it('should call updatePerson with the result of buildPersonModification', () => {
+            const personToUpdate = {
+                id: '123',
+                surname: 'John Doe',
+                languageId: 'en',
+            } as PersonUpdate;
+
+            const buildPersonModification = jest.fn().mockReturnValue(personToUpdate);
+
+            // @ts-ignore
+            component.formComponent = jest.fn().mockReturnValue({
+                validateAddresses: jest.fn(),
+                buildPersonModification,
+            });
+
+            (personsServiceMock.updatePerson as jest.Mock).mockReturnValue(of(personToUpdate));
+
+            component.save();
+
+            expect(buildPersonModification).toHaveBeenCalled();
+            expect(personsServiceMock.updatePerson).toHaveBeenCalledWith(personToUpdate);
+        });
     });
 
     describe('reset', () => {
