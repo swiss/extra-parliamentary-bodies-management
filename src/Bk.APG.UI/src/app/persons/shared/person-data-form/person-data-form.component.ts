@@ -437,7 +437,14 @@ export class PersonDataFormComponent implements OnInit {
         }
         formValues.occupations = this.selectedOccupations;
 
-        return {...this.personModification(), ...formValues} as PersonCreate | PersonUpdate;
+        const {privateAddress, officeAddress, ...otherValues} = formValues;
+
+        return {
+            ...this.personModification(),
+            ...otherValues,
+            ...(this.checkIfAddressIsEmpty('privateAddress') ? {} : {privateAddress}),
+            ...(this.checkIfAddressIsEmpty('officeAddress') ? {} : {officeAddress}),
+        } as PersonCreate | PersonUpdate;
     }
 
     changeActiveAddress(selection: AddressControlId) {
