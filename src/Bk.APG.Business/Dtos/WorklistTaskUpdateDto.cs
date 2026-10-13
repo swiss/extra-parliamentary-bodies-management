@@ -13,4 +13,5 @@ public class WorklistTaskUpdateDto
     public bool CanEdit { get; set; }
     public bool CanForward { get; set; }
     public bool IsBigDepartment { get; set; }
+    public bool IsDeleted { get; set; }
 }

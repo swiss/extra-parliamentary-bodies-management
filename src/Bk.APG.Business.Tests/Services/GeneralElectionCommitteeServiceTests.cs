@@ -24,6 +24,7 @@ public class GeneralElectionCommitteeServiceTests
     private readonly ICommitteeService _committeeService = Substitute.For<ICommitteeService>();
     private readonly IGeneralMeasureRepository _generalMeasureRepository = Substitute.For<IGeneralMeasureRepository>();
     private readonly IWorklistTaskRepository _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
+    private readonly IMembershipCandidateRepository _membershipCandidateRepository = Substitute.For<IMembershipCandidateRepository>();
     private readonly IMasterDataRepository _masterDataRepository = Substitute.For<IMasterDataRepository>();
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService = Substitute.For<Swiss.FCh.DocumentService.Client.IDocumentService>();
     private readonly ILogger<GeneralElectionCommitteeService> _logger = NullLogger<GeneralElectionCommitteeService>.Instance;
@@ -86,6 +87,7 @@ public class GeneralElectionCommitteeServiceTests
             _committeeService,
             _generalMeasureRepository,
             _worklistTaskRepository,
+            _membershipCandidateRepository,
             _masterDataRepository,
             _documentService,
             _logger);
@@ -704,6 +706,39 @@ public class GeneralElectionCommitteeServiceTests
 
         await _committeeService.Received(1).UpdateCommitteeAfterGeneralElection(Arg.Any<Guid>(), Arg.Any<CommitteeUpdateDto>(), Arg.Any<List<MembershipCandidate>>());
         Assert.That(result, Is.True);
+    }
+
+    [Test]
+    public async Task SetGeneralElectionCommitteeToIsDeleted_ShouldSoftDeleteCommitteeAndCandidatesAndWorklistTasks()
+    {
+        var committeeId = Guid.NewGuid();
+        var candidate1 = new MembershipCandidateBuilder().Build();
+        var candidate2 = new MembershipCandidateBuilder().Build();
+        var worklistTask1 = new WorklistTaskBuilder().Build();
+        var worklistTask2 = new WorklistTaskBuilder().Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId).Returns(_generalElectionCommittee1);
+        _membershipCandidateRepository.GetByGeneralElectionCommitteeIdForUpdate(_generalElectionCommittee1.Id)
+            .Returns(new List<MembershipCandidate> { candidate1, candidate2 });
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(_generalElectionCommittee1.Id)
+            .Returns(new List<WorklistTask> { worklistTask1, worklistTask2 });
+
+        var result = await _generalElectionCommitteeService.SetGeneralElectionCommitteeToIsDeleted(committeeId);
+
+        Assert.That(result, Is.True);
+        Assert.Multiple(() =>
+        {
+            Assert.That(_generalElectionCommittee1.IsDeleted, Is.True);
+            Assert.That(_generalElectionCommittee1.Modified, Is.EqualTo(DateTime.UtcNow).Within(TimeSpan.FromSeconds(5)));
+            Assert.That(candidate1.IsDeleted, Is.True);
+            Assert.That(candidate2.IsDeleted, Is.True);
+            Assert.That(worklistTask1.IsDeleted, Is.True);
+            Assert.That(worklistTask2.IsDeleted, Is.True);
+        });
+
+        await _generalElectionCommitteeRepository.Received(1).CommitChanges();
+        await _membershipCandidateRepository.Received(2).CommitChanges();
+        await _worklistTaskRepository.Received(2).CommitChanges();
     }
 
     private static GeneralElectionCommitteeJustificationUpdateDto BuildJustificationUpdateDto()

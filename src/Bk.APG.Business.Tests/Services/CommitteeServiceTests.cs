@@ -23,6 +23,7 @@ internal class CommitteeServiceTests
     private IGeneralMeasureRepository _generalMeasureRepository;
     private IMembershipRepository _membershipRepository;
     private IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
+    private IMembershipCandidateRepository _membershipCandidateRepository;
     private IWorklistTaskService _worklistTaskService;
     private IMembershipMirrorService _membershipMirrorService;
     private IWorklistTaskRepository _worklistTaskRepository;
@@ -72,6 +73,7 @@ internal class CommitteeServiceTests
         _membershipMirrorService = Substitute.For<IMembershipMirrorService>();
         _worklistTaskRepository = Substitute.For<IWorklistTaskRepository>();
         _generalElectionCommitteeRepository = Substitute.For<IGeneralElectionCommitteeRepository>();
+        _membershipCandidateRepository = Substitute.For<IMembershipCandidateRepository>();
         _eiamAssignmentRepository = Substitute.For<IEiamAssignmentRepository>();
 
         _cultureService.GetCurrentUiCulture().Returns(new CultureInfo("de"));
@@ -248,6 +250,7 @@ internal class CommitteeServiceTests
             _generalMeasureRepository,
             _membershipRepository,
             _generalElectionCommitteeRepository,
+            _membershipCandidateRepository,
             _worklistTaskRepository,
             _eiamAssignmentRepository,
             NullLogger<CommitteeService>.Instance);
@@ -717,6 +720,100 @@ internal class CommitteeServiceTests
             {
                 Assert.That(membership.ElectionTypeId, Is.Not.EqualTo(ElectionType.CommitteeDissolutionWithdrawalGuid));
                 Assert.That(membership.EndDate, Is.Not.EqualTo(updateDto.EndDate!.Value));
+            });
+        }
+    }
+
+    [Test]
+    public async Task UpdateCommittee_WithDepartmentRoleAndChangedEndDate_GERunningAndNextTermBeginsAfterEndDate_ShouldDeactivateGeneralElectionCommittee()
+    {
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.IsDepartment.Returns(true);
+
+        var updateDto = BuildUpdateDto();
+        updateDto.EndDate = _committee.EndDate!.Value.AddDays(1);
+        updateDto.TermOfOfficeId = TermOfOffice.Period4YearsInGeneralElectionGuid;
+        updateDto.LevelId = CommitteeLevel.FederalCouncilGuid;
+        _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
+        _committeeRepository.GetById(updateDto.Id).Returns(_committee);
+        _authorizationService.GetDepartment().Returns(new DepartmentBuilder().WithId(_committee.DepartmentId).Build());
+        _committee.GeneralElectionCommittees = [new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build()];
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+        _termOfOfficeDateService.GetNextTermOfOfficeDate()
+            .Returns(new TermOfOfficeDateBuilder().WithBeginDate(updateDto.EndDate!.Value.AddDays(1)).Build());
+
+        var generalElectionCommittee = new GeneralElectionCommitteeBuilder().Build();
+        var candidate1 = new MembershipCandidateBuilder().Build();
+        var candidate2 = new MembershipCandidateBuilder().Build();
+        var worklistTask1 = new WorklistTaskBuilder().Build();
+        var worklistTask2 = new WorklistTaskBuilder().Build();
+
+        _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(updateDto.Id).Returns(generalElectionCommittee);
+        _membershipCandidateRepository.GetByGeneralElectionCommitteeIdForUpdate(generalElectionCommittee.Id)
+            .Returns(new List<MembershipCandidate> { candidate1, candidate2 });
+        _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id)
+            .Returns(new List<WorklistTask> { worklistTask1, worklistTask2 });
+
+        await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
+
+        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(generalElectionCommittee.IsDeleted, Is.True);
+            Assert.That(candidate1.IsDeleted, Is.True);
+            Assert.That(candidate2.IsDeleted, Is.True);
+            Assert.That(worklistTask1.IsDeleted, Is.True);
+            Assert.That(worklistTask2.IsDeleted, Is.True);
+
+            foreach (var membership in _committee.Memberships)
+            {
+                Assert.That(membership.ElectionTypeId, Is.EqualTo(ElectionType.CommitteeDissolutionWithdrawalGuid));
+                Assert.That(membership.EndDate, Is.EqualTo(updateDto.EndDate!.Value));
+            }
+        });
+
+        await _generalElectionCommitteeRepository.Received(1).CommitChanges();
+        await _membershipCandidateRepository.Received(2).CommitChanges();
+        await _worklistTaskRepository.Received(2).CommitChanges();
+
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().InvalidateMembershipCandidateList(Arg.Any<Guid>());
+        await _membershipMirrorService.DidNotReceiveWithAnyArgs().MirrorOrDeleteMembershipForGeneralElection(Arg.Any<Membership>(), Arg.Any<bool>(), Arg.Any<bool>());
+    }
+
+    [Test]
+    public async Task UpdateCommittee_WithDepartmentRoleAndChangedEndDate_GERunningAndNextTermBeginsBeforeEndDate_ShouldInvalidateCandidateListInstead()
+    {
+        _authorizationService.IsAdmin.Returns(false);
+        _authorizationService.IsDepartment.Returns(true);
+
+        var updateDto = BuildUpdateDto();
+        updateDto.EndDate = _committee.EndDate!.Value.AddDays(1);
+        updateDto.TermOfOfficeId = TermOfOffice.Period4YearsInGeneralElectionGuid;
+        updateDto.LevelId = CommitteeLevel.FederalCouncilGuid;
+        _committeeRepository.GetByIdForUpdate(updateDto.Id, updateDto.RowVersion).Returns(_committee);
+        _committeeRepository.GetById(updateDto.Id).Returns(_committee);
+        _authorizationService.GetDepartment().Returns(new DepartmentBuilder().WithId(_committee.DepartmentId).Build());
+        _committee.GeneralElectionCommittees = [new GeneralElectionCommitteeBuilder().WithCandidateListStateId(CandidateListState.Validated).Build()];
+
+        _termOfOfficeDateService.CheckForRunningGeneralElection().Returns(true);
+        _termOfOfficeDateService.GetNextTermOfOfficeDate()
+            .Returns(new TermOfOfficeDateBuilder().WithBeginDate(updateDto.EndDate!.Value.AddDays(-1)).Build());
+
+        await _committeeService.UpdateCommittee(updateDto.Id, updateDto, true);
+
+        await _committeeRepository.Received(1).GetByIdForUpdate(updateDto.Id, updateDto.RowVersion);
+
+        await _generalElectionCommitteeRepository.DidNotReceiveWithAnyArgs().GetByCommitteeIdForUpdate(Arg.Any<Guid>());
+        await _membershipMirrorService.Received(1).InvalidateMembershipCandidateList(_committee.Id);
+
+        foreach (var membership in _committee.Memberships)
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(membership.ElectionTypeId, Is.EqualTo(ElectionType.CommitteeDissolutionWithdrawalGuid));
+                Assert.That(membership.EndDate, Is.EqualTo(updateDto.EndDate!.Value));
             });
         }
     }

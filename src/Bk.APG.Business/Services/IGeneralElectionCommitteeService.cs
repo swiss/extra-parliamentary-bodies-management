@@ -18,4 +18,5 @@ public interface IGeneralElectionCommitteeService
     Task SetFederalCouncilProposalToDirty(Guid committeeId);
     Task<IEnumerable<GeneralElectionCommitteeListDto>> GetAllUnfinishedCommittees();
     Task<bool> EndGeneralElectionForCommittee(GeneralElectionCommittee committee);
+    Task<bool> SetGeneralElectionCommitteeToIsDeleted(Guid committeeId);
 }

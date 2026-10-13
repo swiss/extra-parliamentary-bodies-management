@@ -59,6 +59,7 @@ internal class MembershipCandidateMapperTests
             .WithEndDate(new DateOnly(2024, 12, 31))
             .WithElectionTypeId(Guid.Parse("3f8d3d1a-2a48-45b4-8d8a-6b58cd0a7e02"))
             .WithFunctionId(Guid.Parse("c1044bf3-4e4c-4b09-ae5b-0a89df14f86d"))
+            .WithIsDeleted(true)
             .Build();
 
         var dto = MembershipCandidateMapper.ToMembershipCandidateUpdateDto(membership);
@@ -96,6 +97,7 @@ internal class MembershipCandidateMapperTests
             Assert.That(dto.NeedsRequirementsProfile, Is.EqualTo(membership.NeedsRequirementsProfile));
             Assert.That(dto.MaximumDurationExceeded, Is.EqualTo(membership.MaximumDurationExceeded));
             Assert.That(dto.HasFederalAssemblyAuthoritiesCommissionConflict, Is.EqualTo(membership.HasFederalAssemblyAuthoritiesCommissionConflict));
+            Assert.That(dto.IsDeleted, Is.EqualTo(membership.IsDeleted));
         }
     }
 }

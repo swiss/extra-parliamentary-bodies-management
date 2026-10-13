@@ -19,6 +19,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly ICommitteeService _committeeService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
+    private readonly IMembershipCandidateRepository _membershipCandidateRepository;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ILogger<GeneralElectionCommitteeService> _logger;
@@ -30,6 +31,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         ICommitteeService committeeService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
+        IMembershipCandidateRepository membershipCandidateRepository,
         IMasterDataRepository masterDataRepository,
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         ILogger<GeneralElectionCommitteeService> logger
@@ -41,6 +43,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _committeeService = committeeService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
+        _membershipCandidateRepository = membershipCandidateRepository;
         _masterDataRepository = masterDataRepository;
         _documentService = documentService;
         _logger = logger;
@@ -442,6 +445,41 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
 
         await _committeeService.UpdateCommitteeAfterGeneralElection(updateCommittee.Id, updateCommittee, committee.MembershipCandidates.ToList());
+
+        return true;
+    }
+
+    public async Task<bool> SetGeneralElectionCommitteeToIsDeleted(Guid committeeId)
+    {
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+
+        generalElectionCommittee.IsDeleted = true;
+        generalElectionCommittee.Modified = DateTime.UtcNow;
+        generalElectionCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+        await _generalElectionCommitteeRepository.CommitChanges();
+
+        var candidates = await _membershipCandidateRepository.GetByGeneralElectionCommitteeIdForUpdate(generalElectionCommittee.Id);
+
+        foreach (var candidate in candidates)
+        {
+            candidate.IsDeleted = true;
+            candidate.Modified = DateTime.UtcNow;
+            candidate.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+            await _membershipCandidateRepository.CommitChanges();
+        }
+
+        var worklistTasks = await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id);
+
+        foreach (var worklistTask in worklistTasks)
+        {
+            worklistTask.IsDeleted = true;
+            worklistTask.Modified = DateTime.UtcNow;
+            worklistTask.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+            await _worklistTaskRepository.CommitChanges();
+        }
 
         return true;
     }

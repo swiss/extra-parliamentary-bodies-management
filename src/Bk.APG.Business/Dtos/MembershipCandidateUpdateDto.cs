@@ -34,4 +34,5 @@ public class MembershipCandidateUpdateDto
     public bool HasFederalAssemblyAuthoritiesCommissionConflict { get; set; }
     public bool CanEditBeginDate { get; set; }
     public bool CanEditEndDate { get; set; }
+    public bool IsDeleted { get; set; }
 }

@@ -382,7 +382,7 @@ public class CompareListService : ICompareListService
             Name = committee.GetDescription(),
             StartDate = committee.BeginDate,
             MemberCount = committee.ActiveMemberCount.ToString(CultureInfo.InvariantCulture),
-            GenderQuota = $"F: {committee.FemaleCount} ({ committee.FemaleQuota }%), M: {committee.MaleCount} ({committee.MaleQuota}%)",
+            GenderQuota = $"F: {committee.FemaleCount} ({committee.FemaleQuota}%), M: {committee.MaleCount} ({committee.MaleQuota}%)",
             LanguageQuota = $"D: {committee.GermanCount} ({committee.GermanQuota}%), F: {committee.FrenchCount} ({committee.FrenchQuota}%), I: {committee.ItalianCount} ({committee.ItalianQuota}%)",
         };
 
