@@ -330,7 +330,7 @@ public class PersonService : IPersonService
                 }
             }
 
-            if (update.OfficeAddress.ActiveAddress && existingEntry.CorrespondenceAddressId != existingEntry.OfficeAddressId)
+            if (update.OfficeAddress.ActiveAddress && (existingEntry.CorrespondenceAddressId is null || existingEntry.CorrespondenceAddressId != existingEntry.OfficeAddressId))
             {
                 existingEntry.CorrespondenceAddress = existingEntry.OfficeAddress;
             }
@@ -358,7 +358,7 @@ public class PersonService : IPersonService
                 }
             }
 
-            if (update.PrivateAddress.ActiveAddress && existingEntry.CorrespondenceAddressId != existingEntry.PrivateAddressId)
+            if (update.PrivateAddress.ActiveAddress && (existingEntry.CorrespondenceAddressId is null || existingEntry.CorrespondenceAddressId != existingEntry.PrivateAddressId))
             {
                 existingEntry.CorrespondenceAddress = existingEntry.PrivateAddress;
             }
