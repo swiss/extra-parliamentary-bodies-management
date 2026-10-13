@@ -56,6 +56,7 @@ public class CommitteeBuilder
     private readonly List<GeneralElectionCommittee> _generalElectionCommittees;
     private EiamAssignment? _eiamAssignment;
     private readonly Guid _eiamAssignmentId;
+    private bool _federalInstitution;
 
     private readonly uint _rowVersion;
 
@@ -326,6 +327,12 @@ public class CommitteeBuilder
         return this;
     }
 
+    public CommitteeBuilder WithFederalInstitution(bool federalInstitution)
+    {
+        _federalInstitution = federalInstitution;
+        return this;
+    }
+
     public Committee Build()
     {
         return new Committee
@@ -379,7 +386,8 @@ public class CommitteeBuilder
             RowVersion = _rowVersion,
             GeneralElectionCommittees = _generalElectionCommittees,
             EiamAssignment = _eiamAssignment,
-            EiamAssignmentId = _eiamAssignmentId
+            EiamAssignmentId = _eiamAssignmentId,
+            FederalInstitution = _federalInstitution
         };
     }
 }

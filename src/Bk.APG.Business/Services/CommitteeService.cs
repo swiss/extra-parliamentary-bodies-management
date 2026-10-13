@@ -273,11 +273,11 @@ public class CommitteeService : ICommitteeService
                 }
             }
 
-            foreach (var membership in existingCommittee.Memberships.Where(y => !y.IsDeleted && !y.HasOtherElectionOffice))
+            foreach (var membership in existingCommittee.Memberships.Where(y => !y.IsDeleted && y.EndDate > updateDto.EndDate!.Value && !y.HasOtherElectionOffice))
             {
                 membership.ElectionTypeId = ElectionType.CommitteeDissolutionWithdrawalGuid;
                 membership.EndDate = updateDto.EndDate!.Value;
-                // maybe, this is not even necessary
+
                 if (existingCommittee.IsInGeneralElection && !candidatesAlreadyDeleted)
                 {
                     await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(membership, true, true);
