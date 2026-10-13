@@ -69,8 +69,7 @@ public static class MembershipCandidateMapper
             NeedsFederalAssemblyJustification = membershipCandidate.NeedsFederalAssemblyJustification,
             NeedsRequirementsProfile = membershipCandidate.NeedsRequirementsProfile,
             MaximumDurationExceeded = membershipCandidate.MaximumDurationExceeded,
-            HasFederalAssemblyAuthoritiesCommissionConflict = membershipCandidate.HasFederalAssemblyAuthoritiesCommissionConflict,
-            IsDeleted = membershipCandidate.IsDeleted,
+            HasFederalAssemblyAuthoritiesCommissionConflict = membershipCandidate.HasFederalAssemblyAuthoritiesCommissionConflict
         };
     }
 }

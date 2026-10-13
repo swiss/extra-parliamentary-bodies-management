@@ -1,5 +1,6 @@
 using System.Globalization;
 using Bk.APG.Business.Dtos;
+using Bk.APG.Business.Extensions;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -19,7 +20,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
     private readonly ICommitteeService _committeeService;
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
-    private readonly IMembershipCandidateRepository _membershipCandidateRepository;
     private readonly IMasterDataRepository _masterDataRepository;
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ILogger<GeneralElectionCommitteeService> _logger;
@@ -31,7 +31,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         ICommitteeService committeeService,
         IGeneralMeasureRepository generalMeasureRepository,
         IWorklistTaskRepository worklistTaskRepository,
-        IMembershipCandidateRepository membershipCandidateRepository,
         IMasterDataRepository masterDataRepository,
         Swiss.FCh.DocumentService.Client.IDocumentService documentService,
         ILogger<GeneralElectionCommitteeService> logger
@@ -43,7 +42,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         _committeeService = committeeService;
         _generalMeasureRepository = generalMeasureRepository;
         _worklistTaskRepository = worklistTaskRepository;
-        _membershipCandidateRepository = membershipCandidateRepository;
         _masterDataRepository = masterDataRepository;
         _documentService = documentService;
         _logger = logger;
@@ -147,22 +145,21 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeListForRecipientExport(GeneralElectionCommitteeExportFilterParametersDto? filter)
     {
+        ArgumentNullException.ThrowIfNull(filter);
+
         var filterParameters = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeExportFilterParameters(filter);
         var allElectionTypes = await _masterDataRepository.GetElectionTypes();
+        var allElectionTypesIds = allElectionTypes.Select(e => e.Id).ToList();
 
-        var electionTypeList = allElectionTypes.Select(e => e.Id).ToList();
-        electionTypeList.Remove(ElectionType.MembershipEndedBecauseOfDeathGuid);
-        electionTypeList.Remove(ElectionType.PermanentGuid);
+        if (filter.ElectionTypeIds is not null && filter.ElectionTypeIds.Any())
+        {
+            allElectionTypesIds = allElectionTypesIds
+                .Where(id => filter.ElectionTypeIds.Contains(id))
+                .ToList();
+        }
 
-        var electionTypeListPresent = electionTypeList.ToList();
-        electionTypeListPresent.Remove(ElectionType.NewElectionGuid);
-        electionTypeListPresent.Remove(ElectionType.ReElectionGuid);
-
-        var electionTypeListFuture = electionTypeList.ToList();
-        electionTypeListFuture.Remove(ElectionType.MaximumMembershipDurationGuid);
-        electionTypeListFuture.Remove(ElectionType.OtherRetirementReasonGuid);
-        electionTypeListFuture.Remove(ElectionType.CommitteeDissolutionWithdrawalGuid);
-        electionTypeListFuture.Remove(ElectionType.RetirementGuid);
+        var electionTypeListPresent = allElectionTypesIds.GetElectionTypesForPresent();
+        var electionTypeListFuture = allElectionTypesIds.GetElectionTypesForFuture();
 
         if (_authorizationService is { IsAdmin: false, IsObserver: false })
         {
@@ -445,41 +442,6 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         var updateCommittee = CommitteeMapper.ToCommitteeUpdateDto(mappedCommittee);
 
         await _committeeService.UpdateCommitteeAfterGeneralElection(updateCommittee.Id, updateCommittee, committee.MembershipCandidates.ToList());
-
-        return true;
-    }
-
-    public async Task<bool> SetGeneralElectionCommitteeToIsDeleted(Guid committeeId)
-    {
-        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
-
-        generalElectionCommittee.IsDeleted = true;
-        generalElectionCommittee.Modified = DateTime.UtcNow;
-        generalElectionCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
-
-        await _generalElectionCommitteeRepository.CommitChanges();
-
-        var candidates = await _membershipCandidateRepository.GetByGeneralElectionCommitteeIdForUpdate(generalElectionCommittee.Id);
-
-        foreach (var candidate in candidates)
-        {
-            candidate.IsDeleted = true;
-            candidate.Modified = DateTime.UtcNow;
-            candidate.ModifiedBy = _authorizationService.GetCurrentUserName();
-
-            await _membershipCandidateRepository.CommitChanges();
-        }
-
-        var worklistTasks = await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id);
-
-        foreach (var worklistTask in worklistTasks)
-        {
-            worklistTask.IsDeleted = true;
-            worklistTask.Modified = DateTime.UtcNow;
-            worklistTask.ModifiedBy = _authorizationService.GetCurrentUserName();
-
-            await _worklistTaskRepository.CommitChanges();
-        }
 
         return true;
     }

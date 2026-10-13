@@ -283,4 +283,15 @@ internal class GeneralElectionCommitteeTests
 
         Assert.That(committee.JustificationsNeedAttention, Is.False);
     }
+
+    [Test]
+    public void JustificationsNeedAttention_WhenSelectionProcedureRequiredButMissing_ShouldReturnTrue()
+    {
+        var committee = new GeneralElectionCommitteeBuilder()
+            .WithFederalInstitution(true)
+            .WithIsValidated(true)
+            .Build();
+
+        Assert.That(committee.JustificationsNeedAttention, Is.True);
+    }
 }
