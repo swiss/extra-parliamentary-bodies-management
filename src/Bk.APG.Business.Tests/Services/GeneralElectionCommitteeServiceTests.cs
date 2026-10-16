@@ -527,6 +527,9 @@ public class GeneralElectionCommitteeServiceTests
                             ])
                             .WithInterests([
                                 new InterestBuilder()
+                                    .WithInterestText("test gmbh")
+                                    .WithLegalForm(new LegalFormBuilder().Build())
+                                    .WithInterestCommittee(new InterestCommitteeBuilder().Build())
                                     .Build()
                             ]).Build())
                     .WithRemarks("remarks")
