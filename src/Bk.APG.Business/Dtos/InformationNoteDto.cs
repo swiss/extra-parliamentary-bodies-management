@@ -57,40 +57,31 @@ public class InformationNoteDto
     // APK
     public required int TotalExtraParliamentaryCommittees { get; set; }
     public required int UnreleasedExtraParliamentaryCommittees { get; set; }
-    // public required int PreviousTotalExtraParliamentaryCommittees { get; set; }
     public decimal? ExpectedGenderPercentage { get; set; }
-    // public decimal? PreviousExpectedGenderPercentage { get; set; }
+
+    public required int CurrentFemaleTotal { get; set; }
     public decimal? CurrentFemalePercentage { get; set; }
-    // public decimal? PreviousFemalePercentage { get; set; }
     public required int UnderstaffedFemaleCommittees { get; set; }
-    //public required int HeavyUnderstaffedFemaleCommittees { get; set; }
-    //public required int PreviousHeavyUnderstaffedFemaleCommittees { get; set; }
 
+    public required int CurrentMaleTotal { get; set; }
     public decimal? CurrentMalePercentage { get; set; }
-    // public decimal? PreviousMalePercentage { get; set; }
     public required int UnderstaffedMaleCommittees { get; set; }
-    //public required int HeavyUnderstaffedMaleCommittees { get; set; }
-    //public required int PreviousHeavyUnderstaffedMaleCommittees { get; set; }
 
+    public required int CurrentGermanTotal { get; set; }
     public decimal? CurrentGermanPercentage { get; set; }
-    // public decimal? PreviousGermanPercentage { get; set; }
+    public required int CurrentFrenchTotal { get; set; }
     public decimal? CurrentFrenchPercentage { get; set; }
-    // public decimal? PreviousFrenchPercentage { get; set; }
+    public required int CurrentItalianTotal { get; set; }
     public decimal? CurrentItalianPercentage { get; set; }
-    // public decimal? PreviousItalianPercentage { get; set; }
+    public required int CurrentRomanshTotal { get; set; }
     public decimal? CurrentRomanshPercentage { get; set; }
-    // public decimal? PreviousRomanshPercentage { get; set; }
 
     // we also include missing german committees, even though currently it will most likely be 0. But it will be included in the template.
     public required int MissingGermanCommittees { get; set; }
-    // public required int PreviousMissingGermanCommittees { get; set; }
     public required int MissingFrenchCommittees { get; set; }
-    // public required int PreviousMissingFrenchCommittees { get; set; }
     public required int MissingItalianCommittees { get; set; }
-    // public required int PreviousMissingItalianCommittees { get; set; }
     // currently, this might not be used? Logicially it is needed.
     public required int MissingFrenchItalianCommittees { get; set; }
-    // public required int PreviousMissingFrenchItalianCommittees { get; set; }
 
     public required int TotalMembersExtraParliamentaryCommittees { get; set; }
     public required int MoreThan12Years { get; set; }
@@ -98,22 +89,34 @@ public class InformationNoteDto
 
     public decimal? MinimalFemaleThreshold { get; set; }
     public decimal? MinimalMaleThreshold { get; set; }
+    public required int CurrentFemaleTotalManagementCommittees { get; set; }
     public decimal? CurrentFemaleThresholdManagementCommittees { get; set; }
+    public required int CurrentMaleTotalManagementCommittees { get; set; }
     public decimal? CurrentMaleThresholdManagementCommittees { get; set; }
+    public required int CurrentFemaleTotalFederalAgenciesCommittees { get; set; }
     public decimal? CurrentFemaleThresholdFederalAgenciesCommittees { get; set; }
+    public required int CurrentMaleTotalFederalAgenciesCommittees { get; set; }
     public decimal? CurrentMaleThresholdFederalAgenciesCommittees { get; set; }
 
     public decimal? MinimalGermanThreshold { get; set; }
     public decimal? MinimalFrenchThreshold { get; set; }
     public decimal? MinimalItalianThreshold { get; set; }
     public decimal? MinimalRomanshThreshold { get; set; }
+    public required int CurrentGermanTotalManagementCommittees { get; set; }
     public decimal? CurrentGermanThresholdManagementCommittees { get; set; }
+    public required int CurrentFrenchTotalManagementCommittees { get; set; }
     public decimal? CurrentFrenchThresholdManagementCommittees { get; set; }
+    public required int CurrentItalianTotalManagementCommittees { get; set; }
     public decimal? CurrentItalianThresholdManagementCommittees { get; set; }
+    public required int CurrentRomanshTotalManagementCommittees { get; set; }
     public decimal? CurrentRomanshThresholdManagementCommittees { get; set; }
+    public required int CurrentGermanTotalFederalAgenciesCommittees { get; set; }
     public decimal? CurrentGermanThresholdFederalAgenciesCommittees { get; set; }
+    public required int CurrentFrenchTotalFederalAgenciesCommittees { get; set; }
     public decimal? CurrentFrenchThresholdFederalAgenciesCommittees { get; set; }
+    public required int CurrentItalianTotalFederalAgenciesCommittees { get; set; }
     public decimal? CurrentItalianThresholdFederalAgenciesCommittees { get; set; }
+    public required int CurrentRomanshTotalFederalAgenciesCommittees { get; set; }
     public decimal? CurrentRomanshThresholdFederalAgenciesCommittees { get; set; }
 
     public required int UnderstaffedFemaleManagementCommittees { get; set; }
@@ -139,6 +142,7 @@ public class InformationNoteDto
 
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? ReleasedCommitteesByDepartmentAndType { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? UnreleasedCommitteesByDepartmentAndType { get; set; }
+    public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? ReleasedWithVacanciesCommitteesByDepartmentAndType { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? GenderUnderstaffedCommitteesByDepartmentAndType { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteeTypeDto>? LanguageUnderstaffedCommitteesByDepartmentAndType { get; set; }
     public IEnumerable<ReportDepartmentWithCommitteesDto>? LongerDutyCommitteesByDepartmentAndType { get; set; }
@@ -194,7 +198,6 @@ public class CommitteeNameLongerDutyDto
 
 public enum InformationNoteData
 {
-    Vacancies,
     Genders,
     Languages
 }

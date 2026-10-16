@@ -206,7 +206,8 @@ public class WorklistTaskRepository : IWorklistTaskRepository
         return await _dataContext.WorklistTasks
             .Where(x => x.DepartmentId.HasValue &&
                 departmentIds.Contains(x.DepartmentId.Value) &&
-                worklistTaskTypeIds.Contains(x.WorklistTaskTypeId))
+                worklistTaskTypeIds.Contains(x.WorklistTaskTypeId) &&
+                !x.IsDeleted)
             .AsNoTracking()
             .ToListAsync();
     }

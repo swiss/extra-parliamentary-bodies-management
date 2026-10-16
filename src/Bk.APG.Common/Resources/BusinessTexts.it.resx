@@ -519,14 +519,20 @@
     <data name="CandidateList_EmploymentLevel" xml:space="preserve">
         <value>Tasso di occupazione in percentuale</value>
     </data>
+    <data name="InformationNoteExport_MemberCount_Single" xml:space="preserve">
+        <value>1 membro</value>
+    </data>
+    <data name="InformationNoteExport_FederalMemberCount_Single" xml:space="preserve">
+        <value>1 membro al servizio della Confederazione</value>
+    </data>
     <data name="InformationNoteExport_MemberCount" xml:space="preserve">
-        <value>{0} membro(i)</value>
+        <value>{0} membri</value>
     </data>
     <data name="InformationNoteExport_FederalMemberCount" xml:space="preserve">
-        <value>{0} membro(i) al servizio della Confederazione</value>
+        <value>{0} membri al servizio della Confederazione</value>
     </data>
     <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
-        <value>{0} membro(i), di cui {1} al servizio della Confederazione</value>
+        <value>{0} membri, di cui {1} al servizio della Confederazione</value>
     </data>
     <data name="InformationNoteExport_Vacancies" xml:space="preserve">
         <value>{0} vacanza(e)</value>

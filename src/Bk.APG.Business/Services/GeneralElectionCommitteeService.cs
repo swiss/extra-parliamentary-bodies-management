@@ -1,5 +1,6 @@
 using System.Globalization;
 using Bk.APG.Business.Dtos;
+using Bk.APG.Business.Extensions;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
@@ -144,22 +145,21 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
 
     public async Task<IEnumerable<GeneralElectionCommitteeListDto>> GetGeneralElectionCommitteeListForRecipientExport(GeneralElectionCommitteeExportFilterParametersDto? filter)
     {
+        ArgumentNullException.ThrowIfNull(filter);
+
         var filterParameters = GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeExportFilterParameters(filter);
         var allElectionTypes = await _masterDataRepository.GetElectionTypes();
+        var allElectionTypesIds = allElectionTypes.Select(e => e.Id).ToList();
 
-        var electionTypeList = allElectionTypes.Select(e => e.Id).ToList();
-        electionTypeList.Remove(ElectionType.MembershipEndedBecauseOfDeathGuid);
-        electionTypeList.Remove(ElectionType.PermanentGuid);
+        if (filter.ElectionTypeIds is not null && filter.ElectionTypeIds.Any())
+        {
+            allElectionTypesIds = allElectionTypesIds
+                .Where(id => filter.ElectionTypeIds.Contains(id))
+                .ToList();
+        }
 
-        var electionTypeListPresent = electionTypeList.ToList();
-        electionTypeListPresent.Remove(ElectionType.NewElectionGuid);
-        electionTypeListPresent.Remove(ElectionType.ReElectionGuid);
-
-        var electionTypeListFuture = electionTypeList.ToList();
-        electionTypeListFuture.Remove(ElectionType.MaximumMembershipDurationGuid);
-        electionTypeListFuture.Remove(ElectionType.OtherRetirementReasonGuid);
-        electionTypeListFuture.Remove(ElectionType.CommitteeDissolutionWithdrawalGuid);
-        electionTypeListFuture.Remove(ElectionType.RetirementGuid);
+        var electionTypeListPresent = allElectionTypesIds.GetElectionTypesForPresent();
+        var electionTypeListFuture = allElectionTypesIds.GetElectionTypesForFuture();
 
         if (_authorizationService is { IsAdmin: false, IsObserver: false })
         {

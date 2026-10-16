@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.IO.Compression;
 using Bk.APG.Business.Dtos;
+using Bk.APG.Business.Extensions;
 using Bk.APG.Business.Models;
 using Bk.APG.Business.Repositories;
 using Bk.APG.Common.Resources;
@@ -166,25 +167,17 @@ public class FormLetterService : IFormLetterService
         const string template = "FormLetterGeneralElection";
 
         var allElectionTypes = await _masterDataRepository.GetElectionTypes();
-        var electionTypeList = allElectionTypes.Select(e => e.Id).ToList();
-        electionTypeList.Remove(ElectionType.MembershipEndedBecauseOfDeathGuid);
-        electionTypeList.Remove(ElectionType.PermanentGuid);
+        var allElectionTypesIds = allElectionTypes.Select(e => e.Id).ToList();
 
         if (filterDto.ElectionTypeIds != null && filterDto.ElectionTypeIds.Any())
         {
-            electionTypeList = electionTypeList
+            allElectionTypesIds = allElectionTypesIds
                 .Where(id => filterDto.ElectionTypeIds.Contains(id))
                 .ToList();
         }
 
-        var electionTypeListPresent = electionTypeList.ToList();
-        electionTypeListPresent.Remove(ElectionType.NewElectionGuid);
-        electionTypeListPresent.Remove(ElectionType.ReElectionGuid);
-
-        var electionTypeListFuture = electionTypeList.ToList();
-        electionTypeListFuture.Remove(ElectionType.MaximumMembershipDurationGuid);
-        electionTypeListFuture.Remove(ElectionType.OtherRetirementReasonGuid);
-        electionTypeListFuture.Remove(ElectionType.RetirementGuid);
+        var electionTypeListPresent = allElectionTypesIds.GetElectionTypesForPresent();
+        var electionTypeListFuture = allElectionTypesIds.GetElectionTypesForFuture();
 
         var sender = await _formLetterSenderRepository.GetByIdForUpdate(filterDto.FormLetterSenderId);
 
