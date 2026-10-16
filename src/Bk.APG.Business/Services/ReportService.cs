@@ -444,7 +444,7 @@ public class ReportService : IReportService
         var managementCommitteeType = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.ManagementCommitteeGuid);
 
         // this value is not in the database, as it's overwritten!
-        var previousExpectedGenderPercentage = 40;
+        // var previousExpectedGenderPercentage = 40;
 
         // present data, needed for the comparision with the future!
         var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
@@ -471,14 +471,16 @@ public class ReportService : IReportService
 
         // get all committees for GE, which are released and did not end before the current termOfOfficeDate
         var releasedCommittees = allGeneralElectionCommittees
-            .Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            //.Where(c => c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded || c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .Where(c => c.IsValidated)
             .Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee)
             .ToArray();
         var releasedCommitteesDto = GetCommitteesByDepartmentAndTypes(releasedCommittees, departments);
 
         // same as above, but not released
         var unreleasedCommittees = allGeneralElectionCommitteesUnfiltered
-            .Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded && c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            // .Where(c => c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalForwarded && c.CandidateListStateId != CandidateListState.ReadyForFederalCouncilProposalFinalized)
+            .Where(c => !c.IsValidated)
             .ToArray();
         var unreleasedCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(unreleasedCommittees, departments, InformationNoteData.Vacancies);
 
@@ -570,91 +572,94 @@ public class ReportService : IReportService
             TotalCommittees = allGeneralElectionCommitteesUnfiltered.Length,
             ReleasedCommittees = releasedCommittees.Length,
             UnreleasedCommittees = unreleasedCommittees.Length,
-            OneVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies == 1),
-            TwoVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies == 2),
-            ThreeVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies == 3),
-            FourVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.CalculatedVacancies >= 4),
+            TotalCommitteesWithVacancies = releasedCommittees.Count(c => c.VacanciesGeneralElection > 0),
+            OneVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.IsValidated && c.VacanciesGeneralElection == 1),
+            TwoVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.IsValidated && c.VacanciesGeneralElection == 2),
+            ThreeVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.IsValidated && c.VacanciesGeneralElection == 3),
+            FourVacanciesTotal = allGeneralElectionCommitteesUnfiltered.Count(c => c.IsValidated && c.VacanciesGeneralElection >= 4),
             TotalAuthoritiesCommittees = allAuthoritiesCommittees.Length,
             ReleasedAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.IsValidated),
             UnreleasedAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => !c.IsValidated),
-            OneVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies == 1),
-            TwoVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies == 2),
-            ThreeVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies == 3),
-            FourVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.CalculatedVacancies >= 4),
+            OneVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 1),
+            TwoVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 2),
+            ThreeVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 3),
+            FourVacanciesAuthoritiesCommittees = allAuthoritiesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection >= 4),
             TotalAdministrationCommittees = allAdministrationCommittees.Length,
             ReleasedAdministrationCommittees = allAdministrationCommittees.Count(c => c.IsValidated),
             UnreleasedAdministrationCommittees = allAdministrationCommittees.Count(c => !c.IsValidated),
-            OneVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies == 1),
-            TwoVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies == 2),
-            ThreeVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies == 3),
-            FourVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.CalculatedVacancies >= 4),
+            OneVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 1),
+            TwoVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 2),
+            ThreeVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 3),
+            FourVacanciesAdministrationCommittees = allAdministrationCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection >= 4),
             TotalManagementCommittees = allManagementCommittees.Length,
             ReleasedManagementCommittees = allManagementCommittees.Count(c => c.IsValidated),
             UnreleasedManagementCommittees = allManagementCommittees.Count(c => !c.IsValidated),
-            OneVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies == 1),
-            TwoVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies == 2),
-            ThreeVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies == 3),
-            FourVacanciesManagementCommittees = allManagementCommittees.Count(c => c.CalculatedVacancies >= 4),
+            OneVacanciesManagementCommittees = allManagementCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 1),
+            TwoVacanciesManagementCommittees = allManagementCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 2),
+            ThreeVacanciesManagementCommittees = allManagementCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 3),
+            FourVacanciesManagementCommittees = allManagementCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection >= 4),
             TotalFederalAgenciesCommittees = allFederalAgenciesCommittees.Length,
             ReleasedFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.IsValidated),
             UnreleasedFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => !c.IsValidated),
-            OneVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 1),
-            TwoVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 2),
-            ThreeVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies == 3),
-            FourVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.CalculatedVacancies >= 4),
+            OneVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 1),
+            TwoVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 2),
+            ThreeVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection == 3),
+            FourVacanciesFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c.IsValidated && c.VacanciesGeneralElection >= 4),
             TotalExtraParliamentaryCommittees = allExtraParliamentaryCommittees.Length,
             UnreleasedExtraParliamentaryCommittees = allFederalAgenciesCommittees.Count(c => !c.IsValidated),
-            PreviousTotalExtraParliamentaryCommittees = extraParliamentaryCommittees.Length,
+            // PreviousTotalExtraParliamentaryCommittees = extraParliamentaryCommittees.Length,
+
+            TotalUnvalidatedNonExtraParliamentCommittees = 0,
 
             CurrentFemalePercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allFemaleCandidates / allCandidates * 100, 2),
-            PreviousFemalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFemaleMembers / allMembers * 100, 2),
+            // PreviousFemalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFemaleMembers / allMembers * 100, 2),
             ExpectedGenderPercentage = (decimal?)(managementCommitteeType != null ? managementCommitteeType.FemaleThreshold : 0),
-            PreviousExpectedGenderPercentage = previousExpectedGenderPercentage,
+            // PreviousExpectedGenderPercentage = previousExpectedGenderPercentage,
             UnderstaffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleUnderStaffed),
-            HeavyUnderstaffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
-            PreviousHeavyUnderstaffedFemaleCommittees = extraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
+            // HeavyUnderstaffedFemaleCommittees = allExtraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
+            // PreviousHeavyUnderstaffedFemaleCommittees = extraParliamentaryCommittees.Count(c => c.FemaleQuota <= 30),
             CurrentMalePercentage = Math.Round((decimal)allMaleCandidates / allCandidates * 100, 2),
-            PreviousMalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allMaleMembers / allMembers * 100, 2),
+            // PreviousMalePercentage = allMembers == 0 ? 0 : Math.Round((decimal)allMaleMembers / allMembers * 100, 2),
             UnderstaffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleUnderStaffed),
-            HeavyUnderstaffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
-            PreviousHeavyUnderstaffedMaleCommittees = extraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
+            // HeavyUnderstaffedMaleCommittees = allExtraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
+            // PreviousHeavyUnderstaffedMaleCommittees = extraParliamentaryCommittees.Count(c => c.MaleQuota <= 30),
             CurrentGermanPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allGermanCandidates / allCandidates * 100, 2),
-            PreviousGermanPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allGermanMembers / allMembers * 100, 2),
+            // PreviousGermanPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allGermanMembers / allMembers * 100, 2),
             CurrentFrenchPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allFrenchCandidates / allCandidates * 100, 2),
-            PreviousFrenchPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFrenchMembers / allMembers * 100, 2),
+            // PreviousFrenchPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allFrenchMembers / allMembers * 100, 2),
             CurrentItalianPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allItalianCandidates / allCandidates * 100, 2),
-            PreviousItalianPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allItalianMembers / allMembers * 100, 2),
+            // PreviousItalianPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allItalianMembers / allMembers * 100, 2),
             CurrentRomanshPercentage = allCandidates == 0 ? 0 : Math.Round((decimal)allRomanshCandidates / allCandidates * 100, 2),
-            PreviousRomanshPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allRomanshMembers / allMembers * 100, 2),
+            // PreviousRomanshPercentage = allMembers == 0 ? 0 : Math.Round((decimal)allRomanshMembers / allMembers * 100, 2),
 
             MissingGermanCommittees = allExtraParliamentaryCommittees.Count(c =>
                 !c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.GermanGuid) &&
                 (c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.ItalianGuid) ||
                 c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.FrenchGuid))),
-            PreviousMissingGermanCommittees = extraParliamentaryCommittees.Count(c =>
-                !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.GermanGuid) &&
-                (c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) ||
-                c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid))),
+            //PreviousMissingGermanCommittees = extraParliamentaryCommittees.Count(c =>
+            //    !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.GermanGuid) &&
+            //    (c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) ||
+            //    c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid))),
             MissingFrenchItalianCommittees = allExtraParliamentaryCommittees.Count(c =>
                 c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.GermanGuid) &&
                 !c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.ItalianGuid) &&
                 !c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.FrenchGuid)),
-            PreviousMissingFrenchItalianCommittees = extraParliamentaryCommittees.Count(c =>
-                c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.GermanGuid) &&
-                !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) &&
-                !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid)),
+            //PreviousMissingFrenchItalianCommittees = extraParliamentaryCommittees.Count(c =>
+            //    c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.GermanGuid) &&
+            //    !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) &&
+            //    !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid)),
             MissingFrenchCommittees = allExtraParliamentaryCommittees.Count(c =>
                 c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.ItalianGuid) &&
                 !c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.FrenchGuid)),
-            PreviousMissingFrenchCommittees = extraParliamentaryCommittees.Count(c =>
-                c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) &&
-                !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid)),
+            //PreviousMissingFrenchCommittees = extraParliamentaryCommittees.Count(c =>
+            //    c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) &&
+            //    !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid)),
             MissingItalianCommittees = allExtraParliamentaryCommittees.Count(c =>
                 !c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.ItalianGuid) &&
                 c.MembershipCandidates.Any(m => m.IsSelected && m.Person!.LanguageId == Language.FrenchGuid)),
-            PreviousMissingItalianCommittees = extraParliamentaryCommittees.Count(c =>
-                !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) &&
-                c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid)),
+            //PreviousMissingItalianCommittees = extraParliamentaryCommittees.Count(c =>
+            //    !c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.ItalianGuid) &&
+            //    c.Memberships.Any(m => m.IsActive && m.Person!.LanguageId == Language.FrenchGuid)),
 
             TotalMembersExtraParliamentaryCommittees = allCandidates,
             MoreThan12Years = membersWith12OrMoreYears,
@@ -682,6 +687,9 @@ public class ReportService : IReportService
 
             UnderstaffedFemaleManagementCommittees = allManagementCommittees.Count(c => c is { FemaleUnderStaffed: true, IsValidated: true }),
             UnderstaffedMaleManagementCommittees = allManagementCommittees.Count(c => c is { MaleUnderStaffed: true, IsValidated: true }),
+
+            UnderstaffedFemaleFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c is { FemaleUnderStaffed: true, IsValidated: true }),
+            UnderstaffedMaleFederalAgenciesCommittees = allFederalAgenciesCommittees.Count(c => c is { MaleUnderStaffed: true, IsValidated: true }),
 
             TotalMembersWith3Memberships = multipleMemberships.Count(m => m.MembershipCount == 3),
             FemaleMembersWith3Memberships = multipleMemberships.Count(m => m.MembershipCount == 3 && m.GenderId == Gender.FemaleGuid),
