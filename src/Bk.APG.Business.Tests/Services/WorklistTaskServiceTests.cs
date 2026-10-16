@@ -322,7 +322,7 @@ internal class WorklistTaskServiceTests
             .Build();
 
         var worklistCompletedTaskForDepartment = new WorklistTaskBuilder()
-            .WithCommitteeId(committeeId)            
+            .WithCommitteeId(committeeId)
             .WithWorklistTaskStateId(WorklistTaskState.Completed)
             .WithWorklistTaskTypeId(WorklistTaskType.CandidateListApprove)
             .WithAssignedTo(
