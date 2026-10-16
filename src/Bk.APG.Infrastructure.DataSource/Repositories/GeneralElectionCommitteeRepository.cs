@@ -79,7 +79,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     {
         var generalElectionCommittees = await _dataContext.GeneralElectionCommittees
             .Include(x => x.Department)
-            .Where(x => departmentId == x.DepartmentId)
+            .Where(x => departmentId == x.DepartmentId && !x.IsDeleted)
             .ToListAsync();
 
         return generalElectionCommittees;
@@ -88,7 +88,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetByOfficeId(Guid officeId)
     {
         return await _dataContext.GeneralElectionCommittees
-            .Where(x => officeId == x.OfficeId)
+            .Where(x => officeId == x.OfficeId && !x.IsDeleted)
             .ToListAsync();
     }
 
@@ -97,6 +97,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         ArgumentNullException.ThrowIfNull(paging);
 
         var query = _dataContext.GeneralElectionCommittees
+            .Where(g => !g.IsDeleted)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -130,6 +131,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         ArgumentNullException.ThrowIfNull(filterDto);
 
         var committees = await _dataContext.GeneralElectionCommittees
+            .Where(g => !g.IsDeleted)
             .Where(IsCommitteeReleasedPredicate(filterDto.ReleasedCommittees))
             .Include(item => item.Committee)
             .Include(item => item.CommitteeLevel)
@@ -228,7 +230,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetterPreview(GeneralElectionCommitteeExportFilterParameters filterDto, List<Guid> electionTypesIds)
     {
         var committees = await _dataContext.GeneralElectionCommittees
-            .Where(g => g.IsValidated)
+            .Where(g => g.IsValidated && !g.IsDeleted)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -246,7 +248,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
             .ThenInclude(item => item!.ElectionType)
             .Include(item => item.Committee)
             .FilterGeneralElectionCommitteesForExport(filterDto)
-        .AsSplitQuery()
+            .AsSplitQuery()
             .Select(c => new GeneralElectionCommittee
             {
                 Id = c.Id,
@@ -285,7 +287,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 AssignedToRole = c.AssignedToRole,
                 SelfOrganized = c.SelfOrganized,
                 MembershipCandidates = c.MembershipCandidates
-                    .Where(m => m.Person != null &&
+                    .Where(m => m.Person != null && !m.IsDeleted &&
                         (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
                          filterDto.CorrespondenceLanguageIds!.Contains(
                              m.Person.CorrespondenceLanguageId)) &&
@@ -302,7 +304,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds)
     {
         var committees = await _dataContext.GeneralElectionCommittees
-            .Where(g => g.IsValidated)
+            .Where(g => g.IsValidated && !g.IsDeleted)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -367,7 +369,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 AssignedToRole = c.AssignedToRole,
                 // bring only candidates, which match by language and electiontype
                 MembershipCandidates = c.MembershipCandidates
-                    .Where(m => m.Person != null &&
+                    .Where(m => m.Person != null && !m.IsDeleted &&
                         (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
                          filterDto.CorrespondenceLanguageIds!.Contains(
                              m.Person.CorrespondenceLanguageId)) &&
@@ -384,6 +386,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAll()
     {
         return await _dataContext.GeneralElectionCommittees
+            .Where(g => !g.IsDeleted)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -397,6 +400,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllWithPermissionCheck(Guid departmentId, Guid officeId, Guid committeeId)
     {
         return await _dataContext.GeneralElectionCommittees
+            .Where(g => !g.IsDeleted)
             .Include(item => item.Committee)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
@@ -464,6 +468,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
     private IQueryable<GeneralElectionCommittee> GetGeneralElectionCommittees()
     {
         return _dataContext.GeneralElectionCommittees
+            .Where(g => !g.IsDeleted)
             .Include(item => item.MembershipCandidates)
                 .ThenInclude(c => c.Gender)
             .Include(item => item.MembershipCandidates)

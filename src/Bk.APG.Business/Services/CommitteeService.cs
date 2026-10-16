@@ -23,6 +23,7 @@ public class CommitteeService : ICommitteeService
     private readonly IGeneralMeasureRepository _generalMeasureRepository;
     private readonly IMembershipRepository _membershipRepository;
     private readonly IGeneralElectionCommitteeRepository _generalElectionCommitteeRepository;
+    private readonly IMembershipCandidateRepository _membershipCandidateRepository;
     private readonly IWorklistTaskRepository _worklistTaskRepository;
     private readonly IEiamAssignmentRepository _eiamAssignmentRepository;
     private readonly ILogger<CommitteeService> _logger;
@@ -40,6 +41,7 @@ public class CommitteeService : ICommitteeService
         IGeneralMeasureRepository generalMeasureRepository,
         IMembershipRepository membershipRepository,
         IGeneralElectionCommitteeRepository generalElectionCommitteeRepository,
+        IMembershipCandidateRepository membershipCandidateRepository,
         IWorklistTaskRepository worklistTaskRepository,
         IEiamAssignmentRepository eiamAssignmentRepository,
         ILogger<CommitteeService> logger)
@@ -57,6 +59,7 @@ public class CommitteeService : ICommitteeService
         _membershipRepository = membershipRepository;
         _worklistTaskRepository = worklistTaskRepository;
         _generalElectionCommitteeRepository = generalElectionCommitteeRepository;
+        _membershipCandidateRepository = membershipCandidateRepository;
         _eiamAssignmentRepository = eiamAssignmentRepository;
         _logger = logger;
     }
@@ -212,6 +215,8 @@ public class CommitteeService : ICommitteeService
             await CheckAuthorizationForUpdate(committee);
         }
 
+        var nextTermOfOffice = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
+
         var existingCommittee = await _committeeRepository.GetByIdForUpdate(id, updateDto.RowVersion > 0 ? updateDto.RowVersion : null);
 
         var committeeDissolutionWithdrawal = updateDto.EndDate is not null && existingCommittee.EndDate != updateDto.EndDate;
@@ -252,16 +257,28 @@ public class CommitteeService : ICommitteeService
 
         if (committeeDissolutionWithdrawal)
         {
-            if (existingCommittee.IsInGeneralElection && existingCommittee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
+            var candidatesAlreadyDeleted = false;
+
+            if (existingCommittee.IsInGeneralElection)
             {
-                await _membershipMirrorService.InvalidateMembershipCandidateList(existingCommittee.Id);
+                if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && nextTermOfOffice.BeginDate > updateDto.EndDate)
+                {
+                    // When GE is running and committee is already copied to the future, we make a soft delete on all data...
+                    await DeactivateGeneralElectionCommittee(id);
+                    candidatesAlreadyDeleted = true;
+                }
+                else if (existingCommittee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
+                {
+                    await _membershipMirrorService.InvalidateMembershipCandidateList(existingCommittee.Id);
+                }
             }
 
             foreach (var membership in existingCommittee.Memberships.Where(y => !y.IsDeleted && y.EndDate > updateDto.EndDate!.Value && !y.HasOtherElectionOffice))
             {
                 membership.ElectionTypeId = ElectionType.CommitteeDissolutionWithdrawalGuid;
                 membership.EndDate = updateDto.EndDate!.Value;
-                if (existingCommittee.IsInGeneralElection)
+
+                if (existingCommittee.IsInGeneralElection && !candidatesAlreadyDeleted)
                 {
                     await _membershipMirrorService.MirrorOrDeleteMembershipForGeneralElection(membership, true, true);
                 }
@@ -329,6 +346,39 @@ public class CommitteeService : ICommitteeService
         }
 
         return saved;
+    }
+
+    private async Task DeactivateGeneralElectionCommittee(Guid committeeId)
+    {
+        var generalElectionCommittee = await _generalElectionCommitteeRepository.GetByCommitteeIdForUpdate(committeeId);
+
+        generalElectionCommittee.IsDeleted = true;
+        generalElectionCommittee.Modified = DateTime.UtcNow;
+        generalElectionCommittee.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+        await _generalElectionCommitteeRepository.CommitChanges();
+
+        var candidates = await _membershipCandidateRepository.GetByGeneralElectionCommitteeIdForUpdate(generalElectionCommittee.Id);
+
+        foreach (var candidate in candidates)
+        {
+            candidate.IsDeleted = true;
+            candidate.Modified = DateTime.UtcNow;
+            candidate.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+            await _membershipCandidateRepository.CommitChanges();
+        }
+
+        var worklistTasks = await _worklistTaskRepository.GetAllByGeneralElectionCommitteeId(generalElectionCommittee.Id);
+
+        foreach (var worklistTask in worklistTasks)
+        {
+            worklistTask.IsDeleted = true;
+            worklistTask.Modified = DateTime.UtcNow;
+            worklistTask.ModifiedBy = _authorizationService.GetCurrentUserName();
+
+            await _worklistTaskRepository.CommitChanges();
+        }
     }
 
     private async Task UpdateMembershipAdditionsInGeneralElection(CommitteeUpdateDto updateDto, Committee existingCommittee)

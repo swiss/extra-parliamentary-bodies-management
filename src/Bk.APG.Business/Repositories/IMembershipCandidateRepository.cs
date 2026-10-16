@@ -9,6 +9,7 @@ public interface IMembershipCandidateRepository
     Task<MembershipCandidate> GetByIdForUpdate(Guid id, uint? updateDtoRowVersion = null);
     Task<MembershipCandidate?> GetByMembershipIdForUpdate(Guid membershipId, uint? updateDtoRowVersion = null);
     Task<IEnumerable<MembershipCandidate>> GetByPersonIdForUpdate(Guid personId);
+    Task<IEnumerable<MembershipCandidate>> GetByGeneralElectionCommitteeIdForUpdate(Guid generalElectionCommitteeId);
     Task CommitChanges();
     Task Delete(MembershipCandidate membershipCandidate);
     void DeleteRange(IEnumerable<MembershipCandidate> membershipCandidates);
