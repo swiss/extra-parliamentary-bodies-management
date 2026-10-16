@@ -9,6 +9,7 @@ public class InformationNoteDto
     public required int ReleasedCommittees { get; set; }
     public required int TotalCommittees { get; set; }
     public required int UnreleasedCommittees { get; set; }
+    public required int TotalCommitteesWithVacancies { get; set; }
     public required int OneVacanciesTotal { get; set; }
     public required int TwoVacanciesTotal { get; set; }
     public required int ThreeVacanciesTotal { get; set; }
@@ -50,43 +51,46 @@ public class InformationNoteDto
     public required int ThreeVacanciesFederalAgenciesCommittees { get; set; }
     public required int FourVacanciesFederalAgenciesCommittees { get; set; }
 
+    // NON APK
+    public required int TotalUnvalidatedNonExtraParliamentCommittees { get; set; }
+
     // APK
     public required int TotalExtraParliamentaryCommittees { get; set; }
     public required int UnreleasedExtraParliamentaryCommittees { get; set; }
-    public required int PreviousTotalExtraParliamentaryCommittees { get; set; }
+    // public required int PreviousTotalExtraParliamentaryCommittees { get; set; }
     public decimal? ExpectedGenderPercentage { get; set; }
-    public decimal? PreviousExpectedGenderPercentage { get; set; }
+    // public decimal? PreviousExpectedGenderPercentage { get; set; }
     public decimal? CurrentFemalePercentage { get; set; }
-    public decimal? PreviousFemalePercentage { get; set; }
+    // public decimal? PreviousFemalePercentage { get; set; }
     public required int UnderstaffedFemaleCommittees { get; set; }
-    public required int HeavyUnderstaffedFemaleCommittees { get; set; }
-    public required int PreviousHeavyUnderstaffedFemaleCommittees { get; set; }
+    //public required int HeavyUnderstaffedFemaleCommittees { get; set; }
+    //public required int PreviousHeavyUnderstaffedFemaleCommittees { get; set; }
 
     public decimal? CurrentMalePercentage { get; set; }
-    public decimal? PreviousMalePercentage { get; set; }
+    // public decimal? PreviousMalePercentage { get; set; }
     public required int UnderstaffedMaleCommittees { get; set; }
-    public required int HeavyUnderstaffedMaleCommittees { get; set; }
-    public required int PreviousHeavyUnderstaffedMaleCommittees { get; set; }
+    //public required int HeavyUnderstaffedMaleCommittees { get; set; }
+    //public required int PreviousHeavyUnderstaffedMaleCommittees { get; set; }
 
     public decimal? CurrentGermanPercentage { get; set; }
-    public decimal? PreviousGermanPercentage { get; set; }
+    // public decimal? PreviousGermanPercentage { get; set; }
     public decimal? CurrentFrenchPercentage { get; set; }
-    public decimal? PreviousFrenchPercentage { get; set; }
+    // public decimal? PreviousFrenchPercentage { get; set; }
     public decimal? CurrentItalianPercentage { get; set; }
-    public decimal? PreviousItalianPercentage { get; set; }
+    // public decimal? PreviousItalianPercentage { get; set; }
     public decimal? CurrentRomanshPercentage { get; set; }
-    public decimal? PreviousRomanshPercentage { get; set; }
+    // public decimal? PreviousRomanshPercentage { get; set; }
 
     // we also include missing german committees, even though currently it will most likely be 0. But it will be included in the template.
     public required int MissingGermanCommittees { get; set; }
-    public required int PreviousMissingGermanCommittees { get; set; }
+    // public required int PreviousMissingGermanCommittees { get; set; }
     public required int MissingFrenchCommittees { get; set; }
-    public required int PreviousMissingFrenchCommittees { get; set; }
+    // public required int PreviousMissingFrenchCommittees { get; set; }
     public required int MissingItalianCommittees { get; set; }
-    public required int PreviousMissingItalianCommittees { get; set; }
+    // public required int PreviousMissingItalianCommittees { get; set; }
     // currently, this might not be used? Logicially it is needed.
     public required int MissingFrenchItalianCommittees { get; set; }
-    public required int PreviousMissingFrenchItalianCommittees { get; set; }
+    // public required int PreviousMissingFrenchItalianCommittees { get; set; }
 
     public required int TotalMembersExtraParliamentaryCommittees { get; set; }
     public required int MoreThan12Years { get; set; }
@@ -114,6 +118,8 @@ public class InformationNoteDto
 
     public required int UnderstaffedFemaleManagementCommittees { get; set; }
     public required int UnderstaffedMaleManagementCommittees { get; set; }
+    public required int UnderstaffedFemaleFederalAgenciesCommittees { get; set; }
+    public required int UnderstaffedMaleFederalAgenciesCommittees { get; set; }
 
     public required int TotalMembersWith3Memberships { get; set; }
     public required int FemaleMembersWith3Memberships { get; set; }
