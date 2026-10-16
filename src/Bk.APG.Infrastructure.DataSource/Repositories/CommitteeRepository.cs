@@ -286,9 +286,22 @@ public class CommitteeRepository : ICommitteeRepository
         return committees;
     }
 
-    public async Task<IEnumerable<Committee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid> electionTypesIds)
+    public async Task<IEnumerable<Committee>> GetAllForFormLetter(FormLetterFilterParameters filterDto, List<Guid>? electionTypeIds)
     {
+        ArgumentNullException.ThrowIfNull(filterDto);
+
+        if (electionTypeIds != null)
+        {
+            if (filterDto.ElectionTypeIds != null && filterDto.ElectionTypeIds.Any())
+            {
+                electionTypeIds = electionTypeIds
+                    .Where(id => filterDto.ElectionTypeIds.Contains(id))
+                    .ToList();
+            }
+        }
+
         var committees = await _dataContext.Committees
+            .Where(c => c.CommitteeLevelId == CommitteeLevel.FederalCouncilGuid && c.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
             .Include(item => item.Office)
@@ -310,7 +323,7 @@ public class CommitteeRepository : ICommitteeRepository
             .ThenInclude(item => item.Function)
             .Include(item => item.Memberships)
             .ThenInclude(item => item.ElectionType)
-            .FilterCommitteesForFormLetter(filterDto, electionTypesIds)
+            .FilterCommitteesForFormLetter(filterDto)
             .AsSplitQuery()
             .Select(c => new Committee
             {
@@ -346,7 +359,7 @@ public class CommitteeRepository : ICommitteeRepository
                     .Where(m => m.Person != null &&
                                 (filterDto.CorrespondenceLanguageIds == null || !filterDto.CorrespondenceLanguageIds.Any() ||
                                  filterDto.CorrespondenceLanguageIds!.Contains(m.Person.CorrespondenceLanguageId)) &&
-                                (electionTypesIds == null || electionTypesIds.Count == 0 || electionTypesIds.Contains(m.ElectionTypeId)) &&
+                                (electionTypeIds == null || electionTypeIds.Count == 0 || electionTypeIds.Contains(m.ElectionTypeId)) &&
                                 (m.EndDate == filterDto.EndDateCurrentTermOfOfficeDate || m.ElectionTypeId == ElectionType.CommitteeDissolutionWithdrawalGuid) &&
                                 m.ElectionOfficeId != ElectionOffice.OtherGuid)
                     .ToList()
