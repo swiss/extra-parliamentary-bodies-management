@@ -480,14 +480,20 @@
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
         <value>APG Serienbrief Gesamt</value>
     </data>
+    <data name="InformationNoteExport_MemberCount_Single" xml:space="preserve">
+        <value>1 Mitglied</value>
+    </data>
+    <data name="InformationNoteExport_FederalMemberCount_Single" xml:space="preserve">
+        <value>1 Mitglied im Bundesdienst</value>
+    </data>
     <data name="InformationNoteExport_MemberCount" xml:space="preserve">
-        <value>{0} Mitglied(er)</value>
+        <value>{0} Mitglieder</value>
     </data>
     <data name="InformationNoteExport_FederalMemberCount" xml:space="preserve">
-        <value>{0} Mitglied(er) im Bundesdienst</value>
+        <value>{0} Mitglieder im Bundesdienst</value>
     </data>
     <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
-        <value>{0} Mitglied(er), davon {1} im Bundesdienst</value>
+        <value>{0} Mitglieder, davon {1} im Bundesdienst</value>
     </data>
     <data name="InformationNoteExport_Vacancies" xml:space="preserve">
         <value>{0} Vakanz(en)</value>
