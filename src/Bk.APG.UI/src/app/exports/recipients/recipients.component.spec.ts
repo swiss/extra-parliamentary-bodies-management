@@ -59,8 +59,8 @@ describe('RecipientsComponent', () => {
     const masterDataServiceMock = {
         permittedDepartments: jest.fn(),
         permittedOffices: signal([
-            {id: 'off1', text: 'Office 1', description: 'Office 1'},
-            {id: 'off2', text: 'Office 2', description: 'Office 2'},
+            {id: 'off1', text: 'Office 1', description: 'Office 1', departmentId: 'dep1'},
+            {id: 'off2', text: 'Office 2', description: 'Office 2', departmentId: 'dep2'},
         ] as Office[]),
         electionTypes: signal([
             {id: 'id1', text: 'type1', description: 'desc1', isDeleted: false},
@@ -124,5 +124,51 @@ describe('RecipientsComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should prune selected offices whose department is no longer selected', () => {
+        component.form.controls.departments.setValue(['dep1', 'dep2']);
+        component.form.controls.offices.setValue(['off1', 'off2']);
+
+        component.form.controls.departments.setValue(['dep1']);
+
+        expect(component.form.controls.offices.value).toEqual(['off1']);
+    });
+
+    it('should empty selected offices when the last department is removed', () => {
+        component.form.controls.departments.setValue(['dep1']);
+        component.form.controls.offices.setValue(['off1']);
+
+        component.form.controls.departments.setValue([]);
+
+        expect(component.form.controls.offices.value).toEqual([]);
+    });
+
+    it('should empty selected offices when departments are reset to null', () => {
+        component.form.controls.departments.setValue(['dep1']);
+        component.form.controls.offices.setValue(['off1']);
+
+        component.form.controls.departments.setValue(null);
+
+        expect(component.form.controls.offices.value).toEqual([]);
+    });
+
+    it('should prune offices from other departments when a department is selected', () => {
+        component.form.controls.offices.setValue(['off1', 'off2']);
+
+        component.form.controls.departments.setValue(['dep1']);
+
+        expect(component.form.controls.offices.value).toEqual(['off1']);
+    });
+
+    it('should not touch selected offices when nothing needs pruning', () => {
+        component.form.controls.departments.setValue(['dep1']);
+        component.form.controls.offices.setValue(['off1']);
+
+        const setValueSpy = jest.spyOn(component.form.controls.offices, 'setValue');
+        component.form.controls.departments.setValue(['dep1', 'dep2']);
+
+        expect(setValueSpy).not.toHaveBeenCalled();
+        expect(component.form.controls.offices.value).toEqual(['off1']);
     });
 });
