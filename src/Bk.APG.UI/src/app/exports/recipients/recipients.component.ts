@@ -113,9 +113,12 @@ export class RecipientsComponent {
             this.isGeneralElection = true;
         }
 
-        // Load form letter senders
         this.formLettersSenderService.getFormLettersSenderList().subscribe(senders => {
             this.formLetterSenders.set(senders);
+        });
+
+        this.form.controls.departments.valueChanges.pipe(takeUntilDestroyed()).subscribe(selectedDepartments => {
+            this.pruneOfficesOutsideSelectedDepartments(selectedDepartments);
         });
 
         if (this.isGeneralElection) {
@@ -242,5 +245,15 @@ export class RecipientsComponent {
             exportFileType: this.fb.control<string | null>('word'),
             formLetterExportDate: this.fb.control<Date | null>(null),
         });
+    }
+
+    private pruneOfficesOutsideSelectedDepartments(selectedDepartments: string[] | null) {
+        const offices = this.masterDataService.permittedOffices();
+        const validOffices = offices.filter(office => (selectedDepartments ?? []).includes(office.departmentId));
+        const selected = this.form.controls.offices.value ?? [];
+        const validSelection = selected.filter(id => validOffices.some(office => office.id === id));
+        if (validSelection.length !== selected.length) {
+            this.form.controls.offices.setValue(validSelection);
+        }
     }
 }

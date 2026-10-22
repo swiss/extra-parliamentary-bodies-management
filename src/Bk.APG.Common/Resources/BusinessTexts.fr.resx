@@ -474,14 +474,20 @@
     <data name="FormLetterCompleteExport_Filename" xml:space="preserve">
         <value>organes extraparlementaires lettre en série total</value>
     </data>
+    <data name="InformationNoteExport_MemberCount_Single" xml:space="preserve">
+        <value>1 membre</value>
+    </data>
+    <data name="InformationNoteExport_FederalMemberCount_Single" xml:space="preserve">
+        <value>1 membre au service de la Confédération</value>
+    </data>    
     <data name="InformationNoteExport_MemberCount" xml:space="preserve">
-        <value>{0} membre(s)</value>
+        <value>{0} membres</value>
     </data>
     <data name="InformationNoteExport_FederalMemberCount" xml:space="preserve">
-        <value>{0} membre(s) au service de la Confédération</value>
+        <value>{0} membres au service de la Confédération</value>
     </data>
     <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
-        <value>{0} membre(s), dont {1} au service de la Confédération</value>
+        <value>{0} membres, dont {1} au service de la Confédération</value>
     </data>
     <data name="InformationNoteExport_Vacancies" xml:space="preserve">
         <value>{0} vacance(s)</value>

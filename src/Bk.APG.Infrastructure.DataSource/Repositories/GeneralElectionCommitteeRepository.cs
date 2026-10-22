@@ -223,7 +223,8 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         return x =>
             !releasedCommittees
             || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded
-            || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
+            || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized
+            || x.CandidateListStateId == CandidateListState.Validated;
     }
 
     public async Task<IEnumerable<GeneralElectionCommittee>> GetAllForFormLetterPreview(GeneralElectionCommitteeExportFilterParameters filterDto, List<Guid> electionTypesIds)
