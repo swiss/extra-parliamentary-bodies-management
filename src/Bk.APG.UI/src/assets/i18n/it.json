@@ -927,6 +927,8 @@
   "recipients.filter.pdf.label": "Generare documento PDF",
   "recipients.filter.formLetterExportDate.label": "Data della lettera",
   "openDataStack.title": "Open Data Stack",
+  "openDataStack.fullscreen": "Schermo intero",
+  "openDataStack.exitFullscreen": "Esci da schermo intero",
   "candidateList.hasActiveTasks": "Vi sono ancora compiti in sospeso",
   "committee.helpTooltip.selfOrganized": "Indicare «Sì» se l'elezione delle presidenti e dei presidenti nonché delle vicepresidenti e dei vicepresidenti non è effettuata dal Consiglio federale o da un dipartimento, ma è organizzata dall'organo stesso.",
   "committee.generalElection.running.isFederalCouncilProposalFinalized.hint": "Questo organo è già stato approvato dalla CaF. Le modifiche all'elenco dei membri non vengono più trasferite automaticamente nell'ambiente ERI e non generano nuovamente compiti nell'elenco dei lavori. L'adeguamento deve essere registrato dalla CaF nell'ambiente ERI. Per gli adeguamenti, contattare il supporto APG (SG in CC). Il ruolo Admin (CaF) effettua le modifiche nelle ERI e le valida direttamente."
