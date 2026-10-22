@@ -1,4 +1,5 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
+import {MatIconTestingModule} from '@angular/material/icon/testing';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {MockPipe} from 'ng-mocks';
 import {of, Subject} from 'rxjs';
@@ -39,7 +40,7 @@ describe('OpenDataStackComponent', () => {
         } as unknown as jest.Mocked<OpenDataStackService>;
 
         await TestBed.configureTestingModule({
-            imports: [OpenDataStackComponent, MockPipe(TranslatePipe)],
+            imports: [OpenDataStackComponent, MockPipe(TranslatePipe), MatIconTestingModule],
             providers: [
                 {provide: ConfigsService, useValue: configsServiceMock},
                 {provide: OpenDataStackService, useValue: openDataStackServiceMock},
@@ -203,5 +204,62 @@ describe('OpenDataStackComponent', () => {
 
         expect(openDataStackServiceMock.getDashboards).toHaveBeenNthCalledWith(2, 'fr');
         expect(iframe.style.display).toBe('none');
+    });
+
+    describe('fullscreen', () => {
+        let fullscreenElement: Element | null;
+        let exitFullscreenMock: jest.Mock;
+
+        beforeEach(() => {
+            fullscreenElement = null;
+            exitFullscreenMock = jest.fn().mockResolvedValue(undefined);
+            Object.defineProperty(document, 'fullscreenElement', {get: () => fullscreenElement, configurable: true});
+            Object.defineProperty(document, 'exitFullscreen', {value: exitFullscreenMock, configurable: true});
+        });
+
+        const getContainer = (): HTMLDivElement => fixture.nativeElement.querySelector('.ods-container') as HTMLDivElement;
+        const getButton = (): HTMLButtonElement => fixture.nativeElement.querySelector('.ods-toolbar-actions button') as HTMLButtonElement;
+
+        it('should disable the fullscreen button while no dashboard is shown', () => {
+            fixture.detectChanges();
+
+            expect(getButton().disabled).toBe(true);
+        });
+
+        it('should request fullscreen for the iframe container when not in fullscreen', () => {
+            fixture.detectChanges();
+            const container = getContainer();
+            container.requestFullscreen = jest.fn().mockResolvedValue(undefined);
+
+            (component as unknown as {toggleFullscreen: () => void}).toggleFullscreen();
+
+            expect(container.requestFullscreen).toHaveBeenCalledTimes(1);
+            expect(exitFullscreenMock).not.toHaveBeenCalled();
+        });
+
+        it('should exit fullscreen when already in fullscreen', () => {
+            fixture.detectChanges();
+            const container = getContainer();
+            container.requestFullscreen = jest.fn().mockResolvedValue(undefined);
+            fullscreenElement = container;
+
+            (component as unknown as {toggleFullscreen: () => void}).toggleFullscreen();
+
+            expect(exitFullscreenMock).toHaveBeenCalledTimes(1);
+            expect(container.requestFullscreen).not.toHaveBeenCalled();
+        });
+
+        it('should track the fullscreen state on fullscreenchange', () => {
+            fixture.detectChanges();
+            const isFullscreen = (component as unknown as {isFullscreen: () => boolean}).isFullscreen;
+
+            fullscreenElement = getContainer();
+            document.dispatchEvent(new Event('fullscreenchange'));
+            expect(isFullscreen()).toBe(true);
+
+            fullscreenElement = null;
+            document.dispatchEvent(new Event('fullscreenchange'));
+            expect(isFullscreen()).toBe(false);
+        });
     });
 });
