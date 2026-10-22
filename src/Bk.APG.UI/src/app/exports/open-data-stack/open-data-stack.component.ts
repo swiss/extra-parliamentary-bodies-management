@@ -1,9 +1,12 @@
-import {AfterViewInit, Component, ElementRef, Signal, ViewChild, effect, inject, signal} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, HostListener, Signal, ViewChild, effect, inject, signal} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {FormBuilder, FormControl, FormGroup, ReactiveFormsModule} from '@angular/forms';
+import {MatIconButton} from '@angular/material/button';
 import {MatOption} from '@angular/material/core';
 import {MatFormField, MatLabel} from '@angular/material/form-field';
+import {MatIcon} from '@angular/material/icon';
 import {MatSelect} from '@angular/material/select';
+import {MatTooltip} from '@angular/material/tooltip';
 import {OpenDataStackDashboard} from '@api/OpenDataStackDashboard';
 import {TranslatePipe, TranslateService} from '@ngx-translate/core';
 import {map} from 'rxjs';
@@ -18,13 +21,14 @@ interface DashboardForm {
     selector: 'apg-open-data-stack',
     templateUrl: './open-data-stack.component.html',
     styleUrls: ['./open-data-stack.component.scss'],
-    imports: [ReactiveFormsModule, TranslatePipe, MatFormField, MatLabel, MatSelect, MatOption],
+    imports: [ReactiveFormsModule, TranslatePipe, MatFormField, MatLabel, MatSelect, MatOption, MatIconButton, MatIcon, MatTooltip],
 })
 export class OpenDataStackComponent implements AfterViewInit {
     protected readonly dashboardForm: FormGroup<DashboardForm>;
 
     protected readonly dashboards = signal<OpenDataStackDashboard[]>([]);
     protected readonly isIframeVisible = signal(false);
+    protected readonly isFullscreen = signal(false);
 
     private readonly configsService = inject(ConfigsService);
     private readonly openDataStackService = inject(OpenDataStackService);
@@ -37,6 +41,9 @@ export class OpenDataStackComponent implements AfterViewInit {
 
     @ViewChild('odsEmbed')
     private readonly iframeRef?: ElementRef<HTMLIFrameElement>;
+
+    @ViewChild('odsContainer')
+    private readonly containerRef?: ElementRef<HTMLDivElement>;
 
     constructor() {
         this.dashboardForm = this.formBuilder.group<DashboardForm>({
@@ -88,6 +95,20 @@ export class OpenDataStackComponent implements AfterViewInit {
                 };
             };
         });
+    }
+
+    protected toggleFullscreen(): void {
+        if (document.fullscreenElement) {
+            void document.exitFullscreen();
+        } else {
+            void this.containerRef?.nativeElement.requestFullscreen();
+        }
+    }
+
+    // Also fires when the user leaves fullscreen with Esc.
+    @HostListener('document:fullscreenchange')
+    protected onFullscreenChange(): void {
+        this.isFullscreen.set(document.fullscreenElement === this.containerRef?.nativeElement);
     }
 
     private loadDashboards(language: string): void {
