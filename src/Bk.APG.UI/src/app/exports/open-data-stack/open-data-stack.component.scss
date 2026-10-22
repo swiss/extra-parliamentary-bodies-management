@@ -1,0 +1,41 @@
+.ods-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+
+    h5 {
+        margin: 0;
+    }
+}
+
+.ods-toolbar-actions {
+    display: flex;
+    flex: 0 1 30rem;
+    align-items: center;
+    gap: 0.5rem;
+
+    mat-form-field {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+.ods-container {
+    background-color: #fff;
+
+    iframe {
+        width: 100%;
+        // Fill the viewport below the application header and the toolbar above.
+        height: calc(100dvh - 250px);
+        min-height: 500px;
+        border: none;
+    }
+
+    &:fullscreen iframe {
+        height: 100vh;
+        min-height: 0;
+    }
+}
