@@ -1411,11 +1411,20 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Mitglied(er) im Bundesdienst.
+        ///   Looks up a localized string similar to {0} Mitglieder im Bundesdienst.
         /// </summary>
         public static string InformationNoteExport_FederalMemberCount {
             get {
                 return ResourceManager.GetString("InformationNoteExport_FederalMemberCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 Mitglied im Bundesdienst.
+        /// </summary>
+        public static string InformationNoteExport_FederalMemberCount_Single {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_FederalMemberCount_Single", resourceCulture);
             }
         }
         
@@ -1465,7 +1474,7 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Mitglied(er), davon {1} im Bundesdienst.
+        ///   Looks up a localized string similar to {0} Mitglieder, davon {1} im Bundesdienst.
         /// </summary>
         public static string InformationNoteExport_MemberAndFederalMemberCount {
             get {
@@ -1474,11 +1483,20 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Mitglied(er).
+        ///   Looks up a localized string similar to {0} Mitglieder.
         /// </summary>
         public static string InformationNoteExport_MemberCount {
             get {
                 return ResourceManager.GetString("InformationNoteExport_MemberCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 Mitglied.
+        /// </summary>
+        public static string InformationNoteExport_MemberCount_Single {
+            get {
+                return ResourceManager.GetString("InformationNoteExport_MemberCount_Single", resourceCulture);
             }
         }
         
