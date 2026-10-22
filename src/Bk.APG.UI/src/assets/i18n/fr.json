@@ -927,6 +927,8 @@
   "recipients.filter.pdf.label": "Générer un document PDF",
   "recipients.filter.formLetterExportDate.label": "Date de la lettre",
   "openDataStack.title": "Open Data Stack",
+  "openDataStack.fullscreen": "Plein écran",
+  "openDataStack.exitFullscreen": "Quitter le plein écran",
   "candidateList.hasActiveTasks": "Il reste des tâches à accomplir.",
   "committee.helpTooltip.selfOrganized": "Indiquez «Oui» si l'élection des présidentes et présidents ainsi que des vice-présidentes et vice-présidents n'est pas effectuée par le Conseil fédéral ou par un département, mais organisée par l'organe lui-même.",
   "committee.generalElection.running.isFederalCouncilProposalFinalized.hint": "Cet organe a déjà été autorisé par la ChF. Les modifications de la liste des membres ne sont plus reprises automatiquement dans l’environnement RI et ne déclenchent plus de nouvelles tâches dans la liste de tâches. L’adaptation doit être effectuée par la ChF dans l’environnement RI. Pour les adaptations, veuillez contacter le support APG (SG en copie). Le rôle Admin (ChF) effectue les modifications dans le RI et les valide directement."

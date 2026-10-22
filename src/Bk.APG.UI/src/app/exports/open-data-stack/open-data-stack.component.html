@@ -1,18 +1,29 @@
-<div>
+<div class="ods-toolbar">
     <h5>{{ 'openDataStack.title' | translate }}</h5>
 
-    <form [formGroup]="dashboardForm">
-        <fieldset>
-            <mat-form-field>
-                <mat-label>Dashboards</mat-label>
-                <mat-select [formControl]="dashboardForm.controls.dashboardId">
-                    @for (dashboard of dashboards(); track dashboard.id) {
-                        <mat-option [value]="dashboard.id">{{ dashboard.title }}</mat-option>
-                    }
-                </mat-select>
-            </mat-form-field>
-        </fieldset>
+    <form [formGroup]="dashboardForm" class="ods-toolbar-actions">
+        <mat-form-field subscriptSizing="dynamic">
+            <mat-label>Dashboards</mat-label>
+            <mat-select [formControl]="dashboardForm.controls.dashboardId">
+                @for (dashboard of dashboards(); track dashboard.id) {
+                    <mat-option [value]="dashboard.id">{{ dashboard.title }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <button
+            mat-icon-button
+            type="button"
+            [disabled]="!isIframeVisible()"
+            (click)="toggleFullscreen()"
+            [matTooltip]="(isFullscreen() ? 'openDataStack.exitFullscreen' : 'openDataStack.fullscreen') | translate"
+            [attr.aria-label]="(isFullscreen() ? 'openDataStack.exitFullscreen' : 'openDataStack.fullscreen') | translate"
+        >
+            <mat-icon svgIcon="fullscreen" />
+        </button>
     </form>
 </div>
 
-<iframe #odsEmbed id="ods-embed" style="width: 100%; height: 800px; border: none" [style.display]="isIframeVisible() ? 'block' : 'none'"></iframe>
+<div #odsContainer class="ods-container">
+    <iframe #odsEmbed id="ods-embed" [style.display]="isIframeVisible() ? 'block' : 'none'"></iframe>
+</div>
