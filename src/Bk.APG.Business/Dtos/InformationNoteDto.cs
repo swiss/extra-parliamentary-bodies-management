@@ -198,6 +198,7 @@ public class CommitteeNameLongerDutyDto
 
 public enum InformationNoteData
 {
+    Vacancies,
     Genders,
     Languages
 }
