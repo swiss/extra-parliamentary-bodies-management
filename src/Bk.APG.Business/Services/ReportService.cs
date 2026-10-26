@@ -443,10 +443,6 @@ public class ReportService : IReportService
         var committeeTypes = await _masterDataRepository.GetCommitteeTypes();
         var managementCommitteeType = committeeTypes.FirstOrDefault(c => c.Id == CommitteeType.ManagementCommitteeGuid);
 
-        // present data, needed for the comparision with the future!
-        var committees = await _committeeRepository.GetAllForGeneralElectionWithActiveMembers(departmentId, officeId, committeeId);
-        var extraParliamentaryCommittees = committees.Where(c => c.ExtraParliamentaryCommission).ToArray();
-
         var allGeneralElectionCommittees = (await _generalElectionCommitteeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto)).ToArray();
         var allGeneralElectionCommitteesUnfiltered = (await _generalElectionCommitteeRepository.GetAllWithPermissionCheck(departmentId, officeId, committeeId)).ToArray();
 
@@ -501,18 +497,10 @@ public class ReportService : IReportService
         var allFemaleCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.GenderId == Gender.FemaleGuid);
         var allMaleCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.GenderId == Gender.MaleGuid);
 
-        var allMembers = extraParliamentaryCommittees.SelectMany(c => c.Memberships).Count(m => m.IsActive);
-        var allFemaleMembers = extraParliamentaryCommittees.SelectMany(c => c.Memberships).Count(m => m.IsActive && m.Person!.GenderId == Gender.FemaleGuid);
-        var allMaleMembers = extraParliamentaryCommittees.SelectMany(c => c.Memberships).Count(m => m.IsActive && m.Person!.GenderId == Gender.MaleGuid);
-
         var allGermanCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.LanguageId == Language.GermanGuid);
-        var allGermanMembers = extraParliamentaryCommittees.SelectMany(c => c.Memberships).Count(m => m.IsActive && m.Person!.LanguageId == Language.GermanGuid);
         var allFrenchCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.LanguageId == Language.FrenchGuid);
-        var allFrenchMembers = extraParliamentaryCommittees.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.FrenchGuid);
         var allItalianCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.LanguageId == Language.ItalianGuid);
-        var allItalianMembers = extraParliamentaryCommittees.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.ItalianGuid);
         var allRomanshCandidates = allExtraParliamentaryCommittees.SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.LanguageId == Language.RomanshGuid);
-        var allRomanshMembers = extraParliamentaryCommittees.SelectMany(c => c.Memberships).Count(m => m.Person!.LanguageId == Language.RomanshGuid);
 
         var allCandidatesManagementCommittees = allManagementCommittees.Where(c => c.IsValidated).SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected);
         var allFemaleCandidatesManagementCommittees = allManagementCommittees.Where(c => c.IsValidated).SelectMany(c => c.MembershipCandidates).Count(m => m.IsSelected && m.Person!.GenderId == Gender.FemaleGuid);
@@ -796,9 +784,15 @@ public class ReportService : IReportService
         var (departmentId, officeId, committeeId) = await _eiamAssignmentService.GetPermittedIds();
 
         var departments = await _masterDataRepository.GetDepartments();
-        departments = departments.Where(d => d.Uri != Department.BkUri).ToArray();
+        departments = [.. departments.Where(d => d.Uri != Department.BkUri)];
 
-        var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == Language.French ? "Vacancies_Report_French" : "Vacancies_Report_German";
+        var language = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName;
+        var template = language switch
+        {
+            Language.French => "Vacancies_Report_French",
+            Language.Italian => "Vacancies_Report_Italian",
+            _ => "Vacancies_Report_German"
+        };
 
         var nextTermOfOfficeDate = await _termOfOfficeDateService.GetNextTermOfOfficeDate();
 

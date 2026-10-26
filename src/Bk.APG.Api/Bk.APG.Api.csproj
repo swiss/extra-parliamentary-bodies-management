@@ -92,6 +92,9 @@
       <None Update="Templates\Vacancies_Report_German.docx">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
+      <None Update="Templates\Vacancies_Report_Italian.docx">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
