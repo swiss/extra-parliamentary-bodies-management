@@ -39,6 +39,7 @@ describe('AppComponent', () => {
     const configsServiceMock = {
         frontendConfig: {
             eiamMyAccountUrl: 'https://example.com/account',
+            manualUrl: 'https://example.com/manual',
         },
     };
 
