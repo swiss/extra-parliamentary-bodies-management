@@ -17,6 +17,7 @@ export interface FrontendConfig {
     keyCloakRoleSecretariat: string;
     keyCloakRoleObserver: string;
     eiamMyAccountUrl: string;
+    manualUrl: string;
     froalaKey: string;
     entityIds: EntityIdConfig;
     openDataStack: OpenDataStackConfig;
