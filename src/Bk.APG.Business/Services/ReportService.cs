@@ -484,9 +484,8 @@ public class ReportService : IReportService
 
         var releasedCommitteesWithVacancies = allGeneralElectionCommittees
             .Where(c => c.IsValidated && c.VacanciesGeneralElection > 0)
-            .Select(GeneralElectionMapper.FromGeneralElectionCommitteeToCommittee)
             .ToArray();
-        var releasedWithVacanciesCommitteesDto = GetCommitteesByDepartmentAndTypes(releasedCommitteesWithVacancies, departments);
+        var releasedWithVacanciesCommitteesDto = GetCommitteesByDepartmentAndTypesForInformationNote(releasedCommitteesWithVacancies, departments, InformationNoteData.Vacancies);
 
         var moreThan12YearsCommittes = allGeneralElectionCommittees.Where(c => c.IsValidated).ToArray();
         var moreThan12YearsCommitteesDto = GetCommitteesByDepartmentForMembershipDuration(moreThan12YearsCommittes, departments);
@@ -901,7 +900,12 @@ public class ReportService : IReportService
                 {
                     var freeText = string.Empty;
 
-                    if (informationNoteData == InformationNoteData.Genders)
+                    if (informationNoteData == InformationNoteData.Vacancies)
+                    {
+                        var vacancies = committee.VacanciesGeneralElection;
+                        freeText = string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_Vacancies, vacancies);
+                    }
+                    else if (informationNoteData == InformationNoteData.Genders)
                     {
                         freeText = committee.FemaleQuota < committee.MaleQuota ?
                             string.Format(CultureInfo.InvariantCulture, BusinessTexts.InformationNoteExport_Female, committee.FemaleQuota) :
