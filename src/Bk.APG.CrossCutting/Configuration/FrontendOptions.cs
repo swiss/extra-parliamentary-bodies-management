@@ -45,6 +45,9 @@ public class FrontendOptions
     public required string EiamMyAccountUrl { get; init; }
 
     [Required]
+    public required string ManualUrl { get; init; }
+
+    [Required]
     public required EntityIdOptions EntityIds { get; init; }
 
     [Required]
