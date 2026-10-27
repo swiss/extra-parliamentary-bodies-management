@@ -10,7 +10,6 @@
     <File Path="../GETTING-STARTED.md" />
     <File Path="../GitVersion.yaml" />
     <File Path="../README.md" />
-    <File Path=".globalconfig" />
     <File Path="Directory.Build.props" />
     <File Path="NuGet.Config" />
   </Folder>
