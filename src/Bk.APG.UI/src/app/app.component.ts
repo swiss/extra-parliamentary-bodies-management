@@ -21,6 +21,7 @@ import {InformationService} from './information.service';
 })
 export class AppComponent implements OnInit {
     readonly myAccountHref: string;
+    readonly manualHref: string;
     readonly isAuthenticated = signal<boolean | undefined>(undefined);
     readonly userName = signal<string>('');
     readonly currentYear = signal<number>(new Date().getFullYear());
@@ -126,6 +127,7 @@ export class AppComponent implements OnInit {
         private readonly injector: Injector
     ) {
         this.myAccountHref = configsService.frontendConfig.eiamMyAccountUrl;
+        this.manualHref = configsService.frontendConfig.manualUrl;
         this.authService.isAuthenticated$.subscribe(value => this.isAuthenticated.set(value));
         this.authService.userName$.subscribe(value => this.userName.set(value));
         config.homePageRoute = '';
