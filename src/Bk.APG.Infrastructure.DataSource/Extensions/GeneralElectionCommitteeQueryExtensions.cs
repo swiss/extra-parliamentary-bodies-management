@@ -263,9 +263,34 @@ public static class GeneralElectionCommitteeQueryExtensions
             "hassupervisionduty" => sortDirection == SortDirection.Asc
                 ? committees.OrderBy(c => c.SupervisionDuty)
                 : committees.OrderByDescending(c => c.SupervisionDuty),
+            "status" => sortDirection == SortDirection.Asc
+                ? committees.OrderBy(IsNewExpression)
+                : committees.OrderByDescending(IsNewExpression),
+            "vacancies" => sortDirection == SortDirection.Asc
+                ? committees.OrderBy(VacanciesExpression)
+                : committees.OrderByDescending(VacanciesExpression),
+            "statusproposal" => sortDirection == SortDirection.Asc
+                ? committees.OrderBy(StatusProposalExpression)
+                : committees.OrderByDescending(StatusProposalExpression),
+            "modified" => sortDirection == SortDirection.Asc
+                ? committees.OrderBy(c => c.Modified)
+                : committees.OrderByDescending(c => c.Modified),
             _ => committees
         };
     }
+
+    // Mirror the values computed in GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto, translatable to SQL
+    private static readonly Expression<Func<GeneralElectionCommittee, bool>> IsNewExpression = c =>
+        c.Committee!.TermOfOfficeDate != null && DateOnly.FromDateTime(c.Committee.Created) >= c.Committee.TermOfOfficeDate.BeginDate;
+
+    private static readonly Expression<Func<GeneralElectionCommittee, int>> VacanciesExpression = c =>
+        c.VacanciesGeneralElection ??
+        (c.MinimalMembers - c.MembershipCandidates.Count(x => x.IsSelected && !x.IsDeleted) > 0
+            ? c.MinimalMembers.GetValueOrDefault() - c.MembershipCandidates.Count(x => x.IsSelected && !x.IsDeleted)
+            : 0);
+
+    private static readonly Expression<Func<GeneralElectionCommittee, bool>> StatusProposalExpression = c =>
+        c.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
 
     private static IQueryable<GeneralElectionCommittee> SortByProperty(
         this IQueryable<GeneralElectionCommittee> committees,
