@@ -85,7 +85,7 @@
     <ng-container matColumnDef="modified">
         <th *matHeaderCellDef mat-header-cell mat-sort-header>{{ 'generalElection.committees.table.header.modified.label' | translate }}</th>
         <td *matCellDef="let element" mat-cell attr.data-label="{{ 'generalElection.committees.table.header.modified.label' | translate }}">
-            {{ element.modifiedBy }}<br />{{ element.modified | date: 'dd.MM.yyyy hh:MM:ss' }}
+            {{ element.modifiedBy }}<br />{{ element.modified | date: 'dd.MM.yyyy HH:mm:ss' }}
         </td>
     </ng-container>
 
