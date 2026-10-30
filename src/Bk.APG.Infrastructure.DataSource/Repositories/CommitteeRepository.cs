@@ -637,7 +637,7 @@ public class CommitteeRepository : ICommitteeRepository
         return committees;
     }
 
-    public async Task<IEnumerable<Committee>> GetFormerCommitteesByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? startDate, DateOnly? endDate)
+    public async Task<IEnumerable<Committee>> GetDisbandedCommitteesByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, DateOnly? startDate, DateOnly? endDate)
     {
         var committees = await _dataContext.Committees
            // we only want GeneralElection commmittes, which are active at the reportDate.
