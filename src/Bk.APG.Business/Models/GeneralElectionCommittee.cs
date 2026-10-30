@@ -16,6 +16,7 @@ public class GeneralElectionCommittee : EntityBase
     public required string DescriptionRomansh { get; set; }
     public Committee? Committee { get; set; }
     public Guid CommitteeId { get; set; }
+    public int CommitteeNumber { get; set; }
     public Department? Department { get; set; }
     public Guid DepartmentId { get; set; }
     public Office? Office { get; set; }

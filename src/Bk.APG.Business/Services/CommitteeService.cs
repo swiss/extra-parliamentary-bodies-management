@@ -120,10 +120,10 @@ public class CommitteeService : ICommitteeService
 
             var newCommittees = (await _committeeRepository.GetNewCommitteesByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1, filterParameters.AnalysisDate2)).ToArray();
 
-            var formerCommittees = (await _committeeRepository.GetFormerCommitteesByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1, filterParameters.AnalysisDate2)).ToArray();
+            var disbandedCommittees = (await _committeeRepository.GetDisbandedCommitteesByFilterForReport(departmentId, officeId, committeeId, filterParameters, filterParameters.AnalysisDate1, filterParameters.AnalysisDate2)).ToArray();
 
             committees.AddRange(newCommittees);
-            committees.AddRange(formerCommittees);
+            committees.AddRange(disbandedCommittees);
 
             var distinctCommittees = committees
                 .DistinctBy(c => c.Id)
@@ -261,13 +261,13 @@ public class CommitteeService : ICommitteeService
 
             if (existingCommittee.IsInGeneralElection)
             {
-                if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && nextTermOfOffice.BeginDate > updateDto.EndDate)
+                if (await _termOfOfficeDateService.CheckForRunningGeneralElection() && nextTermOfOffice.BeginDate > updateDto.EndDate && existingCommittee.GeneralElectionCommittees.Any(g => !g.IsDeleted))
                 {
                     // When GE is running and committee is already copied to the future, we make a soft delete on all data...
                     await DeactivateGeneralElectionCommittee(id);
                     candidatesAlreadyDeleted = true;
                 }
-                else if (existingCommittee.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
+                else if (existingCommittee.GeneralElectionCommittees.FirstOrDefault(g => !g.IsDeleted)?.CandidateListStateId == CandidateListState.Validated)
                 {
                     await _membershipMirrorService.InvalidateMembershipCandidateList(existingCommittee.Id);
                 }
@@ -277,6 +277,8 @@ public class CommitteeService : ICommitteeService
             {
                 membership.ElectionTypeId = ElectionType.CommitteeDissolutionWithdrawalGuid;
                 membership.EndDate = updateDto.EndDate!.Value;
+
+                await _membershipRepository.CommitChanges();
 
                 if (existingCommittee.IsInGeneralElection && !candidatesAlreadyDeleted)
                 {

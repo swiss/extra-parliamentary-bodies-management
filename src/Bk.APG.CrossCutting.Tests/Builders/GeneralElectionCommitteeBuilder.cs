@@ -20,6 +20,7 @@ public class GeneralElectionCommitteeBuilder
     private string _descriptionRomansh;
     private Committee? _committee;
     private Guid _committeeId;
+    private int _committeeNumber;
     private Department? _department;
     private Guid _departmentId;
     private Office? _office;
@@ -70,6 +71,7 @@ public class GeneralElectionCommitteeBuilder
         _id = _faker.Random.Guid();
         _committeeId = _faker.Random.Guid();
         _committee = new CommitteeBuilder().WithId(_committeeId).Build();
+        _committeeNumber = _faker.Random.Int();
         _created = _faker.Date.Past();
         _createdBy = _faker.Person.Email;
         _modified = _faker.Date.Past();
@@ -257,6 +259,12 @@ public class GeneralElectionCommitteeBuilder
         return this;
     }
 
+    public GeneralElectionCommitteeBuilder WithCommitteeNumber(int committeeNumber)
+    {
+        _committeeNumber = committeeNumber;
+        return this;
+    }
+
     public GeneralElectionCommitteeBuilder WithOfficeId(Guid id)
     {
         _officeId = id;
@@ -406,6 +414,7 @@ public class GeneralElectionCommitteeBuilder
             DescriptionRomansh = _descriptionRomansh,
             CommitteeId = _committeeId,
             Committee = _committee,
+            CommitteeNumber = _committeeNumber,
             DepartmentId = _departmentId,
             Department = _department,
             OfficeId = _officeId,

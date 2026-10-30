@@ -58,15 +58,15 @@ public class CompareListService : ICompareListService
         var committeesFromDate1 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1)).ToArray();
         var committeesFromDate2 = (await _committeeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate2)).ToArray();
 
-        // inactive commitees should only come in formerCommittees, so filter them out here
+        // inactive commitees should only come in disbandedCommittees, so filter them out here
         committeesFromDate1 = committeesFromDate1.Where(c => c.IsActive).ToArray();
         committeesFromDate2 = committeesFromDate2.Where(c => c.IsActive).ToArray();
 
         var newCommittees = (await _committeeRepository.GetNewCommitteesByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1, filterDto.AnalysisDate2)).ToArray();
-        var formerCommittees = (await _committeeRepository.GetFormerCommitteesByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1, filterDto.AnalysisDate2)).ToArray();
+        var disbandedCommittees = (await _committeeRepository.GetDisbandedCommitteesByFilterForReport(departmentId, officeId, committeeId, filterDto, filterDto.AnalysisDate1, filterDto.AnalysisDate2)).ToArray();
 
         var newCommitteesList = newCommittees.Select(FillNewCommitteeDto).ToArray();
-        var formerCommitteesList = formerCommittees.Select(FillFormerCommitteeDto).ToArray();
+        var disbandedCommitteesList = disbandedCommittees.Select(FillDisbandedCommitteeDto).ToArray();
 
         var compareListDto = new CompareListDto
         {
@@ -97,7 +97,7 @@ public class CompareListService : ICompareListService
         compareListDto.CommitteeTypes = compareCommitteeTypeList;
 
         compareListDto.NewCommittees = newCommitteesList!;
-        compareListDto.FormerCommittees = formerCommitteesList!;
+        compareListDto.DisbandedCommittees = disbandedCommitteesList!;
 
         var template = _cultureService.GetCurrentUiCulture().TwoLetterISOLanguageName == Language.French ? "Compare_List_French" : "Compare_List_German";
 
@@ -389,16 +389,16 @@ public class CompareListService : ICompareListService
         return compareListNewCommittee;
     }
 
-    private static CompareListFormerCommitteeDto? FillFormerCommitteeDto(Committee committee)
+    private static CompareListDisbandedCommitteeDto? FillDisbandedCommitteeDto(Committee committee)
     {
-        var compareListFormerCommittee = new CompareListFormerCommitteeDto()
+        var compareListDisbandedCommittee = new CompareListDisbandedCommitteeDto()
         {
             Id = committee.Id,
             Name = committee.GetDescription(),
             EndDate = (DateOnly)committee.EndDate!,
         };
 
-        return compareListFormerCommittee;
+        return compareListDisbandedCommittee;
     }
 
     private static bool IsGenderUnderStaffed(ICollection<Membership> memberships, int activeMemberCount, Guid genderId, double threshold)

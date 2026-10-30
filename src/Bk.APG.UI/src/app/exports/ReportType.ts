@@ -3,7 +3,6 @@ export enum ReportType {
     AppendixFederalCouncil = 'AppendixFederalCouncil',
     Vacancies = 'Vacancies',
     CompareListGeneralElection = 'CompareListGeneralElection',
-    AppendixFederalCouncilCheck = 'AppendixFederalCouncilCheck',
     DecisionFederalCouncil = 'DecisionFederalCouncil',
     InformationNoteGeneralElection = 'InformationNoteGeneralElection',
     ElectoralListFC = 'ElectoralListFC',
