@@ -495,9 +495,6 @@
     <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
         <value>{0} Mitglieder, davon {1} im Bundesdienst</value>
     </data>
-    <data name="InformationNoteExport_Vacancies" xml:space="preserve">
-        <value>{0} Vakanz(en)</value>
-    </data>
     <data name="InformationNoteExport_Male" xml:space="preserve">
         <value>{0} % Männer</value>
     </data>
@@ -557,5 +554,17 @@
     </data>
     <data name="CandidateList_EmploymentLevel" xml:space="preserve">
         <value>Beschäftigungsgrad in Prozent</value>
+    </data>
+    <data name="Report_BeginDate" xml:space="preserve">
+        <value>Startdatum</value>
+    </data>
+    <data name="Report_EndDate" xml:space="preserve">
+        <value>Enddatum</value>
+    </data>
+    <data name="ReportData_Vacancies" xml:space="preserve">
+        <value>{0} Vakanzen</value>
+    </data>
+    <data name="ReportData_Vacancy" xml:space="preserve">
+        <value>1 Vakanz</value>
     </data>
 </root>

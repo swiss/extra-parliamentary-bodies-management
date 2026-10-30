@@ -195,10 +195,3 @@ public class CommitteeNameLongerDutyDto
     public required int MemberCount { get; set; }
     public required int FederalMemberCount { get; set; }
 }
-
-public enum InformationNoteData
-{
-    Vacancies,
-    Genders,
-    Languages
-}

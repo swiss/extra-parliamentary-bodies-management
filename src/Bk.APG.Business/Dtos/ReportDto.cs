@@ -3,6 +3,7 @@ namespace Bk.APG.Business.Dtos;
 public class ReportDepartmentDto
 {
     public required string Name { get; set; }
+    public string? Justification { get; set; }
 }
 
 public class ReportDepartmentWithCommitteeTypeDto : ReportDepartmentDto
@@ -25,6 +26,7 @@ public class ReportCommitteeDto
     public string? FreeText2 { get; set; }
     public bool HasOpenJustificationChanges { get; set; }
     public string? JustificationUrl { get; set; }
+    public int SortOrder { get; set; }
 }
 
 public class ReportDepartmentWithCommitteesDto : ReportDepartmentDto
@@ -132,6 +134,14 @@ public enum ReportMembershipType
 public enum ReportCommitteeType
 {
     StandardBehaviour,
-    Vacancies,
+    VacanciesHomepageMembershipAddition,
     SelectionProcedure
+}
+
+public enum ReportDetailData
+{
+    Vacancies,
+    Genders,
+    Languages,
+    NewAndDisbanded
 }

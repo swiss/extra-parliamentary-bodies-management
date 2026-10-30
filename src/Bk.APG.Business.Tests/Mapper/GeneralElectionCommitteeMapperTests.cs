@@ -3,7 +3,6 @@ using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
 using Bk.APG.CrossCutting.Tests.Builders;
-using Bogus;
 
 namespace Bk.APG.Business.Tests.Mapper;
 
@@ -53,40 +52,6 @@ internal class GeneralElectionCommitteeMapperTests
             Assert.That(committeeDetailDto.JustificationsNeedAttention, Is.EqualTo(generalElectionCommittee.JustificationsNeedAttention));
             Assert.That(committeeDetailDto.CandidateListState, Is.Not.Empty);
             Assert.That(committeeDetailDto.Candidates.Count(), Is.EqualTo(2));
-        });
-    }
-
-    [Test]
-    public void FromGeneralElectionCommitteeCreateDto_ShouldMapCorrectly()
-    {
-        var createDto = new Faker<GeneralElectionCommitteeCreateDto>().Generate();
-
-        var generalElectionCommittee = GeneralElectionCommitteeMapper.FromGeneralElectionCommitteeCreateDto(createDto, "foo bar");
-
-        Assert.That(generalElectionCommittee, Is.Not.Null);
-        Assert.Multiple(() =>
-        {
-            Assert.That(generalElectionCommittee.BeginDate, Is.EqualTo(createDto.BeginDate));
-            Assert.That(generalElectionCommittee.EndDate, Is.EqualTo(createDto.EndDate));
-            Assert.That(generalElectionCommittee.DescriptionGerman, Is.EqualTo(createDto.DescriptionGerman));
-            Assert.That(generalElectionCommittee.DescriptionFrench, Is.EqualTo(createDto.DescriptionFrench));
-            Assert.That(generalElectionCommittee.DescriptionItalian, Is.EqualTo(createDto.DescriptionItalian));
-            Assert.That(generalElectionCommittee.DescriptionRomansh, Is.EqualTo(createDto.DescriptionRomansh));
-            Assert.That(generalElectionCommittee.DepartmentId, Is.EqualTo(createDto.DepartmentId));
-            Assert.That(generalElectionCommittee.OfficeId, Is.EqualTo(createDto.OfficeId));
-            Assert.That(generalElectionCommittee.CommitteeLevelId, Is.EqualTo(createDto.LevelId));
-            Assert.That(generalElectionCommittee.CommitteeTypeId, Is.EqualTo(createDto.CommitteeTypeId));
-            Assert.That(generalElectionCommittee.TermOfOfficeId, Is.EqualTo(createDto.TermOfOfficeId));
-            Assert.That(generalElectionCommittee.LegalFormId, Is.EqualTo(createDto.LegalFormId));
-            Assert.That(generalElectionCommittee.LegalBase, Is.EqualTo(createDto.LegalBase));
-            Assert.That(generalElectionCommittee.FederalLawEstablishment, Is.EqualTo(createDto.FederalLawEstablishment));
-            Assert.That(generalElectionCommittee.MarketOrientated, Is.EqualTo(createDto.MarketOrientated));
-            Assert.That(generalElectionCommittee.SupervisionDuty, Is.EqualTo(createDto.SupervisionDuty));
-            Assert.That(generalElectionCommittee.MinimalMembers, Is.EqualTo(createDto.MinimalMembers));
-            Assert.That(generalElectionCommittee.MaximalMembers, Is.EqualTo(createDto.MaximalMembers));
-            Assert.That(generalElectionCommittee.AdditionalAuthorityMembers, Is.EqualTo(createDto.AdditionalAuthorityMembers));
-            Assert.That(generalElectionCommittee.LinkAuthorityWebsite, Is.EqualTo(createDto.LinkAuthorityWebsite));
-            Assert.That(generalElectionCommittee.ReleaseGeneralElection, Is.False);
         });
     }
 
