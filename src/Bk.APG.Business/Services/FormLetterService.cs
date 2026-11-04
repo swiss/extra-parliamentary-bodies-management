@@ -19,7 +19,7 @@ public class FormLetterService : IFormLetterService
     private const string CommitteeDissolutionWithdrawalTextGerman = "Gremiumauflösung";
     private const string CommitteeDissolutionWithdrawalTextFrench = "Dissolution d'un comité";
     private const string CommitteeDissolutionWithdrawalTextItalian = "Scioglimento dell'organo";
-    private const string CommitteeDissolutionWithdrawalTextRomansh = "Dissoluziun dal gremi";
+    private const string CommitteeDissolutionWithdrawalTextRomansh = "Schliaziun dal gremi";
 
     private readonly Swiss.FCh.DocumentService.Client.IDocumentService _documentService;
     private readonly ITermOfOfficeDateService _termOfOfficeDateService;
