@@ -185,7 +185,7 @@ public class GeneralElectionCommitteeService : IGeneralElectionCommitteeService
         {
             var currentCommittees = await _committeeService.GetCommitteesWithRetiredMembers(filterParameters, electionTypeListPresent);
 
-            var existingCommittees = currentCommittees.Select(c => GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(c, "pp"));
+            var existingCommittees = currentCommittees.Select(c => GeneralElectionMapper.FromCommitteeToGeneralElectionCommittee(c, "username"));
 
             var presentCommittees = existingCommittees.Select(committee => GeneralElectionCommitteeMapper.ToGeneralElectionCommitteeListDto(committee, _cultureService.GetCurrentUiCulture()));
 
