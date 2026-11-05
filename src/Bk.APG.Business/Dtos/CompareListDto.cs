@@ -6,7 +6,7 @@ public class CompareListDto
     public string? EndYear { get; set; }
     public IEnumerable<CompareListCommitteeTypeDto>? CommitteeTypes { get; set; }
     public IEnumerable<CompareListNewCommitteeDto>? NewCommittees { get; set; }
-    public IEnumerable<CompareListFormerCommitteeDto>? FormerCommittees { get; set; }
+    public IEnumerable<CompareListDisbandedCommitteeDto>? DisbandedCommittees { get; set; }
 }
 
 public class CompareListCommitteeTypeDto
@@ -79,7 +79,7 @@ public class CompareListNewCommitteeDto
     public string? LanguageQuota { get; init; }
 }
 
-public class CompareListFormerCommitteeDto
+public class CompareListDisbandedCommitteeDto
 {
     public required Guid Id { get; init; }
     public required string Name { get; init; }

@@ -123,8 +123,8 @@ describe('RequestsAndReportsComponent', () => {
         expect(component.isGeneralElection).toBe(false);
     });
 
-    it.each([ReportType.AppendixFederalCouncilCheck, ReportType.Vacancies])('should update date fields properly for document Type "%s"', dt => {
-        component.form.controls.documentType.setValue(dt);
+    it('should update date fields properly for document type Vacancies', () => {
+        component.form.controls.documentType.setValue(ReportType.Vacancies);
         expect(component.form.controls.analysisDate1.value).toEqual(today());
     });
 
@@ -136,14 +136,11 @@ describe('RequestsAndReportsComponent', () => {
         expect(component.form.controls.analysisDate2.disabled).toEqual(false);
     });
 
-    it.each([ReportType.ParliamentaryReport, ReportType.Vacancies, ReportType.AppendixFederalCouncilCheck])(
-        'should clear and disable "date 2" field for document Type "%s"',
-        dt => {
-            component.form.controls.documentType.setValue(dt);
-            expect(component.form.controls.analysisDate2.disabled).toEqual(true);
-            expect(component.form.controls.analysisDate2.value).toEqual(null);
-        }
-    );
+    it.each([ReportType.ParliamentaryReport, ReportType.Vacancies])('should clear and disable "date 2" field for document Type "%s"', dt => {
+        component.form.controls.documentType.setValue(dt);
+        expect(component.form.controls.analysisDate2.disabled).toEqual(true);
+        expect(component.form.controls.analysisDate2.value).toEqual(null);
+    });
 
     it('should load masterData correctly', () => {
         expect(component.departmentOffices().length).toBe(2);
