@@ -1,3 +1,4 @@
+using System.Globalization;
 using Bk.APG.Business.Dtos;
 using Bk.APG.Business.Mapper;
 using Bk.APG.Business.Models;
@@ -92,9 +93,13 @@ public class ElectoralListService : IElectoralListService
                                     Name = membershipsByFunction.Key,
                                     Members = membershipsByFunction.Select(membership => new ElectoralListMemberDto
                                     {
-                                        TitleOccupation = string.IsNullOrWhiteSpace(membership.Person!.Title)
-                                            ? membership.Person!.Occupation
-                                            : $"{membership.Person!.Title}, {membership.Person!.Occupation}",
+                                        TitleOccupation =
+                                            (string.IsNullOrWhiteSpace(membership.Person!.Title)
+                                                ? string.Empty
+                                                : $"{membership.Person.Title}, ") +
+                                            (membership.Person.Gender!.Uri == Gender.Female
+                                                ? string.Join("/", membership.Person.Occupations.Select(o => o.GetFemaleText(CultureInfo.CurrentUICulture)).Order())
+                                                : string.Join("/", membership.Person.Occupations.Select(o => o.GetText(CultureInfo.CurrentUICulture)).Order())),
                                         Salutation = membership.Person!.Salutation?.GetText() ?? string.Empty,
                                         Surname = membership.Person!.Surname,
                                         GivenName = membership.Person!.GivenName,
