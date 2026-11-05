@@ -126,13 +126,13 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
         };
     }
 
-    public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto)
+    public async Task<IEnumerable<GeneralElectionCommittee>> GetByFilterForReport(Guid departmentId, Guid officeId, Guid committeeId, ReportFilterParametersDto filterDto, bool adminObserverView = false)
     {
         ArgumentNullException.ThrowIfNull(filterDto);
 
         var committees = await _dataContext.GeneralElectionCommittees
             .Where(g => !g.IsDeleted)
-            .Where(IsCommitteeReleasedPredicate(filterDto.ReleasedCommittees))
+            .Where(IsCommitteeReleasedPredicate(filterDto.ReleasedCommittees, adminObserverView))
             .Include(item => item.Committee)
             .Include(item => item.CommitteeLevel)
             .Include(item => item.Department)
@@ -181,6 +181,7 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 TermOfOfficeDateId = c.TermOfOfficeDateId,
                 CommitteeId = c.CommitteeId,
                 Committee = c.Committee,
+                CommitteeNumber = c.CommitteeNumber,
                 DepartmentId = c.DepartmentId,
                 Department = c.Department,
                 OfficeId = c.OfficeId,
@@ -210,16 +211,22 @@ public class GeneralElectionCommitteeRepository : IGeneralElectionCommitteeRepos
                 CandidateListStateId = c.CandidateListStateId,
                 AssignedToRole = c.AssignedToRole,
                 SelfOrganized = c.SelfOrganized,
-                MembershipCandidates = c.MembershipCandidates.ToList()
+                // Candidates, which are not selected, are not interesting for any report
+                MembershipCandidates = c.MembershipCandidates.Where(mc => mc.IsSelected).ToList()
             })
-            .OrderBy(c => c.Committee!.CommitteeNumber)
+            .OrderBy(c => c.CommitteeNumber)
             .ToListAsync();
 
         return committees;
     }
 
-    private static Expression<Func<GeneralElectionCommittee, bool>> IsCommitteeReleasedPredicate(bool releasedCommittees)
+    private static Expression<Func<GeneralElectionCommittee, bool>> IsCommitteeReleasedPredicate(bool releasedCommittees, bool adminObserverView)
     {
+        if (adminObserverView)
+        {
+            return x => x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalFinalized;
+        }
+
         return x =>
             !releasedCommittees
             || x.CandidateListStateId == CandidateListState.ReadyForFederalCouncilProposalForwarded

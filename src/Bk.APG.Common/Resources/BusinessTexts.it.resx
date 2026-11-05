@@ -534,9 +534,6 @@
     <data name="InformationNoteExport_MemberAndFederalMemberCount" xml:space="preserve">
         <value>{0} membri, di cui {1} al servizio della Confederazione</value>
     </data>
-    <data name="InformationNoteExport_Vacancies" xml:space="preserve">
-        <value>{0} vacanza(e)</value>
-    </data>
     <data name="InformationNoteExport_Male" xml:space="preserve">
         <value>{0} % uomini</value>
     </data>
@@ -551,5 +548,17 @@
     </data>
     <data name="InformationNoteExport_ItalianMissing" xml:space="preserve">
         <value>Italiano non rappresentato</value>
+    </data>
+    <data name="Report_BeginDate" xml:space="preserve">
+        <value>Data di inizio</value>
+    </data>
+    <data name="Report_EndDate" xml:space="preserve">
+        <value>Data di fine</value>
+    </data>
+    <data name="ReportData_Vacancies" xml:space="preserve">
+        <value>{0} vacanze</value>
+    </data>
+    <data name="ReportData_Vacancy" xml:space="preserve">
+        <value>1 vacanza</value>
     </data>
 </root>

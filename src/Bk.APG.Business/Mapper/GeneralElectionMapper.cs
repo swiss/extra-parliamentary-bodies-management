@@ -14,6 +14,7 @@ public static class GeneralElectionMapper
         {
             Id = committee.Id,
             CommitteeId = committee.Id,
+            CommitteeNumber = committee.CommitteeNumber,
             BeginDate = committee.BeginDate,
             EndDate = committee.EndDate,
             DescriptionGerman = committee.DescriptionGerman,
@@ -72,6 +73,7 @@ public static class GeneralElectionMapper
             Id = committee.CommitteeId,
             BeginDate = committee.BeginDate,
             EndDate = committee.EndDate,
+            CommitteeNumber = committee.CommitteeNumber,
             DescriptionGerman = committee.DescriptionGerman,
             DescriptionFrench = committee.DescriptionFrench,
             DescriptionItalian = committee.DescriptionItalian,

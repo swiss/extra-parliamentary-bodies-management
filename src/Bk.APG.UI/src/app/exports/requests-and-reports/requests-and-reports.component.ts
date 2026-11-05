@@ -100,7 +100,7 @@ export class RequestsAndReportsComponent {
         if (routeData.isGeneralElection) {
             this.isGeneralElection = true;
         }
-        this.form.controls.documentType.valueChanges.pipe(takeUntilDestroyed()).subscribe(_ => this.updateAnalysisDateFields());
+        this.form.controls.documentType.valueChanges.pipe(takeUntilDestroyed()).subscribe(_ => this.updateFilterFields());
 
         if (!this.isGeneralElection) {
             this.form.valueChanges.pipe(startWith(this.form.value), pairwise(), takeUntilDestroyed()).subscribe(([_, curr]) => {
@@ -236,9 +236,9 @@ export class RequestsAndReportsComponent {
         this.form.controls.analysisDate2.setValue(null);
     }
 
-    private updateAnalysisDateFields() {
+    private updateFilterFields() {
         if (!this.isGeneralElection) {
-            if ([ReportType.AppendixFederalCouncilCheck, ReportType.Vacancies].includes(this.form.controls.documentType.value!)) {
+            if (this.form.controls.documentType.value! === ReportType.Vacancies) {
                 this.form.controls.analysisDate1.setValue(today());
             }
 
@@ -251,13 +251,24 @@ export class RequestsAndReportsComponent {
                 this.form.controls.analysisDate2.disable();
             }
         } else {
-            if (this.form.controls.documentType.value === ReportType.InformationNoteGeneralElection) {
+            if (
+                this.form.controls.documentType.value === ReportType.InformationNoteGeneralElection ||
+                this.form.controls.documentType.value === ReportType.AppendixFederalCouncil
+            ) {
                 this.form.controls.analysisDate1.disable();
                 this.form.controls.releasedCommittees.setValue(true);
                 this.form.controls.releasedCommittees.disable();
+                if (this.form.controls.documentType.value === ReportType.AppendixFederalCouncil) {
+                    this.form.controls.committeesWithActiveMembership.disable();
+                    this.form.controls.committeesWithActiveMembership.setValue(true);
+                }
+                if (this.form.controls.documentType.value === ReportType.InformationNoteGeneralElection) {
+                    this.form.controls.committeesWithActiveMembership.enable();
+                }
             } else {
                 this.form.controls.analysisDate1.enable();
                 this.form.controls.releasedCommittees.enable();
+                this.form.controls.committeesWithActiveMembership.enable();
             }
         }
     }

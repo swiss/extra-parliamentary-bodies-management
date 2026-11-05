@@ -39,49 +39,6 @@ public static class GeneralElectionCommitteeMapper
         };
     }
 
-    public static GeneralElectionCommittee FromGeneralElectionCommitteeCreateDto(GeneralElectionCommitteeCreateDto createDto, string currentUserName)
-    {
-        ArgumentNullException.ThrowIfNull(createDto);
-
-        return new GeneralElectionCommittee
-        {
-            BeginDate = createDto.BeginDate,
-            EndDate = createDto.EndDate,
-            DescriptionGerman = createDto.DescriptionGerman,
-            DescriptionFrench = createDto.DescriptionFrench,
-            DescriptionItalian = createDto.DescriptionItalian,
-            DescriptionRomansh = createDto.DescriptionRomansh,
-            CommitteeLevelId = createDto.LevelId,
-            OfficeId = createDto.OfficeId,
-            DepartmentId = createDto.DepartmentId,
-            CommitteeTypeId = createDto.CommitteeTypeId,
-            ReleaseGeneralElection = false,
-            FederalLawEstablishment = createDto.FederalLawEstablishment,
-            SupervisionDuty = createDto.SupervisionDuty,
-            MarketOrientated = createDto.MarketOrientated,
-            LegalFormId = createDto.LegalFormId,
-            LegalBase = createDto.LegalBase,
-            TermOfOfficeId = createDto.TermOfOfficeId,
-            TermOfOfficeDateId = createDto.TermOfOfficeId == TermOfOffice.Period4YearsInGeneralElectionGuid ? TermOfOfficeDate.IndefiniteDurationGuid : TermOfOfficeDate.CurrentGeneralElectionGuid,
-            MinimalMembers = createDto.MinimalMembers,
-            MaximalMembers = createDto.MaximalMembers,
-            AdditionalAuthorityMembers = createDto.AdditionalAuthorityMembers,
-            LinkAuthorityWebsite = createDto.LinkAuthorityWebsite,
-            LinkHomepageGerman = createDto.LinkHomepageGerman,
-            LinkHomepageFrench = createDto.LinkHomepageFrench,
-            LinkHomepageItalian = createDto.LinkHomepageItalian,
-            LinkHomepageRomansh = createDto.LinkHomepageRomansh,
-            Created = DateTime.UtcNow,
-            CreatedBy = currentUserName,
-            Modified = DateTime.UtcNow,
-            ModifiedBy = currentUserName,
-            IsDeleted = false,
-            IsValidated = false,
-            WasValidatedOnce = false,
-            IsFederalCouncilProposalDirty = false,
-        };
-    }
-
     public static GeneralElectionCommitteeDetailDto ToGeneralElectionCommitteeDetailDto(GeneralElectionCommittee generalElectionCommittee)
     {
         ArgumentNullException.ThrowIfNull(generalElectionCommittee);
@@ -90,7 +47,7 @@ public static class GeneralElectionCommitteeMapper
         {
             Id = generalElectionCommittee.Id,
             CommitteeId = generalElectionCommittee.CommitteeId,
-            CommitteeNumber = generalElectionCommittee.Committee!.CommitteeNumber,
+            CommitteeNumber = generalElectionCommittee.CommitteeNumber,
             Description = generalElectionCommittee.GetDescription(),
             DescriptionDe = generalElectionCommittee.DescriptionGerman,
             DescriptionFr = generalElectionCommittee.DescriptionFrench,

@@ -1501,15 +1501,6 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} Vakanz(en).
-        /// </summary>
-        public static string InformationNoteExport_Vacancies {
-            get {
-                return ResourceManager.GetString("InformationNoteExport_Vacancies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to bis.
         /// </summary>
         public static string Membership_Until {
@@ -1573,11 +1564,29 @@ namespace Bk.APG.Common.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Startdatum.
+        /// </summary>
+        public static string Report_BeginDate {
+            get {
+                return ResourceManager.GetString("Report_BeginDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Datum der Gründung: {0}.
         /// </summary>
         public static string Report_BeginDateInFuture {
             get {
                 return ResourceManager.GetString("Report_BeginDateInFuture", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enddatum.
+        /// </summary>
+        public static string Report_EndDate {
+            get {
+                return ResourceManager.GetString("Report_EndDate", resourceCulture);
             }
         }
         
@@ -1632,6 +1641,24 @@ namespace Bk.APG.Common.Resources {
         public static string Report_Years {
             get {
                 return ResourceManager.GetString("Report_Years", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} Vakanzen.
+        /// </summary>
+        public static string ReportData_Vacancies {
+            get {
+                return ResourceManager.GetString("ReportData_Vacancies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1 Vakanz.
+        /// </summary>
+        public static string ReportData_Vacancy {
+            get {
+                return ResourceManager.GetString("ReportData_Vacancy", resourceCulture);
             }
         }
         

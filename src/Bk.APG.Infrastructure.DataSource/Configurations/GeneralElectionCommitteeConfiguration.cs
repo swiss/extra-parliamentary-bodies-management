@@ -1,4 +1,5 @@
 using Bk.APG.Business.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Bk.APG.Infrastructure.DataSource.Configurations;
@@ -8,6 +9,10 @@ public class GeneralElectionCommitteeConfiguration : EntityBaseConfiguration<Gen
     protected override void ConfigureEntity(EntityTypeBuilder<GeneralElectionCommittee> builder)
     {
         ArgumentNullException.ThrowIfNull(builder);
+
+        builder.Property(c => c.CommitteeNumber)
+            .IsRequired()
+            .HasDefaultValue(0);
 
         builder.Property(c => c.DescriptionGerman)
             .IsRequired()

@@ -2901,6 +2901,12 @@ namespace Bk.APG.Infrastructure.DataSource.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("committee_level_id");
 
+                    b.Property<int>("CommitteeNumber")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("committee_number");
+
                     b.Property<Guid>("CommitteeTypeId")
                         .HasColumnType("uuid")
                         .HasColumnName("committee_type_id");
