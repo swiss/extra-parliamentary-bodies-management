@@ -300,13 +300,13 @@ public static class GeneralElectionCommitteeQueryExtensions
         SortDirection sortDirection,
         CultureInfo cultureInfo)
     {
-        var selectedProperty = cultureInfo.TwoLetterISOLanguageName switch
+        var selectedProperty = (cultureInfo.TwoLetterISOLanguageName switch
         {
             Language.German => propertyDe,
             Language.French => propertyFr,
             Language.Italian => propertyIt,
             _ => propertyDe
-        };
+        }).WithCollation(cultureInfo.ToIcuCollation());
 
         return sortDirection == SortDirection.Asc
             ? committees.OrderBy(selectedProperty)
