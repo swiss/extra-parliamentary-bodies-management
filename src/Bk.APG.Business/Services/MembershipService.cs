@@ -471,8 +471,8 @@ public class MembershipService : IMembershipService
         var canEdit = await CanEditMembership(existingEntry);
         var currentUserName = _authorizationService.GetCurrentUserName();
 
-        // if a membership is inactive, then only admins are allowed to edit
-        if ((!existingEntry.IsActive && !_authorizationService.IsAdmin) || !canEdit)
+        // if a membership is inactive, then only admins are allowed to edit. Memberships in the future however can also be edited by department/office/secretariat users.
+        if ((!existingEntry.IsActive && !existingEntry.IsFuture && !_authorizationService.IsAdmin) || !canEdit)
         {
             throw new AuthorizationException("Not permitted to edit inactive memberships with this role");
         }
@@ -558,7 +558,7 @@ public class MembershipService : IMembershipService
 
         // TODO: Code smell – MembershipService is handling GEW workflow logic.
         // Extract GEW-related behavior into an application/orchestrator service.
-        if (isGeneralElectionRunning && membership.IsActive && await IsMembershipForGeneralElectionCommittee(membership))
+        if (isGeneralElectionRunning && (membership.IsActive || membership.IsFuture) && await IsMembershipForGeneralElectionCommittee(membership))
         {
             if (membership.Committee?.GeneralElectionCommittees.FirstOrDefault()?.CandidateListStateId == CandidateListState.Validated)
             {
