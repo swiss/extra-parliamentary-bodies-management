@@ -48,7 +48,7 @@ public class ElectoralListService : IElectoralListService
 
         var evaluationDate = filterDto.AnalysisDate1 ?? DateOnly.FromDateTime(DateTime.Today);
 
-        var allOtherCommittees = _committeeRepository.GetAll().Where(c => c.BeginDate <= evaluationDate && c.EndDate >= evaluationDate && c.TermOfOfficeId != TermOfOffice.Period4YearsInGeneralElectionGuid);
+        var allOtherCommittees = _committeeRepository.GetAll().Where(c => c.BeginDate <= evaluationDate && (c.EndDate >= evaluationDate || c.EndDate is null) && c.TermOfOfficeId != TermOfOffice.Period4YearsInGeneralElectionGuid);
 
         var generalElectionCommittees = await _generalElectionCommitteeRepository.GetByFilterForReport(departmentId, officeId, committeeId, filterDto);
 
@@ -68,6 +68,27 @@ public class ElectoralListService : IElectoralListService
             .Where(membership => !membership.IsDeleted && membership.BeginDate <= evaluationDate && membership.EndDate >= evaluationDate)
             .GroupBy(membership => membership.PersonId)
             .ToDictionary(membershipsByPerson => membershipsByPerson.Key, membershipsByPerson => membershipsByPerson.ToList());
+
+        // Used for other memberships in GE, only if the user is allowed to see them
+        var otherGeneralElectionMembershipsByPerson = generalElectionCommittees
+            .SelectMany(committee => committee.MembershipCandidates
+                .Where(candidate => candidate.IsSelected
+                                    && !candidate.IsDeleted
+                                    && candidate.PersonId.HasValue
+                                    && candidate.BeginDate <= evaluationDate
+                                    && candidate.EndDate >= evaluationDate)
+                .Select(candidate => new
+                {
+                    PersonId = candidate.PersonId!.Value,
+                    committee.CommitteeId,
+                    Text = $"[ {committee.GetDescription()} | {committee.CommitteeType!.GetText()} | {(committee.SelfOrganized == true ? memberFunction : candidate.Function)!.GetText()} ]"
+                }))
+            .GroupBy(membershipsByPerson => membershipsByPerson.PersonId)
+            .ToDictionary(
+                membershipsByPerson => membershipsByPerson.Key,
+                membershipsByPerson => membershipsByPerson
+                    .Select(membership => (membership.CommitteeId, membership.Text))
+                    .ToList());
 
         var electoralListDto = new ElectoralListDto
         {
@@ -115,7 +136,7 @@ public class ElectoralListService : IElectoralListService
                                             ? BusinessTexts.Common_None
                                             : string.Join(" ", membership.Person!.Interests.Select(interest => $"[ {interest.Text} | {interest.LegalForm?.GetText() ?? "-"} | {interest.InterestCommittee?.GetText() ?? "-"} | {interest.InterestFunction?.GetText() ?? "-"} ]")
                                                 .Where(x => !string.IsNullOrWhiteSpace(x))),
-                                        OtherMemberships = GetOtherMemberships(membership, allMembershipsByPerson)
+                                        OtherMemberships = GetOtherMemberships(membership, committee.Id, allMembershipsByPerson, otherGeneralElectionMembershipsByPerson)
                                     })
                                 }),
                         })
@@ -145,19 +166,32 @@ public class ElectoralListService : IElectoralListService
         return ($"{DateTime.Today:yyyyMMdd}_{BusinessTexts.ElectoralList_ElectoralList}_{BusinessTexts.ResourceManager.GetString(listType)}.docx", documentStream);
     }
 
-    private static string? GetOtherMemberships(Membership currentMembership, Dictionary<Guid, List<Membership>> allMembershipsByPerson)
+    private static string? GetOtherMemberships(
+        Membership currentMembership,
+        Guid currentCommitteeId,
+        Dictionary<Guid, List<Membership>> allMembershipsByPerson,
+        Dictionary<Guid, List<(Guid CommitteeId, string Text)>> generalElectionMembershipsByPerson)
     {
-        if (!allMembershipsByPerson.TryGetValue(currentMembership.PersonId, out var personMemberships))
+        var otherMemberships = new List<(Guid CommitteeId, string Text)>();
+
+        if (allMembershipsByPerson.TryGetValue(currentMembership.PersonId, out var personMemberships))
         {
-            return null;
+            otherMemberships.AddRange(personMemberships
+                .Where(membership => membership.Id != currentMembership.Id)
+                .Select(membership => (CommitteeId: membership.CommitteeId, Text: $"[ {membership.Committee!.GetDescription()} | {membership.Committee!.CommitteeType!.GetText()} | {membership.Function!.GetText()} ]")));
         }
 
-        var otherMemberships = personMemberships
-            .Where(x => x.Id != currentMembership.Id)
-            .Select(x => $"[ {x.Committee!.GetDescription()} | {x.Committee!.CommitteeType!.GetText()} | {x.Function!.GetText()} ]")
-            .OrderBy(x => x)
+        if (generalElectionMembershipsByPerson.TryGetValue(currentMembership.PersonId, out var generalElectionMemberships))
+        {
+            otherMemberships.AddRange(generalElectionMemberships.Where(membership => membership.CommitteeId != currentCommitteeId));
+        }
+
+        var distinctMemberships = otherMemberships
+            .GroupBy(membership => membership.CommitteeId)
+            .Select(membershipsByCommittee => membershipsByCommittee.OrderBy(membership => membership.Text).First().Text)
+            .OrderBy(membership => membership)
             .ToList();
 
-        return otherMemberships.Count != 0 ? string.Join(" ", otherMemberships) : null;
+        return distinctMemberships.Count != 0 ? string.Join($"{Environment.NewLine}", distinctMemberships) : null;
     }
 }
