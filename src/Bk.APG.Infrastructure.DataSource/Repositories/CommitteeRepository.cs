@@ -390,9 +390,11 @@ public class CommitteeRepository : ICommitteeRepository
     {
         return _dataContext.Committees
             .Include(item => item.Memberships)
+                .ThenInclude(item => item.Function)
             .Include(item => item.ContactPoints)
             .Include(item => item.AppointmentDecisions)
                 .ThenInclude(item => item.OriginalDocument)
+            .Include(item => item.CommitteeType)
             .AsSingleQuery()
             .AsEnumerable();
     }

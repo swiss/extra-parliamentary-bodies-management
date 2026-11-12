@@ -141,26 +141,174 @@ internal class ElectoralListServiceTests
         Assert.That(member.OtherMemberships, Is.EqualTo($"[ {secondCommittee.GetDescription()} | {secondCommittee.CommitteeType!.GetText()} | {secondCommittee.Memberships.First().Function!.GetText()} ]"));
     }
 
-    private static GeneralElectionCommittee CreateGeneralElectionCommittee(Guid? personId = null, Guid? termOfOfficeId = null)
+    [Test]
+    public async Task GenerateDocument_WithOtherGeneralElectionMembership_ShouldIncludeOtherGeneralElectionCommittee()
+    {
+        var personId = Guid.NewGuid();
+        var function = new FunctionBuilder().WithGermanText("Mitglied").Build();
+        var currentCommittee = CreateGeneralElectionCommittee(personId, function: function);
+        var otherCommittee = CreateGeneralElectionCommittee(personId, function: function);
+
+        var members = await GenerateAndGetMembers(currentCommittee, otherCommittee);
+
+        var expectedForCurrentCommittee = FormatOtherMembership(otherCommittee, function);
+        var expectedForOtherCommittee = FormatOtherMembership(currentCommittee, function);
+        Assert.That(members.Select(member => member.OtherMemberships), Is.EquivalentTo(new[] { expectedForCurrentCommittee, expectedForOtherCommittee }));
+    }
+
+    [Test]
+    public async Task GenerateDocument_WithMultipleCandidatesInOtherGeneralElectionCommittee_ShouldListCommitteeOnlyOnce()
+    {
+        var personId = Guid.NewGuid();
+        var functionA = new FunctionBuilder().WithGermanText("A").Build();
+        var functionB = new FunctionBuilder().WithGermanText("B").Build();
+        var currentCommittee = CreateGeneralElectionCommittee(personId, function: functionA);
+        var otherCommittee = CreateGeneralElectionCommittee(personId, function: functionA);
+        otherCommittee.MembershipCandidates.Add(new MembershipCandidateBuilder()
+            .WithPerson(CreatePerson(personId))
+            .WithFunction(functionB)
+            .WithIsSelected(true)
+            .WithBeginDate(DateOnly.FromDateTime(DateTime.Today.AddDays(-1)))
+            .WithEndDate(DateOnly.FromDateTime(DateTime.Today.AddDays(1)))
+            .Build());
+
+        var members = await GenerateAndGetMembers(currentCommittee, otherCommittee);
+
+        var memberOfCurrentCommittee = members.Single(member => member.OtherMemberships!.Contains(otherCommittee.GetDescription(), StringComparison.Ordinal));
+        Assert.That(CountOccurrences(memberOfCurrentCommittee.OtherMemberships!, otherCommittee.GetDescription()), Is.EqualTo(1));
+    }
+
+    [Test]
+    public async Task GenerateDocument_WithInactiveGeneralElectionMembership_ShouldExcludeIt()
+    {
+        var personId = Guid.NewGuid();
+        var currentCommittee = CreateGeneralElectionCommittee(personId);
+        var inactiveCommittee = CreateGeneralElectionCommittee(
+            personId,
+            beginDate: DateOnly.FromDateTime(DateTime.Today.AddDays(-10)),
+            endDate: DateOnly.FromDateTime(DateTime.Today.AddDays(-5)));
+
+        var members = await GenerateAndGetMembers(currentCommittee, inactiveCommittee);
+
+        Assert.That(members.Single().OtherMemberships, Is.Null);
+    }
+
+    [Test]
+    public async Task GenerateDocument_WithGeneralElectionMembershipWithoutPerson_ShouldExcludeIt()
+    {
+        var personId = Guid.NewGuid();
+        var currentCommittee = CreateGeneralElectionCommittee(personId);
+        var otherCommittee = CreateGeneralElectionCommittee(personId);
+        var personlessCandidate = otherCommittee.MembershipCandidates.First();
+        personlessCandidate.Person = null;
+        personlessCandidate.PersonId = null;
+
+        var members = await GenerateAndGetMembers(currentCommittee, otherCommittee);
+
+        Assert.That(members.Single().OtherMemberships, Is.Null);
+    }
+
+    [Test]
+    public async Task GenerateDocument_WithNonGeneralElectionAndGeneralElectionMemberships_ShouldCombineThem()
+    {
+        var personId = Guid.NewGuid();
+        var function = new FunctionBuilder().WithGermanText("Mitglied").Build();
+        var currentCommittee = CreateGeneralElectionCommittee(personId, function: function);
+        var otherGeneralElectionCommittee = CreateGeneralElectionCommittee(personId, function: function);
+        var nonGeneralElectionCommittee = CreateCommittee(personId, Guid.NewGuid());
+        _committeeRepository.GetAll().Returns(new List<Committee> { nonGeneralElectionCommittee });
+
+        var members = await GenerateAndGetMembers(currentCommittee, otherGeneralElectionCommittee);
+
+        var nonGeneralElectionText = FormatOtherMembership(nonGeneralElectionCommittee, nonGeneralElectionCommittee.Memberships.First().Function!);
+        var otherGeneralElectionText = FormatOtherMembership(otherGeneralElectionCommittee, function);
+        var expected = string.Join($"{Environment.NewLine}", new[] { nonGeneralElectionText, otherGeneralElectionText }.OrderBy(text => text));
+        Assert.That(members.Select(member => member.OtherMemberships), Does.Contain(expected));
+    }
+
+    [Test]
+    public async Task GenerateDocument_WithSelfOrganizedGeneralElectionCommittee_ShouldUseMemberFunction()
+    {
+        var personId = Guid.NewGuid();
+        var memberFunction = new FunctionBuilder().WithId(Function.MemberGuid).WithGermanText("Mitglied").Build();
+        var currentCommittee = CreateGeneralElectionCommittee(personId);
+        var selfOrganizedCommittee = CreateGeneralElectionCommittee(personId, selfOrganized: true);
+        _masterDataRepository.GetById<Function>(Function.MemberGuid).Returns(memberFunction);
+
+        var members = await GenerateAndGetMembers(currentCommittee, selfOrganizedCommittee);
+
+        var memberOfCurrentCommittee = members.Single(member => member.OtherMemberships!.Contains(selfOrganizedCommittee.GetDescription(), StringComparison.Ordinal));
+        Assert.That(memberOfCurrentCommittee.OtherMemberships, Does.Contain(memberFunction.GetText()));
+    }
+
+    private async Task<List<ElectoralListMemberDto>> GenerateAndGetMembers(params GeneralElectionCommittee[] generalElectionCommittees)
+    {
+        _generalElectionCommitteeRepository.GetByFilterForReport(_zeroGuid, _zeroGuid, _zeroGuid, _filterDto).Returns(generalElectionCommittees);
+        using var documentStream = new MemoryStream();
+        _documentService.CreateWordFromTemplate(Arg.Any<string>(), Arg.Any<object>(), Arg.Any<string>()).Returns(documentStream);
+
+        ElectoralListDto? capturedData = null!;
+        await _documentService.CreateWordFromTemplate(Arg.Any<string>(), Arg.Do<object>(captured => capturedData = captured as ElectoralListDto), Arg.Any<string>());
+
+        await _electoralListService.GenerateDocument(_filterDto, "ElectoralList_FederalCouncil");
+
+        return capturedData.Departments
+            .SelectMany(department => department.Committees)
+            .SelectMany(committee => committee.Functions)
+            .SelectMany(function => function.Members)
+            .ToList();
+    }
+
+    private static string FormatOtherMembership(GeneralElectionCommittee committee, Function function)
+    {
+        return $"[ {committee.GetDescription()} | {committee.CommitteeType!.GetText()} | {function.GetText()} ]";
+    }
+
+    private static string FormatOtherMembership(Committee committee, Function function)
+    {
+        return $"[ {committee.GetDescription()} | {committee.CommitteeType!.GetText()} | {function.GetText()} ]";
+    }
+
+    private static int CountOccurrences(string text, string value)
+    {
+        return text.Split(value).Length - 1;
+    }
+
+    private static GeneralElectionCommittee CreateGeneralElectionCommittee(
+        Guid? personId = null,
+        Guid? termOfOfficeId = null,
+        Function? function = null,
+        bool isSelected = true,
+        DateOnly? beginDate = null,
+        DateOnly? endDate = null,
+        bool selfOrganized = false)
     {
         personId ??= Guid.NewGuid();
         termOfOfficeId ??= TermOfOffice.Period4YearsInGeneralElectionGuid;
 
-        var person = new PersonBuilder()
-            .WithId(personId.Value)
-            .WithLanguage(new LanguageBuilder().Build())
-            .WithCorrespondenceAddress(new AddressBuilder().Build())
-            .Build();
+        var membershipCandidateBuilder = new MembershipCandidateBuilder()
+            .WithPerson(CreatePerson(personId.Value))
+            .WithIsSelected(isSelected)
+            .WithBeginDate(beginDate ?? DateOnly.FromDateTime(DateTime.Today.AddDays(-1)))
+            .WithEndDate(endDate ?? DateOnly.FromDateTime(DateTime.Today.AddDays(1)));
 
-        var membershipCandidate = new MembershipCandidateBuilder()
-            .WithPerson(person)
-            .Build();
+        if (function is not null)
+        {
+            membershipCandidateBuilder.WithFunction(function);
+        }
 
+        var description = $"Kommission-{Guid.NewGuid():N}";
         var committee = new GeneralElectionCommitteeBuilder()
+            .WithGermanDescription(description)
+            .WithFrenchDescription(description)
+            .WithItalianDescription(description)
+            .WithRomanschDescription(description)
             .WithTermOfOfficeId(termOfOfficeId.Value)
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
-            .WithMembershipCandidate(membershipCandidate)
+            .WithMembershipCandidate(membershipCandidateBuilder.Build())
             .Build();
+
+        committee.SelfOrganized = selfOrganized;
 
         return committee;
     }
@@ -170,24 +318,33 @@ internal class ElectoralListServiceTests
         personId ??= Guid.NewGuid();
         termOfOfficeId ??= TermOfOffice.Period4YearsInGeneralElectionGuid;
 
-        var person = new PersonBuilder()
-            .WithId(personId.Value)
-            .WithLanguage(new LanguageBuilder().Build())
-            .WithCorrespondenceAddress(new AddressBuilder().Build())
-            .Build();
-
         var membership = new MembershipBuilder()
-            .WithPerson(person)
+            .WithPerson(CreatePerson(personId.Value))
             .Build();
 
+        var description = $"Kommission-{Guid.NewGuid():N}";
         var committee = new CommitteeBuilder()
+            .WithGermanDescription(description)
+            .WithFrenchDescription(description)
+            .WithItalianDescription(description)
             .WithTermOfOfficeId(termOfOfficeId.Value)
             .WithCommitteeLevelId(CommitteeLevel.FederalCouncilGuid)
             .WithMembership(membership)
             .Build();
 
         membership.Committee = committee;
+        membership.CommitteeId = committee.Id;
 
         return committee;
+    }
+
+    private static Person CreatePerson(Guid personId)
+    {
+        return new PersonBuilder()
+            .WithId(personId)
+            .WithLanguage(new LanguageBuilder().Build())
+            .WithGender(new GenderBuilder().Build())
+            .WithCorrespondenceAddress(new AddressBuilder().Build())
+            .Build();
     }
 }
