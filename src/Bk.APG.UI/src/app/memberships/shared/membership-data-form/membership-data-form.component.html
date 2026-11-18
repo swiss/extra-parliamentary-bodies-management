@@ -64,59 +64,74 @@
                 </div>
             }
 
-            <mat-form-field obErrorMessages>
-                <mat-label>{{ 'membership.details.electionType' | translate }}</mat-label>
-                <mat-select [formControl]="membershipForm.controls.electionTypeId">
-                    @for (electionType of activeElectionTypes(); track electionType.id) {
-                        <mat-option [value]="electionType.id">{{ electionType.text }}</mat-option>
-                    }
-                </mat-select>
-                <mat-error>
-                    {{
-                        errorService.getControlError(
-                            membershipForm.controls.electionTypeId.errors,
-                            'membership.details.electionType' | translate,
-                            'membership.error'
-                        )
-                    }}
-                </mat-error>
-            </mat-form-field>
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'membership.details.electionType' | translate }}</mat-label>
+                    <mat-select [formControl]="membershipForm.controls.electionTypeId">
+                        @for (electionType of activeElectionTypes(); track electionType.id) {
+                            <mat-option [value]="electionType.id">{{ electionType.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipForm.controls.electionTypeId.errors,
+                                'membership.details.electionType' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="membership.helpTooltip.electionType" />
+            </div>
 
-            <mat-form-field obErrorMessages>
-                <mat-label>{{ 'membership.details.function' | translate }}</mat-label>
-                <mat-select
-                    [matTooltip]="this.membershipModification() && this.hasDeletedFunction() ? this.membershipModification()!.functionName : ''"
-                    [formControl]="membershipForm.controls.functionId"
-                >
-                    @for (function of activeFunctions(); track function.id) {
-                        <mat-option [value]="function.id">{{ getFunctionText(function) }}</mat-option>
-                    }
-                </mat-select>
-                <mat-error>
-                    {{ errorService.getControlError(membershipForm.controls.functionId.errors, 'membership.details.function' | translate, 'membership.error') }}
-                </mat-error>
-            </mat-form-field>
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'membership.details.function' | translate }}</mat-label>
+                    <mat-select
+                        [matTooltip]="this.membershipModification() && this.hasDeletedFunction() ? this.membershipModification()!.functionName : ''"
+                        [formControl]="membershipForm.controls.functionId"
+                    >
+                        @for (function of activeFunctions(); track function.id) {
+                            <mat-option [value]="function.id">{{ getFunctionText(function) }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipForm.controls.functionId.errors,
+                                'membership.details.function' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="membership.helpTooltip.function" />
+            </div>
 
-            <mat-form-field obErrorMessages>
-                <mat-label>{{ 'membership.details.electionOffice' | translate }}</mat-label>
-                <mat-select
-                    [matTooltip]="this.membershipModification() && this.hasDeletedElectionOffice() ? this.membershipModification()!.electionOfficeName : ''"
-                    [formControl]="membershipForm.controls.electionOfficeId"
-                >
-                    @for (electionOffice of activeElectionOffices(); track electionOffice.id) {
-                        <mat-option [value]="electionOffice.id">{{ electionOffice.text }}</mat-option>
-                    }
-                </mat-select>
-                <mat-error>
-                    {{
-                        errorService.getControlError(
-                            membershipForm.controls.electionOfficeId.errors,
-                            'membership.details.electionOffice' | translate,
-                            'membership.error'
-                        )
-                    }}
-                </mat-error>
-            </mat-form-field>
+            <div class="form-field-with-tooltip">
+                <mat-form-field obErrorMessages>
+                    <mat-label>{{ 'membership.details.electionOffice' | translate }}</mat-label>
+                    <mat-select
+                        [matTooltip]="this.membershipModification() && this.hasDeletedElectionOffice() ? this.membershipModification()!.electionOfficeName : ''"
+                        [formControl]="membershipForm.controls.electionOfficeId"
+                    >
+                        @for (electionOffice of activeElectionOffices(); track electionOffice.id) {
+                            <mat-option [value]="electionOffice.id">{{ electionOffice.text }}</mat-option>
+                        }
+                    </mat-select>
+                    <mat-error>
+                        {{
+                            errorService.getControlError(
+                                membershipForm.controls.electionOfficeId.errors,
+                                'membership.details.electionOffice' | translate,
+                                'membership.error'
+                            )
+                        }}
+                    </mat-error>
+                </mat-form-field>
+                <apg-help-tooltip text="membership.helpTooltip.electionOffice" />
+            </div>
 
             <div class="form-field-with-tooltip">
                 <mat-form-field obErrorMessages>
