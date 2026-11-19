@@ -99,9 +99,10 @@ public class WorklistTaskService : IWorklistTaskService
 
         dto.CanEdit = worklistTask.AssignedBy!.Id == currentEiamAssignment.Id ||
             ((worklistTask.WorklistTaskStateId != WorklistTaskState.Completed) &&
-            (worklistTask.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate || worklistTask.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal) &&
+            (worklistTask.WorklistTaskTypeId == WorklistTaskType.CandidateListCreate || worklistTask.WorklistTaskTypeId == WorklistTaskType.CandidateListForward  || worklistTask.WorklistTaskTypeId == WorklistTaskType.ReadyForFederalCouncilProposal) &&
                     ((currentEiamAssignment.Role == Role.Department && (worklistTask.AssignedTo!.Parent?.Id == currentEiamAssignment.Id || worklistTask.AssignedTo!.Parent!.Parent?.Id == currentEiamAssignment.Id)) ||
-                        (currentEiamAssignment.Role == Role.Office && (worklistTask.AssignedTo!.Parent?.Id == currentEiamAssignment.Id))));
+                        (currentEiamAssignment.Role == Role.Office && (worklistTask.AssignedTo!.Parent?.Id == currentEiamAssignment.Id)) ||
+                        (currentEiamAssignment.Role == Role.Admin && (worklistTask.AssignedTo!.Parent?.Id == currentEiamAssignment.Id))));
         dto.CanForward = worklistTask.GetCanBeForwarded(currentEiamAssignment.Id, _authorizationService.IsDepartment, isBigDepartment);
         dto.IsBigDepartment = worklistTask.AssignedTo!.Role == Role.Department && (worklistTask.AssignedTo.Department?.IsBigDepartment ?? false);
 
