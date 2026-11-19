@@ -8,6 +8,7 @@ namespace Bk.APG.Infrastructure.DataSource.Extensions;
 
 internal static class CollationExtensions
 {
+    // this class is used to allow correct sorting in all languages. There were issues, when sorting the lists according to the committee name in french (de/d'/de la etc.)
     private static readonly MethodInfo CollateMethod = typeof(RelationalDbFunctionsExtensions)
         .GetMethods(BindingFlags.Public | BindingFlags.Static)
         .Single(m => m.Name == nameof(RelationalDbFunctionsExtensions.Collate) && m.GetParameters().Length == 3)
