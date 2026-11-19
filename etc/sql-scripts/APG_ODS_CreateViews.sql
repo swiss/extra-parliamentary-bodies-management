@@ -119,6 +119,12 @@ CREATE OR REPLACE VIEW data.ods_worklist_task_types AS SELECT * FROM data.workli
 -- View 39: ods_worklist_tasks
 CREATE OR REPLACE VIEW data.ods_worklist_tasks AS SELECT * FROM data.worklist_tasks;
 
+-- View 40: ods_general_gender_measures
+CREATE OR REPLACE VIEW data.ods_general_gender_measures AS SELECT * FROM data.general_gender_measures;
+
+-- View 41: ods_general_language_measures
+CREATE OR REPLACE VIEW data.ods_general_language_measures AS SELECT * FROM data.general_language_measures;
+
 -- Grant SELECT on all ODS views to the given user.
 -- PostgreSQL has no script-level variables, so an anonymous code block (DO) is used instead.
 DO $$
